@@ -1,0 +1,252 @@
+{
+ "backgrounds": [
+  "Touxiang_DIY_bg_1.31ef72bd.png",
+  "Touxiang_DIY_bg_2.d4bf7745.png",
+  "Touxiang_DIY_bg_3.47b3e77a.png",
+  "Touxiang_DIY_bg_4.9cc31f20.png",
+  "Touxiang_DIY_bg_5.3aeb4d07.png",
+  "Touxiang_DIY_bg_6.c1ec104f.png",
+  "Touxiang_DIY_bg_7.c943bdb9.png",
+  "Touxiang_DIY_bg_8.4de3e1b6.png",
+  "Touxiang_DIY_bg_9.22185a24.png",
+  "Touxiang_DIY_bg_10.b0cf55c0.png",
+  "Touxiang_DIY_bg_11.675be95d.png",
+  "Touxiang_DIY_bg_12.063e1344.png",
+  "Touxiang_DIY_bg_13.3ada6038.png",
+  "Touxiang_DIY_bg_14.61c706d7.png",
+  "Touxiang_DIY_bg_15.4f5337ec.png",
+  "Touxiang_DIY_bg_16.eaeb934d.png",
+  "Touxiang_DIY_bg_17.3dc3da3d.png",
+  "Touxiang_DIY_bg_18.3bca6195.png",
+  "Touxiang_DIY_bg_19.1fc507bb.png",
+  "Touxiang_DIY_bg_20.c5f89d81.png",
+  "Touxiang_DIY_bg_52.6b36aad4.png",
+  "Touxiang_DIY_bg_53.364ad74b.png",
+  "Touxiang_DIY_bg_54.6dc56bee.png",
+  "Touxiang_DIY_bg_55.1ce483c7.png",
+  "Touxiang_DIY_bg_56.f56f5cec.png"
+ ],
+ "roles": {
+  "adao": "1_role.1da8fc20.png",
+  "ahua": "2_role.9975f342.png",
+  "duoduo": "3_role.f30dc181.png",
+  "goutui": "4_role.47947740.png",
+  "guazi": "5_role.dd66c5cd.png",
+  "gumi": "6_role.71e1a20f.png",
+  "haidewei": "7_role.8dfc3238.png",
+  "jidan": "8_role.e791d133.png",
+  "jiji": "9_role.f2faf0c4.png",
+  "miaoxiaochu": "10_role.4d7dfe26.png",
+  "pidan": "11_role.e4d69e94.png",
+  "tuding": "12_role.b61bdc8b.png",
+  "wangcai": "13_role.301ffe30.png",
+  "xiaoju": "14_role.3a164a8a.png",
+  "xiaowang": "15_role.64ae2609.png",
+  "mijiu": "16_role.b2b269f4.png",
+  "ayan": "17_role.2eacf365.png",
+  "pingping": "18_role.c5449680.png",
+  "pupu": "19_role.4a76a8ee.png",
+  "xiaofei": "20_role.5b72d16e.png",
+  "ahei": "21_role.deec7a80.png"
+ },
+ "faces": {
+  "adao": [
+   "Touxiang_DIY_adao_biaoqing_1.9c9c0ed7.png",
+   "Touxiang_DIY_adao_biaoqing_2.d2ee6f6c.png",
+   "Touxiang_DIY_adao_biaoqing_3.ef4bba7d.png",
+   "Touxiang_DIY_adao_biaoqing_4.3e533ac4.png",
+   "Touxiang_DIY_adao_biaoqing_5.484c1cfc.png"
+  ],
+  "ahua": [
+   "Touxiang_DIY_ahua_biaoqing_1.30cd4e30.png",
+   "Touxiang_DIY_ahua_biaoqing_2.92c70eae.png",
+   "Touxiang_DIY_ahua_biaoqing_3.12315b48.png",
+   "Touxiang_DIY_ahua_biaoqing_4.217d979a.png",
+   "Touxiang_DIY_ahua_biaoqing_5.82c9698d.png"
+  ],
+  "duoduo": [
+   "Touxiang_DIY_duoduo_biaoqing_1.fc685041.png",
+   "Touxiang_DIY_duoduo_biaoqing_2.3a62d404.png",
+   "Touxiang_DIY_duoduo_biaoqing_3.9726aef8.png",
+   "Touxiang_DIY_duoduo_biaoqing_4.8ca4608f.png",
+   "Touxiang_DIY_duoduo_biaoqing_5.5f7299d6.png"
+  ],
+  "goutui": [
+   "Touxiang_DIY_goutui_biaoqing_1.387c02c3.png",
+   "Touxiang_DIY_goutui_biaoqing_2.9144ce44.png",
+   "Touxiang_DIY_goutui_biaoqing_3.eca8b0db.png",
+   "Touxiang_DIY_goutui_biaoqing_4.73a934cc.png",
+   "Touxiang_DIY_goutui_biaoqing_5.fd417789.png"
+  ],
+  "guazi": [
+   "Touxiang_DIY_guazi_biaoqing_1.2571f098.png",
+   "Touxiang_DIY_guazi_biaoqing_2.41f71c1f.png",
+   "Touxiang_DIY_guazi_biaoqing_3.000eca7d.png",
+   "Touxiang_DIY_guazi_biaoqing_4.7f4313f8.png",
+   "Touxiang_DIY_guazi_biaoqing_5.fa426295.png"
+  ],
+  "gumi": [
+   "Touxiang_DIY_gumi_biaoqing_1.15db6cdc.png",
+   "Touxiang_DIY_gumi_biaoqing_2.9edc9763.png",
+   "Touxiang_DIY_gumi_biaoqing_3.917c673f.png",
+   "Touxiang_DIY_gumi_biaoqing_4.1a9ad6b7.png",
+   "Touxiang_DIY_gumi_biaoqing_5.a93043a6.png"
+  ],
+  "haidewei": [
+   "Touxiang_DIY_haidewei_biaoqing_1.3f090ce6.png",
+   "Touxiang_DIY_haidewei_biaoqing_2.f818d4ce.png",
+   "Touxiang_DIY_haidewei_biaoqing_3.060d8b1e.png",
+   "Touxiang_DIY_haidewei_biaoqing_4.3dacf1e7.png",
+   "Touxiang_DIY_haidewei_biaoqing_5.8e5da8c5.png"
+  ],
+  "jidan": [
+   "Touxiang_DIY_jidan_biaoqing_1.cbc8beab.png",
+   "Touxiang_DIY_jidan_biaoqing_2.ce7dc68d.png",
+   "Touxiang_DIY_jidan_biaoqing_3.fcca6aa9.png",
+   "Touxiang_DIY_jidan_biaoqing_4.ba5f5101.png",
+   "Touxiang_DIY_jidan_biaoqing_5.585204dd.png"
+  ],
+  "jiji": [
+   "Touxiang_DIY_jiji_biaoqing_1.809bb0ae.png",
+   "Touxiang_DIY_jiji_biaoqing_2.755d5639.png",
+   "Touxiang_DIY_jiji_biaoqing_3.98b326f3.png",
+   "Touxiang_DIY_jiji_biaoqing_4.adac7a29.png",
+   "Touxiang_DIY_jiji_biaoqing_5.003c1c76.png"
+  ],
+  "miaoxiaochu": [
+   "Touxiang_DIY_miaoxiaochu_biaoqing_1.e5d20416.png",
+   "Touxiang_DIY_miaoxiaochu_biaoqing_2.bcc88136.png",
+   "Touxiang_DIY_miaoxiaochu_biaoqing_3.bed7a0ac.png",
+   "Touxiang_DIY_miaoxiaochu_biaoqing_4.4973b778.png",
+   "Touxiang_DIY_miaoxiaochu_biaoqing_5.52d2e3e9.png"
+  ],
+  "pidan": [
+   "Touxiang_DIY_pidan_biaoqing_1.6299c22c.png",
+   "Touxiang_DIY_pidan_biaoqing_2.674fbce8.png",
+   "Touxiang_DIY_pidan_biaoqing_3.a5a89c85.png",
+   "Touxiang_DIY_pidan_biaoqing_4.6916ea8e.png",
+   "Touxiang_DIY_pidan_biaoqing_5.6e0ad22f.png"
+  ],
+  "tuding": [
+   "Touxiang_DIY_tuding_1.bca2a47d.png",
+   "Touxiang_DIY_tuding_2.d8ba6481.png",
+   "Touxiang_DIY_tuding_3.2ef33131.png",
+   "Touxiang_DIY_tuding_4.a4f5ee0f.png",
+   "Touxiang_DIY_tuding_5.2ea856e9.png"
+  ],
+  "wangcai": [
+   "Touxiang_DIY_wangcai_biaoqing_1.a51c76ff.png",
+   "Touxiang_DIY_wangcai_biaoqing_2.140515e3.png",
+   "Touxiang_DIY_wangcai_biaoqing_3.7f8de159.png",
+   "Touxiang_DIY_wangcai_biaoqing_4.6c48f301.png",
+   "Touxiang_DIY_wangcai_biaoqing_5.01a9ecf1.png"
+  ],
+  "xiaoju": [
+   "Touxiang_DIY_xiaoju_biaoqing_1.8c8a2bb4.png",
+   "Touxiang_DIY_xiaoju_biaoqing_2.06a43855.png",
+   "Touxiang_DIY_xiaoju_biaoqing_3.59f5ba1c.png",
+   "Touxiang_DIY_xiaoju_biaoqing_4.9fff262d.png",
+   "Touxiang_DIY_xiaoju_biaoqing_5.b4f0dea8.png"
+  ],
+  "xiaowang": [
+   "Touxiang_DIY_xiaowang_biaoqing_1.fe40a13b.png",
+   "Touxiang_DIY_xiaowang_biaoqing_2.c40b78ae.png",
+   "Touxiang_DIY_xiaowang_biaoqing_3.a6465922.png",
+   "Touxiang_DIY_xiaowang_biaoqing_4.edd60017.png",
+   "Touxiang_DIY_xiaowang_biaoqing_5.086e270f.png"
+  ],
+  "mijiu": [
+   "Touxiang_DIY_mijiu_biaoqing_1.7eddfc66.png",
+   "Touxiang_DIY_mijiu_biaoqing_2.ee5b3cca.png",
+   "Touxiang_DIY_mijiu_biaoqing_3.9d0c2769.png",
+   "Touxiang_DIY_mijiu_biaoqing_4.af0c4505.png",
+   "Touxiang_DIY_mijiu_biaoqing_5.1f2aca87.png"
+  ],
+  "ayan": [
+   "Touxiang_DIY_ayan_biaoqing_1.c3b93a78.png",
+   "Touxiang_DIY_ayan_biaoqing_2.f5b0ddf9.png",
+   "Touxiang_DIY_ayan_biaoqing_3.1ff956bf.png",
+   "Touxiang_DIY_ayan_biaoqing_4.a18f75f3.png",
+   "Touxiang_DIY_ayan_biaoqing_5.fff2154c.png"
+  ],
+  "pingping": [
+   "Touxiang_DIY_pingping_biaoqing_1.8030e3b7.png",
+   "Touxiang_DIY_pingping_biaoqing_2.51fc309b.png",
+   "Touxiang_DIY_pingping_biaoqing_3.c4c321c5.png",
+   "Touxiang_DIY_pingping_biaoqing_4.f6bf2351.png",
+   "Touxiang_DIY_pingping_biaoqing_5.4f373cd6.png"
+  ],
+  "pupu": [
+   "Touxiang_DIY_pupu_biaoqing_1.8b04df91.png",
+   "Touxiang_DIY_pupu_biaoqing_2.1c10bd02.png",
+   "Touxiang_DIY_pupu_biaoqing_3.83c6e403.png",
+   "Touxiang_DIY_pupu_biaoqing_4.714c63e5.png",
+   "Touxiang_DIY_pupu_biaoqing_5.9adc3f1b.png"
+  ],
+  "xiaofei": [
+   "Touxiang_DIY_xiaofei_biaoqing_1.62ad71e7.png",
+   "Touxiang_DIY_xiaofei_biaoqing_2.5a637cae.png",
+   "Touxiang_DIY_xiaofei_biaoqing_3.bab2f722.png",
+   "Touxiang_DIY_xiaofei_biaoqing_4.49fcaf8f.png",
+   "Touxiang_DIY_xiaofei_biaoqing_5.13370a73.png"
+  ],
+  "ahei": [
+   "Touxiang_DIY_ahei_biaoqing_1.1b6456b3.png",
+   "Touxiang_DIY_ahei_biaoqing_2.17dbf2d2.png",
+   "Touxiang_DIY_ahei_biaoqing_3.97abb6e1.png",
+   "Touxiang_DIY_ahei_biaoqing_4.a02da253.png",
+   "Touxiang_DIY_ahei_biaoqing_5.9dc69bd7.png"
+  ]
+ },
+ "accessoriesA": [
+  "Touxiang_DIY_zhuangshi_peidai_4.fe60fa80.png",
+  "Touxiang_DIY_zhuangshi_peidai_12.2e0e5c6d.png",
+  "Touxiang_DIY_zhuangshi_peidai_22.488fc1eb.png",
+  "Touxiang_DIY_zhuangshi_peidai_137.42d26b18.png",
+  "Touxiang_DIY_zhuangshi_peidai_138.4ced4982.png",
+  "Touxiang_DIY_zhuangshi_peidai_139.df393cf7.png",
+  "Touxiang_DIY_zhuangshi_peidai_140.9c3c755c.png",
+  "Touxiang_DIY_zhuangshi_peidai_141.4fd08ae6.png",
+  "Touxiang_DIY_zhuangshi_peidai_142.f1fd3aed.png",
+  "Touxiang_DIY_zhuangshi_peidai_143.2367124c.png",
+  "Touxiang_DIY_zhuangshi_peidai_144.ca92e571.png",
+  "Touxiang_DIY_zhuangshi_peidai_145.a30175b5.png",
+  "Touxiang_DIY_zhuangshi_peidai_146.4f35afa6.png",
+  "Touxiang_DIY_zhuangshi_peidai_147.5bdfe879.png",
+  "Touxiang_DIY_zhuangshi_peidai_148.1481b798.png",
+  "Touxiang_DIY_zhuangshi_peidai_149.905499b9.png",
+  "Touxiang_DIY_zhuangshi_peidai_150.9f7843a6.png",
+  "Touxiang_DIY_zhuangshi_peidai_151.4683dd3a.png",
+  "Touxiang_DIY_zhuangshi_peidai_152.2a3fb9c0.png",
+  "Touxiang_DIY_zhuangshi_peidai_153.b05058bf.png",
+  "Touxiang_DIY_zhuangshi_peidai_154.cac07772.png",
+  "Touxiang_DIY_zhuangshi_peidai_155.4161ec20.png",
+  "Touxiang_DIY_zhuangshi_peidai_156.0aa0e4f9.png",
+  "Touxiang_DIY_zhuangshi_peidai_157.e567759d.png",
+  "Touxiang_DIY_zhuangshi_peidai_158.51e18bd2.png"
+ ],
+ "accessoriesB": [
+  "Touxiang_DIY_zhuangshi_qita_6.dbcff04e.png",
+  "Touxiang_DIY_zhuangshi_qita_7.b11b6478.png",
+  "Touxiang_DIY_zhuangshi_qita_9.a887a32b.png",
+  "Touxiang_DIY_zhuangshi_qita_21.9aa2e05e.png",
+  "Touxiang_DIY_zhuangshi_qita_54.725f354b.png",
+  "Touxiang_DIY_zhuangshi_qita_117.b9aa5ca4.png",
+  "Touxiang_DIY_zhuangshi_qita_141.8cbfc833.png",
+  "Touxiang_DIY_zhuangshi_qita_142.f3bdf323.png",
+  "Touxiang_DIY_zhuangshi_qita_143.06e842ac.png",
+  "Touxiang_DIY_zhuangshi_qita_144.cf15bdfc.png",
+  "Touxiang_DIY_zhuangshi_qita_145.b40a71fe.png",
+  "Touxiang_DIY_zhuangshi_qita_146.8098b2c4.png",
+  "Touxiang_DIY_zhuangshi_qita_147.9f9733ea.png",
+  "Touxiang_DIY_zhuangshi_qita_148.7f7ab2dc.png",
+  "Touxiang_DIY_zhuangshi_qita_149.a11f3bfd.png",
+  "Touxiang_DIY_zhuangshi_qita_150.822b6cba.png",
+  "Touxiang_DIY_zhuangshi_qita_151.ffb03397.png",
+  "Touxiang_DIY_zhuangshi_qita_152.089e21ee.png",
+  "Touxiang_DIY_zhuangshi_qita_153.414a14f8.png",
+  "Touxiang_DIY_zhuangshi_qita_154.3c07a5f5.png",
+  "Touxiang_DIY_zhuangshi_qita_155.f201a5cf.png",
+  "Touxiang_DIY_zhuangshi_qita_156.d129ea29.png"
+ ]
+}
