@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/PaymentDialog.js","assets/clipboard.js","assets/Tile.js","assets/IconPhoto.js","assets/IconCheck.js","assets/Account.js","assets/useRemoteResource.js","assets/Avatar.js","assets/IconTrash.js","assets/AdminPanel.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/PaymentDialog.js","assets/IconCopy.js","assets/clipboard.js","assets/Tile.js","assets/IconPhoto.js","assets/IconCheck.js","assets/Account.js","assets/useRemoteResource.js","assets/Avatar.js","assets/IconTrash.js","assets/AdminPanel.js"])))=>i.map(i=>d[i]);
 // \0rolldown/runtime.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -12149,7 +12149,7 @@ var require_disable_devtool_min = /* @__PURE__ */ __commonJSMin(((exports, modul
 }));
 // node_modules/@tabler/icons-react/dist/esm/defaultAttributes.mjs
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12178,7 +12178,7 @@ var defaultAttributes = {
 // node_modules/@tabler/icons-react/dist/esm/createReactComponent.mjs
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12208,7 +12208,7 @@ var createReactComponent = (type, iconName, iconNamePascal, iconNode) => {
 	return Component;
 };
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12228,7 +12228,7 @@ var IconAlertTriangle = createReactComponent("outline", "alert-triangle", "Alert
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12241,7 +12241,7 @@ var IconArrowsSort = createReactComponent("outline", "arrows-sort", "ArrowsSort"
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12254,7 +12254,7 @@ var IconBraces = createReactComponent("outline", "braces", "Braces", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12282,7 +12282,7 @@ var IconBuildingStore = createReactComponent("outline", "building-store", "Build
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12292,7 +12292,7 @@ var IconChevronLeft = createReactComponent("outline", "chevron-left", "ChevronLe
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12302,7 +12302,7 @@ var IconChevronRight = createReactComponent("outline", "chevron-right", "Chevron
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12315,7 +12315,7 @@ var IconCircleCheck = createReactComponent("outline", "circle-check", "CircleChe
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12328,7 +12328,7 @@ var IconCloudOff = createReactComponent("outline", "cloud-off", "CloudOff", [["p
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12348,7 +12348,7 @@ var IconDeviceFloppy = createReactComponent("outline", "device-floppy", "DeviceF
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12368,7 +12368,7 @@ var IconDotsVertical = createReactComponent("outline", "dots-vertical", "DotsVer
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12388,7 +12388,7 @@ var IconEyeOff = createReactComponent("outline", "eye-off", "EyeOff", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12401,7 +12401,7 @@ var IconEye = createReactComponent("outline", "eye", "Eye", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12421,7 +12421,7 @@ var IconHexagonLetterA = createReactComponent("outline", "hexagon-letter-a", "He
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12441,7 +12441,7 @@ var IconInfoCircle = createReactComponent("outline", "info-circle", "InfoCircle"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12469,7 +12469,7 @@ var IconListNumbers = createReactComponent("outline", "list-numbers", "ListNumbe
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12479,7 +12479,7 @@ var IconLoader2 = createReactComponent("outline", "loader-2", "Loader2", [["path
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12503,7 +12503,7 @@ var IconPalette = createReactComponent("outline", "palette", "Palette", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12516,7 +12516,7 @@ var IconRefresh = createReactComponent("outline", "refresh", "Refresh", [["path"
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12529,7 +12529,7 @@ var IconSelector = createReactComponent("outline", "selector", "Selector", [["pa
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12542,7 +12542,7 @@ var IconSend = createReactComponent("outline", "send", "Send", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12555,7 +12555,7 @@ var IconSettings = createReactComponent("outline", "settings", "Settings", [["pa
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -12575,7 +12575,7 @@ var IconUserCircle = createReactComponent("outline", "user-circle", "UserCircle"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14136,6 +14136,7 @@ var API_BASE_URL = DEFAULT_API_BASE_URL.replace(/\/+$/, "");
 var REQUEST_TIMEOUT = DEFAULT_REQUEST_TIMEOUT;
 // src/shared/library/api/client.js
 var TOKEN_KEY = "token";
+var getToken = () => localStorage.getItem(TOKEN_KEY) || "";
 var setToken = (t) => localStorage.setItem(TOKEN_KEY, t);
 var hasToken = () => !!localStorage.getItem(TOKEN_KEY);
 var clearToken = () => localStorage.removeItem(TOKEN_KEY);
@@ -14207,6 +14208,100 @@ async function call(method, path, body, { auth = true } = {}) {
 	}
 	if (r.token) setToken(r.token);
 	return r;
+}
+async function callStream(method, path, body, onProgress, { auth = true, timeout = REQUEST_TIMEOUT } = {}) {
+	const isForm = body instanceof FormData;
+	const controller = new AbortController();
+	const timer = setTimeout(() => controller.abort(), timeout);
+	let reader;
+	const handleError = (data = {}) => {
+		if (data.status === 401) data = {
+			...data,
+			success: false,
+			code: "UNAUTHORIZED"
+		};
+		if (!data.code && /xác thực|đăng nhập lại|unauthori|token/i.test(data.message || "")) data.code = "UNAUTHORIZED";
+		const error = new ApiError(data.message || "Đã có lỗi xảy ra", data);
+		if (auth && error.code === "UNAUTHORIZED") {
+			clearToken();
+			onUnauthorized(error);
+		}
+		return error;
+	};
+	try {
+		const token = getToken();
+		const response = await fetch(API_BASE_URL + path, {
+			method,
+			headers: {
+				...!isForm && body !== void 0 && { "Content-Type": "application/json" },
+				...token && { token }
+			},
+			body: body === void 0 ? void 0 : isForm ? body : JSON.stringify(body),
+			signal: controller.signal
+		});
+		if (response.status === 204) return {
+			success: true,
+			status: 204
+		};
+		if (!response.body) throw handleError({
+			message: "Máy chủ không hỗ trợ truyền dữ liệu streaming",
+			status: response.status
+		});
+		reader = response.body.getReader();
+		const decoder = new TextDecoder();
+		let buffer = "";
+		let result = null;
+		const processLine = (line) => {
+			if (!line.trim()) return;
+			let data;
+			try {
+				data = JSON.parse(line);
+			} catch {
+				throw handleError({
+					message: "Máy chủ trả về dữ liệu streaming không hợp lệ",
+					status: response.status
+				});
+			}
+			if (data.type === "progress") {
+				onProgress?.(data.progress, data.message, data);
+				return;
+			}
+			if (data.type === "error") throw handleError({
+				...data,
+				status: response.status
+			});
+			if (data.type === "success") result = {
+				...data,
+				success: true,
+				status: response.status
+			};
+		};
+		while (true) {
+			const { done, value } = await reader.read();
+			buffer += decoder.decode(value || /* @__PURE__ */ new Uint8Array(), { stream: !done });
+			const lines = buffer.split("\n");
+			buffer = lines.pop() || "";
+			for (const line of lines) processLine(line);
+			if (done) break;
+		}
+		if (buffer.trim()) processLine(buffer);
+		if (!response.ok) throw handleError({
+			message: "Máy chủ xử lý yêu cầu thất bại",
+			status: response.status
+		});
+		if (!result) throw handleError({
+			message: "Máy chủ kết thúc xử lý mà không trả kết quả",
+			status: response.status
+		});
+		return result;
+	} catch (error) {
+		if (error instanceof ApiError) throw error;
+		if (error?.name === "AbortError") throw new ApiError("Máy chủ phản hồi quá lâu — hãy thử lại", { code: "TIMEOUT" });
+		throw new ApiError("Không kết nối được máy chủ — hãy kiểm tra kết nối mạng", { code: "NETWORK" });
+	} finally {
+		clearTimeout(timer);
+		if (reader) reader.releaseLock();
+	}
 }
 var enc = encodeURIComponent;
 // src/shared/library/api/normalize.js
@@ -14337,13 +14432,13 @@ var redeemGiftCode = async (code) => withUser(await call("POST", "/user/giftcode
 var getFriendLink = () => call("GET", "/user/links/friend");
 var getBuffetLink = () => call("GET", "/user/links/buffet");
 var checkShopReady = () => call("GET", "/user/shop/ready");
-async function updateAvatar(image) {
+async function updateAvatar(image, onProgress) {
 	const blob = typeof image === "string" ? await (await fetch(image)).blob() : image;
 	if (blob.size > 8388608) throw new Error("Ảnh đại diện không được vượt quá 8MB");
 	if (!["image/jpeg", "image/png"].includes(blob.type)) throw new Error("Ảnh đại diện chỉ được chấp nhận định dạng JPG, JPEG hoặc PNG");
 	const fd = new FormData();
 	fd.append("avatar", blob, `avatar.${blob.type.split("/")[1]}`);
-	return await withUser(await call("PATCH", "/user/avatar", fd));
+	return withUser(await callStream("PATCH", "/user/avatar", fd, onProgress, { timeout: 12e4 }));
 }
 var getShop = async () => {
 	const r = await call("GET", "/user/shop");
@@ -14846,10 +14941,10 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 };
 // src/application/App.jsx
 var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([0,1,2,3])));
-var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9])));
-var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([10,5,6,11,2,3])));
-var Avatar = (0, import_react.lazy)(() => __vitePreload(() => import("./Avatar.js"), __vite__mapDeps([12,8,9,13])));
-var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([14,1,7,8,6,11,13,2])));
+var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10])));
+var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([11,7,12,2,3,5,6])));
+var Avatar = (0, import_react.lazy)(() => __vitePreload(() => import("./Avatar.js"), __vite__mapDeps([13,9,10,14,6])));
+var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([15,8,9,12,14,7,2,1,6])));
 function App() {
 	const session = useSession();
 	const { status, user, setUser, refreshUser } = session;

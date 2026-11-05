@@ -1,9 +1,10 @@
+import { $ as Skeleton, Ct as __toESM, L as updateAvatar, St as require_react, gt as IconRefresh, mt as require_jsx_runtime, pt as Button, rt as Tabs, tt as Spinner, ut as toast, xt as createReactComponent } from "./index.js";
 import { n as IconCat, t as IconPhoto } from "./IconPhoto.js";
 import { t as IconCheck } from "./IconCheck.js";
 import { t as IconTrash } from "./IconTrash.js";
-import { $ as Skeleton, Ct as __toESM, L as updateAvatar, St as require_react, gt as IconRefresh, mt as require_jsx_runtime, pt as Button, rt as Tabs, tt as Spinner, ut as toast, xt as createReactComponent } from "./index.js";
+import { t as IconCopy } from "./IconCopy.js";
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -16,7 +17,7 @@ var IconArrowBackUp = createReactComponent("outline", "arrow-back-up", "ArrowBac
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -29,7 +30,20 @@ var IconArrowForwardUp = createReactComponent("outline", "arrow-forward-up", "Ar
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
+*
+* This source code is licensed under the MIT license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var IconClipboard = createReactComponent("outline", "clipboard", "Clipboard", [["path", {
+	"d": "M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2",
+	"key": "svg-0"
+}], ["path", {
+	"d": "M9 5a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2",
+	"key": "svg-1"
+}]]);
+/**
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -39,7 +53,7 @@ var IconCrown = createReactComponent("outline", "crown", "Crown", [["path", {
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -76,7 +90,7 @@ var IconDice5 = createReactComponent("outline", "dice-5", "Dice5", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -96,7 +110,7 @@ var IconDownload = createReactComponent("outline", "download", "Download", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -120,7 +134,7 @@ var IconMoodSmile = createReactComponent("outline", "mood-smile", "MoodSmile", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -148,7 +162,7 @@ var IconPhotoOff = createReactComponent("outline", "photo-off", "PhotoOff", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -180,7 +194,7 @@ var IconRotateClockwise2 = createReactComponent("outline", "rotate-clockwise-2",
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -190,7 +204,7 @@ var IconSparkles = createReactComponent("outline", "sparkles", "Sparkles", [["pa
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -210,7 +224,7 @@ var IconUserCheck = createReactComponent("outline", "user-check", "UserCheck", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -234,7 +248,7 @@ var IconZoomIn = createReactComponent("outline", "zoom-in", "ZoomIn", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -815,18 +829,55 @@ function AvatarStage({ doc, selectedId, dispatch }) {
 	});
 }
 // src/features/avatar/AvatarToolbar.jsx
-function IconBtn({ label, Icon, ...p }) {
+function IconBtn({ label, Icon, ...props }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 		type: "button",
-		...p,
+		...props,
 		title: label,
 		"aria-label": label,
 		className: "grid h-9 w-full cursor-pointer place-items-center rounded-lg border border-line bg-raise text-fg transition hover:border-mute focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-line disabled:active:scale-100",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 17 })
 	});
 }
-function AvatarToolbar({ selected, canUndo, canRedo, dispatch }) {
+function encodeBase64(value) {
+	const bytes = new TextEncoder().encode(JSON.stringify(value));
+	let binary = "";
+	for (let i = 0; i < bytes.length; i += 32768) binary += String.fromCharCode(...bytes.subarray(i, i + 32768));
+	return btoa(binary);
+}
+function decodeBase64(value) {
+	const binary = atob(value.trim());
+	const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+	return JSON.parse(new TextDecoder().decode(bytes));
+}
+function AvatarToolbar({ selected, canUndo, canRedo, dispatch, doc }) {
 	const id = selected?.id;
+	const copyDesign = async () => {
+		try {
+			const encoded = encodeBase64({
+				version: 1,
+				...doc
+			});
+			await navigator.clipboard.writeText(encoded);
+			toast("Đã sao chép mã thiết kế");
+		} catch {
+			toast("Không thể sao chép mã thiết kế", "err");
+		}
+	};
+	const pasteDesign = async () => {
+		try {
+			const data = decodeBase64(await navigator.clipboard.readText());
+			if (!data || data.version !== 1) throw new Error("Mã thiết kế không hợp lệ");
+			if (!Number.isInteger(data.background) || !Number.isInteger(data.role) || !Number.isInteger(data.emoji) || !Array.isArray(data.items)) throw new Error("Dữ liệu thiết kế không hợp lệ");
+			dispatch({
+				type: "load",
+				doc: data
+			});
+			toast("Đã dán thiết kế thành công");
+		} catch (error) {
+			toast(error.name === "NotAllowedError" ? "Không có quyền truy cập clipboard" : error.message === "Mã thiết kế không hợp lệ" || error.message === "Dữ liệu thiết kế không hợp lệ" ? error.message : "Clipboard không chứa mã thiết kế hợp lệ", "err");
+		}
+	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		role: "toolbar",
 		"aria-label": "Công cụ chỉnh sửa",
@@ -892,6 +943,16 @@ function AvatarToolbar({ selected, canUndo, canRedo, dispatch }) {
 				label: "Làm lại từ đầu",
 				Icon: IconRefresh,
 				onClick: () => dispatch({ type: "reset" })
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconBtn, {
+				label: "Sao chép mã Base64",
+				Icon: IconCopy,
+				onClick: copyDesign
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconBtn, {
+				label: "Dán mã Base64",
+				Icon: IconClipboard,
+				onClick: pasteDesign
 			})
 		]
 	});
@@ -1063,7 +1124,7 @@ function reducer(s, a) {
 				items
 			}, { selectedId: null });
 		}
-		case "load": return initialState(sanitizeDoc(a.doc));
+		case "load": return commit(s, sanitizeDoc(a.doc), { selectedId: null });
 		default: return s;
 	}
 }
@@ -1123,25 +1184,67 @@ function Avatar({ onUser }) {
 	const { doc, selected, selectedId, canUndo, canRedo, dispatch } = useAvatarEditor();
 	const [tab, setTab] = (0, import_react.useState)("role");
 	const [busy, setBusy] = (0, import_react.useState)(false);
+	const [progress, setProgress] = (0, import_react.useState)(0);
+	const [progressMessage, setProgressMessage] = (0, import_react.useState)("");
+	const progressRef = (0, import_react.useRef)({
+		current: 0,
+		target: 0
+	});
 	useShortcuts(dispatch, selectedId);
 	(0, import_react.useEffect)(() => {
 		const t = setTimeout(() => preloadImages(FACES[doc.role].map(imageUrl)), 300);
 		return () => clearTimeout(t);
 	}, [doc.role]);
+	(0, import_react.useEffect)(() => {
+		if (!busy) return;
+		const interval = setInterval(() => {
+			const state = progressRef.current;
+			if (state.current < state.target) {
+				state.current = Math.min(state.current + 1, state.target);
+				setProgress(state.current);
+			}
+		}, 40);
+		return () => clearInterval(interval);
+	}, [busy]);
 	const itemKey = (0, import_react.useMemo)(() => doc.items.map((i) => i.src).join("|"), [doc.items]);
+	const waitForProgress = () => new Promise((resolve) => {
+		const interval = setInterval(() => {
+			if (progressRef.current.current >= 100) {
+				clearInterval(interval);
+				resolve();
+			}
+		}, 20);
+	});
 	const run = async (task) => {
 		setBusy(true);
+		progressRef.current = {
+			current: 0,
+			target: 0
+		};
+		setProgress(0);
+		setProgressMessage("Đang chuẩn bị");
 		try {
 			await task(await renderAvatarToBlob(doc, 512));
 		} catch (e) {
-			if (e.code === "UNAUTHORIZED") return;
-			toast("Có lỗi xảy ra", "err");
+			if (e.code !== "UNAUTHORIZED") toast(e.message || "Có lỗi xảy ra", "err");
 		} finally {
 			setBusy(false);
+			setProgress(0);
+			setProgressMessage("");
+			progressRef.current = {
+				current: 0,
+				target: 0
+			};
 		}
 	};
 	const useAsAvatar = () => run(async (blob) => {
-		const r = await updateAvatar(blob);
+		const r = await updateAvatar(blob, (value, message) => {
+			progressRef.current.target = Math.max(progressRef.current.target, Math.min(100, value));
+			setProgressMessage(message);
+		});
+		progressRef.current.target = 100;
+		setProgressMessage("Hoàn tất");
+		await waitForProgress();
 		if (r.user) onUser(r.user);
 		toast(r.message || "Đã đổi ảnh đại diện");
 	});
@@ -1157,49 +1260,76 @@ function Avatar({ onUser }) {
 		className: "flex h-[calc(100svh-var(--app-header-h)-var(--app-bottom-nav-h)-env(safe-area-inset-bottom))] flex-col overflow-hidden md:h-[calc(100svh-var(--app-header-h))] md:flex-row md:gap-6 md:p-6",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("aside", {
 			className: "shrink-0 border-b border-line px-4 py-3 md:max-h-full md:w-90 md:self-start md:overflow-y-auto md:rounded-2xl md:border md:bg-panel md:p-5",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "grid grid-cols-[minmax(0,44%)_minmax(0,1fr)] items-stretch gap-3 md:block md:space-y-3",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarStage, {
-					doc,
-					selectedId,
-					dispatch
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex min-w-0 flex-col justify-between gap-2 md:gap-3",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarToolbar, {
-						selected,
-						canUndo,
-						canRedo,
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "grid grid-cols-[minmax(0,44%)_minmax(0,1fr)] items-stretch gap-3 md:block md:space-y-3",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarStage, {
+						doc,
+						selectedId,
 						dispatch
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "flex gap-2",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-							variant: "ghost",
-							size: "sm",
-							className: "h-9 w-9 shrink-0 px-0",
-							disabled: busy,
-							onClick: download,
-							"aria-label": "Tải ảnh về máy",
-							title: "Tải ảnh về máy",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDownload, { size: 16 })
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-							size: "sm",
-							className: "h-9 min-w-0 flex-1 px-2",
-							loading: busy,
-							onClick: useAsAvatar,
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUserCheck, {
-								size: 15,
-								className: "hidden md:block"
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								className: "truncate",
-								children: "Đặt làm ảnh đại diện"
+						className: "flex min-w-0 flex-col justify-between gap-2 md:gap-3",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarToolbar, {
+							doc,
+							selected,
+							canUndo,
+							canRedo,
+							dispatch
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex gap-2",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+								variant: "ghost",
+								size: "sm",
+								className: "h-9 w-9 shrink-0 px-0",
+								disabled: busy,
+								onClick: download,
+								"aria-label": "Tải ảnh về máy",
+								title: "Tải ảnh về máy",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDownload, { size: 16 })
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+								size: "sm",
+								className: "h-9 min-w-0 flex-1 px-2",
+								loading: busy,
+								onClick: useAsAvatar,
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUserCheck, {
+									size: 15,
+									className: "hidden md:block"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "truncate",
+									children: "Đặt làm ảnh đại diện"
+								})]
 							})]
 						})]
 					})]
-				})]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "mt-3 hidden text-center text-[10px] text-mute md:block",
-				children: "Kéo để di chuyển · lăn chuột hoặc chụm 2 ngón để phóng/xoay"
-			})]
+				}),
+				busy && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "mt-3 space-y-2",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex items-center justify-between gap-3 text-xs",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "truncate text-mute",
+							children: progressMessage
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+							className: "shrink-0 font-semibold tabular-nums text-fg",
+							children: [progress, "%"]
+						})]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "h-2 overflow-hidden rounded-full bg-bg",
+						role: "progressbar",
+						"aria-valuenow": progress,
+						"aria-valuemin": 0,
+						"aria-valuemax": 100,
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "h-full rounded-full bg-lime transition-[width] duration-300 ease-out",
+							style: { width: `${progress}%` }
+						})
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "mt-3 hidden text-center text-[10px] text-mute md:block",
+					children: "Kéo để di chuyển · lăn chuột hoặc chụm 2 ngón để phóng/xoay"
+				})
+			]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
 			className: "flex min-h-0 flex-1 flex-col px-4 pt-3 md:px-0 md:pt-0",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AssetPicker_default, {

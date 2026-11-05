@@ -71,4 +71,103 @@ export async function call(method, path, body, { auth = true } = {}) {
   return r;
 };
 
+export async function callStream(method, path, body, onProgress, { auth = true, timeout = REQUEST_TIMEOUT } = {}) {
+  const isForm = body instanceof FormData;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  let reader;
+  const handleError = (data = {}) => {
+    if (data.status === 401) data = { ...data, success: false, code: 'UNAUTHORIZED' };
+    if (!data.code && /xác thực|đăng nhập lại|unauthori|token/i.test(data.message || '')) data.code = 'UNAUTHORIZED';
+
+    const error = new ApiError(data.message || 'Đã có lỗi xảy ra', data);
+    if (auth && error.code === 'UNAUTHORIZED') {
+      clearToken();
+      onUnauthorized(error);
+    };
+    return error;
+  };
+
+  try {
+    const token = getToken();
+    const response = await fetch(API_BASE_URL + path, {
+      method,
+      headers: {
+        ...(!isForm && body !== undefined && { 'Content-Type': 'application/json' }),
+        ...(token && { token })
+      },
+      body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
+      signal: controller.signal
+    });
+    if (response.status === 204) return { success: true, status: 204 };
+    if (!response.body) throw handleError({
+      message: 'Máy chủ không hỗ trợ truyền dữ liệu streaming',
+      status: response.status
+    });
+
+    reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let result = null;
+    const processLine = (line) => {
+      if (!line.trim()) return;
+      let data;
+      try {
+        data = JSON.parse(line);
+      } catch {
+        throw handleError({
+          message: 'Máy chủ trả về dữ liệu streaming không hợp lệ',
+          status: response.status
+        });
+      };
+
+      if (data.type === 'progress') {
+        onProgress?.(
+          data.progress,
+          data.message,
+          data
+        );
+        return;
+      };
+      if (data.type === 'error') throw handleError({
+        ...data,
+        status: response.status
+      });
+      if (data.type === 'success') result = {
+        ...data,
+        success: true,
+        status: response.status
+      };
+    };
+
+    while (true) {
+      const { done, value } = await reader.read();
+      buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for (const line of lines) processLine(line);
+      if (done) break;
+    };
+
+    if (buffer.trim()) processLine(buffer);
+    if (!response.ok) throw handleError({
+      message: 'Máy chủ xử lý yêu cầu thất bại',
+      status: response.status
+    });
+    if (!result) throw handleError({
+      message: 'Máy chủ kết thúc xử lý mà không trả kết quả',
+      status: response.status
+    });
+
+    return result;
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    if (error?.name === 'AbortError') throw new ApiError('Máy chủ phản hồi quá lâu — hãy thử lại', { code: 'TIMEOUT' });
+    throw new ApiError('Không kết nối được máy chủ — hãy kiểm tra kết nối mạng', { code: 'NETWORK' });
+  } finally {
+    clearTimeout(timer);
+    if (reader) reader.releaseLock();
+  };
+};
+
 export const enc = encodeURIComponent;

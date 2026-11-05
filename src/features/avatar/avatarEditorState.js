@@ -85,7 +85,7 @@ export function reducer(s, a) {
       return commit(s, { background: pick(BACKGROUNDS.length), role, emoji: pick(FACES[role].length), items }, { selectedId: null });
     };
     case 'load':
-      return initialState(sanitizeDoc(a.doc));
+      return commit(s, sanitizeDoc(a.doc), { selectedId: null });
     default:
       return s;
   };

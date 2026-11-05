@@ -1,4 +1,4 @@
-import { IconCheck, IconPlus } from '@tabler/icons-react';
+import { IconCheck, IconShoppingBag } from '@tabler/icons-react';
 import { formatNumber } from '@/shared/library/format';
 import { Coin } from '@/shared/components/ui';
 import { hasPrice } from '@/features/shop/shopUtilities';
@@ -32,7 +32,7 @@ export default function ProductItem({ p, poor, owned, onBuy }) {
           )}
           {!owned && (
             <span className='grid size-7 place-items-center rounded-lg bg-raise text-mute transition group-hover:bg-lime group-hover:text-bg'>
-              <IconPlus size={15} stroke={2.4} />
+              <IconShoppingBag size={15} stroke={2.4} />
             </span>
           )}
         </span>

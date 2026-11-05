@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { IconDownload, IconUserCheck } from '@tabler/icons-react';
 import { Button, toast } from '@/shared/components/ui';
 import { FACES, imageUrl } from '@/features/avatar/manifest';
@@ -33,6 +33,12 @@ export default function Avatar({ onUser }) {
   const { doc, selected, selectedId, canUndo, canRedo, dispatch } = useAvatarEditorState();
   const [tab, setTab] = useState('role');
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [progressMessage, setProgressMessage] = useState('');
+  const progressRef = useRef({
+    current: 0,
+    target: 0
+  });
   useShortcuts(dispatch, selectedId);
 
   useEffect(() => {
@@ -40,22 +46,54 @@ export default function Avatar({ onUser }) {
     return () => clearTimeout(t);
   }, [doc.role]);
 
+  useEffect(() => {
+    if (!busy) return;
+    const interval = setInterval(() => {
+      const state = progressRef.current;
+      if (state.current < state.target) {
+        state.current = Math.min(state.current + 1, state.target);
+        setProgress(state.current);
+      };
+    }, 40);
+    return () => clearInterval(interval);
+  }, [busy]);
+
   const itemKey = useMemo(() => doc.items.map((i) => i.src).join('|'), [doc.items]);
+
+  const waitForProgress = () => new Promise((resolve) => {
+    const interval = setInterval(() => {
+      if (progressRef.current.current >= 100) {
+        clearInterval(interval);
+        resolve();
+      };
+    }, 20);
+  });
 
   const run = async (task) => {
     setBusy(true);
+    progressRef.current = { current: 0, target: 0 };
+    setProgress(0);
+    setProgressMessage('Đang chuẩn bị');
     try {
       await task(await renderAvatarToBlob(doc, EXPORT_SIZE));
     } catch (e) {
-      if (e.code === 'UNAUTHORIZED') return;
-      toast('Có lỗi xảy ra', 'err');
+      if (e.code !== 'UNAUTHORIZED') toast(e.message || 'Có lỗi xảy ra', 'err');
     } finally {
       setBusy(false);
+      setProgress(0);
+      setProgressMessage('');
+      progressRef.current = { current: 0, target: 0 };
     };
   };
 
   const useAsAvatar = () => run(async (blob) => {
-    const r = await api.updateAvatar(blob);
+    const r = await api.updateAvatar(blob, (value, message) => {
+      progressRef.current.target = Math.max(progressRef.current.target, Math.min(100, value));
+      setProgressMessage(message);
+    });
+    progressRef.current.target = 100;
+    setProgressMessage('Hoàn tất');
+    await waitForProgress();
     if (r.user) onUser(r.user);
     toast(r.message || 'Đã đổi ảnh đại diện');
   });
@@ -75,7 +113,7 @@ export default function Avatar({ onUser }) {
         <div className='grid grid-cols-[minmax(0,44%)_minmax(0,1fr)] items-stretch gap-3 md:block md:space-y-3'>
           <AvatarStage doc={doc} selectedId={selectedId} dispatch={dispatch} />
           <div className='flex min-w-0 flex-col justify-between gap-2 md:gap-3'>
-            <AvatarToolbar selected={selected} canUndo={canUndo} canRedo={canRedo} dispatch={dispatch} />
+            <AvatarToolbar doc={doc} selected={selected} canUndo={canUndo} canRedo={canRedo} dispatch={dispatch} />
             <div className='flex gap-2'>
               <Button variant='ghost' size='sm' className='h-9 w-9 shrink-0 px-0' disabled={busy} onClick={download} aria-label='Tải ảnh về máy' title='Tải ảnh về máy'>
                 <IconDownload size={16} />
@@ -87,6 +125,20 @@ export default function Avatar({ onUser }) {
             </div>
           </div>
         </div>
+        {busy && (
+          <div className='mt-3 space-y-2'>
+            <div className='flex items-center justify-between gap-3 text-xs'>
+              <span className='truncate text-mute'>{progressMessage}</span>
+              <span className='shrink-0 font-semibold tabular-nums text-fg'>{progress}%</span>
+            </div>
+            <div className='h-2 overflow-hidden rounded-full bg-bg' role='progressbar' aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
+              <div
+                className='h-full rounded-full bg-lime transition-[width] duration-300 ease-out'
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        )}
         <p className='mt-3 hidden text-center text-[10px] text-mute md:block'>Kéo để di chuyển · lăn chuột hoặc chụm 2 ngón để phóng/xoay</p>
       </aside>
 

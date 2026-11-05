@@ -1,10 +1,10 @@
+import { $ as Skeleton, Ct as __toESM, O as createTransaction, St as require_react, ct as Dialog, dt as toastError, et as ErrorState, ft as Field, gt as IconRefresh, ht as IconX, i as formatNumber, j as buy, mt as require_jsx_runtime, pt as Button, q as Coin, tt as Spinner, ut as toast, vt as IconCircleCheck, xt as createReactComponent } from "./index.js";
 import { i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
 import { a as TOPUP, c as IconPlus, i as CATEGORY_ICONS, n as hasPrice, r as matches, t as Tile, u as IconBox } from "./Tile.js";
 import { t as IconCheck } from "./IconCheck.js";
 import { n as IconSearch, r as IconLock } from "./clipboard.js";
-import { $ as Skeleton, Ct as __toESM, O as createTransaction, St as require_react, ct as Dialog, dt as toastError, et as ErrorState, ft as Field, gt as IconRefresh, ht as IconX, i as formatNumber, j as buy, mt as require_jsx_runtime, pt as Button, q as Coin, tt as Spinner, ut as toast, vt as IconCircleCheck, xt as createReactComponent } from "./index.js";
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14,7 +14,7 @@ var IconMinus = createReactComponent("outline", "minus", "Minus", [["path", {
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -46,7 +46,7 @@ var IconPackageOff = createReactComponent("outline", "package-off", "PackageOff"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -54,6 +54,19 @@ var IconPackageOff = createReactComponent("outline", "package-off", "PackageOff"
 var IconPlayerPlay = createReactComponent("outline", "player-play", "PlayerPlay", [["path", {
 	"d": "M7 4v16l13 -8l-13 -8",
 	"key": "svg-0"
+}]]);
+/**
+* @license @tabler/icons-react v3.50.0 - MIT
+*
+* This source code is licensed under the MIT license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var IconShoppingBag = createReactComponent("outline", "shopping-bag", "ShoppingBag", [["path", {
+	"d": "M6.331 8h11.339a2 2 0 0 1 1.977 2.304l-1.255 8.152a3 3 0 0 1 -2.966 2.544h-6.852a3 3 0 0 1 -2.965 -2.544l-1.255 -8.152a2 2 0 0 1 1.977 -2.304",
+	"key": "svg-0"
+}], ["path", {
+	"d": "M9 11v-5a3 3 0 0 1 6 0v5",
+	"key": "svg-1"
 }]]);
 // src/shared/components/payment/TopUp.jsx
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
@@ -544,7 +557,7 @@ function ProductItem({ p, poor, owned, onBuy }) {
 					]
 				}), !owned && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 					className: "grid size-7 place-items-center rounded-lg bg-raise text-mute transition group-hover:bg-lime group-hover:text-bg",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlus, {
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingBag, {
 						size: 15,
 						stroke: 2.4
 					})

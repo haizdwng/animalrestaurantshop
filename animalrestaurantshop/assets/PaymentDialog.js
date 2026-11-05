@@ -1,7 +1,8 @@
-import { i as IconCopy, t as copyText } from "./clipboard.js";
 import { Ct as __toESM, D as cancelTransaction, St as require_react, ct as Dialog, dt as toastError, gt as IconRefresh, ht as IconX, i as formatNumber, k as getTransaction, mt as require_jsx_runtime, o as formatVietnameseDong, pt as Button, q as Coin, tt as Spinner, ut as toast, vt as IconCircleCheck, xt as createReactComponent } from "./index.js";
+import { t as IconCopy } from "./IconCopy.js";
+import { t as copyText } from "./clipboard.js";
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14,7 +15,7 @@ var IconBan = createReactComponent("outline", "ban", "Ban", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -34,7 +35,7 @@ var IconClockHour4 = createReactComponent("outline", "clock-hour-4", "ClockHour4
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
