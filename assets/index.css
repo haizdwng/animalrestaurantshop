@@ -3,10 +3,10 @@
 
 @layer components;
 
-/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
 
 @layer properties {
-  @supports (((-webkit-hyphens: none)) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
+  @supports (((-webkit-hyphens: none)) and (not (margin-trim: block))) or ((-moz-orient: inline) and (not (color: rgb(from red r g b)))) {
     *, :before, :after, ::backdrop {
       --tw-rotate-x: initial;
       --tw-rotate-y: initial;
@@ -62,6 +62,7 @@
       --tw-backdrop-saturate: initial;
       --tw-backdrop-sepia: initial;
       --tw-duration: initial;
+      --tw-ease: initial;
       --tw-scale-x: 1;
       --tw-scale-y: 1;
       --tw-scale-z: 1;
@@ -94,6 +95,7 @@
     --text-3xl: 1.875rem;
     --text-3xl--line-height: calc(2.25 / 1.875);
     --font-weight-medium: 500;
+    --font-weight-semibold: 600;
     --font-weight-bold: 700;
     --font-weight-extrabold: 800;
     --tracking-tight: -.025em;
@@ -106,6 +108,7 @@
     --radius-lg: .5rem;
     --radius-xl: .75rem;
     --radius-2xl: 1rem;
+    --ease-out: cubic-bezier(0, 0, .2, 1);
     --animate-spin: spin 1s linear infinite;
     --animate-pulse: pulse 2s cubic-bezier(.4, 0, .6, 1) infinite;
     --blur-sm: 8px;
@@ -1351,7 +1354,7 @@
   }
 
   .rounded-full {
-    border-radius: 3.40282e38px;
+    border-radius: 2147483647px;
   }
 
   .rounded-lg {
@@ -1996,6 +1999,11 @@
     font-weight: var(--font-weight-medium);
   }
 
+  .font-semibold {
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+
   .tracking-\[0\.2em\] {
     --tw-tracking: .2em;
     letter-spacing: .2em;
@@ -2271,6 +2279,12 @@
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
 
+  .transition-\[width\] {
+    transition-property: width;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+
   .transition-opacity {
     transition-property: opacity;
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
@@ -2280,6 +2294,16 @@
   .duration-200 {
     --tw-duration: .2s;
     transition-duration: .2s;
+  }
+
+  .duration-300 {
+    --tw-duration: .3s;
+    transition-duration: .3s;
+  }
+
+  .ease-out {
+    --tw-ease: var(--ease-out);
+    transition-timing-function: var(--ease-out);
   }
 
   .outline-none {
@@ -2297,11 +2321,11 @@
   }
 
   @media (hover: hover) {
-    .group-hover\:bg-lime:is(:where(.group):hover *) {
+    :is(:where(.group):hover .group-hover\:bg-lime) {
       background-color: var(--color-lime);
     }
 
-    .group-hover\:text-bg:is(:where(.group):hover *) {
+    :is(:where(.group):hover .group-hover\:text-bg) {
       color: var(--color-bg);
     }
   }
@@ -3182,6 +3206,11 @@
 }
 
 @property --tw-duration {
+  syntax: "*";
+  inherits: false
+}
+
+@property --tw-ease {
   syntax: "*";
   inherits: false
 }

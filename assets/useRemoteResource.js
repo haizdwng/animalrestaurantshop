@@ -1,6 +1,6 @@
 import { Ct as __toESM, St as require_react, mt as require_jsx_runtime, nt as Pager, xt as createReactComponent } from "./index.js";
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -24,7 +24,7 @@ var IconGift = createReactComponent("outline", "gift", "Gift", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -37,7 +37,7 @@ var IconPencil = createReactComponent("outline", "pencil", "Pencil", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -57,7 +57,7 @@ var IconUpload = createReactComponent("outline", "upload", "Upload", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -81,7 +81,7 @@ var IconUserPlus = createReactComponent("outline", "user-plus", "UserPlus", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.

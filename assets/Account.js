@@ -1,11 +1,12 @@
-import { i as IconQrcode, n as STATUS, r as StatusBadge, t as PaymentDialog } from "./PaymentDialog.js";
-import { i as IconCopy, n as IconSearch, r as IconLock, t as copyText } from "./clipboard.js";
+import { A as getTransactions, Ct as __toESM, D as cancelTransaction, F as openidOtp, I as redeemGiftCode, L as updateAvatar, M as changeOpenid, N as getBuffetLink, P as getFriendLink, Q as RowSkeleton, R as updateUser, St as require_react, W as fileToAvatar, Z as PagerSkeleton, a as formatShortDateTime, at as Select, ct as Dialog, dt as toastError, ft as Field, gt as IconRefresh, ht as IconX, i as formatNumber, it as PageSizeSelect, lt as OtpButton, mt as require_jsx_runtime, n as formatDate, o as formatVietnameseDong, ot as SortSelect, pt as Button, q as Coin, st as Menu, t as compareByTime, tt as Spinner, ut as toast, xt as createReactComponent } from "./index.js";
+import { n as IconSearch, r as IconLock, t as copyText } from "./clipboard.js";
 import { a as IconUpload, i as IconUserPlus, n as usePaginatedData, o as IconPencil, r as IconStarFilled, s as IconGift, t as useRemoteResource } from "./useRemoteResource.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
-import { A as getTransactions, Ct as __toESM, D as cancelTransaction, F as openidOtp, I as redeemGiftCode, L as updateAvatar, M as changeOpenid, N as getBuffetLink, P as getFriendLink, Q as RowSkeleton, R as updateUser, St as require_react, W as fileToAvatar, Z as PagerSkeleton, a as formatShortDateTime, at as Select, ct as Dialog, dt as toastError, ft as Field, gt as IconRefresh, ht as IconX, i as formatNumber, it as PageSizeSelect, lt as OtpButton, mt as require_jsx_runtime, n as formatDate, o as formatVietnameseDong, ot as SortSelect, pt as Button, q as Coin, st as Menu, t as compareByTime, tt as Spinner, ut as toast, xt as createReactComponent } from "./index.js";
 import { t as StrengthBar } from "./StrengthBar.js";
+import { i as IconQrcode, n as STATUS, r as StatusBadge, t as PaymentDialog } from "./PaymentDialog.js";
+import { t as IconCopy } from "./IconCopy.js";
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -18,7 +19,7 @@ var IconAt = createReactComponent("outline", "at", "At", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -31,7 +32,7 @@ var IconBriefcase2 = createReactComponent("outline", "briefcase-2", "Briefcase2"
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -41,7 +42,7 @@ var IconFilter = createReactComponent("outline", "filter", "Filter", [["path", {
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -69,7 +70,7 @@ var IconFingerprint = createReactComponent("outline", "fingerprint", "Fingerprin
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -97,7 +98,7 @@ var IconId = createReactComponent("outline", "id", "Id", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -117,7 +118,7 @@ var IconLink = createReactComponent("outline", "link", "Link", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -137,7 +138,7 @@ var IconLogout = createReactComponent("outline", "logout", "Logout", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -173,6 +174,12 @@ function FormDialog({ form, kind, title, onSubmit, children }) {
 	});
 }
 function AvatarDialog({ form, user }) {
+	const [progress, setProgress] = (0, import_react.useState)(0);
+	const [progressMessage, setProgressMessage] = (0, import_react.useState)("");
+	const progressRef = (0, import_react.useRef)({
+		current: 0,
+		target: 0
+	});
 	const { preview, setPreview, busy, submit } = form;
 	(0, import_react.useEffect)(() => () => preview?.url && URL.revokeObjectURL(preview.url), [preview]);
 	const pickFile = async (e) => {
@@ -189,6 +196,17 @@ function AvatarDialog({ form, user }) {
 			toast(err.message, "err");
 		}
 	};
+	(0, import_react.useEffect)(() => {
+		if (!busy) return;
+		const interval = setInterval(() => {
+			const state = progressRef.current;
+			if (state.current < state.target) {
+				state.current = Math.min(state.current + 1, state.target);
+				setProgress(state.current);
+			}
+		}, 40);
+		return () => clearInterval(interval);
+	}, [busy]);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Dialog, {
 		open: form.open === "avatar",
 		title: "Đổi ảnh đại diện",
@@ -214,13 +232,47 @@ function AvatarDialog({ form, user }) {
 				className: "text-center text-[11px] text-mute",
 				children: preview ? "Bấm vào ảnh đại diện để chọn ảnh khác" : "JPG, JPEG, PNG · tối đa 8MB · ảnh gốc được giữ nguyên"
 			}),
+			busy && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "space-y-2",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex items-center justify-between gap-3 text-xs",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "truncate text-mute",
+						children: progressMessage
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+						className: "shrink-0 font-semibold tabular-nums text-fg",
+						children: [progress, "%"]
+					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "h-2 overflow-hidden rounded-full bg-bg",
+					role: "progressbar",
+					"aria-valuenow": progress,
+					"aria-valuemin": 0,
+					"aria-valuemax": 100,
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "h-full rounded-full bg-lime transition-[width] duration-300 ease-out",
+						style: { width: `${progress}%` }
+					})
+				})]
+			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "flex gap-2",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 					className: "flex-1",
 					disabled: !preview,
 					loading: busy,
-					onClick: () => submit({}, () => updateAvatar(preview.file), "Đã đổi ảnh đại diện"),
+					onClick: () => {
+						progressRef.current = {
+							current: 0,
+							target: 0
+						};
+						setProgress(0);
+						setProgressMessage("Đang chuẩn bị");
+						submit({}, () => updateAvatar(preview.file, (value, message) => {
+							progressRef.current.target = value;
+							setProgressMessage(message);
+						}), "Đã đổi ảnh đại diện");
+					},
 					children: "Đổi ảnh đại diện"
 				})
 			})

@@ -1,19 +1,6 @@
 import { ut as toast, xt as createReactComponent } from "./index.js";
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var IconCopy = createReactComponent("outline", "copy", "Copy", [["path", {
-	"d": "M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666",
-	"key": "svg-0"
-}], ["path", {
-	"d": "M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1",
-	"key": "svg-1"
-}]]);
-/**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -33,7 +20,7 @@ var IconLock = createReactComponent("outline", "lock", "Lock", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.49.0 - MIT
+* @license @tabler/icons-react v3.50.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -47,4 +34,4 @@ var IconSearch = createReactComponent("outline", "search", "Search", [["path", {
 }]]);
 // src/shared/library/clipboard.js
 var copyText = (text, msg) => navigator.clipboard?.writeText(text).then(() => toast(msg, "info"));
-export { IconCopy as i, IconSearch as n, IconLock as r, copyText as t };
+export { IconSearch as n, IconLock as r, copyText as t };
