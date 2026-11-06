@@ -25,7 +25,9 @@ export default function AvatarStage({ doc, selectedId, dispatch }) {
   const imageKey = imageUrls.join('|');
   const images = loadedAssets.key === imageKey ? loadedAssets.images : new Map();
 
-  useEffect(() => live.current = { doc, selectedId, images });
+  useEffect(() => {
+    live.current = { doc, selectedId, images };
+  });
 
   useEffect(() => {
     const observer = new ResizeObserver(([entry]) => setWidth(Math.round(entry.contentRect.width)));

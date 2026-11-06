@@ -21,14 +21,8 @@ const AdminData = lazy(() => import('@/features/administration/Data'));
 
 function StartRoute() {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const redirect = new URLSearchParams(location.search).get('redirect');
-    navigate(redirect?.startsWith('/') ? redirect : `/${DEFAULT_TAB}`, { replace: true });
-  }, [location.search, navigate]);
-
-  return null;
+  const redirect = new URLSearchParams(location.search).get('redirect');
+  return <Navigate to={redirect?.startsWith('/') ? redirect : `/${DEFAULT_TAB}`} replace />;
 };
 
 function PlayerRouteRedirect() {
@@ -45,9 +39,10 @@ function AppContent() {
   const lockedPath = useRef('');
   const pendingRequestCount = useSyncExternalStore(subscribeToRequests, getPendingRequestCount, getPendingRequestCount);
   const requestsPending = pendingRequestCount > 0;
-  const current = location.pathname.split('/').filter(Boolean)[0] || DEFAULT_TAB;
+  const pathSegment = location.pathname.split('/').filter(Boolean)[0];
+  const current = pathSegment || DEFAULT_TAB;
   const admin = isAdmin(user);
-  const { shop, load: loadShop } = useShop(status === 'authed' && current === 'shop', admin);
+  const { shop, load: loadShop } = useShop(status === 'authed' && pathSegment === 'shop', admin);
 
   const currentPath = `${location.pathname}${location.search}${location.hash}`;
 
