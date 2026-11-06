@@ -1,14 +1,14 @@
-import { B as redeemGiftCode, Et as createReactComponent, H as updateUser, I as changeOpenid, J as fileToAvatar, L as getBuffetLink, Mt as __toESM, P as getTransactions, R as getFriendLink, V as updateAvatar, Z as Coin, _t as Button, a as formatShortDateTime, at as Spinner, bt as IconRefresh, ct as PageSizeSelect, dt as Menu, ft as Dialog, gt as Field, ht as toastError, i as formatNumber, j as cancelTransaction, jt as require_react, lt as Select, mt as toast, n as formatDate, nt as RowSkeleton, o as formatVietnameseDong, pt as OtpButton, t as compareByTime, tt as PagerSkeleton, ut as SortSelect, vt as require_jsx_runtime, yt as IconX, z as openidOtp } from "./index.js";
+import { B as redeemGiftCode, Dt as createReactComponent, H as updateAvatar, I as changeOpenid, L as getBuffetLink, Mt as require_react, Nt as __toESM, P as getTransactions, Q as Coin, R as getFriendLink, U as updateUser, V as submitInvite, Y as fileToAvatar, _t as Field, a as formatShortDateTime, bt as IconX, dt as SortSelect, ft as Menu, gt as toastError, ht as toast, i as formatNumber, j as cancelTransaction, lt as PageSizeSelect, mt as OtpButton, n as formatDate, nt as PagerSkeleton, o as formatVietnameseDong, ot as Spinner, pt as Dialog, rt as RowSkeleton, t as compareByTime, ut as Select, vt as Button, xt as IconRefresh, yt as require_jsx_runtime, z as openidOtp } from "./index.js";
 import { n as IconLock, t as copyText } from "./clipboard.js";
 import { n as IconUpload, t as IconStarFilled } from "./IconStarFilled.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
 import { t as StrengthBar } from "./StrengthBar.js";
 import { t as IconPencil } from "./IconPencil.js";
+import { t as IconCopy } from "./IconCopy.js";
 import { t as IconUserPlus } from "./IconUserPlus.js";
 import { i as IconQrcode, n as STATUS, r as StatusBadge, t as PaymentDialog } from "./PaymentDialog.js";
 import { n as usePaginatedData, t as useRemoteResource } from "./useRemoteResource.js";
 import { t as IconSearch } from "./IconSearch.js";
-import { t as IconCopy } from "./IconCopy.js";
 import { t as IconGift } from "./IconGift.js";
 /**
 * @license @tabler/icons-react v3.50.0 - MIT
@@ -482,7 +482,8 @@ function FieldRow({ label, children, onEdit, Icon }) {
 	});
 }
 // src/features/account/ProfileCard.jsx
-function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGiftCode, onFriendLink, onBuffetLink }) {
+function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGiftCode, onRedeemInvite, onFriendLink, onBuffetLink }) {
+	const hasFriendInvite = Boolean(user.friendInvite);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "relative overflow-hidden rounded-2xl border border-line bg-panel p-5",
 		children: [
@@ -573,9 +574,31 @@ function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGiftCode, onFriendL
 				children: "Nhập mã đổi thưởng"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "relative mt-2 flex gap-2",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+					variant: "ghost",
+					size: "sm",
+					className: "min-w-0 flex-1",
+					disabled: hasFriendInvite,
+					onClick: hasFriendInvite ? void 0 : onRedeemInvite,
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "truncate",
+						children: hasFriendInvite ? `Mã mời đã nhập: ${user.friendInvite}` : "Nhập mã mời"
+					})
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+					variant: "ghost",
+					size: "sm",
+					className: "size-8! shrink-0 px-0!",
+					disabled: !user.invite,
+					onClick: () => user.invite && copyText(user.invite, "Đã sao chép mã mời"),
+					"aria-label": "Sao chép mã mời của mình",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCopy, { size: 15 })
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "relative mt-2 grid grid-cols-2 gap-2",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-					variant: "quiet",
+					variant: "ghost",
 					size: "sm",
 					className: "min-w-0",
 					onClick: onFriendLink,
@@ -588,7 +611,7 @@ function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGiftCode, onFriendL
 						})
 					]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-					variant: "quiet",
+					variant: "ghost",
 					size: "sm",
 					className: "min-w-0",
 					onClick: onBuffetLink,
@@ -1054,6 +1077,72 @@ function GiftCodeDialog({ open, onClose, onUser }) {
 		})
 	});
 }
+// src/features/account/InviteCodeDialog.jsx
+function InviteCodeDialog({ open, onClose, user, onUser }) {
+	const [code, setCode] = (0, import_react.useState)("");
+	const [busy, setBusy] = (0, import_react.useState)(false);
+	const close = () => !busy && onClose();
+	const submit = async (event) => {
+		event.preventDefault();
+		const value = code.trim();
+		if (!value) return;
+		setBusy(true);
+		try {
+			const result = await submitInvite(value);
+			if (!result.success) {
+				toast(result.message || "Không thể áp dụng mã mời", "err");
+				return;
+			}
+			if (result.user) onUser(result.user);
+			else onUser({
+				...user,
+				friendInvite: value,
+				coins: result.coins !== void 0 ? Number(result.coins) : user.coins,
+				...result.star !== void 0 ? { star: Number(result.star) } : {}
+			});
+			toast(result.message || "Đã áp dụng mã mời");
+			setCode("");
+			onClose();
+		} catch (error) {
+			toastError(error);
+		} finally {
+			setBusy(false);
+		}
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dialog, {
+		open,
+		title: "Nhập mã mời",
+		onClose: close,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+			noValidate: true,
+			className: "space-y-4",
+			onSubmit: submit,
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex items-start gap-3 rounded-xl bg-bg p-3 text-xs text-mute",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUserPlus, {
+						size: 18,
+						className: "mt-0.5 shrink-0 text-lime"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { children: "Nhập mã mời của người giới thiệu để nhận 50 xu." })]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+					label: "Mã mời",
+					placeholder: "Mã mời",
+					autoFocus: true,
+					value: code,
+					onChange: (event) => setCode(event.target.value)
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+					type: "submit",
+					className: "w-full",
+					loading: busy,
+					disabled: !code.trim(),
+					children: "Xác nhận"
+				})
+			]
+		})
+	});
+}
 // src/features/account/LinkDialog.jsx
 function LinkDialog({ request, title, open, onClose }) {
 	const [state, setState] = (0, import_react.useState)({
@@ -1146,6 +1235,7 @@ function Account({ user, onUser, onLogout, onRefresh }) {
 					onEditAvatar: () => show("avatar"),
 					onLogout: () => show("logout"),
 					onRedeemGiftCode: () => show("giftcode"),
+					onRedeemInvite: () => show("invite"),
 					onFriendLink: () => openLink("friend", "Liên kết kết bạn", getFriendLink),
 					onBuffetLink: () => openLink("buffet", "Liên kết làm thêm", getBuffetLink)
 				})
@@ -1207,6 +1297,12 @@ function Account({ user, onUser, onLogout, onRefresh }) {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(GiftCodeDialog, {
 				open: form.open === "giftcode",
 				onClose: form.close,
+				onUser
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(InviteCodeDialog, {
+				open: form.open === "invite",
+				onClose: form.close,
+				user,
 				onUser
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(LinkDialog, {
