@@ -16576,7 +16576,7 @@ var adminDecryptRecordValue = (openid, type, value) => call("POST", `/administra
 	value
 });
 var adminData = (name) => call("GET", `/administrator/data/${name}`);
-var adminSaveData = (name, value) => call("PATCH", `/administrator/data/${name}`, { [name]: value });
+var adminSaveData = (name, value) => call("PATCH", `/administrator/data/${name}`, { [name]: JSON.stringify(value) });
 var adminAddPlayerStar = (openid, star) => call("POST", `/administrator/players/${enc(openid)}/star`, { star });
 // src/shared/configuration/navigation.js
 var NAV = [
