@@ -65,7 +65,7 @@ export default function BuyDialog({ item, category, user, onUser, onOwned, onBou
 
           {hasCurrent && (
             <div className='flex items-center justify-between rounded-lg border border-line bg-bg px-3 py-2.5 text-xs'>
-              <span className='text-mute'>Số lượng mà người chơi đang có</span>
+              <span className='text-mute'>Số lượng đã có</span>
               <strong className='tabular-nums'>{formatNumber(Number(item.current) || 0)}</strong>
             </div>
           )}
@@ -98,7 +98,7 @@ export default function BuyDialog({ item, category, user, onUser, onOwned, onBou
 
           {once ? (
             <p className='flex items-center gap-2 rounded-lg border border-dashed border-line p-3 text-[11px] text-mute'>
-              <IconLock size={15} className='shrink-0 text-lime' /> Vật phẩm chỉ mua được một lần · số lượng 1
+              <IconLock size={15} className='shrink-0 text-lime' /> Vật phẩm chỉ mua được một lần
             </p>
           ) : (
             <QuantityPicker value={qty} max={maxQty} disabled={buying || blocked} onChange={setQty} onEnter={confirm} />

@@ -378,7 +378,7 @@ function BuyDialog({ item, category, user, onUser, onOwned, onBought, onClose, o
 				className: "flex items-center justify-between rounded-lg border border-line bg-bg px-3 py-2.5 text-xs",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 					className: "text-mute",
-					children: "Số lượng mà người chơi đang có"
+					children: "Số lượng đã có"
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
 					className: "tabular-nums",
 					children: formatNumber(Number(item.current) || 0)
@@ -423,7 +423,7 @@ function BuyDialog({ item, category, user, onUser, onOwned, onBought, onClose, o
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, {
 					size: 15,
 					className: "shrink-0 text-lime"
-				}), " Vật phẩm chỉ mua được một lần · số lượng 1"]
+				}), " Vật phẩm chỉ mua được một lần"]
 			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuantityPicker, {
 				value: qty,
 				max: maxQty,
