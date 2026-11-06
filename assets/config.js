@@ -1,4 +1,4 @@
-import { Dt as createReactComponent, Tt as IconBuildingStore, t as compareByTime } from "./index.js";
+import { Et as createReactComponent, t as compareByTime, wt as IconBuildingStore } from "./index.js";
 import { n as IconMusic, t as IconUsers } from "./IconUsers.js";
 /**
 * @license @tabler/icons-react v3.50.0 - MIT
