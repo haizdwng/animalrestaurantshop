@@ -126,7 +126,6 @@ export default function Avatar({ onUser }) {
             </div>
           </div>
         )}
-        <p className='mt-3 hidden text-center text-[10px] text-mute md:block'>Kéo để di chuyển · lăn chuột hoặc chụm 2 ngón để phóng/xoay</p>
       </aside>
 
       <section className='flex min-h-0 flex-1 flex-col px-4 pt-3 md:px-0 md:pt-0'>

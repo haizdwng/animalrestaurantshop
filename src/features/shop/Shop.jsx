@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { IconPlayerPlay, IconRefresh } from '@tabler/icons-react';
 import { formatNumber } from '@/shared/library/format';
 import { Button, ErrorState } from '@/shared/components/ui';
@@ -25,22 +26,30 @@ function useOwned(resetKey) {
 };
 
 export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
+  const navigate = useNavigate();
+  const { section } = useParams();
   const tabs = shop.tabs || [];
-  const [tabId, setTabId] = useState(null);
+  const tabId = section || tabs[0]?.id || null;
   const [q, setQ] = useState('');
   const [shown, setShown] = useState(PAGE);
   const [item, setItem] = useState(null);
   const [guide, setGuide] = useState(false);
   const [done, setDone] = useState(false);
   const { isOwned, markOwned } = useOwned(shop.tabs);
+  const selectTab = (next) => navigate(`/shop/${next}`);
 
   useEffect(() => {
-    if (tabId !== TOPUP && tabs.length && !tabs.some((t) => t.id === tabId)) setTabId(tabs[0].id);
-  }, [tabs, tabId]);
+    if (!tabs.length) return;
+    if (!section) {
+      navigate(`/shop/${tabs[0].id}`, { replace: true });
+      return;
+    };
+    if (section !== TOPUP && !tabs.some((tab) => tab.id === section)) navigate(`/shop/${tabs[0].id}`, { replace: true });
+  }, [tabs, section, navigate]);
   useEffect(() => setShown(PAGE), [tabId, q]);
 
   const topup = tabId === TOPUP;
-  const current = tabs.find((t) => t.id === tabId);
+  const current = tabs.find((tab) => tab.id === tabId);
   const needle = q.trim().toLowerCase();
   const products = useMemo(() => (Array.isArray(current?.products) ? current.products : []).filter((p) => matches(p, needle)), [current, needle]);
   const hits = useMemo(() => Object.fromEntries(tabs.map((t) => {
@@ -76,7 +85,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
         <ShopToolbar title={current?.name} count={products.length} ownedCount={products.filter((p) => isOwned(p)).length} query={q} onQuery={setQ} loading={shop.loading} onReload={onReload} />
 
         {products.length === 0 ? (
-          <EmptyProducts searching={!!needle} tabs={tabs} hits={hits} onSelect={setTabId} />
+          <EmptyProducts searching={!!needle} tabs={tabs} hits={hits} onSelect={selectTab} />
         ) : (
           <ul key={tabId} className={`grid animate-fade gap-2 transition-opacity sm:grid-cols-2 xl:grid-cols-3 ${shop.loading ? 'pointer-events-none opacity-50' : ''}`}>
             {products.slice(0, shown).map((p) => (
@@ -101,7 +110,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
 
   return (
     <div className={shop.ready === false ? 'md:px-6 md:py-6' : 'md:grid md:grid-cols-[220px_1fr] md:gap-6 md:px-6 md:py-6'}>
-      {shop.ready !== false && <CategoryNav tabs={shop.tabs} tabId={tabId} hits={hits} onSelect={setTabId} />}
+      {shop.ready !== false && <CategoryNav tabs={shop.tabs} tabId={tabId} hits={hits} onSelect={selectTab} />}
 
       <section className='app-screen min-w-0 md:p-0'>{topup && shop.ready !== false ? <TopUp user={user} onPaid={onRefresh} /> : renderCatalogue()}</section>
 
@@ -116,7 +125,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
         onClose={() => setItem(null)}
         onTopUp={() => {
           setItem(null);
-          setTabId(TOPUP);
+          selectTab(TOPUP);
         }}
       />
       <PurchaseDoneDialog open={done} onClose={() => setDone(false)} />

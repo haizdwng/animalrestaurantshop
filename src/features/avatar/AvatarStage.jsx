@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { IconPhotoOff } from '@tabler/icons-react';
 import { Skeleton, Spinner } from '@/shared/components/ui';
-import { PIXEL_RATIO, STAGE } from '@/features/avatar/config';
+import { PIXEL_RATIO, SCALE, STAGE } from '@/features/avatar/config';
 import { getAvatarDocumentImageUrls, drawAvatar } from '@/features/avatar/avatarRendering';
 import { hitTest, doesPointHitCloseButton } from '@/features/avatar/geometry';
 import { areAllImagesLoaded, preloadImages } from '@/features/avatar/imageLoading';
@@ -70,14 +70,22 @@ export default function AvatarStage({ doc, selectedId, dispatch }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     const onWheel = (event) => {
+      if (!event.ctrlKey) return;
+      event.preventDefault();
       const { doc: currentDoc, selectedId: currentSelectedId } = live.current;
       const item = currentDoc.items.find((entry) => entry.id === currentSelectedId);
       if (!item) return;
-      event.preventDefault();
+      const nextScale = item.scale * Math.exp(-event.deltaY * 0.0015);
+      const scale = Math.min(SCALE.max, Math.max(SCALE.min, nextScale));
+      if (scale === item.scale) return;
       const now = Date.now();
       if (now - lastWheel.current > 400) dispatch({ type: 'checkpoint' });
       lastWheel.current = now;
-      dispatch({ type: 'patch', id: currentSelectedId, patch: { scale: item.scale * Math.exp(-event.deltaY * 0.0015) } });
+      dispatch({
+        type: 'patch',
+        id: currentSelectedId,
+        patch: { scale }
+      });
     };
     canvas.addEventListener('wheel', onWheel, { passive: false });
     return () => canvas.removeEventListener('wheel', onWheel);

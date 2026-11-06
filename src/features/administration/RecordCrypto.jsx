@@ -23,12 +23,8 @@ export default function RecordCrypto({ openid }) {
     } else if (!decryptValue.trim()) return toast('Nhập chuỗi cần giải mã', 'err');
     setBusy(true);
     try {
-      const value = mode === 'encrypt'
-        ? await api.adminEncryptRecordValue(openid, type, Number(numberValue), key.trim())
-        : await api.adminDecryptRecordValue(openid, type, decryptValue.trim());
-      if (!value.success || (mode === 'encrypt' ? typeof value.encrypted !== 'string' : typeof value.decrypted !== 'number')) {
-        return toast(value.message || 'Không xử lý được giá trị', 'err');
-      }
+      const value = mode === 'encrypt' ? await api.adminEncryptRecordValue(openid, type, Number(numberValue), key.trim()) : await api.adminDecryptRecordValue(openid, type, decryptValue.trim());
+      if (!value.success || (mode === 'encrypt' ? typeof value.encrypted !== 'string' : typeof value.decrypted !== 'number')) return toast(value.message || 'Không xử lý được giá trị', 'err');
       setResult(mode === 'encrypt' ? value.encrypted : String(value.decrypted));
       toast(value.message || 'Đã xử lý');
     } catch (error) {

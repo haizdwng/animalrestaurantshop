@@ -133,7 +133,7 @@ function AppContent() {
           <Suspense fallback={null}>
             <Routes>
               <Route path='/' element={<StartRoute />} />
-              <Route path='/shop' element={<Shop user={user} onUser={setUser} shop={shop} onReload={loadShop} onRefresh={refreshUser} />} />
+              <Route path='/shop/:section?' element={<Shop user={user} onUser={setUser} shop={shop} onReload={loadShop} onRefresh={refreshUser} />} />
               <Route path='/avatar' element={<Avatar onUser={setUser} />} />
               <Route path='/administrator' element={admin ? <AdminPanel /> : <Navigate to='/shop' replace />}>
                 <Route index element={<Navigate to='giftcodes' replace />} />

@@ -31,9 +31,7 @@ export default function CategoryNav({ tabs, tabId, hits, onSelect }) {
     <aside className='sticky top-(--app-header-h) z-20 border-b border-line bg-bg/90 backdrop-blur-md supports-backdrop-filter:bg-bg/75 md:top-[calc(var(--app-header-h)+1rem)] md:max-h-[calc(100dvh-var(--app-header-h)-2rem)] md:self-start md:overflow-y-auto md:border-0 md:bg-transparent md:backdrop-blur-none'>
       <p className='hidden px-3 pb-2 text-[10px] font-bold tracking-[0.2em] text-mute uppercase md:block'>Danh mục</p>
       <div role='tablist' className='no-scrollbar flex gap-1 overflow-x-auto px-3 py-2 md:flex-col md:overflow-visible md:p-0'>
-        {tabs
-          ? list.map((t) => <CategoryButton key={t.id} id={t.id} name={t.name} Icon={CATEGORY_ICONS[t.id] || IconBox} count={hits[t.id]} on={isOn(t.id)} onSelect={onSelect} />)
-          : Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className='h-8.25 w-28 shrink-0 rounded-lg md:w-full' />)}
+        {tabs ? list.map((t) => <CategoryButton key={t.id} id={t.id} name={t.name} Icon={CATEGORY_ICONS[t.id] || IconBox} count={hits[t.id]} on={isOn(t.id)} onSelect={onSelect} />) : Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className='h-8.25 w-28 shrink-0 rounded-lg md:w-full' />)}
         <div className='mx-1 w-px shrink-0 bg-line md:mx-0 md:my-2 md:h-px md:w-auto' />
         <CategoryButton key={TOPUP} id={TOPUP} name='Mua xu' Icon={CoinIcon} accent on={isOn(TOPUP)} onSelect={onSelect} />
       </div>

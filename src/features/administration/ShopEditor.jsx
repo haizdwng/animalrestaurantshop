@@ -152,9 +152,7 @@ export default function ShopEditor() {
     setShop((current) => current.map((category) => {
       if (category.id !== dialog.category) return category;
       const product = { ...(dialog.product || {}), id, name, price };
-      const products = dialog.product
-        ? category.products.map((item) => item.id === dialog.product.id ? product : item)
-        : [...category.products, product];
+      const products = dialog.product ? category.products.map((item) => item.id === dialog.product.id ? product : item) : [...category.products, product];
       return { ...category, products };
     }));
     close();
@@ -163,9 +161,7 @@ export default function ShopEditor() {
   const remove = () => {
     if (busy || !deleteTarget) return;
     setShop((current) => current.map((category) => (
-      category.id === deleteTarget.category
-        ? { ...category, products: category.products.filter((item) => item !== deleteTarget.product) }
-        : category
+      category.id === deleteTarget.category ? { ...category, products: category.products.filter((item) => item !== deleteTarget.product) } : category
     )));
     setDeleteTarget(null);
   };

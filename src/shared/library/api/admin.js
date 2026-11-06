@@ -41,3 +41,4 @@ export const adminDecryptRecordValue = (openid, type, value) => call('POST', `/a
 export const adminData = (name) => call('GET', `/administrator/data/${name}`);
 export const adminSaveData = (name, value) => call('PATCH', `/administrator/data/${name}`, { [name]: JSON.stringify(value) });
 export const adminAddPlayerStar = (openid, star) => call('POST', `/administrator/players/${enc(openid)}/star`, { star });
+export const adminAddPlayerLike = (openid, like) => call('POST', `/administrator/players/${enc(openid)}/like`, { like });

@@ -30,6 +30,10 @@ function decodeBase64(value) {
   return JSON.parse(new TextDecoder().decode(bytes));
 };
 
+function isEditableTarget(target) {
+  return target instanceof HTMLElement && (target.isContentEditable || target.closest('input, textarea, select, [contenteditable="true"]'));
+};
+
 export default function AvatarToolbar({ selected, canUndo, canRedo, dispatch, doc }) {
   const id = selected?.id;
   const copyDesign = async () => {
@@ -54,22 +58,62 @@ export default function AvatarToolbar({ selected, canUndo, canRedo, dispatch, do
       dispatch({ type: 'load', doc: data });
       toast('Đã dán thiết kế thành công');
     } catch (error) {
-      toast(error.name === 'NotAllowedError' ? 'Không có quyền truy cập clipboard' : error.message === 'Mã thiết kế không hợp lệ' || error.message === 'Dữ liệu thiết kế không hợp lệ' ? error.message : 'Clipboard không chứa mã thiết kế hợp lệ', 'err');
+      toast(error.name === 'NotAllowedError' ? 'Không có quyền truy cập bộ nhớ tạm' : error.message === 'Mã thiết kế không hợp lệ' || error.message === 'Dữ liệu thiết kế không hợp lệ' ? error.message : 'Bộ nhớ tạm không chứa mã thiết kế hợp lệ', 'err');
     };
   };
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (!event.ctrlKey || event.altKey || event.metaKey || isEditableTarget(event.target)) return;
+      const key = event.key.toLowerCase();
+      if (key === 'c') {
+        if (window.getSelection()?.toString()) return;
+        event.preventDefault();
+        copyDesign();
+      };
+      if (key === 'v') {
+        event.preventDefault();
+        pasteDesign();
+      };
+      if (key === 'z' || key === 'y') {
+        event.preventDefault();
+        dispatch({ type: key === 'y' || event.shiftKey ? 'redo' : 'undo' });
+      };
+    };
+
+    const handleWheel = (event) => {
+      if (!event.ctrlKey || isEditableTarget(event.target)) return;
+      event.preventDefault();
+      if (!selected) return;
+      const direction = event.deltaY < 0 ? 1 : -1;
+      const nextScale = selected.scale + direction * SCALE.step;
+      if (nextScale < SCALE.min || nextScale > SCALE.max) return;
+      dispatch({
+        type: 'adjust',
+        id,
+        dScale: direction * SCALE.step
+      });
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('wheel', handleWheel);
+    };
+  }, [selected, id, dispatch, copyDesign, pasteDesign]);
+
   return (
     <div role='toolbar' aria-label='Công cụ chỉnh sửa' className='grid grid-cols-4 gap-1.5 md:grid-cols-8'>
-      <IconBtn label='Hoàn tác (Ctrl+Z)' Icon={IconArrowBackUp} disabled={!canUndo} onClick={() => dispatch({ type: 'undo' })} />
-      <IconBtn label='Làm lại (Ctrl+Shift+Z)' Icon={IconArrowForwardUp} disabled={!canRedo} onClick={() => dispatch({ type: 'redo' })} />
+      <IconBtn label='Hoàn tác' Icon={IconArrowBackUp} disabled={!canUndo} onClick={() => dispatch({ type: 'undo' })} />
+      <IconBtn label='Làm lại' Icon={IconArrowForwardUp} disabled={!canRedo} onClick={() => dispatch({ type: 'redo' })} />
       <IconBtn label='Phóng to' Icon={IconZoomIn} disabled={!selected || selected.scale >= SCALE.max} onClick={() => dispatch({ type: 'adjust', id, dScale: SCALE.step })} />
       <IconBtn label='Thu nhỏ' Icon={IconZoomOut} disabled={!selected || selected.scale <= SCALE.min} onClick={() => dispatch({ type: 'adjust', id, dScale: -SCALE.step })} />
       <IconBtn label='Xoay' Icon={IconRotateClockwise2} disabled={!selected} onClick={() => dispatch({ type: 'adjust', id, dRotation: ROTATE_STEP })} />
-      <IconBtn label='Xóa phụ kiện đang chọn (Delete)' Icon={IconTrash} disabled={!selected} onClick={() => dispatch({ type: 'remove', id })} />
+      <IconBtn label='Xóa phụ kiện đang chọn' Icon={IconTrash} disabled={!selected} onClick={() => dispatch({ type: 'remove', id })} />
       <IconBtn label='Ngẫu nhiên' Icon={IconDice5} onClick={() => dispatch({ type: 'random' })} />
       <IconBtn label='Làm lại từ đầu' Icon={IconRefresh} onClick={() => dispatch({ type: 'reset' })} />
-      <IconBtn label='Sao chép mã Base64' Icon={IconCopy} onClick={copyDesign} />
-      <IconBtn label='Dán mã Base64' Icon={IconClipboard} onClick={pasteDesign} />
+      <IconBtn label='Sao chép thiết kế' Icon={IconCopy} onClick={copyDesign} />
+      <IconBtn label='Dán thiết kế' Icon={IconClipboard} onClick={pasteDesign} />
     </div>
   );
 };

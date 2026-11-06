@@ -10,7 +10,7 @@ import usePaginatedData from '@/shared/hooks/usePaginatedData';
 import useRemoteResource from '@/shared/hooks/useRemoteResource';
 import Head from '@/features/administration/Head';
 import PlayerRow, { PlayerRowSkeleton } from '@/features/administration/PlayerRow';
-import PlayerDialogs, { PlayerStarDialog } from '@/features/administration/PlayerDialogs';
+import PlayerDialogs, { PlayerStarDialog, PlayerLikeDialog } from '@/features/administration/PlayerDialogs';
 import * as api from '@/shared/library/api';
 
 const PLAYER_SECTIONS = PLAYER_TABS.map(([key]) => key);
@@ -97,6 +97,21 @@ export default function AdminPlayers() {
     };
   };
 
+  const addLike = async (like) => {
+    if (!dialog?.player) return;
+    const id = dialog.player.openid;
+    setBusy(true);
+    try {
+      const response = await api.adminAddPlayerLike(id, like);
+      toast(response.message || `Đã thêm ${like} lượt thích`);
+      setDialog(null);
+    } catch (error) {
+      toastError(error);
+    } finally {
+      setBusy(false);
+    };
+  };
+
   const savePlayer = async ({ nickName, avatar }) => {
     if (!dialog?.player) return;
     const id = dialog.player.openid;
@@ -162,7 +177,7 @@ export default function AdminPlayers() {
               <PlayerRow
                 key={`${person.openid || 'player'}-${index}`}
                 player={person}
-                onAction={(kind) => kind === 'data' ? openPlayer(person.openid) : setDialog({ kind, player: person })}
+                onAction={(kind) => kind === 'info' ? openPlayer(person.openid) : setDialog({ kind, player: person })}
               />
             ))}
           </ul>
@@ -182,6 +197,7 @@ export default function AdminPlayers() {
         </Dialog>
         <PlayerDialogs player={dialog?.player} open={dialog?.kind} busy={busy} onClose={() => !busy && setDialog(null)} onSave={savePlayer} />
         <PlayerStarDialog player={dialog?.player} open={dialog?.kind} busy={busy} onClose={() => !busy && setDialog(null)} onSubmit={addStar} />
+        <PlayerLikeDialog player={dialog?.player} open={dialog?.kind} busy={busy} onClose={() => !busy && setDialog(null)} onSubmit={addLike} />
       </div>
     );
   };

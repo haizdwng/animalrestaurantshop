@@ -1,4 +1,4 @@
-import { At as require_react, P as buy, St as IconCircleCheck, Tt as createReactComponent, X as Coin, _t as require_jsx_runtime, dt as Dialog, gt as Button, ht as Field, i as formatNumber, it as Spinner, j as createTransaction, jt as __toESM, mt as toastError, nt as Skeleton, pt as toast, rt as ErrorState, vt as IconX, yt as IconRefresh } from "./index.js";
+import { At as useParams, Ct as IconCircleCheck, Et as createReactComponent, F as buy, M as createTransaction, Mt as __toESM, Z as Coin, _t as Button, at as Spinner, bt as IconRefresh, ft as Dialog, gt as Field, ht as toastError, i as formatNumber, it as ErrorState, jt as require_react, kt as useNavigate, mt as toast, rt as Skeleton, vt as require_jsx_runtime, yt as IconX } from "./index.js";
 import { i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
 import { a as TOPUP, i as CATEGORY_ICONS, n as hasPrice, r as matches, s as IconBox, t as Tile } from "./Tile.js";
 import { t as IconCheck } from "./IconCheck.js";
@@ -792,20 +792,32 @@ function useOwned(resetKey) {
 	};
 }
 function Shop({ user, onUser, shop, onReload, onRefresh }) {
+	const navigate = useNavigate();
+	const { section } = useParams();
 	const tabs = shop.tabs || [];
-	const [tabId, setTabId] = (0, import_react.useState)(null);
+	const tabId = section || tabs[0]?.id || null;
 	const [q, setQ] = (0, import_react.useState)("");
 	const [shown, setShown] = (0, import_react.useState)(60);
 	const [item, setItem] = (0, import_react.useState)(null);
 	const [guide, setGuide] = (0, import_react.useState)(false);
 	const [done, setDone] = (0, import_react.useState)(false);
 	const { isOwned, markOwned } = useOwned(shop.tabs);
+	const selectTab = (next) => navigate(`/shop/${next}`);
 	(0, import_react.useEffect)(() => {
-		if (tabId !== "__topup" && tabs.length && !tabs.some((t) => t.id === tabId)) setTabId(tabs[0].id);
-	}, [tabs, tabId]);
+		if (!tabs.length) return;
+		if (!section) {
+			navigate(`/shop/${tabs[0].id}`, { replace: true });
+			return;
+		}
+		if (section !== "__topup" && !tabs.some((tab) => tab.id === section)) navigate(`/shop/${tabs[0].id}`, { replace: true });
+	}, [
+		tabs,
+		section,
+		navigate
+	]);
 	(0, import_react.useEffect)(() => setShown(60), [tabId, q]);
 	const topup = tabId === TOPUP;
-	const current = tabs.find((t) => t.id === tabId);
+	const current = tabs.find((tab) => tab.id === tabId);
 	const needle = q.trim().toLowerCase();
 	const products = (0, import_react.useMemo)(() => (Array.isArray(current?.products) ? current.products : []).filter((p) => matches(p, needle)), [current, needle]);
 	const hits = (0, import_react.useMemo)(() => Object.fromEntries(tabs.map((t) => {
@@ -865,7 +877,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 				searching: !!needle,
 				tabs,
 				hits,
-				onSelect: setTabId
+				onSelect: selectTab
 			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 				className: `grid animate-fade gap-2 transition-opacity sm:grid-cols-2 xl:grid-cols-3 ${shop.loading ? "pointer-events-none opacity-50" : ""}`,
 				children: products.slice(0, shown).map((p) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProductItem, {
@@ -901,7 +913,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 				tabs: shop.tabs,
 				tabId,
 				hits,
-				onSelect: setTabId
+				onSelect: selectTab
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
 				className: "app-screen min-w-0 md:p-0",
@@ -920,7 +932,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 				onClose: () => setItem(null),
 				onTopUp: () => {
 					setItem(null);
-					setTabId(TOPUP);
+					selectTab(TOPUP);
 				}
 			}, item?.id ?? ""),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PurchaseDoneDialog, {

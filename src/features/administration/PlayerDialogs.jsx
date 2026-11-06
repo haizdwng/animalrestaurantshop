@@ -72,3 +72,27 @@ export function PlayerStarDialog({ player, open, busy, onClose, onSubmit }) {
     </Dialog>
   );
 };
+
+export function PlayerLikeDialog({ player, open, busy, onClose, onSubmit }) {
+  const [value, setValue] = useState('');
+
+  useEffect(() => {
+    if (open === 'like') setValue('');
+  }, [open, player]);
+
+  const submit = (event) => {
+    event.preventDefault();
+    const like = Number(value);
+    if (!Number.isSafeInteger(like) || like < 1) return toast('Số lượt thích phải là số nguyên từ 1 trở lên', 'err');
+    onSubmit(like);
+  };
+
+  return (
+    <Dialog open={open === 'like'} title={`Thêm lượt thích cho ${player?.nickName || 'người chơi'}`} onClose={onClose}>
+      <form noValidate className='space-y-4' onSubmit={submit}>
+        <Field label='Số lượt thích' hint='số nguyên ≥ 1' inputMode='numeric' placeholder='1' autoFocus value={value} onChange={(event) => setValue(event.target.value.replace(/\D/g, '').slice(0, 9))} />
+        <Button type='submit' className='w-full' loading={busy} disabled={!value}>Thêm lượt thích</Button>
+      </form>
+    </Dialog>
+  );
+};

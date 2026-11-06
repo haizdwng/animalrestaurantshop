@@ -9,7 +9,7 @@ import * as api from '@/shared/library/api';
 export default function AdminData() {
   const { section } = useParams();
   const navigate = useNavigate();
-  const activeSection = DATA_TABS.some(([key]) => key === section) ? section : 'musicians';
+  const activeSection = DATA_TABS.some(([key]) => key === section) ? section : 'shop';
 
   useEffect(() => {
     if (!section || activeSection !== section)  navigate('/administrator/data/musicians', { replace: true });
