@@ -5,6 +5,7 @@ export const updateUser = async (patch) => withUser(await call('PATCH', '/user',
 export const openidOtp = (openid) => call('POST', '/user/openid/otp', { openid });
 export const changeOpenid = async (openid, otp) => withUser(await call('PATCH', '/user/openid', { openid, otp }));
 export const redeemGiftCode = async (code) => withUser(await call('POST', '/user/giftcode', { code }));
+export const submitInvite = (invite) => call('POST', '/user/invite', { invite });
 export const getFriendLink = () => call('GET', '/user/links/friend');
 export const getBuffetLink = () => call('GET', '/user/links/buffet');
 export const checkShopReady = () => call('GET', '/user/shop/ready');

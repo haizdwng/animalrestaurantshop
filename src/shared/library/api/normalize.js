@@ -13,6 +13,8 @@ export function normUser(u) {
     coins: num(u.coins, u.coin, u.money, u.gold, u.balance),
     star: num(u.star, u.stars),
     role: u.role ?? '',
+    invite: u.invite ?? '',
+    friendInvite: u.friendInvite ?? u.friend_invite ?? '',
     createdAt: u.createdAt ?? u.created_at
   };
 };

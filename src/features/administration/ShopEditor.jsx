@@ -63,8 +63,8 @@ function ProductCard({ product, onEdit, onDelete, disabled }) {
         </span>
         <Menu
           items={[
-            { label: 'Sửa', Icon: IconPencil, onClick: onEdit, hidden: disabled },
-            { label: 'Xóa', Icon: IconTrash, danger: true, onClick: onDelete, hidden: disabled }
+            { label: 'Sửa', Icon: IconPencil, onClick: onEdit },
+            { label: 'Xóa', Icon: IconTrash, danger: true, onClick: onDelete }
           ]}
           label={`Tùy chọn ${product.name}`}
         />

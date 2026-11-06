@@ -4,7 +4,7 @@ import { IconDotsVertical } from '@tabler/icons-react';
 
 const ITEM_H = 44;
 
-export default function Menu({ items, label = 'Tuỳ chọn' }) {
+export default function Menu({ items, label = 'Tuỳ chọn', disabled = false }) {
   const btn = useRef(null);
   const [pos, setPos] = useState(null);
   const shown = items.filter((i) => !i.hidden);
@@ -23,7 +23,12 @@ export default function Menu({ items, label = 'Tuỳ chọn' }) {
     };
   }, [pos]);
 
+  useEffect(() => {
+    if (disabled) setPos(null);
+  }, [disabled]);
+
   const toggle = () => {
+    if (disabled) return;
     if (pos) return setPos(null);
     const r = btn.current.getBoundingClientRect();
     const up = r.bottom + ITEM_H * shown.length + 16 > innerHeight;
@@ -33,7 +38,15 @@ export default function Menu({ items, label = 'Tuỳ chọn' }) {
   if (!shown.length) return null;
   return (
     <>
-      <button ref={btn} onClick={toggle} aria-label={label} aria-expanded={!!pos} className={`grid size-8 shrink-0 cursor-pointer place-items-center rounded-lg transition hover:bg-raise hover:text-fg ${pos ? 'bg-raise text-fg' : 'text-mute'}`}>
+      <button
+        ref={btn}
+        type='button'
+        onClick={toggle}
+        disabled={disabled}
+        aria-label={label}
+        aria-expanded={!!pos}
+        className={`grid size-8 shrink-0 place-items-center rounded-lg transition ${disabled ? 'cursor-not-allowed opacity-40 text-mute' : `cursor-pointer hover:bg-raise hover:text-fg ${pos ? 'bg-raise text-fg' : 'text-mute'}`}`}
+      >
         <IconDotsVertical size={17} />
       </button>
       {pos &&
@@ -43,6 +56,7 @@ export default function Menu({ items, label = 'Tuỳ chọn' }) {
               {shown.map(({ label: l, Icon, onClick, danger }) => (
                 <button
                   key={l}
+                  type='button'
                   role='menuitem'
                   onClick={() => {
                     setPos(null);

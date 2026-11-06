@@ -14898,7 +14898,7 @@ function Dialog({ open, title, onClose, children }) {
 }
 // src/shared/components/ui/Menu.jsx
 var ITEM_H = 44;
-function Menu({ items, label = "Tuỳ chọn" }) {
+function Menu({ items, label = "Tuỳ chọn", disabled = false }) {
 	const btn = (0, import_react.useRef)(null);
 	const [pos, setPos] = (0, import_react.useState)(null);
 	const shown = items.filter((i) => !i.hidden);
@@ -14915,7 +14915,11 @@ function Menu({ items, label = "Tuỳ chọn" }) {
 			document.removeEventListener("keydown", onKey);
 		};
 	}, [pos]);
+	(0, import_react.useEffect)(() => {
+		if (disabled) setPos(null);
+	}, [disabled]);
 	const toggle = () => {
+		if (disabled) return;
 		if (pos) return setPos(null);
 		const r = btn.current.getBoundingClientRect();
 		const up = r.bottom + ITEM_H * shown.length + 16 > innerHeight;
@@ -14927,10 +14931,12 @@ function Menu({ items, label = "Tuỳ chọn" }) {
 	if (!shown.length) return null;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 		ref: btn,
+		type: "button",
 		onClick: toggle,
+		disabled,
 		"aria-label": label,
 		"aria-expanded": !!pos,
-		className: `grid size-8 shrink-0 cursor-pointer place-items-center rounded-lg transition hover:bg-raise hover:text-fg ${pos ? "bg-raise text-fg" : "text-mute"}`,
+		className: `grid size-8 shrink-0 place-items-center rounded-lg transition ${disabled ? "cursor-not-allowed opacity-40 text-mute" : `cursor-pointer hover:bg-raise hover:text-fg ${pos ? "bg-raise text-fg" : "text-mute"}`}`,
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDotsVertical, { size: 17 })
 	}), pos && (0, import_react_dom.createPortal)(/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 		className: "fixed inset-0 z-40",
@@ -14941,6 +14947,7 @@ function Menu({ items, label = "Tuỳ chọn" }) {
 			className: "fixed min-w-44 animate-pop rounded-xl border border-line bg-raise p-1 shadow-2xl shadow-black/60",
 			onClick: (e) => e.stopPropagation(),
 			children: shown.map(({ label: l, Icon, onClick, danger }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+				type: "button",
 				role: "menuitem",
 				onClick: () => {
 					setPos(null);
@@ -16370,6 +16377,8 @@ function normUser(u) {
 		coins: num(u.coins, u.coin, u.money, u.gold, u.balance),
 		star: num(u.star, u.stars),
 		role: u.role ?? "",
+		invite: u.invite ?? "",
+		friendInvite: u.friendInvite ?? u.friend_invite ?? "",
 		createdAt: u.createdAt ?? u.created_at
 	};
 }
@@ -16480,6 +16489,7 @@ var changeOpenid = async (openid, otp) => withUser(await call("PATCH", "/user/op
 	otp
 }));
 var redeemGiftCode = async (code) => withUser(await call("POST", "/user/giftcode", { code }));
+var submitInvite = (invite) => call("POST", "/user/invite", { invite });
 var getFriendLink = () => call("GET", "/user/links/friend");
 var getBuffetLink = () => call("GET", "/user/links/buffet");
 var checkShopReady = () => call("GET", "/user/shop/ready");
@@ -16967,7 +16977,7 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 // src/application/App.jsx
 var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([0,1,2,3])));
 var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11,12,13])));
-var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([14,7,15,2,3,16,17,5,6,18,13,19])));
+var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([14,7,15,2,3,16,6,17,5,18,13,19])));
 var Avatar = (0, import_react.lazy)(() => __vitePreload(() => import("./Avatar.js"), __vite__mapDeps([20,10,11,21,6])));
 var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([22,23,9])));
 var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([24,19,16,12,21,23,9,18])));
@@ -17148,7 +17158,7 @@ function AppContent() {
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
 										path: "data",
 										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
-											to: "/administrator/data/musicians",
+											to: "/administrator/data/shop",
 											replace: true
 										})
 									}),
@@ -17199,4 +17209,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)();
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }) }));
-export { JsonEditor as $, adminUsers as A, useParams as At, redeemGiftCode as B, adminPlayer as C, IconCircleCheck as Ct, adminSaveData as D, Outlet as Dt, adminRecord as E, createReactComponent as Et, buy as F, resetPassword as G, updateUser as H, changeOpenid as I, fileToAvatar as J, signup as K, getBuffetLink as L, createTransaction as M, __toESM as Mt, getTransaction as N, adminSaveRecord as O, useLocation as Ot, getTransactions as P, Logo as Q, getFriendLink as R, adminGiftCodes as S, IconDeviceFloppy as St, adminPlayers as T, IconAlertTriangle as Tt, login as U, updateAvatar as V, passwordOtp as W, normShop as X, isAdmin as Y, Coin as Z, adminDeleteUser as _, Button as _t, formatShortDateTime as a, Spinner as at, adminEditUser as b, IconRefresh as bt, adminAddPlayerFriend as c, PageSizeSelect as ct, adminCreateGiftCode as d, Menu as dt, Line as et, adminCreateUser as f, Dialog as ft, adminDeletePlayerFriend as g, Field as gt, adminDeleteGiftCode as h, toastError as ht, formatNumber as i, ErrorState as it, cancelTransaction as j, require_react as jt, adminUpdatePlayerAvatar as k, useNavigate as kt, adminAddPlayerLike as l, Select as lt, adminDecryptRecordValue as m, toast as mt, formatDate as n, RowSkeleton as nt, formatVietnameseDong as o, Pager as ot, adminData as p, OtpButton as pt, signupOtp as q, formatDateTime as r, Skeleton as rt, adminAddCoin as s, Tabs as st, compareByTime as t, PagerSkeleton as tt, adminAddPlayerStar as u, SortSelect as ut, adminEditGiftCode as v, require_jsx_runtime as vt, adminPlayerFriends as w, IconBuildingStore as wt, adminEncryptRecordValue as x, IconInfoCircle as xt, adminEditPlayer as y, IconX as yt, openidOtp as z };
+export { Logo as $, adminUsers as A, useNavigate as At, redeemGiftCode as B, adminPlayer as C, IconDeviceFloppy as Ct, adminSaveData as D, createReactComponent as Dt, adminRecord as E, IconAlertTriangle as Et, buy as F, passwordOtp as G, updateAvatar as H, changeOpenid as I, signupOtp as J, resetPassword as K, getBuffetLink as L, createTransaction as M, require_react as Mt, getTransaction as N, __toESM as Nt, adminSaveRecord as O, Outlet as Ot, getTransactions as P, Coin as Q, getFriendLink as R, adminGiftCodes as S, IconInfoCircle as St, adminPlayers as T, IconBuildingStore as Tt, updateUser as U, submitInvite as V, login as W, isAdmin as X, fileToAvatar as Y, normShop as Z, adminDeleteUser as _, Field as _t, formatShortDateTime as a, ErrorState as at, adminEditUser as b, IconX as bt, adminAddPlayerFriend as c, Tabs as ct, adminCreateGiftCode as d, SortSelect as dt, JsonEditor as et, adminCreateUser as f, Menu as ft, adminDeletePlayerFriend as g, toastError as gt, adminDeleteGiftCode as h, toast as ht, formatNumber as i, Skeleton as it, cancelTransaction as j, useParams as jt, adminUpdatePlayerAvatar as k, useLocation as kt, adminAddPlayerLike as l, PageSizeSelect as lt, adminDecryptRecordValue as m, OtpButton as mt, formatDate as n, PagerSkeleton as nt, formatVietnameseDong as o, Spinner as ot, adminData as p, Dialog as pt, signup as q, formatDateTime as r, RowSkeleton as rt, adminAddCoin as s, Pager as st, compareByTime as t, Line as tt, adminAddPlayerStar as u, Select as ut, adminEditGiftCode as v, Button as vt, adminPlayerFriends as w, IconCircleCheck as wt, adminEncryptRecordValue as x, IconRefresh as xt, adminEditPlayer as y, require_jsx_runtime as yt, openidOtp as z };

@@ -1,8 +1,11 @@
-import { IconBriefcase2, IconLink, IconLogout, IconPencil, IconStarFilled, IconUserPlus } from '@tabler/icons-react';
+import { IconBriefcase2, IconCopy, IconLogout, IconPencil, IconStarFilled, IconUserPlus } from '@tabler/icons-react';
 import { formatNumber, formatDate } from '@/shared/library/format';
+import { copyText } from '@/shared/library/clipboard';
 import { Button, Coin } from '@/shared/components/ui';
 
-export default function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGiftCode, onFriendLink, onBuffetLink }) {
+export default function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGiftCode, onRedeemInvite, onFriendLink, onBuffetLink }) {
+  const hasFriendInvite = Boolean(user.friendInvite);
+
   return (
     <div className='relative overflow-hidden rounded-2xl border border-line bg-panel p-5'>
       <div aria-hidden className='absolute inset-x-0 top-0 h-20 bg-[radial-gradient(80%_100%_at_0%_0%,color-mix(in_oklab,var(--color-lime)_18%,transparent),transparent)]' />
@@ -41,11 +44,32 @@ export default function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGift
       <Button variant='ghost' size='sm' className='relative mt-3 w-full' onClick={onRedeemGiftCode}>
         Nhập mã đổi thưởng
       </Button>
+      <div className='relative mt-2 flex gap-2'>
+        <Button
+          variant='ghost'
+          size='sm'
+          className='min-w-0 flex-1'
+          disabled={hasFriendInvite}
+          onClick={hasFriendInvite ? undefined : onRedeemInvite}
+        >
+          <span className='truncate'>{hasFriendInvite ? `Mã mời đã nhập: ${user.friendInvite}` : 'Nhập mã mời'}</span>
+        </Button>
+        <Button
+          variant='ghost'
+          size='sm'
+          className='size-8! shrink-0 px-0!'
+          disabled={!user.invite}
+          onClick={() => user.invite && copyText(user.invite, 'Đã sao chép mã mời')}
+          aria-label='Sao chép mã mời của mình'
+        >
+          <IconCopy size={15} />
+        </Button>
+      </div>
       <div className='relative mt-2 grid grid-cols-2 gap-2'>
-        <Button variant='quiet' size='sm' className='min-w-0' onClick={onFriendLink}>
+        <Button variant='ghost' size='sm' className='min-w-0' onClick={onFriendLink}>
           <IconUserPlus size={14} /> <span className='truncate'>Liên kết kết bạn</span>
         </Button>
-        <Button variant='quiet' size='sm' className='min-w-0' onClick={onBuffetLink}>
+        <Button variant='ghost' size='sm' className='min-w-0' onClick={onBuffetLink}>
           <IconBriefcase2 size={14} /> <span className='truncate'>Liên kết làm thêm</span>
         </Button>
       </div>

@@ -142,7 +142,7 @@ function AppContent() {
                 <Route path='players' element={<AdminPlayers />} />
                 <Route path='players/:openid' element={<PlayerRouteRedirect />} />
                 <Route path='players/:openid/:section' element={<AdminPlayers />} />
-                <Route path='data' element={<Navigate to='/administrator/data/musicians' replace />} />
+                <Route path='data' element={<Navigate to='/administrator/data/shop' replace />} />
                 <Route path='data/:section' element={<AdminData />} />
                 <Route path='*' element={<Navigate to='/administrator/giftcodes' replace />} />
               </Route>

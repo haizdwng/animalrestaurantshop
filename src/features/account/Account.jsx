@@ -6,6 +6,7 @@ import ProfileCard from '@/features/account/ProfileCard';
 import Transactions from '@/features/account/Transactions';
 import useProfileForm from '@/features/account/useProfileForm';
 import GiftCodeDialog from '@/features/account/GiftCodeDialog';
+import InviteCodeDialog from '@/features/account/InviteCodeDialog';
 import LinkDialog from '@/features/account/LinkDialog';
 import * as api from '@/shared/library/api';
 
@@ -27,6 +28,7 @@ export default function Account({ user, onUser, onLogout, onRefresh }) {
           onEditAvatar={() => show('avatar')}
           onLogout={() => show('logout')}
           onRedeemGiftCode={() => show('giftcode')}
+          onRedeemInvite={() => show('invite')}
           onFriendLink={() => openLink('friend', 'Liên kết kết bạn', api.getFriendLink)}
           onBuffetLink={() => openLink('buffet', 'Liên kết làm thêm', api.getBuffetLink)}
         />
@@ -57,6 +59,7 @@ export default function Account({ user, onUser, onLogout, onRefresh }) {
       <OpenidDialog form={form} user={user} />
       <LogoutDialog form={form} user={user} onLogout={onLogout} />
       <GiftCodeDialog open={form.open === 'giftcode'} onClose={form.close} onUser={onUser} />
+      <InviteCodeDialog open={form.open === 'invite'} onClose={form.close} user={user} onUser={onUser} />
       <LinkDialog
         open={!!linkDialog}
         title={linkDialog?.title}

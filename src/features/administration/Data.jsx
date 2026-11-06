@@ -12,7 +12,7 @@ export default function AdminData() {
   const activeSection = DATA_TABS.some(([key]) => key === section) ? section : 'shop';
 
   useEffect(() => {
-    if (!section || activeSection !== section)  navigate('/administrator/data/musicians', { replace: true });
+    if (!section || activeSection !== section) navigate('/administrator/data/shop', { replace: true });
   }, [section, activeSection, navigate]);
 
   const visit = (next) => navigate(`/administrator/data/${next}`);
