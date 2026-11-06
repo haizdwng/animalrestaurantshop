@@ -1,4 +1,4 @@
-import { At as require_react, E as adminSaveData, Ot as useNavigate, Q as JsonEditor, X as Coin, Y as normShop, _t as require_jsx_runtime, dt as Dialog, f as adminData, gt as Button, ht as Field, i as formatNumber, it as Spinner, jt as __toESM, kt as useParams, mt as toastError, nt as Skeleton, ot as Tabs, pt as toast, rt as ErrorState, ut as Menu, xt as IconDeviceFloppy, yt as IconRefresh } from "./index.js";
+import { $ as JsonEditor, At as useParams, D as adminSaveData, Mt as __toESM, St as IconDeviceFloppy, X as normShop, Z as Coin, _t as Button, at as Spinner, bt as IconRefresh, dt as Menu, ft as Dialog, gt as Field, ht as toastError, i as formatNumber, it as ErrorState, jt as require_react, kt as useNavigate, mt as toast, p as adminData, rt as Skeleton, st as Tabs, vt as require_jsx_runtime } from "./index.js";
 import { r as DATA_TABS } from "./config.js";
 import { t as Head } from "./Head.js";
 import { t as IconPencil } from "./IconPencil.js";
@@ -387,7 +387,7 @@ function ShopEditor() {
 function AdminData() {
 	const { section } = useParams();
 	const navigate = useNavigate();
-	const activeSection = DATA_TABS.some(([key]) => key === section) ? section : "musicians";
+	const activeSection = DATA_TABS.some(([key]) => key === section) ? section : "shop";
 	(0, import_react.useEffect)(() => {
 		if (!section || activeSection !== section) navigate("/administrator/data/musicians", { replace: true });
 	}, [

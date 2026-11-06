@@ -1,5 +1,5 @@
 import { r as passwordStrength } from "./validate.js";
-import { _t as require_jsx_runtime } from "./index.js";
+import { vt as require_jsx_runtime } from "./index.js";
 // src/shared/components/StrengthBar.jsx
 var import_jsx_runtime = require_jsx_runtime();
 var LABELS = [

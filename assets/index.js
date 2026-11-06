@@ -11472,24 +11472,30 @@ var PopStateEventType = "popstate";
 function isLocation(obj) {
 	return typeof obj === "object" && obj != null && "pathname" in obj && "search" in obj && "hash" in obj && "state" in obj && "key" in obj;
 }
-function createBrowserHistory(options = {}) {
-	function createBrowserLocation(window2, globalHistory) {
-		let maskedLocation = globalHistory.state?.masked;
-		let { pathname, search, hash } = maskedLocation || window2.location;
+function createHashHistory(options = {}) {
+	function createHashLocation(window2, globalHistory) {
+		let { pathname = "/", search = "", hash = "" } = parsePath(window2.location.hash.substring(1));
+		if (!pathname.startsWith("/") && !pathname.startsWith(".")) pathname = "/" + pathname;
 		return createLocation("", {
 			pathname,
 			search,
 			hash
-		}, globalHistory.state && globalHistory.state.usr || null, globalHistory.state && globalHistory.state.key || "default", maskedLocation ? {
-			pathname: window2.location.pathname,
-			search: window2.location.search,
-			hash: window2.location.hash
-		} : void 0);
+		}, globalHistory.state && globalHistory.state.usr || null, globalHistory.state && globalHistory.state.key || "default");
 	}
-	function createBrowserHref(window2, to) {
-		return typeof to === "string" ? to : createPath(to);
+	function createHashHref(window2, to) {
+		let base = window2.document.querySelector("base");
+		let href = "";
+		if (base && base.getAttribute("href")) {
+			let url = window2.location.href;
+			let hashIndex = url.indexOf("#");
+			href = hashIndex === -1 ? url : url.slice(0, hashIndex);
+		}
+		return href + "#" + (typeof to === "string" ? to : createPath(to));
 	}
-	return getUrlBasedHistory(createBrowserLocation, createBrowserHref, null, options);
+	function validateHashLocation(location, to) {
+		warning(location.pathname.charAt(0) === "/", `relative pathnames are not supported in hash history.push(${JSON.stringify(to)})`);
+	}
+	return getUrlBasedHistory(createHashLocation, createHashHref, validateHashLocation, options);
 }
 function invariant(value, message) {
 	if (value === false || value === null || typeof value === "undefined") throw new Error(message);
@@ -13048,9 +13054,9 @@ var isBrowser2 = typeof window !== "undefined" && typeof window.document !== "un
 try {
 	if (isBrowser2) window.__reactRouterVersion = "7.18.5";
 } catch (e) {}
-function BrowserRouter({ basename, children, useTransitions, window: window2 }) {
+function HashRouter({ basename, children, useTransitions, window: window2 }) {
 	let historyRef = import_react.useRef();
-	if (historyRef.current == null) historyRef.current = createBrowserHistory({
+	if (historyRef.current == null) historyRef.current = createHashHistory({
 		window: window2,
 		v5Compat: true
 	});
@@ -16578,6 +16584,7 @@ var adminDecryptRecordValue = (openid, type, value) => call("POST", `/administra
 var adminData = (name) => call("GET", `/administrator/data/${name}`);
 var adminSaveData = (name, value) => call("PATCH", `/administrator/data/${name}`, { [name]: JSON.stringify(value) });
 var adminAddPlayerStar = (openid, star) => call("POST", `/administrator/players/${enc(openid)}/star`, { star });
+var adminAddPlayerLike = (openid, like) => call("POST", `/administrator/players/${enc(openid)}/like`, { like });
 // src/shared/configuration/navigation.js
 var NAV = [
 	[
@@ -17091,7 +17098,7 @@ function AppContent() {
 								element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StartRoute, {})
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-								path: "/shop",
+								path: "/shop/:section?",
 								element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Shop, {
 									user,
 									onUser: setUser,
@@ -17191,8 +17198,5 @@ function App() {
 }
 // src/main.jsx
 (0, import_disable_devtool_min.default)();
-(0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
-	basename: "/animalrestaurantshop",
-	children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {})
-}) }));
-export { Line as $, cancelTransaction as A, require_react as At, updateAvatar as B, adminPlayerFriends as C, IconBuildingStore as Ct, adminSaveRecord as D, useLocation as Dt, adminSaveData as E, Outlet as Et, changeOpenid as F, signup as G, login as H, getBuffetLink as I, isAdmin as J, signupOtp as K, getFriendLink as L, getTransaction as M, getTransactions as N, adminUpdatePlayerAvatar as O, useNavigate as Ot, buy as P, JsonEditor as Q, openidOtp as R, adminPlayer as S, IconCircleCheck as St, adminRecord as T, createReactComponent as Tt, passwordOtp as U, updateUser as V, resetPassword as W, Coin as X, normShop as Y, Logo as Z, adminEditGiftCode as _, require_jsx_runtime as _t, formatShortDateTime as a, Pager as at, adminEncryptRecordValue as b, IconInfoCircle as bt, adminAddPlayerFriend as c, Select as ct, adminCreateUser as d, Dialog as dt, PagerSkeleton as et, adminData as f, OtpButton as ft, adminDeleteUser as g, Button as gt, adminDeletePlayerFriend as h, Field as ht, formatNumber as i, Spinner as it, createTransaction as j, __toESM as jt, adminUsers as k, useParams as kt, adminAddPlayerStar as l, SortSelect as lt, adminDeleteGiftCode as m, toastError as mt, formatDate as n, Skeleton as nt, formatVietnameseDong as o, Tabs as ot, adminDecryptRecordValue as p, toast as pt, fileToAvatar as q, formatDateTime as r, ErrorState as rt, adminAddCoin as s, PageSizeSelect as st, compareByTime as t, RowSkeleton as tt, adminCreateGiftCode as u, Menu as ut, adminEditPlayer as v, IconX as vt, adminPlayers as w, IconAlertTriangle as wt, adminGiftCodes as x, IconDeviceFloppy as xt, adminEditUser as y, IconRefresh as yt, redeemGiftCode as z };
+(0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }) }));
+export { JsonEditor as $, adminUsers as A, useParams as At, redeemGiftCode as B, adminPlayer as C, IconCircleCheck as Ct, adminSaveData as D, Outlet as Dt, adminRecord as E, createReactComponent as Et, buy as F, resetPassword as G, updateUser as H, changeOpenid as I, fileToAvatar as J, signup as K, getBuffetLink as L, createTransaction as M, __toESM as Mt, getTransaction as N, adminSaveRecord as O, useLocation as Ot, getTransactions as P, Logo as Q, getFriendLink as R, adminGiftCodes as S, IconDeviceFloppy as St, adminPlayers as T, IconAlertTriangle as Tt, login as U, updateAvatar as V, passwordOtp as W, normShop as X, isAdmin as Y, Coin as Z, adminDeleteUser as _, Button as _t, formatShortDateTime as a, Spinner as at, adminEditUser as b, IconRefresh as bt, adminAddPlayerFriend as c, PageSizeSelect as ct, adminCreateGiftCode as d, Menu as dt, Line as et, adminCreateUser as f, Dialog as ft, adminDeletePlayerFriend as g, Field as gt, adminDeleteGiftCode as h, toastError as ht, formatNumber as i, ErrorState as it, cancelTransaction as j, require_react as jt, adminUpdatePlayerAvatar as k, useNavigate as kt, adminAddPlayerLike as l, Select as lt, adminDecryptRecordValue as m, toast as mt, formatDate as n, RowSkeleton as nt, formatVietnameseDong as o, Pager as ot, adminData as p, OtpButton as pt, signupOtp as q, formatDateTime as r, Skeleton as rt, adminAddCoin as s, Tabs as st, compareByTime as t, PagerSkeleton as tt, adminAddPlayerStar as u, SortSelect as ut, adminEditGiftCode as v, require_jsx_runtime as vt, adminPlayerFriends as w, IconBuildingStore as wt, adminEncryptRecordValue as x, IconInfoCircle as xt, adminEditPlayer as y, IconX as yt, openidOtp as z };

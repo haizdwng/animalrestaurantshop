@@ -1,4 +1,4 @@
-import { At as require_react, B as updateAvatar, Tt as createReactComponent, _t as require_jsx_runtime, gt as Button, it as Spinner, jt as __toESM, nt as Skeleton, ot as Tabs, pt as toast, yt as IconRefresh } from "./index.js";
+import { Et as createReactComponent, Mt as __toESM, V as updateAvatar, _t as Button, at as Spinner, bt as IconRefresh, jt as require_react, mt as toast, rt as Skeleton, st as Tabs, vt as require_jsx_runtime } from "./index.js";
 import { n as IconCat, t as IconPhoto } from "./IconPhoto.js";
 import { t as IconCheck } from "./IconCheck.js";
 import { t as IconTrash } from "./IconTrash.js";
@@ -686,17 +686,21 @@ function AvatarStage({ doc, selectedId, dispatch }) {
 	(0, import_react.useEffect)(() => {
 		const canvas = canvasRef.current;
 		const onWheel = (event) => {
+			if (!event.ctrlKey) return;
+			event.preventDefault();
 			const { doc: currentDoc, selectedId: currentSelectedId } = live.current;
 			const item = currentDoc.items.find((entry) => entry.id === currentSelectedId);
 			if (!item) return;
-			event.preventDefault();
+			const nextScale = item.scale * Math.exp(-event.deltaY * .0015);
+			const scale = Math.min(SCALE.max, Math.max(SCALE.min, nextScale));
+			if (scale === item.scale) return;
 			const now = Date.now();
 			if (now - lastWheel.current > 400) dispatch({ type: "checkpoint" });
 			lastWheel.current = now;
 			dispatch({
 				type: "patch",
 				id: currentSelectedId,
-				patch: { scale: item.scale * Math.exp(-event.deltaY * .0015) }
+				patch: { scale }
 			});
 		};
 		canvas.addEventListener("wheel", onWheel, { passive: false });
@@ -840,6 +844,9 @@ function decodeBase64(value) {
 	const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
 	return JSON.parse(new TextDecoder().decode(bytes));
 }
+function isEditableTarget(target) {
+	return target instanceof HTMLElement && (target.isContentEditable || target.closest("input, textarea, select, [contenteditable=\"true\"]"));
+}
 function AvatarToolbar({ selected, canUndo, canRedo, dispatch, doc }) {
 	const id = selected?.id;
 	const copyDesign = async () => {
@@ -865,22 +872,66 @@ function AvatarToolbar({ selected, canUndo, canRedo, dispatch, doc }) {
 			});
 			toast("Đã dán thiết kế thành công");
 		} catch (error) {
-			toast(error.name === "NotAllowedError" ? "Không có quyền truy cập clipboard" : error.message === "Mã thiết kế không hợp lệ" || error.message === "Dữ liệu thiết kế không hợp lệ" ? error.message : "Clipboard không chứa mã thiết kế hợp lệ", "err");
+			toast(error.name === "NotAllowedError" ? "Không có quyền truy cập bộ nhớ tạm" : error.message === "Mã thiết kế không hợp lệ" || error.message === "Dữ liệu thiết kế không hợp lệ" ? error.message : "Bộ nhớ tạm không chứa mã thiết kế hợp lệ", "err");
 		}
 	};
+	(0, import_react.useEffect)(() => {
+		const handleKeyDown = (event) => {
+			if (!event.ctrlKey || event.altKey || event.metaKey || isEditableTarget(event.target)) return;
+			const key = event.key.toLowerCase();
+			if (key === "c") {
+				if (window.getSelection()?.toString()) return;
+				event.preventDefault();
+				copyDesign();
+			}
+			if (key === "v") {
+				event.preventDefault();
+				pasteDesign();
+			}
+			if (key === "z" || key === "y") {
+				event.preventDefault();
+				dispatch({ type: key === "y" || event.shiftKey ? "redo" : "undo" });
+			}
+		};
+		const handleWheel = (event) => {
+			if (!event.ctrlKey || isEditableTarget(event.target)) return;
+			event.preventDefault();
+			if (!selected) return;
+			const direction = event.deltaY < 0 ? 1 : -1;
+			const nextScale = selected.scale + direction * SCALE.step;
+			if (nextScale < SCALE.min || nextScale > SCALE.max) return;
+			dispatch({
+				type: "adjust",
+				id,
+				dScale: direction * SCALE.step
+			});
+		};
+		window.addEventListener("keydown", handleKeyDown);
+		window.addEventListener("wheel", handleWheel, { passive: false });
+		return () => {
+			window.removeEventListener("keydown", handleKeyDown);
+			window.removeEventListener("wheel", handleWheel);
+		};
+	}, [
+		selected,
+		id,
+		dispatch,
+		copyDesign,
+		pasteDesign
+	]);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		role: "toolbar",
 		"aria-label": "Công cụ chỉnh sửa",
 		className: "grid grid-cols-4 gap-1.5 md:grid-cols-8",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconBtn, {
-				label: "Hoàn tác (Ctrl+Z)",
+				label: "Hoàn tác",
 				Icon: IconArrowBackUp,
 				disabled: !canUndo,
 				onClick: () => dispatch({ type: "undo" })
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconBtn, {
-				label: "Làm lại (Ctrl+Shift+Z)",
+				label: "Làm lại",
 				Icon: IconArrowForwardUp,
 				disabled: !canRedo,
 				onClick: () => dispatch({ type: "redo" })
@@ -916,7 +967,7 @@ function AvatarToolbar({ selected, canUndo, canRedo, dispatch, doc }) {
 				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconBtn, {
-				label: "Xóa phụ kiện đang chọn (Delete)",
+				label: "Xóa phụ kiện đang chọn",
 				Icon: IconTrash,
 				disabled: !selected,
 				onClick: () => dispatch({
@@ -935,12 +986,12 @@ function AvatarToolbar({ selected, canUndo, canRedo, dispatch, doc }) {
 				onClick: () => dispatch({ type: "reset" })
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconBtn, {
-				label: "Sao chép mã Base64",
+				label: "Sao chép thiết kế",
 				Icon: IconCopy,
 				onClick: copyDesign
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconBtn, {
-				label: "Dán mã Base64",
+				label: "Dán thiết kế",
 				Icon: IconClipboard,
 				onClick: pasteDesign
 			})
@@ -1246,76 +1297,69 @@ function Avatar({ onUser }) {
 		className: "flex h-[calc(100svh-var(--app-header-h)-var(--app-bottom-nav-h)-env(safe-area-inset-bottom))] flex-col overflow-hidden md:h-[calc(100svh-var(--app-header-h))] md:flex-row md:gap-6 md:p-6",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("aside", {
 			className: "shrink-0 border-b border-line px-4 py-3 md:max-h-full md:w-90 md:self-start md:overflow-y-auto md:rounded-2xl md:border md:bg-panel md:p-5",
-			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "grid grid-cols-[minmax(0,44%)_minmax(0,1fr)] items-stretch gap-3 md:block md:space-y-3",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarStage, {
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "grid grid-cols-[minmax(0,44%)_minmax(0,1fr)] items-stretch gap-3 md:block md:space-y-3",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarStage, {
+					doc,
+					selectedId,
+					dispatch
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex min-w-0 flex-col justify-between gap-2 md:gap-3",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarToolbar, {
 						doc,
-						selectedId,
+						selected,
+						canUndo,
+						canRedo,
 						dispatch
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "flex min-w-0 flex-col justify-between gap-2 md:gap-3",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarToolbar, {
-							doc,
-							selected,
-							canUndo,
-							canRedo,
-							dispatch
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							className: "flex gap-2",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-								variant: "ghost",
-								size: "sm",
-								className: "h-9 w-9 shrink-0 px-0",
-								disabled: busy,
-								onClick: download,
-								"aria-label": "Tải ảnh về máy",
-								title: "Tải ảnh về máy",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDownload, { size: 16 })
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-								size: "sm",
-								className: "h-9 min-w-0 flex-1 px-2",
-								loading: busy,
-								onClick: useAsAvatar,
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUserCheck, {
-									size: 15,
-									className: "hidden md:block"
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "truncate",
-									children: "Đặt làm ảnh đại diện"
-								})]
+						className: "flex gap-2",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+							variant: "ghost",
+							size: "sm",
+							className: "h-9 w-9 shrink-0 px-0",
+							disabled: busy,
+							onClick: download,
+							"aria-label": "Tải ảnh về máy",
+							title: "Tải ảnh về máy",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDownload, { size: 16 })
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+							size: "sm",
+							className: "h-9 min-w-0 flex-1 px-2",
+							loading: busy,
+							onClick: useAsAvatar,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUserCheck, {
+								size: 15,
+								className: "hidden md:block"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "truncate",
+								children: "Đặt làm ảnh đại diện"
 							})]
 						})]
 					})]
-				}),
-				busy && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "mt-3 space-y-2",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "flex items-center justify-between gap-3 text-xs",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "truncate text-mute",
-							children: progressMessage
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-							className: "shrink-0 font-semibold tabular-nums text-fg",
-							children: [progress, "%"]
-						})]
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "h-2 overflow-hidden rounded-full bg-bg",
-						role: "progressbar",
-						"aria-valuenow": progress,
-						"aria-valuemin": 0,
-						"aria-valuemax": 100,
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-							className: "h-full rounded-full bg-lime transition-[width] duration-300 ease-out",
-							style: { width: `${progress}%` }
-						})
+				})]
+			}), busy && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "mt-3 space-y-2",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex items-center justify-between gap-3 text-xs",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "truncate text-mute",
+						children: progressMessage
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+						className: "shrink-0 font-semibold tabular-nums text-fg",
+						children: [progress, "%"]
 					})]
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "mt-3 hidden text-center text-[10px] text-mute md:block",
-					children: "Kéo để di chuyển · lăn chuột hoặc chụm 2 ngón để phóng/xoay"
-				})
-			]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "h-2 overflow-hidden rounded-full bg-bg",
+					role: "progressbar",
+					"aria-valuenow": progress,
+					"aria-valuemin": 0,
+					"aria-valuemax": 100,
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "h-full rounded-full bg-lime transition-[width] duration-300 ease-out",
+						style: { width: `${progress}%` }
+					})
+				})]
+			})]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
 			className: "flex min-h-0 flex-1 flex-col px-4 pt-3 md:px-0 md:pt-0",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AssetPicker_default, {

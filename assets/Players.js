@@ -1,4 +1,4 @@
-import { $ as Line, At as require_react, C as adminPlayerFriends, D as adminSaveRecord, O as adminUpdatePlayerAvatar, Ot as useNavigate, Q as JsonEditor, S as adminPlayer, T as adminRecord, Tt as createReactComponent, _t as require_jsx_runtime, b as adminEncryptRecordValue, bt as IconInfoCircle, c as adminAddPlayerFriend, ct as Select, dt as Dialog, et as PagerSkeleton, gt as Button, h as adminDeletePlayerFriend, ht as Field, i as formatNumber, it as Spinner, jt as __toESM, kt as useParams, l as adminAddPlayerStar, mt as toastError, nt as Skeleton, ot as Tabs, p as adminDecryptRecordValue, pt as toast, q as fileToAvatar, rt as ErrorState, st as PageSizeSelect, ut as Menu, v as adminEditPlayer, w as adminPlayers, yt as IconRefresh } from "./index.js";
+import { $ as JsonEditor, At as useParams, C as adminPlayer, E as adminRecord, Et as createReactComponent, J as fileToAvatar, Mt as __toESM, O as adminSaveRecord, T as adminPlayers, _t as Button, at as Spinner, bt as IconRefresh, c as adminAddPlayerFriend, ct as PageSizeSelect, dt as Menu, et as Line, ft as Dialog, g as adminDeletePlayerFriend, gt as Field, ht as toastError, i as formatNumber, it as ErrorState, jt as require_react, k as adminUpdatePlayerAvatar, kt as useNavigate, l as adminAddPlayerLike, lt as Select, m as adminDecryptRecordValue, mt as toast, rt as Skeleton, st as Tabs, tt as PagerSkeleton, u as adminAddPlayerStar, vt as require_jsx_runtime, w as adminPlayerFriends, x as adminEncryptRecordValue, xt as IconInfoCircle, y as adminEditPlayer } from "./index.js";
 import { n as IconArrowLeft, t as IconArrowRight } from "./IconArrowRight.js";
 import { t as IconSearch } from "./IconSearch.js";
 import { c as IconUser, o as PLAYER_TABS } from "./config.js";
@@ -32,6 +32,16 @@ var IconLockOpen = createReactComponent("outline", "lock-open", "LockOpen", [
 		"key": "svg-2"
 	}]
 ]);
+/**
+* @license @tabler/icons-react v3.50.0 - MIT
+*
+* This source code is licensed under the MIT license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var IconThumbUp = createReactComponent("outline", "thumb-up", "ThumbUp", [["path", {
+	"d": "M7 11v8a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1v-7a1 1 0 0 1 1 -1h3a4 4 0 0 0 4 -4v-1a2 2 0 0 1 4 0v5h3a2 2 0 0 1 2 2l-1 5a2 3 0 0 1 -2 2h-7a3 3 0 0 1 -3 -3",
+	"key": "svg-0"
+}]]);
 // src/features/administration/PlayerCard.jsx
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var import_jsx_runtime = require_jsx_runtime();
@@ -522,9 +532,14 @@ function PlayerRow({ player, onAction }) {
 					onClick: () => onAction("star")
 				},
 				{
+					label: "Thêm lượt thích",
+					Icon: IconThumbUp,
+					onClick: () => onAction("like")
+				},
+				{
 					label: "Xem thông tin",
 					Icon: IconInfoCircle,
-					onClick: () => onAction("data")
+					onClick: () => onAction("info")
 				}
 			] })
 		]
@@ -663,6 +678,43 @@ function PlayerStarDialog({ player, open, busy, onClose, onSubmit }) {
 		})
 	});
 }
+function PlayerLikeDialog({ player, open, busy, onClose, onSubmit }) {
+	const [value, setValue] = (0, import_react.useState)("");
+	(0, import_react.useEffect)(() => {
+		if (open === "like") setValue("");
+	}, [open, player]);
+	const submit = (event) => {
+		event.preventDefault();
+		const like = Number(value);
+		if (!Number.isSafeInteger(like) || like < 1) return toast("Số lượt thích phải là số nguyên từ 1 trở lên", "err");
+		onSubmit(like);
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dialog, {
+		open: open === "like",
+		title: `Thêm lượt thích cho ${player?.nickName || "người chơi"}`,
+		onClose,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+			noValidate: true,
+			className: "space-y-4",
+			onSubmit: submit,
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
+				label: "Số lượt thích",
+				hint: "số nguyên ≥ 1",
+				inputMode: "numeric",
+				placeholder: "1",
+				autoFocus: true,
+				value,
+				onChange: (event) => setValue(event.target.value.replace(/\D/g, "").slice(0, 9))
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+				type: "submit",
+				className: "w-full",
+				loading: busy,
+				disabled: !value,
+				children: "Thêm lượt thích"
+			})]
+		})
+	});
+}
 // src/features/administration/Players.jsx
 var PLAYER_SECTIONS = PLAYER_TABS.map(([key]) => key);
 function AdminPlayers() {
@@ -774,6 +826,20 @@ function AdminPlayers() {
 			setBusy(false);
 		}
 	};
+	const addLike = async (like) => {
+		if (!dialog?.player) return;
+		const id = dialog.player.openid;
+		setBusy(true);
+		try {
+			const response = await adminAddPlayerLike(id, like);
+			toast(response.message || `Đã thêm ${like} lượt thích`);
+			setDialog(null);
+		} catch (error) {
+			toastError(error);
+		} finally {
+			setBusy(false);
+		}
+	};
 	const savePlayer = async ({ nickName, avatar }) => {
 		if (!dialog?.player) return;
 		const id = dialog.player.openid;
@@ -864,7 +930,7 @@ function AdminPlayers() {
 				className: `divide-y divide-line rounded-2xl border border-line bg-panel transition-opacity ${listLoading ? "opacity-50" : ""}`,
 				children: rows.map((person, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlayerRow, {
 					player: person,
-					onAction: (kind) => kind === "data" ? openPlayer(person.openid) : setDialog({
+					onAction: (kind) => kind === "info" ? openPlayer(person.openid) : setDialog({
 						kind,
 						player: person
 					})
@@ -912,6 +978,13 @@ function AdminPlayers() {
 				busy,
 				onClose: () => !busy && setDialog(null),
 				onSubmit: addStar
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlayerLikeDialog, {
+				player: dialog?.player,
+				open: dialog?.kind,
+				busy,
+				onClose: () => !busy && setDialog(null),
+				onSubmit: addLike
 			})
 		]
 	});
