@@ -1,8 +1,10 @@
-import { $ as Skeleton, Ct as __toESM, O as createTransaction, St as require_react, ct as Dialog, dt as toastError, et as ErrorState, ft as Field, gt as IconRefresh, ht as IconX, i as formatNumber, j as buy, mt as require_jsx_runtime, pt as Button, q as Coin, tt as Spinner, ut as toast, vt as IconCircleCheck, xt as createReactComponent } from "./index.js";
+import { At as require_react, P as buy, St as IconCircleCheck, Tt as createReactComponent, X as Coin, _t as require_jsx_runtime, dt as Dialog, gt as Button, ht as Field, i as formatNumber, it as Spinner, j as createTransaction, jt as __toESM, mt as toastError, nt as Skeleton, pt as toast, rt as ErrorState, vt as IconX, yt as IconRefresh } from "./index.js";
 import { i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
-import { a as TOPUP, c as IconPlus, i as CATEGORY_ICONS, n as hasPrice, r as matches, t as Tile, u as IconBox } from "./Tile.js";
+import { a as TOPUP, i as CATEGORY_ICONS, n as hasPrice, r as matches, s as IconBox, t as Tile } from "./Tile.js";
 import { t as IconCheck } from "./IconCheck.js";
-import { n as IconSearch, r as IconLock } from "./clipboard.js";
+import { n as IconLock } from "./clipboard.js";
+import { t as IconPlus } from "./IconPlus.js";
+import { t as IconSearch } from "./IconSearch.js";
 /**
 * @license @tabler/icons-react v3.50.0 - MIT
 *
@@ -309,25 +311,28 @@ function BuyDialog({ item, category, user, onUser, onOwned, onBought, onClose, o
 	const [buying, setBuying] = (0, import_react.useState)(false);
 	const once = !!item?.once;
 	const priced = hasPrice(item);
+	const conditions = Array.isArray(item?.conditions) ? item.conditions : [];
+	const blocked = conditions.some((condition) => condition?.already === false);
+	const hasCurrent = item?.current !== void 0 && item?.current !== null;
 	const maxQty = once ? 1 : item ? Math.max(1, priced && item.price > 0 ? Math.min(100, Math.floor(user.coins / item.price)) : 100) : 1;
 	const total = priced ? item.price * qty : 0;
 	const short = priced ? total - user.coins : 0;
 	const confirm = async () => {
-		if (buying || short > 0) return;
+		if (buying || blocked || short > 0) return;
 		setBuying(true);
 		try {
-			const r = await buy(item.id, once ? 1 : qty);
-			if (r.user) onUser(r.user);
+			const response = await buy(item.id, once ? 1 : qty);
+			if (response.user) onUser(response.user);
 			if (once) onOwned(item.id);
-			toast(r.message || (once ? `Đã mua ${item.name}` : `Đã mua ${qty} × ${item.name}`));
+			toast(response.message || (once ? `Đã mua ${item.name}` : `Đã mua ${qty} × ${item.name}`));
 			onBought?.();
 			onClose();
-		} catch (e) {
-			if (once && ALREADY_OWNED.test(e.message)) {
+		} catch (error) {
+			if (once && ALREADY_OWNED.test(error.message)) {
 				onOwned(item.id);
 				onClose();
 			}
-			toastError(e);
+			toastError(error);
 		} finally {
 			setBuying(false);
 		}
@@ -369,6 +374,50 @@ function BuyDialog({ item, category, user, onUser, onOwned, onBought, onClose, o
 					]
 				})]
 			}),
+			hasCurrent && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex items-center justify-between rounded-lg border border-line bg-bg px-3 py-2.5 text-xs",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					className: "text-mute",
+					children: "Số lượng mà người chơi đang có"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
+					className: "tabular-nums",
+					children: formatNumber(Number(item.current) || 0)
+				})]
+			}),
+			conditions.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "space-y-2 rounded-xl border border-line bg-bg p-3",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "text-[11px] font-bold",
+						children: "Điều kiện mua hàng"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+						className: "space-y-2",
+						children: conditions.map((condition, index) => {
+							const satisfied = condition?.already === true;
+							return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+								className: "flex items-start gap-2 text-xs",
+								children: [satisfied ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCheck, {
+									size: 16,
+									stroke: 2.6,
+									className: "mt-0.5 shrink-0 text-ok"
+								}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, {
+									size: 16,
+									stroke: 2.6,
+									className: "mt-0.5 shrink-0 text-bad"
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: satisfied ? "text-mute" : "text-fg",
+									children: condition?.name || "Điều kiện chưa được mô tả"
+								})]
+							}, `${condition?.name || "condition"}-${index}`);
+						})
+					}),
+					blocked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "rounded-lg bg-bad/10 px-3 py-2 text-[11px] font-medium text-bad",
+						children: "Bạn chưa đáp ứng đủ điều kiện để mua vật phẩm này."
+					})
+				]
+			}),
 			once ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 				className: "flex items-center gap-2 rounded-lg border border-dashed border-line p-3 text-[11px] text-mute",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, {
@@ -378,7 +427,7 @@ function BuyDialog({ item, category, user, onUser, onOwned, onBought, onClose, o
 			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuantityPicker, {
 				value: qty,
 				max: maxQty,
-				disabled: buying,
+				disabled: buying || blocked,
 				onChange: setQty,
 				onEnter: confirm
 			}),
@@ -411,7 +460,11 @@ function BuyDialog({ item, category, user, onUser, onOwned, onBought, onClose, o
 					})]
 				})] })]
 			}),
-			short > 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+			blocked ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+				className: "w-full",
+				disabled: true,
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 16 }), " Chưa đủ điều kiện mua"]
+			}) : short > 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 				className: "w-full bg-coin!",
 				onClick: onTopUp,
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 16 }), " Không đủ xu — Mua thêm"]

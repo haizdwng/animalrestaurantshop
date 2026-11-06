@@ -1,5 +1,6 @@
+import { At as require_react, Ct as IconBuildingStore, Tt as createReactComponent, _t as require_jsx_runtime, jt as __toESM } from "./index.js";
+import { n as IconMusic, t as IconUsers } from "./IconUsers.js";
 import { n as IconCat, t as IconPhoto } from "./IconPhoto.js";
-import { mt as require_jsx_runtime, xt as createReactComponent, yt as IconBuildingStore } from "./index.js";
 /**
 * @license @tabler/icons-react v3.50.0 - MIT
 *
@@ -137,71 +138,10 @@ var IconMotorbike = createReactComponent("outline", "motorbike", "Motorbike", [
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconMusic = createReactComponent("outline", "music", "Music", [
-	["path", {
-		"d": "M3 17a3 3 0 1 0 6 0a3 3 0 0 0 -6 0",
-		"key": "svg-0"
-	}],
-	["path", {
-		"d": "M13 17a3 3 0 1 0 6 0a3 3 0 0 0 -6 0",
-		"key": "svg-1"
-	}],
-	["path", {
-		"d": "M9 17v-13h10v13",
-		"key": "svg-2"
-	}],
-	["path", {
-		"d": "M9 8h10",
-		"key": "svg-3"
-	}]
-]);
-/**
-* @license @tabler/icons-react v3.50.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var IconPlus = createReactComponent("outline", "plus", "Plus", [["path", {
-	"d": "M12 5l0 14",
-	"key": "svg-0"
-}], ["path", {
-	"d": "M5 12l14 0",
-	"key": "svg-1"
-}]]);
-/**
-* @license @tabler/icons-react v3.50.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
 var IconStar = createReactComponent("outline", "star", "Star", [["path", {
 	"d": "M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873l-6.158 -3.245",
 	"key": "svg-0"
 }]]);
-/**
-* @license @tabler/icons-react v3.50.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var IconUsers = createReactComponent("outline", "users", "Users", [
-	["path", {
-		"d": "M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0",
-		"key": "svg-0"
-	}],
-	["path", {
-		"d": "M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2",
-		"key": "svg-1"
-	}],
-	["path", {
-		"d": "M16 3.13a4 4 0 0 1 0 7.75",
-		"key": "svg-2"
-	}],
-	["path", {
-		"d": "M21 21v-2a4 4 0 0 0 -3 -3.85",
-		"key": "svg-3"
-	}]
-]);
 /**
 * @license @tabler/icons-react v3.50.0 - MIT
 *
@@ -227,6 +167,7 @@ var IconWheat = createReactComponent("outline", "wheat", "Wheat", [
 	}]
 ]);
 // src/features/shop/config.js
+var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var TOPUP = "__topup";
 var CATEGORY_ICONS = {
 	letters: IconMail,
@@ -261,23 +202,26 @@ var matches = (p, needle) => !needle || p.name.toLowerCase().includes(needle) ||
 // src/features/shop/Tile.jsx
 var import_jsx_runtime = require_jsx_runtime();
 function Tile({ p, size = "md" }) {
-	const c = hue(p.id);
-	const big = size === "lg";
+	const color = hue(p.id || p.name);
+	const large = size === "lg";
+	const [failedImage, setFailedImage] = (0, import_react.useState)("");
+	const imageFailed = !!p.image && failedImage === p.image;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: `relative grid shrink-0 place-items-center overflow-hidden rounded-xl ${big ? "size-16" : "size-12"}`,
+		className: `relative grid shrink-0 place-items-center overflow-hidden rounded-xl ${large ? "size-16" : "size-12"}`,
 		style: {
-			background: `color-mix(in oklab, ${c} 14%, transparent)`,
-			color: c
+			background: `color-mix(in oklab, ${color} 14%, transparent)`,
+			color
 		},
-		children: [p.image ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+		children: [p.image && !imageFailed ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
 			src: p.image,
 			alt: "",
 			loading: "lazy",
-			className: "size-full object-cover"
+			className: "size-full object-cover",
+			onError: () => setFailedImage(p.image)
 		}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-			className: `font-extrabold tracking-tight ${big ? "text-xl" : "text-sm"}`,
-			children: initials(p.name) || "?"
+			className: `font-extrabold tracking-tight ${large ? "text-xl" : "text-sm"}`,
+			children: initials(String(p.name || "")) || "?"
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "absolute inset-0 rounded-xl ring-1 ring-current/20 ring-inset" })]
 	});
 }
-export { TOPUP as a, IconPlus as c, CATEGORY_ICONS as i, IconMusic as l, hasPrice as n, IconUsers as o, matches as r, IconStar as s, Tile as t, IconBox as u };
+export { TOPUP as a, CATEGORY_ICONS as i, hasPrice as n, IconStar as o, matches as r, IconBox as s, Tile as t };
