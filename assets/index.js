@@ -16969,12 +16969,11 @@ var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Pl
 var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([28,23,9,26,16,12,21,8,10])));
 function StartRoute() {
 	const location = useLocation();
-	const navigate = useNavigate();
-	(0, import_react.useEffect)(() => {
-		const redirect = new URLSearchParams(location.search).get("redirect");
-		navigate(redirect?.startsWith("/") ? redirect : `/${DEFAULT_TAB}`, { replace: true });
-	}, [location.search, navigate]);
-	return null;
+	const redirect = new URLSearchParams(location.search).get("redirect");
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
+		to: redirect?.startsWith("/") ? redirect : `/${DEFAULT_TAB}`,
+		replace: true
+	});
 }
 function PlayerRouteRedirect() {
 	const { openid } = useParams();
@@ -16990,9 +16989,10 @@ function AppContent() {
 	const navigate = useNavigate();
 	const lockedPath = (0, import_react.useRef)("");
 	const requestsPending = (0, import_react.useSyncExternalStore)(subscribeToRequests, getPendingRequestCount, getPendingRequestCount) > 0;
-	const current = location.pathname.split("/").filter(Boolean)[0] || "shop";
+	const pathSegment = location.pathname.split("/").filter(Boolean)[0];
+	const current = pathSegment || "shop";
 	const admin = isAdmin(user);
-	const { shop, load: loadShop } = useShop(status === "authed" && current === "shop", admin);
+	const { shop, load: loadShop } = useShop(status === "authed" && pathSegment === "shop", admin);
 	const currentPath = `${location.pathname}${location.search}${location.hash}`;
 	(0, import_react.useEffect)(() => {
 		if (!requestsPending) {

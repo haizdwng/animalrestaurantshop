@@ -631,10 +631,12 @@ function AvatarStage({ doc, selectedId, dispatch }) {
 	const imageUrls = getAvatarDocumentImageUrls(doc);
 	const imageKey = imageUrls.join("|");
 	const images = loadedAssets.key === imageKey ? loadedAssets.images : /* @__PURE__ */ new Map();
-	(0, import_react.useEffect)(() => live.current = {
-		doc,
-		selectedId,
-		images
+	(0, import_react.useEffect)(() => {
+		live.current = {
+			doc,
+			selectedId,
+			images
+		};
 	});
 	(0, import_react.useEffect)(() => {
 		const observer = new ResizeObserver(([entry]) => setWidth(Math.round(entry.contentRect.width)));
