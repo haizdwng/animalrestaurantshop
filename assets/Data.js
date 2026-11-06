@@ -1,4 +1,4 @@
-import { $ as JsonEditor, At as useParams, D as adminSaveData, Mt as __toESM, St as IconDeviceFloppy, X as normShop, Z as Coin, _t as Button, at as Spinner, bt as IconRefresh, dt as Menu, ft as Dialog, gt as Field, ht as toastError, i as formatNumber, it as ErrorState, jt as require_react, kt as useNavigate, mt as toast, p as adminData, rt as Skeleton, st as Tabs, vt as require_jsx_runtime } from "./index.js";
+import { At as useNavigate, Ct as IconDeviceFloppy, D as adminSaveData, Mt as require_react, Nt as __toESM, Q as Coin, X as normShop, Z as parseShopData, _t as Field, at as ErrorState, ct as Tabs, et as JsonEditor, ft as Menu, gt as toastError, ht as toast, i as formatNumber, it as Skeleton, jt as useParams, ot as Spinner, p as adminData, pt as Dialog, vt as Button, xt as IconRefresh, yt as require_jsx_runtime } from "./index.js";
 import { r as DATA_TABS } from "./config.js";
 import { t as Head } from "./Head.js";
 import { t as IconPencil } from "./IconPencil.js";
@@ -164,8 +164,8 @@ function ShopEditor() {
 		setError("");
 		setDialog(null);
 		try {
-			const raw = (await adminData("shop")).shop;
-			setOriginal(raw || {});
+			const raw = parseShopData((await adminData("shop")).shop);
+			setOriginal(raw);
 			setShop(normShop(raw));
 		} catch (e) {
 			setError(e.message || "Không tải được dữ liệu cửa hàng");

@@ -1,4 +1,4 @@
-import { vt as require_jsx_runtime } from "./index.js";
+import { yt as require_jsx_runtime } from "./index.js";
 // src/features/administration/Head.jsx
 var import_jsx_runtime = require_jsx_runtime();
 function Head({ title, sub, children }) {
