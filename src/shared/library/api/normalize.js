@@ -48,10 +48,28 @@ function normProduct(p, i) {
   };
 };
 
+export function parseShopData(shop) {
+  if (typeof shop === 'string') {
+    try {
+      shop = JSON.parse(shop);
+    } catch {
+      return {};
+    };
+  };
+  return shop && typeof shop === 'object' && !Array.isArray(shop) ? shop : {};
+};
+
 export function normShop(shop) {
-  if (!shop) return [];
-  const keys = [...Object.keys(TAB_LABELS).filter((k) => k in shop), ...Object.keys(shop).filter((k) => !(k in TAB_LABELS))];
-  return keys.map((k) => ({ id: k, name: TAB_LABELS[k] || k, products: toList(shop[k]).map(normProduct) }));
+  shop = parseShopData(shop);
+  const keys = [
+    ...Object.keys(TAB_LABELS).filter((key) => key in shop),
+    ...Object.keys(shop).filter((key) => !(key in TAB_LABELS))
+  ];
+  return keys.map((key) => ({
+    id: key,
+    name: TAB_LABELS[key] || key,
+    products: toList(shop[key]).map(normProduct)
+  }));
 };
 
 export const normAdminUser = (u) => ({ ...u, id: u._id ?? u.id, coin: num(u.coin, u.coins) });

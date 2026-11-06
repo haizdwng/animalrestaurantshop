@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { IconPencil, IconPlus, IconDeviceFloppy, IconRefresh, IconTrash } from '@tabler/icons-react';
 import { Button, Coin, Dialog, ErrorState, Field, Menu, Skeleton, Spinner, toast, toastError } from '@/shared/components/ui';
 import { formatNumber } from '@/shared/library/format';
-import { normShop } from '@/shared/library/api/normalize';
+import { normShop, parseShopData } from '@/shared/library/api/normalize';
 import Tile from '@/features/shop/Tile';
 import * as api from '@/shared/library/api';
 
@@ -105,8 +105,8 @@ export default function ShopEditor() {
     setError('');
     setDialog(null);
     try {
-      const raw = (await api.adminData('shop')).shop;
-      setOriginal(raw || {});
+      const raw = parseShopData((await api.adminData('shop')).shop);
+      setOriginal(raw);
       setShop(normShop(raw));
     } catch (e) {
       setError(e.message || 'Không tải được dữ liệu cửa hàng');
