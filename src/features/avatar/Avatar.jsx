@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { IconDownload, IconUserCheck } from '@tabler/icons-react';
 import { Button, toast } from '@/shared/components/ui';
-import { FACES, imageUrl } from '@/features/avatar/manifest';
 import { EXPORT_SIZE } from '@/features/avatar/config';
 import { renderAvatarToBlob } from '@/features/avatar/avatarRendering';
-import { preloadImages } from '@/features/avatar/imageLoading';
 import AssetPicker from '@/features/avatar/AssetPicker';
 import AvatarStage from '@/features/avatar/AvatarStage';
 import AvatarToolbar from '@/features/avatar/AvatarToolbar';
@@ -13,16 +11,16 @@ import * as api from '@/shared/library/api';
 
 function useShortcuts(dispatch, selectedId) {
   useEffect(() => {
-    const onKey = (e) => {
-      if (e.target.closest?.('input, textarea, select, [contenteditable]')) return;
-      const mod = e.ctrlKey || e.metaKey;
-      const key = e.key.toLowerCase();
-      if (mod && key === 'z') dispatch({ type: e.shiftKey ? 'redo' : 'undo' });
-      else if (mod && key === 'y') dispatch({ type: 'redo' });
-      else if ((e.key === 'Delete' || e.key === 'Backspace') && selectedId) dispatch({ type: 'remove', id: selectedId });
-      else if (e.key === 'Escape') dispatch({ type: 'select', id: null });
+    const onKey = (event) => {
+      if (event.target.closest?.('input, textarea, select, [contenteditable]')) return;
+      const modifier = event.ctrlKey || event.metaKey;
+      const key = event.key.toLowerCase();
+      if (modifier && key === 'z') dispatch({ type: event.shiftKey ? 'redo' : 'undo' });
+      else if (modifier && key === 'y') dispatch({ type: 'redo' });
+      else if ((event.key === 'Delete' || event.key === 'Backspace') && selectedId) dispatch({ type: 'remove', id: selectedId });
+      else if (event.key === 'Escape') dispatch({ type: 'select', id: null });
       else return;
-      e.preventDefault();
+      event.preventDefault();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -35,16 +33,8 @@ export default function Avatar({ onUser }) {
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState(0);
   const [progressMessage, setProgressMessage] = useState('');
-  const progressRef = useRef({
-    current: 0,
-    target: 0
-  });
+  const progressRef = useRef({ current: 0, target: 0 });
   useShortcuts(dispatch, selectedId);
-
-  useEffect(() => {
-    const t = setTimeout(() => preloadImages(FACES[doc.role].map(imageUrl)), 300);
-    return () => clearTimeout(t);
-  }, [doc.role]);
 
   useEffect(() => {
     if (!busy) return;
@@ -58,7 +48,7 @@ export default function Avatar({ onUser }) {
     return () => clearInterval(interval);
   }, [busy]);
 
-  const itemKey = useMemo(() => doc.items.map((i) => i.src).join('|'), [doc.items]);
+  const itemKey = useMemo(() => doc.items.map((item) => item.src).join('|'), [doc.items]);
 
   const waitForProgress = () => new Promise((resolve) => {
     const interval = setInterval(() => {
@@ -76,8 +66,8 @@ export default function Avatar({ onUser }) {
     setProgressMessage('Đang chuẩn bị');
     try {
       await task(await renderAvatarToBlob(doc, EXPORT_SIZE));
-    } catch (e) {
-      if (e.code !== 'UNAUTHORIZED') toast(e.message || 'Có lỗi xảy ra', 'err');
+    } catch (error) {
+      if (error.code !== 'UNAUTHORIZED') toast(error.message || 'Có lỗi xảy ra', 'err');
     } finally {
       setBusy(false);
       setProgress(0);
@@ -87,23 +77,23 @@ export default function Avatar({ onUser }) {
   };
 
   const useAsAvatar = () => run(async (blob) => {
-    const r = await api.updateAvatar(blob, (value, message) => {
+    const response = await api.updateAvatar(blob, (value, message) => {
       progressRef.current.target = Math.max(progressRef.current.target, Math.min(100, value));
       setProgressMessage(message);
     });
     progressRef.current.target = 100;
     setProgressMessage('Hoàn tất');
     await waitForProgress();
-    if (r.user) onUser(r.user);
-    toast(r.message || 'Đã đổi ảnh đại diện');
+    if (response.user) onUser(response.user);
+    toast(response.message || 'Đã đổi ảnh đại diện');
   });
 
   const download = () => run((blob) => {
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'avatar.png';
-    a.click();
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'avatar.png';
+    anchor.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
@@ -132,10 +122,7 @@ export default function Avatar({ onUser }) {
               <span className='shrink-0 font-semibold tabular-nums text-fg'>{progress}%</span>
             </div>
             <div className='h-2 overflow-hidden rounded-full bg-bg' role='progressbar' aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
-              <div
-                className='h-full rounded-full bg-lime transition-[width] duration-300 ease-out'
-                style={{ width: `${progress}%` }}
-              />
+              <div className='h-full rounded-full bg-lime transition-[width] duration-300 ease-out' style={{ width: `${progress}%` }} />
             </div>
           </div>
         )}

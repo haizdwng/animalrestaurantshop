@@ -10,11 +10,11 @@ export const getBuffetLink = () => call('GET', '/user/links/buffet');
 export const checkShopReady = () => call('GET', '/user/shop/ready');
 
 export async function updateAvatar(image, onProgress) {
-  const blob = typeof image === 'string' ? await (await fetch(image)).blob() : image;
+  const blob = typeof image === 'string' ? await (await fetch(image, { cache: 'no-store' })).blob() : image;
   if (blob.size > 8 * 1024 * 1024) throw new Error('Ảnh đại diện không được vượt quá 8MB');
   if (!['image/jpeg', 'image/png'].includes(blob.type)) throw new Error('Ảnh đại diện chỉ được chấp nhận định dạng JPG, JPEG hoặc PNG');
-  const fd = new FormData();
-  fd.append('avatar', blob, `avatar.${blob.type.split('/')[1]}`);
-  const response = await callStream('PATCH', '/user/avatar', fd, onProgress, { timeout: 120000 });
+  const form = new FormData();
+  form.append('avatar', blob, `avatar.${blob.type.split('/')[1]}`);
+  const response = await callStream('PATCH', '/user/avatar', form, onProgress, { timeout: 120000 });
   return withUser(response);
 };

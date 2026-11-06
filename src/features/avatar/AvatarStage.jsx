@@ -6,13 +6,13 @@ import { getAvatarDocumentImageUrls, drawAvatar } from '@/features/avatar/avatar
 import { hitTest, doesPointHitCloseButton } from '@/features/avatar/geometry';
 import { areAllImagesLoaded, preloadImages } from '@/features/avatar/imageLoading';
 
-const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-const angle = (a, b) => Math.atan2(b.y - a.y, b.x - a.x);
-const PX = STAGE * PIXEL_RATIO;
+const dist = (first, second) => Math.hypot(first.x - second.x, first.y - second.y);
+const angle = (first, second) => Math.atan2(second.y - first.y, second.x - first.x);
+const PIXEL_SIZE = STAGE * PIXEL_RATIO;
 
 export default function AvatarStage({ doc, selectedId, dispatch }) {
   const canvasRef = useRef(null);
-  const live = useRef({ doc, selectedId });
+  const live = useRef({ doc, selectedId, images: new Map() });
   const pointers = useRef(new Map());
   const gesture = useRef(null);
   const lastWheel = useRef(0);
@@ -20,117 +20,124 @@ export default function AvatarStage({ doc, selectedId, dispatch }) {
   const [loading, setLoading] = useState(false);
   const [missing, setMissing] = useState(false);
   const [width, setWidth] = useState(0);
+  const [loadedAssets, setLoadedAssets] = useState({ key: '', images: new Map() });
+  const imageUrls = getAvatarDocumentImageUrls(doc);
+  const imageKey = imageUrls.join('|');
+  const images = loadedAssets.key === imageKey ? loadedAssets.images : new Map();
+
+  useEffect(() => live.current = { doc, selectedId, images });
 
   useEffect(() => {
-    live.current = { doc, selectedId };
-  });
-
-  useEffect(() => {
-    const ro = new ResizeObserver(([e]) => setWidth(Math.round(e.contentRect.width)));
-    ro.observe(canvasRef.current);
-    return () => ro.disconnect();
+    const observer = new ResizeObserver(([entry]) => setWidth(Math.round(entry.contentRect.width)));
+    observer.observe(canvasRef.current);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
     let stale = false;
-    let raf = 0;
-    const urls = getAvatarDocumentImageUrls(doc);
+    setLoading(true);
+    setLoadedAssets({ key: '', images: new Map() });
 
-    const paint = () => {
-      const c = canvasRef.current;
-      if (stale || !c) return;
-      drawAvatar(c.getContext('2d'), doc, { selectedId, uiScale: STAGE / (c.clientWidth || STAGE) });
-      setPainted(true);
-    };
-    const schedule = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(paint);
-    };
-
-    if (areAllImagesLoaded(urls)) {
+    preloadImages(imageUrls).then((loadedImages) => {
+      if (stale) return;
+      setLoadedAssets({ key: imageKey, images: loadedImages });
+      setMissing(!areAllImagesLoaded(imageUrls, loadedImages));
       setLoading(false);
-      setMissing(false);
-      schedule();
-    } else {
-      setLoading(true);
-      preloadImages(urls).then(() => {
-        if (stale) return;
-        setLoading(false);
-        setMissing(!areAllImagesLoaded(urls));
-        schedule();
-      });
-    };
-    return () => {
-      stale = true;
-      cancelAnimationFrame(raf);
-    };
-  }, [doc, selectedId, width]);
+    });
+
+    return () => stale = true;
+  }, [imageKey]);
 
   useEffect(() => {
-    const c = canvasRef.current;
-    const onWheel = (e) => {
-      const { doc: d, selectedId: id } = live.current;
-      const item = d.items.find((i) => i.id === id);
+    if (loadedAssets.key !== imageKey) return;
+    let animationFrame = 0;
+    const paint = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      drawAvatar(canvas.getContext('2d'), doc, {
+        selectedId,
+        userInterfaceScale: STAGE / (canvas.clientWidth || STAGE),
+        images: loadedAssets.images
+      });
+      setPainted(true);
+    };
+    animationFrame = requestAnimationFrame(paint);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [doc, selectedId, width, imageKey, loadedAssets]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const onWheel = (event) => {
+      const { doc: currentDoc, selectedId: currentSelectedId } = live.current;
+      const item = currentDoc.items.find((entry) => entry.id === currentSelectedId);
       if (!item) return;
-      e.preventDefault();
+      event.preventDefault();
       const now = Date.now();
       if (now - lastWheel.current > 400) dispatch({ type: 'checkpoint' });
       lastWheel.current = now;
-      dispatch({ type: 'patch', id, patch: { scale: item.scale * Math.exp(-e.deltaY * 0.0015) } });
+      dispatch({ type: 'patch', id: currentSelectedId, patch: { scale: item.scale * Math.exp(-event.deltaY * 0.0015) } });
     };
-    c.addEventListener('wheel', onWheel, { passive: false });
-    return () => c.removeEventListener('wheel', onWheel);
+    canvas.addEventListener('wheel', onWheel, { passive: false });
+    return () => canvas.removeEventListener('wheel', onWheel);
   }, [dispatch]);
 
-  const toStage = (e) => {
-    const r = canvasRef.current.getBoundingClientRect();
-    return { x: ((e.clientX - r.left) * STAGE) / r.width, y: ((e.clientY - r.top) * STAGE) / r.height };
+  const toStage = (event) => {
+    const rect = canvasRef.current.getBoundingClientRect();
+    return { x: ((event.clientX - rect.left) * STAGE) / rect.width, y: ((event.clientY - rect.top) * STAGE) / rect.height };
   };
 
-  const onPointerDown = (e) => {
-    const c = canvasRef.current;
-    const p = toStage(e);
-    const { doc: d, selectedId: sid } = live.current;
-    c.setPointerCapture(e.pointerId);
-    pointers.current.set(e.pointerId, p);
+  const onPointerDown = (event) => {
+    const canvas = canvasRef.current;
+    const point = toStage(event);
+    const { doc: currentDoc, selectedId: currentSelectedId, images: currentImages } = live.current;
+    canvas.setPointerCapture(event.pointerId);
+    pointers.current.set(event.pointerId, point);
 
-    const sel = d.items.find((i) => i.id === sid);
-    if (pointers.current.size === 2 && sel) {
-      const [a, b] = [...pointers.current.values()];
-      gesture.current = { type: 'pinch', id: sel.id, d0: dist(a, b) || 1, a0: angle(a, b), s0: sel.scale, r0: sel.rotation, started: false };
+    const selectedItem = currentDoc.items.find((item) => item.id === currentSelectedId);
+    if (pointers.current.size === 2 && selectedItem) {
+      const [first, second] = [...pointers.current.values()];
+      gesture.current = { type: 'pinch', id: selectedItem.id, initialDistance: dist(first, second) || 1, initialAngle: angle(first, second), initialScale: selectedItem.scale, initialRotation: selectedItem.rotation, started: false };
       return;
     };
-    if (sel && doesPointHitCloseButton(sel, p, STAGE / c.clientWidth)) {
-      dispatch({ type: 'remove', id: sel.id });
+    if (selectedItem && doesPointHitCloseButton(selectedItem, point, STAGE / canvas.clientWidth, currentImages)) {
+      dispatch({ type: 'remove', id: selectedItem.id });
       pointers.current.clear();
       gesture.current = null;
       return;
     };
-    const hit = hitTest(d.items, p);
-    dispatch({ type: 'select', id: hit?.id ?? null });
-    gesture.current = hit ? { type: 'drag', id: hit.id, dx: hit.x - p.x, dy: hit.y - p.y, started: false } : null;
+
+    const hitItem = hitTest(currentDoc.items, point, currentImages);
+    dispatch({ type: 'select', id: hitItem?.id ?? null });
+    gesture.current = hitItem ? { type: 'drag', id: hitItem.id, offsetX: hitItem.x - point.x, offsetY: hitItem.y - point.y, started: false } : null;
   };
 
-  const onPointerMove = (e) => {
-    const g = gesture.current;
-    if (!g || !pointers.current.has(e.pointerId)) return;
-    const p = toStage(e);
-    pointers.current.set(e.pointerId, p);
+  const onPointerMove = (event) => {
+    const currentGesture = gesture.current;
+    if (!currentGesture || !pointers.current.has(event.pointerId)) return;
+    const point = toStage(event);
+    pointers.current.set(event.pointerId, point);
 
-    if (g.type === 'drag' && pointers.current.size === 1) {
-      if (!g.started) dispatch({ type: 'checkpoint' });
-      g.started = true;
-      dispatch({ type: 'patch', id: g.id, patch: { x: p.x + g.dx, y: p.y + g.dy } });
-    } else if (g.type === 'pinch' && pointers.current.size >= 2) {
-      const [a, b] = [...pointers.current.values()];
-      if (!g.started) dispatch({ type: 'checkpoint' });
-      g.started = true;
-      dispatch({ type: 'patch', id: g.id, patch: { scale: (g.s0 * dist(a, b)) / g.d0, rotation: g.r0 + ((angle(a, b) - g.a0) * 180) / Math.PI } });
+    if (currentGesture.type === 'drag' && pointers.current.size === 1) {
+      if (!currentGesture.started) dispatch({ type: 'checkpoint' });
+      currentGesture.started = true;
+      dispatch({ type: 'patch', id: currentGesture.id, patch: { x: point.x + currentGesture.offsetX, y: point.y + currentGesture.offsetY } });
+    } else if (currentGesture.type === 'pinch' && pointers.current.size >= 2) {
+      const [first, second] = [...pointers.current.values()];
+      if (!currentGesture.started) dispatch({ type: 'checkpoint' });
+      currentGesture.started = true;
+      dispatch({
+        type: 'patch',
+        id: currentGesture.id,
+        patch: {
+          scale: (currentGesture.initialScale * dist(first, second)) / currentGesture.initialDistance,
+          rotation: currentGesture.initialRotation + ((angle(first, second) - currentGesture.initialAngle) * 180) / Math.PI
+        }
+      });
     };
   };
 
-  const onPointerUp = (e) => {
-    pointers.current.delete(e.pointerId);
+  const onPointerUp = (event) => {
+    pointers.current.delete(event.pointerId);
     if (pointers.current.size < 2 && gesture.current?.type === 'pinch') gesture.current = null;
     if (pointers.current.size === 0) gesture.current = null;
   };
@@ -139,8 +146,8 @@ export default function AvatarStage({ doc, selectedId, dispatch }) {
     <div className='relative aspect-square w-full overflow-hidden rounded-2xl bg-raise ring-1 ring-line'>
       <canvas
         ref={canvasRef}
-        width={PX}
-        height={PX}
+        width={PIXEL_SIZE}
+        height={PIXEL_SIZE}
         aria-label='Khung tạo avatar: kéo phụ kiện để di chuyển'
         className='block size-full touch-none select-none'
         onPointerDown={onPointerDown}

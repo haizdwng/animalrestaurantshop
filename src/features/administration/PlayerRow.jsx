@@ -1,4 +1,4 @@
-import { IconPencil, IconDatabase, IconStar } from '@tabler/icons-react';
+import { IconPencil, IconStar, IconInfoCircle } from '@tabler/icons-react';
 import { IconStarFilled } from '@tabler/icons-react';
 import { Menu, Skeleton } from '@/shared/components/ui';
 
@@ -20,7 +20,7 @@ export default function PlayerRow({ player, onAction }) {
         items={[
           { label: 'Sửa', Icon: IconPencil, onClick: () => onAction('edit') },
           { label: 'Thêm sao', Icon: IconStar, onClick: () => onAction('star') },
-          { label: 'Xem dữ liệu', Icon: IconDatabase, onClick: () => onAction('data') }
+          { label: 'Xem thông tin', Icon: IconInfoCircle, onClick: () => onAction('data') }
         ]}
       />
     </li>

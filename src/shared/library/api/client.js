@@ -1,9 +1,34 @@
 import { API_BASE_URL, REQUEST_TIMEOUT } from '@/shared/configuration/environment';
 
 const TOKEN_KEY = 'token';
+let activeRequests = 0;
+const requestListeners = new Set();
+
+function notifyRequestListeners() {
+  requestListeners.forEach((listener) => listener());
+};
+
+export const subscribeToRequests = (listener) => {
+  requestListeners.add(listener);
+  return () => requestListeners.delete(listener);
+};
+
+export const getPendingRequestCount = () => activeRequests;
+
+function trackRequest() {
+  activeRequests += 1;
+  notifyRequestListeners();
+  let finished = false;
+  return () => {
+    if (finished) return;
+    finished = true;
+    activeRequests = Math.max(0, activeRequests - 1);
+    notifyRequestListeners();
+  };
+};
 
 export const getToken = () => localStorage.getItem(TOKEN_KEY) || '';
-export const setToken = (t) => localStorage.setItem(TOKEN_KEY, t);
+export const setToken = (token) => localStorage.setItem(TOKEN_KEY, token);
 export const hasToken = () => !!localStorage.getItem(TOKEN_KEY);
 export const clearToken = () => localStorage.removeItem(TOKEN_KEY);
 
@@ -16,70 +41,75 @@ export class ApiError extends Error {
 };
 
 let onUnauthorized = () => {};
-export const setUnauthorizedHandler = (fn) => (onUnauthorized = fn);
+export const setUnauthorizedHandler = (handler) => (onUnauthorized = handler);
 
 async function http(method, path, body) {
+  const finishRequest = trackRequest();
   const isForm = body instanceof FormData;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+
   try {
     const token = localStorage.getItem(TOKEN_KEY);
-    const res = await fetch(API_BASE_URL + path, {
+    const response = await fetch(API_BASE_URL + path, {
       method,
-      headers: { ...(!isForm && body !== undefined && { 'Content-Type': 'application/json' }), ...(token && { token }) },
+      cache: 'no-store',
+      headers: {
+        ...(!isForm && body !== undefined && { 'Content-Type': 'application/json' }),
+        ...(token && { token })
+      },
       body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
       signal: controller.signal
     });
-    if (res.status === 204) return { success: true };
+
+    if (response.status === 204) return { success: true };
     let data;
     try {
-      data = await res.json();
+      data = await response.json();
     } catch {
-      data = { success: false, message: `Máy chủ phản hồi không hợp lệ (${res.status})` };
+      data = { success: false, message: `Máy chủ phản hồi không hợp lệ (${response.status})` };
     };
-    if (!data || typeof data !== 'object') {
-      data = { success: false, message: `Máy chủ phản hồi không hợp lệ (${res.status})` };
-    };
-    data.status = res.status;
-    if (res.status === 401) data = { ...data, success: false, code: 'UNAUTHORIZED' };
+    if (!data || typeof data !== 'object') data = { success: false, message: `Máy chủ phản hồi không hợp lệ (${response.status})` };
+    data.status = response.status;
+    if (response.status === 401) data = { ...data, success: false, code: 'UNAUTHORIZED' };
     return data;
   } catch (error) {
     return {
       success: false,
       code: error?.name === 'AbortError' ? 'TIMEOUT' : 'NETWORK',
-      message: error?.name === 'AbortError'
-        ? 'Máy chủ phản hồi quá lâu — hãy thử lại'
-        : 'Không kết nối được máy chủ — có thể máy chủ chưa cho phép tên miền này (CORS)'
+      message: error?.name === 'AbortError' ? 'Máy chủ phản hồi quá lâu — hãy thử lại' : 'Không kết nối được máy chủ — có thể máy chủ chưa cho phép tên miền này (CORS)'
     };
   } finally {
     clearTimeout(timeout);
+    finishRequest();
   };
 };
 
 export async function call(method, path, body, { auth = true } = {}) {
-  const r = await http(method, path, body);
-  if (!r || r.success !== true) {
-    if (r && !r.code && /xác thực|đăng nhập lại|unauthori|token/i.test(r.message || '')) r.code = 'UNAUTHORIZED';
-    const err = new ApiError(r?.message || 'Đã có lỗi xảy ra', r || {});
-    if (auth && err.code === 'UNAUTHORIZED') {
+  const response = await http(method, path, body);
+  if (!response || response.success !== true) {
+    if (response && !response.code && /xác thực|đăng nhập lại|unauthori|token/i.test(response.message || '')) response.code = 'UNAUTHORIZED';
+    const error = new ApiError(response?.message || 'Đã có lỗi xảy ra', response || {});
+    if (auth && error.code === 'UNAUTHORIZED') {
       clearToken();
-      onUnauthorized(err);
+      onUnauthorized(error);
     };
-    throw err;
+    throw error;
   };
-  if (r.token) setToken(r.token);
-  return r;
+  if (response.token) setToken(response.token);
+  return response;
 };
 
 export async function callStream(method, path, body, onProgress, { auth = true, timeout = REQUEST_TIMEOUT } = {}) {
+  const finishRequest = trackRequest();
   const isForm = body instanceof FormData;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
   let reader;
+
   const handleError = (data = {}) => {
     if (data.status === 401) data = { ...data, success: false, code: 'UNAUTHORIZED' };
     if (!data.code && /xác thực|đăng nhập lại|unauthori|token/i.test(data.message || '')) data.code = 'UNAUTHORIZED';
-
     const error = new ApiError(data.message || 'Đã có lỗi xảy ra', data);
     if (auth && error.code === 'UNAUTHORIZED') {
       clearToken();
@@ -92,6 +122,7 @@ export async function callStream(method, path, body, onProgress, { auth = true, 
     const token = getToken();
     const response = await fetch(API_BASE_URL + path, {
       method,
+      cache: 'no-store',
       headers: {
         ...(!isForm && body !== undefined && { 'Content-Type': 'application/json' }),
         ...(token && { token })
@@ -99,11 +130,9 @@ export async function callStream(method, path, body, onProgress, { auth = true, 
       body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
       signal: controller.signal
     });
+
     if (response.status === 204) return { success: true, status: 204 };
-    if (!response.body) throw handleError({
-      message: 'Máy chủ không hỗ trợ truyền dữ liệu streaming',
-      status: response.status
-    });
+    if (!response.body) throw handleError({ message: 'Máy chủ không hỗ trợ truyền dữ liệu streaming', status: response.status });
 
     reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -115,29 +144,14 @@ export async function callStream(method, path, body, onProgress, { auth = true, 
       try {
         data = JSON.parse(line);
       } catch {
-        throw handleError({
-          message: 'Máy chủ trả về dữ liệu streaming không hợp lệ',
-          status: response.status
-        });
+        throw handleError({ message: 'Máy chủ trả về dữ liệu streaming không hợp lệ', status: response.status });
       };
-
       if (data.type === 'progress') {
-        onProgress?.(
-          data.progress,
-          data.message,
-          data
-        );
+        onProgress?.(data.progress, data.message, data);
         return;
       };
-      if (data.type === 'error') throw handleError({
-        ...data,
-        status: response.status
-      });
-      if (data.type === 'success') result = {
-        ...data,
-        success: true,
-        status: response.status
-      };
+      if (data.type === 'error') throw handleError({ ...data, status: response.status });
+      if (data.type === 'success') result = { ...data, success: true, status: response.status };
     };
 
     while (true) {
@@ -150,15 +164,8 @@ export async function callStream(method, path, body, onProgress, { auth = true, 
     };
 
     if (buffer.trim()) processLine(buffer);
-    if (!response.ok) throw handleError({
-      message: 'Máy chủ xử lý yêu cầu thất bại',
-      status: response.status
-    });
-    if (!result) throw handleError({
-      message: 'Máy chủ kết thúc xử lý mà không trả kết quả',
-      status: response.status
-    });
-
+    if (!response.ok) throw handleError({ message: 'Máy chủ xử lý yêu cầu thất bại', status: response.status });
+    if (!result) throw handleError({ message: 'Máy chủ kết thúc xử lý mà không trả kết quả', status: response.status });
     return result;
   } catch (error) {
     if (error instanceof ApiError) throw error;
@@ -167,6 +174,7 @@ export async function callStream(method, path, body, onProgress, { auth = true, 
   } finally {
     clearTimeout(timer);
     if (reader) reader.releaseLock();
+    finishRequest();
   };
 };
 

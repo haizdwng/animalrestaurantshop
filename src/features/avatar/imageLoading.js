@@ -1,29 +1,19 @@
-const imageCache = new Map();
-
 const attempt = (url, cors) => new Promise((resolve, reject) => {
-  const img = new Image();
-  if (cors) img.crossOrigin = 'anonymous';
-  img.onload = () => resolve(img);
-  img.onerror = reject;
-  img.src = url;
+  const image = new Image();
+  if (cors) image.crossOrigin = 'anonymous';
+  image.onload = () => resolve(image);
+  image.onerror = reject;
+  image.src = url;
 });
 
 export function loadImage(url) {
-  let entry = imageCache.get(url);
-  if (!entry) {
-    entry = { img: null };
-    entry.promise = attempt(url, true)
-      .catch(() => attempt(url, false))
-      .then((img) => (entry.img = img))
-      .catch((e) => {
-        imageCache.delete(url);
-        throw e;
-      });
-    imageCache.set(url, entry);
-  };
-  return entry.promise;
+  return attempt(url, true).catch(() => attempt(url, false));
 };
 
-export const getCachedImage = (url) => imageCache.get(url)?.img ?? null;
-export const preloadImages = (urls) => Promise.allSettled(urls.map(loadImage));
-export const areAllImagesLoaded = (urls) => urls.every((u) => getCachedImage(u));
+export async function preloadImages(urls) {
+  const uniqueUrls = [...new Set(urls)];
+  const results = await Promise.allSettled(uniqueUrls.map(async (url) => [url, await loadImage(url)]));
+  return new Map(results.filter((result) => result.status === 'fulfilled').map((result) => result.value));
+};
+
+export const areAllImagesLoaded = (urls, images) => urls.every((url) => images?.has(url));

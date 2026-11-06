@@ -1,4 +1,4 @@
-import { $ as Skeleton, Ct as __toESM, L as updateAvatar, St as require_react, gt as IconRefresh, mt as require_jsx_runtime, pt as Button, rt as Tabs, tt as Spinner, ut as toast, xt as createReactComponent } from "./index.js";
+import { At as require_react, B as updateAvatar, Tt as createReactComponent, _t as require_jsx_runtime, gt as Button, it as Spinner, jt as __toESM, nt as Skeleton, ot as Tabs, pt as toast, yt as IconRefresh } from "./index.js";
 import { n as IconCat, t as IconPhoto } from "./IconPhoto.js";
 import { t as IconCheck } from "./IconCheck.js";
 import { t as IconTrash } from "./IconTrash.js";
@@ -358,33 +358,9 @@ var TABS = [
 	}
 ];
 var isItemTab = (key) => key === "itemA" || key === "itemB";
-// src/features/avatar/imageLoading.js
-var imageCache = /* @__PURE__ */ new Map();
-var attempt = (url, cors) => new Promise((resolve, reject) => {
-	const img = new Image();
-	if (cors) img.crossOrigin = "anonymous";
-	img.onload = () => resolve(img);
-	img.onerror = reject;
-	img.src = url;
-});
-function loadImage(url) {
-	let entry = imageCache.get(url);
-	if (!entry) {
-		entry = { img: null };
-		entry.promise = attempt(url, true).catch(() => attempt(url, false)).then((img) => entry.img = img).catch((e) => {
-			imageCache.delete(url);
-			throw e;
-		});
-		imageCache.set(url, entry);
-	}
-	return entry.promise;
-}
-var getCachedImage = (url) => imageCache.get(url)?.img ?? null;
-var preloadImages = (urls) => Promise.allSettled(urls.map(loadImage));
-var areAllImagesLoaded = (urls) => urls.every((u) => getCachedImage(u));
 // src/features/avatar/geometry.js
-function getItemSize(item) {
-	const image = getCachedImage(imageUrl(item.src));
+function getItemSize(item, images) {
+	const image = images?.get(imageUrl(item.src));
 	return image ? {
 		w: image.naturalWidth,
 		h: image.naturalHeight
@@ -413,27 +389,44 @@ function convertWorldPointToLocal(item, worldPoint) {
 		y: (deltaX * sine + deltaY * cosine) / item.scale
 	};
 }
-function hitTest(items, worldPoint) {
+function hitTest(items, worldPoint, images) {
 	for (let itemIndex = items.length - 1; itemIndex >= 0; itemIndex--) {
 		const item = items[itemIndex];
-		const itemSize = getItemSize(item);
+		const itemSize = getItemSize(item, images);
 		if (!itemSize) continue;
 		const localPoint = convertWorldPointToLocal(item, worldPoint);
 		if (Math.abs(localPoint.x) <= itemSize.w / 2 && Math.abs(localPoint.y) <= itemSize.h / 2) return item;
 	}
 	return null;
 }
-function getCloseButtonPosition(item) {
-	const itemSize = getItemSize(item);
+function getCloseButtonPosition(item, images) {
+	const itemSize = getItemSize(item, images);
 	return itemSize ? convertLocalPointToWorld(item, {
 		x: itemSize.w / 2,
 		y: -itemSize.h / 2
 	}) : null;
 }
-function doesPointHitCloseButton(item, worldPoint, userInterfaceScale) {
-	const closeButtonPosition = getCloseButtonPosition(item);
+function doesPointHitCloseButton(item, worldPoint, userInterfaceScale, images) {
+	const closeButtonPosition = getCloseButtonPosition(item, images);
 	return !!closeButtonPosition && Math.hypot(worldPoint.x - closeButtonPosition.x, worldPoint.y - closeButtonPosition.y) <= 21 * userInterfaceScale;
 }
+// src/features/avatar/imageLoading.js
+var attempt = (url, cors) => new Promise((resolve, reject) => {
+	const image = new Image();
+	if (cors) image.crossOrigin = "anonymous";
+	image.onload = () => resolve(image);
+	image.onerror = reject;
+	image.src = url;
+});
+function loadImage(url) {
+	return attempt(url, true).catch(() => attempt(url, false));
+}
+async function preloadImages(urls) {
+	const uniqueUrls = [...new Set(urls)];
+	const results = await Promise.allSettled(uniqueUrls.map(async (url) => [url, await loadImage(url)]));
+	return new Map(results.filter((result) => result.status === "fulfilled").map((result) => result.value));
+}
+var areAllImagesLoaded = (urls, images) => urls.every((url) => images?.has(url));
 // src/features/avatar/avatarRendering.js
 var getAvatarLayerIdentifiers = (avatarDocument) => [
 	BACKGROUNDS[avatarDocument.background],
@@ -441,28 +434,18 @@ var getAvatarLayerIdentifiers = (avatarDocument) => [
 	FACES[avatarDocument.role][avatarDocument.emoji]
 ];
 var getAvatarDocumentImageUrls = (avatarDocument) => [...getAvatarLayerIdentifiers(avatarDocument), ...avatarDocument.items.map((item) => item.src)].map(imageUrl);
-var cachedBaseLayer = {
-	key: "",
-	canvas: null
-};
-function drawBaseLayer(avatarDocument, pixelSize) {
-	const cacheKey = `${avatarDocument.background}|${avatarDocument.role}|${avatarDocument.emoji}|${pixelSize}`;
-	if (cachedBaseLayer.key === cacheKey) return cachedBaseLayer.canvas;
-	const baseImages = getAvatarLayerIdentifiers(avatarDocument).map((imageIdentifier) => getCachedImage(imageUrl(imageIdentifier)));
+function drawBaseLayer(avatarDocument, pixelSize, images) {
+	const baseImages = getAvatarLayerIdentifiers(avatarDocument).map((identifier) => images.get(imageUrl(identifier)));
 	if (baseImages.some((image) => !image)) return null;
 	const canvas = document.createElement("canvas");
 	canvas.width = canvas.height = pixelSize;
 	const canvasContext = canvas.getContext("2d");
 	canvasContext.imageSmoothingQuality = "high";
 	baseImages.forEach((image) => canvasContext.drawImage(image, 0, 0, pixelSize, pixelSize));
-	cachedBaseLayer = {
-		key: cacheKey,
-		canvas
-	};
 	return canvas;
 }
-function drawSelection(canvasContext, selectedItem, userInterfaceScale) {
-	const itemSize = getItemSize(selectedItem);
+function drawSelection(canvasContext, selectedItem, userInterfaceScale, images) {
+	const itemSize = getItemSize(selectedItem, images);
 	if (!itemSize) return;
 	canvasContext.save();
 	canvasContext.translate(selectedItem.x, selectedItem.y);
@@ -473,37 +456,37 @@ function drawSelection(canvasContext, selectedItem, userInterfaceScale) {
 	canvasContext.setLineDash([8 * userInterfaceScale / selectedItem.scale]);
 	canvasContext.strokeRect(-itemSize.w / 2, -itemSize.h / 2, itemSize.w, itemSize.h);
 	canvasContext.restore();
-	const getCloseButtonPositionition = getCloseButtonPosition(selectedItem);
+	const closeButtonPosition = getCloseButtonPosition(selectedItem, images);
 	const closeButtonRadius = 13 * userInterfaceScale;
 	const closeLineOffset = closeButtonRadius * .4;
 	canvasContext.fillStyle = "#ff5d47";
 	canvasContext.beginPath();
-	canvasContext.arc(getCloseButtonPositionition.x, getCloseButtonPositionition.y, closeButtonRadius, 0, Math.PI * 2);
+	canvasContext.arc(closeButtonPosition.x, closeButtonPosition.y, closeButtonRadius, 0, Math.PI * 2);
 	canvasContext.fill();
 	canvasContext.strokeStyle = "#0c0d0f";
 	canvasContext.lineWidth = 2 * userInterfaceScale;
 	canvasContext.setLineDash([]);
 	canvasContext.beginPath();
-	canvasContext.moveTo(getCloseButtonPositionition.x - closeLineOffset, getCloseButtonPositionition.y - closeLineOffset);
-	canvasContext.lineTo(getCloseButtonPositionition.x + closeLineOffset, getCloseButtonPositionition.y + closeLineOffset);
-	canvasContext.moveTo(getCloseButtonPositionition.x + closeLineOffset, getCloseButtonPositionition.y - closeLineOffset);
-	canvasContext.lineTo(getCloseButtonPositionition.x - closeLineOffset, getCloseButtonPositionition.y + closeLineOffset);
+	canvasContext.moveTo(closeButtonPosition.x - closeLineOffset, closeButtonPosition.y - closeLineOffset);
+	canvasContext.lineTo(closeButtonPosition.x + closeLineOffset, closeButtonPosition.y + closeLineOffset);
+	canvasContext.moveTo(closeButtonPosition.x + closeLineOffset, closeButtonPosition.y - closeLineOffset);
+	canvasContext.lineTo(closeButtonPosition.x - closeLineOffset, closeButtonPosition.y + closeLineOffset);
 	canvasContext.stroke();
 }
-function drawAvatar(canvasContext, avatarDocument, { selectedId = null, userInterfaceScale = 1 } = {}) {
+function drawAvatar(canvasContext, avatarDocument, { selectedId = null, userInterfaceScale = 1, images = /* @__PURE__ */ new Map() } = {}) {
 	const pixelSize = canvasContext.canvas.width;
 	canvasContext.setTransform(1, 0, 0, 1, 0, 0);
 	canvasContext.clearRect(0, 0, pixelSize, pixelSize);
-	const mergedBaseLayer = drawBaseLayer(avatarDocument, pixelSize);
-	if (mergedBaseLayer) canvasContext.drawImage(mergedBaseLayer, 0, 0);
-	else getAvatarLayerIdentifiers(avatarDocument).forEach((imageIdentifier) => {
-		const image = getCachedImage(imageUrl(imageIdentifier));
+	const baseLayer = drawBaseLayer(avatarDocument, pixelSize, images);
+	if (baseLayer) canvasContext.drawImage(baseLayer, 0, 0);
+	else getAvatarLayerIdentifiers(avatarDocument).forEach((identifier) => {
+		const image = images.get(imageUrl(identifier));
 		if (image) canvasContext.drawImage(image, 0, 0, pixelSize, pixelSize);
 	});
 	canvasContext.setTransform(pixelSize / 740, 0, 0, pixelSize / 740, 0, 0);
 	canvasContext.imageSmoothingQuality = "high";
 	for (const item of avatarDocument.items) {
-		const image = getCachedImage(imageUrl(item.src));
+		const image = images.get(imageUrl(item.src));
 		if (!image) continue;
 		canvasContext.save();
 		canvasContext.translate(item.x, item.y);
@@ -513,11 +496,10 @@ function drawAvatar(canvasContext, avatarDocument, { selectedId = null, userInte
 		canvasContext.restore();
 	}
 	const selectedItem = avatarDocument.items.find((item) => item.id === selectedId);
-	if (selectedItem) drawSelection(canvasContext, selectedItem, userInterfaceScale);
+	if (selectedItem) drawSelection(canvasContext, selectedItem, userInterfaceScale, images);
 }
 async function renderAvatarToBlob(avatarDocument, exportSize = 512) {
-	const imageUrls = getAvatarDocumentImageUrls(avatarDocument);
-	if (!areAllImagesLoaded(imageUrls)) await preloadImages(imageUrls);
+	const images = await preloadImages(getAvatarDocumentImageUrls(avatarDocument));
 	const canvas = document.createElement("canvas");
 	canvas.width = canvas.height = exportSize;
 	const canvasContext = canvas.getContext("2d");
@@ -525,11 +507,9 @@ async function renderAvatarToBlob(avatarDocument, exportSize = 512) {
 	canvasContext.fillRect(0, 0, exportSize, exportSize);
 	const avatarLayerCanvas = document.createElement("canvas");
 	avatarLayerCanvas.width = avatarLayerCanvas.height = exportSize;
-	drawAvatar(avatarLayerCanvas.getContext("2d"), avatarDocument);
+	drawAvatar(avatarLayerCanvas.getContext("2d"), avatarDocument, { images });
 	canvasContext.drawImage(avatarLayerCanvas, 0, 0);
-	return new Promise((resolve, reject) => {
-		canvas.toBlob((imageBlob) => imageBlob ? resolve(imageBlob) : reject(/* @__PURE__ */ new Error("Không tạo được ảnh")), "image/png");
-	});
+	return new Promise((resolve, reject) => canvas.toBlob((imageBlob) => imageBlob ? resolve(imageBlob) : reject(/* @__PURE__ */ new Error("Không tạo được ảnh")), "image/png"));
 }
 // src/features/avatar/AssetPicker.jsx
 var import_jsx_runtime = require_jsx_runtime();
@@ -627,14 +607,15 @@ function AssetPicker({ tab, onTab, role, emoji, background, itemKey, dispatch })
 }
 var AssetPicker_default = (0, import_react.memo)(AssetPicker);
 // src/features/avatar/AvatarStage.jsx
-var dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-var angle = (a, b) => Math.atan2(b.y - a.y, b.x - a.x);
-var PX = 740 * PIXEL_RATIO;
+var dist = (first, second) => Math.hypot(first.x - second.x, first.y - second.y);
+var angle = (first, second) => Math.atan2(second.y - first.y, second.x - first.x);
+var PIXEL_SIZE = 740 * PIXEL_RATIO;
 function AvatarStage({ doc, selectedId, dispatch }) {
 	const canvasRef = (0, import_react.useRef)(null);
 	const live = (0, import_react.useRef)({
 		doc,
-		selectedId
+		selectedId,
+		images: /* @__PURE__ */ new Map()
 	});
 	const pointers = (0, import_react.useRef)(/* @__PURE__ */ new Map());
 	const gesture = (0, import_react.useRef)(null);
@@ -643,156 +624,163 @@ function AvatarStage({ doc, selectedId, dispatch }) {
 	const [loading, setLoading] = (0, import_react.useState)(false);
 	const [missing, setMissing] = (0, import_react.useState)(false);
 	const [width, setWidth] = (0, import_react.useState)(0);
-	(0, import_react.useEffect)(() => {
-		live.current = {
-			doc,
-			selectedId
-		};
+	const [loadedAssets, setLoadedAssets] = (0, import_react.useState)({
+		key: "",
+		images: /* @__PURE__ */ new Map()
+	});
+	const imageUrls = getAvatarDocumentImageUrls(doc);
+	const imageKey = imageUrls.join("|");
+	const images = loadedAssets.key === imageKey ? loadedAssets.images : /* @__PURE__ */ new Map();
+	(0, import_react.useEffect)(() => live.current = {
+		doc,
+		selectedId,
+		images
 	});
 	(0, import_react.useEffect)(() => {
-		const ro = new ResizeObserver(([e]) => setWidth(Math.round(e.contentRect.width)));
-		ro.observe(canvasRef.current);
-		return () => ro.disconnect();
+		const observer = new ResizeObserver(([entry]) => setWidth(Math.round(entry.contentRect.width)));
+		observer.observe(canvasRef.current);
+		return () => observer.disconnect();
 	}, []);
 	(0, import_react.useEffect)(() => {
 		let stale = false;
-		let raf = 0;
-		const urls = getAvatarDocumentImageUrls(doc);
+		setLoading(true);
+		setLoadedAssets({
+			key: "",
+			images: /* @__PURE__ */ new Map()
+		});
+		preloadImages(imageUrls).then((loadedImages) => {
+			if (stale) return;
+			setLoadedAssets({
+				key: imageKey,
+				images: loadedImages
+			});
+			setMissing(!areAllImagesLoaded(imageUrls, loadedImages));
+			setLoading(false);
+		});
+		return () => stale = true;
+	}, [imageKey]);
+	(0, import_react.useEffect)(() => {
+		if (loadedAssets.key !== imageKey) return;
+		let animationFrame = 0;
 		const paint = () => {
-			const c = canvasRef.current;
-			if (stale || !c) return;
-			drawAvatar(c.getContext("2d"), doc, {
+			const canvas = canvasRef.current;
+			if (!canvas) return;
+			drawAvatar(canvas.getContext("2d"), doc, {
 				selectedId,
-				uiScale: 740 / (c.clientWidth || 740)
+				userInterfaceScale: 740 / (canvas.clientWidth || 740),
+				images: loadedAssets.images
 			});
 			setPainted(true);
 		};
-		const schedule = () => {
-			cancelAnimationFrame(raf);
-			raf = requestAnimationFrame(paint);
-		};
-		if (areAllImagesLoaded(urls)) {
-			setLoading(false);
-			setMissing(false);
-			schedule();
-		} else {
-			setLoading(true);
-			preloadImages(urls).then(() => {
-				if (stale) return;
-				setLoading(false);
-				setMissing(!areAllImagesLoaded(urls));
-				schedule();
-			});
-		}
-		return () => {
-			stale = true;
-			cancelAnimationFrame(raf);
-		};
+		animationFrame = requestAnimationFrame(paint);
+		return () => cancelAnimationFrame(animationFrame);
 	}, [
 		doc,
 		selectedId,
-		width
+		width,
+		imageKey,
+		loadedAssets
 	]);
 	(0, import_react.useEffect)(() => {
-		const c = canvasRef.current;
-		const onWheel = (e) => {
-			const { doc: d, selectedId: id } = live.current;
-			const item = d.items.find((i) => i.id === id);
+		const canvas = canvasRef.current;
+		const onWheel = (event) => {
+			const { doc: currentDoc, selectedId: currentSelectedId } = live.current;
+			const item = currentDoc.items.find((entry) => entry.id === currentSelectedId);
 			if (!item) return;
-			e.preventDefault();
+			event.preventDefault();
 			const now = Date.now();
 			if (now - lastWheel.current > 400) dispatch({ type: "checkpoint" });
 			lastWheel.current = now;
 			dispatch({
 				type: "patch",
-				id,
-				patch: { scale: item.scale * Math.exp(-e.deltaY * .0015) }
+				id: currentSelectedId,
+				patch: { scale: item.scale * Math.exp(-event.deltaY * .0015) }
 			});
 		};
-		c.addEventListener("wheel", onWheel, { passive: false });
-		return () => c.removeEventListener("wheel", onWheel);
+		canvas.addEventListener("wheel", onWheel, { passive: false });
+		return () => canvas.removeEventListener("wheel", onWheel);
 	}, [dispatch]);
-	const toStage = (e) => {
-		const r = canvasRef.current.getBoundingClientRect();
+	const toStage = (event) => {
+		const rect = canvasRef.current.getBoundingClientRect();
 		return {
-			x: (e.clientX - r.left) * 740 / r.width,
-			y: (e.clientY - r.top) * 740 / r.height
+			x: (event.clientX - rect.left) * 740 / rect.width,
+			y: (event.clientY - rect.top) * 740 / rect.height
 		};
 	};
-	const onPointerDown = (e) => {
-		const c = canvasRef.current;
-		const p = toStage(e);
-		const { doc: d, selectedId: sid } = live.current;
-		c.setPointerCapture(e.pointerId);
-		pointers.current.set(e.pointerId, p);
-		const sel = d.items.find((i) => i.id === sid);
-		if (pointers.current.size === 2 && sel) {
-			const [a, b] = [...pointers.current.values()];
+	const onPointerDown = (event) => {
+		const canvas = canvasRef.current;
+		const point = toStage(event);
+		const { doc: currentDoc, selectedId: currentSelectedId, images: currentImages } = live.current;
+		canvas.setPointerCapture(event.pointerId);
+		pointers.current.set(event.pointerId, point);
+		const selectedItem = currentDoc.items.find((item) => item.id === currentSelectedId);
+		if (pointers.current.size === 2 && selectedItem) {
+			const [first, second] = [...pointers.current.values()];
 			gesture.current = {
 				type: "pinch",
-				id: sel.id,
-				d0: dist(a, b) || 1,
-				a0: angle(a, b),
-				s0: sel.scale,
-				r0: sel.rotation,
+				id: selectedItem.id,
+				initialDistance: dist(first, second) || 1,
+				initialAngle: angle(first, second),
+				initialScale: selectedItem.scale,
+				initialRotation: selectedItem.rotation,
 				started: false
 			};
 			return;
 		}
-		if (sel && doesPointHitCloseButton(sel, p, 740 / c.clientWidth)) {
+		if (selectedItem && doesPointHitCloseButton(selectedItem, point, 740 / canvas.clientWidth, currentImages)) {
 			dispatch({
 				type: "remove",
-				id: sel.id
+				id: selectedItem.id
 			});
 			pointers.current.clear();
 			gesture.current = null;
 			return;
 		}
-		const hit = hitTest(d.items, p);
+		const hitItem = hitTest(currentDoc.items, point, currentImages);
 		dispatch({
 			type: "select",
-			id: hit?.id ?? null
+			id: hitItem?.id ?? null
 		});
-		gesture.current = hit ? {
+		gesture.current = hitItem ? {
 			type: "drag",
-			id: hit.id,
-			dx: hit.x - p.x,
-			dy: hit.y - p.y,
+			id: hitItem.id,
+			offsetX: hitItem.x - point.x,
+			offsetY: hitItem.y - point.y,
 			started: false
 		} : null;
 	};
-	const onPointerMove = (e) => {
-		const g = gesture.current;
-		if (!g || !pointers.current.has(e.pointerId)) return;
-		const p = toStage(e);
-		pointers.current.set(e.pointerId, p);
-		if (g.type === "drag" && pointers.current.size === 1) {
-			if (!g.started) dispatch({ type: "checkpoint" });
-			g.started = true;
+	const onPointerMove = (event) => {
+		const currentGesture = gesture.current;
+		if (!currentGesture || !pointers.current.has(event.pointerId)) return;
+		const point = toStage(event);
+		pointers.current.set(event.pointerId, point);
+		if (currentGesture.type === "drag" && pointers.current.size === 1) {
+			if (!currentGesture.started) dispatch({ type: "checkpoint" });
+			currentGesture.started = true;
 			dispatch({
 				type: "patch",
-				id: g.id,
+				id: currentGesture.id,
 				patch: {
-					x: p.x + g.dx,
-					y: p.y + g.dy
+					x: point.x + currentGesture.offsetX,
+					y: point.y + currentGesture.offsetY
 				}
 			});
-		} else if (g.type === "pinch" && pointers.current.size >= 2) {
-			const [a, b] = [...pointers.current.values()];
-			if (!g.started) dispatch({ type: "checkpoint" });
-			g.started = true;
+		} else if (currentGesture.type === "pinch" && pointers.current.size >= 2) {
+			const [first, second] = [...pointers.current.values()];
+			if (!currentGesture.started) dispatch({ type: "checkpoint" });
+			currentGesture.started = true;
 			dispatch({
 				type: "patch",
-				id: g.id,
+				id: currentGesture.id,
 				patch: {
-					scale: g.s0 * dist(a, b) / g.d0,
-					rotation: g.r0 + (angle(a, b) - g.a0) * 180 / Math.PI
+					scale: currentGesture.initialScale * dist(first, second) / currentGesture.initialDistance,
+					rotation: currentGesture.initialRotation + (angle(first, second) - currentGesture.initialAngle) * 180 / Math.PI
 				}
 			});
 		}
 	};
-	const onPointerUp = (e) => {
-		pointers.current.delete(e.pointerId);
+	const onPointerUp = (event) => {
+		pointers.current.delete(event.pointerId);
 		if (pointers.current.size < 2 && gesture.current?.type === "pinch") gesture.current = null;
 		if (pointers.current.size === 0) gesture.current = null;
 	};
@@ -801,8 +789,8 @@ function AvatarStage({ doc, selectedId, dispatch }) {
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("canvas", {
 				ref: canvasRef,
-				width: PX,
-				height: PX,
+				width: PIXEL_SIZE,
+				height: PIXEL_SIZE,
 				"aria-label": "Khung tạo avatar: kéo phụ kiện để di chuyển",
 				className: "block size-full touch-none select-none",
 				onPointerDown,
@@ -1159,22 +1147,22 @@ function useAvatarEditor() {
 // src/features/avatar/Avatar.jsx
 function useShortcuts(dispatch, selectedId) {
 	(0, import_react.useEffect)(() => {
-		const onKey = (e) => {
-			if (e.target.closest?.("input, textarea, select, [contenteditable]")) return;
-			const mod = e.ctrlKey || e.metaKey;
-			const key = e.key.toLowerCase();
-			if (mod && key === "z") dispatch({ type: e.shiftKey ? "redo" : "undo" });
-			else if (mod && key === "y") dispatch({ type: "redo" });
-			else if ((e.key === "Delete" || e.key === "Backspace") && selectedId) dispatch({
+		const onKey = (event) => {
+			if (event.target.closest?.("input, textarea, select, [contenteditable]")) return;
+			const modifier = event.ctrlKey || event.metaKey;
+			const key = event.key.toLowerCase();
+			if (modifier && key === "z") dispatch({ type: event.shiftKey ? "redo" : "undo" });
+			else if (modifier && key === "y") dispatch({ type: "redo" });
+			else if ((event.key === "Delete" || event.key === "Backspace") && selectedId) dispatch({
 				type: "remove",
 				id: selectedId
 			});
-			else if (e.key === "Escape") dispatch({
+			else if (event.key === "Escape") dispatch({
 				type: "select",
 				id: null
 			});
 			else return;
-			e.preventDefault();
+			event.preventDefault();
 		};
 		window.addEventListener("keydown", onKey);
 		return () => window.removeEventListener("keydown", onKey);
@@ -1192,10 +1180,6 @@ function Avatar({ onUser }) {
 	});
 	useShortcuts(dispatch, selectedId);
 	(0, import_react.useEffect)(() => {
-		const t = setTimeout(() => preloadImages(FACES[doc.role].map(imageUrl)), 300);
-		return () => clearTimeout(t);
-	}, [doc.role]);
-	(0, import_react.useEffect)(() => {
 		if (!busy) return;
 		const interval = setInterval(() => {
 			const state = progressRef.current;
@@ -1206,7 +1190,7 @@ function Avatar({ onUser }) {
 		}, 40);
 		return () => clearInterval(interval);
 	}, [busy]);
-	const itemKey = (0, import_react.useMemo)(() => doc.items.map((i) => i.src).join("|"), [doc.items]);
+	const itemKey = (0, import_react.useMemo)(() => doc.items.map((item) => item.src).join("|"), [doc.items]);
 	const waitForProgress = () => new Promise((resolve) => {
 		const interval = setInterval(() => {
 			if (progressRef.current.current >= 100) {
@@ -1225,8 +1209,8 @@ function Avatar({ onUser }) {
 		setProgressMessage("Đang chuẩn bị");
 		try {
 			await task(await renderAvatarToBlob(doc, 512));
-		} catch (e) {
-			if (e.code !== "UNAUTHORIZED") toast(e.message || "Có lỗi xảy ra", "err");
+		} catch (error) {
+			if (error.code !== "UNAUTHORIZED") toast(error.message || "Có lỗi xảy ra", "err");
 		} finally {
 			setBusy(false);
 			setProgress(0);
@@ -1238,22 +1222,22 @@ function Avatar({ onUser }) {
 		}
 	};
 	const useAsAvatar = () => run(async (blob) => {
-		const r = await updateAvatar(blob, (value, message) => {
+		const response = await updateAvatar(blob, (value, message) => {
 			progressRef.current.target = Math.max(progressRef.current.target, Math.min(100, value));
 			setProgressMessage(message);
 		});
 		progressRef.current.target = 100;
 		setProgressMessage("Hoàn tất");
 		await waitForProgress();
-		if (r.user) onUser(r.user);
-		toast(r.message || "Đã đổi ảnh đại diện");
+		if (response.user) onUser(response.user);
+		toast(response.message || "Đã đổi ảnh đại diện");
 	});
 	const download = () => run((blob) => {
 		const url = URL.createObjectURL(blob);
-		const a = document.createElement("a");
-		a.href = url;
-		a.download = "avatar.png";
-		a.click();
+		const anchor = document.createElement("a");
+		anchor.href = url;
+		anchor.download = "avatar.png";
+		anchor.click();
 		setTimeout(() => URL.revokeObjectURL(url), 1e3);
 	});
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {

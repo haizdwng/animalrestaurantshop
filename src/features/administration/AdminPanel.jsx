@@ -1,26 +1,20 @@
-import { useState } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Tabs } from '@/shared/components/ui';
 import { ADMIN_TABS } from '@/features/administration/config';
-import GiftCodes from '@/features/administration/GiftCodes';
-import AdminUsers from '@/features/administration/Users';
-import AdminPlayers from '@/features/administration/Players';
-import AdminData from '@/features/administration/Data';
 
 export default function AdminPanel() {
-  const [tab, setTab] = useState('giftcodes');
-  const [visited, setVisited] = useState(() => new Set(['giftcodes']));
-  const visit = (next) => {
-    setTab(next);
-    setVisited((current) => current.has(next) ? current : new Set(current).add(next));
-  };
+  const location = useLocation();
+  const navigate = useNavigate();
+  const relativePath = location.pathname.replace(/^\/administrator\/?/, '');
+  const requestedTab = relativePath.split('/')[0] || 'giftcodes';
+  const tab = ADMIN_TABS.some(([key]) => key === requestedTab) ? requestedTab : 'giftcodes';
+
+  const visit = (next) => navigate(`/administrator/${next}`);
 
   return (
     <div className='app-screen space-y-4'>
       <Tabs tabs={ADMIN_TABS} value={tab} onChange={visit} />
-      {visited.has('giftcodes') && <div hidden={tab !== 'giftcodes'}><GiftCodes /></div>}
-      {visited.has('users') && <div hidden={tab !== 'users'}><AdminUsers /></div>}
-      {visited.has('players') && <div hidden={tab !== 'players'}><AdminPlayers /></div>}
-      {visited.has('data') && <div hidden={tab !== 'data'}><AdminData /></div>}
+      <Outlet />
     </div>
   );
 };

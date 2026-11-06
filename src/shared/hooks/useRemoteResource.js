@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export default function useRemoteResource(fetcher) {
+export default function useRemoteResource(fetcher, enabled = true) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -10,29 +10,36 @@ export default function useRemoteResource(fetcher) {
   fetcherRef.current = fetcher;
 
   const reload = useCallback(async () => {
-    const id = ++request.current;
+    const requestId = ++request.current;
     setLoading(true);
     setError('');
     try {
       const next = await fetcherRef.current();
-      if (mounted.current && id === request.current) setData(next);
+      if (mounted.current && requestId === request.current) setData(next);
       return next;
-    } catch (e) {
-      if (mounted.current && id === request.current) setError(e?.message || 'Không tải được dữ liệu');
+    } catch (fetchError) {
+      if (mounted.current && requestId === request.current) setError(fetchError?.message || 'Không tải được dữ liệu');
       return null;
     } finally {
-      if (mounted.current && id === request.current) setLoading(false);
+      if (mounted.current && requestId === request.current) setLoading(false);
     };
   }, []);
 
   useEffect(() => {
     mounted.current = true;
-    reload();
+    if (enabled) reload();
+    else {
+      request.current += 1;
+      setData(null);
+      setLoading(false);
+      setError('');
+    };
+
     return () => {
       mounted.current = false;
       request.current += 1;
     };
-  }, [reload]);
+  }, [reload, enabled]);
 
   return { data, setData, loading, error, reload };
 };

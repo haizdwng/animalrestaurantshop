@@ -1,4 +1,4 @@
-import { ut as toast, xt as createReactComponent } from "./index.js";
+import { Tt as createReactComponent, pt as toast } from "./index.js";
 /**
 * @license @tabler/icons-react v3.50.0 - MIT
 *
@@ -19,19 +19,6 @@ var IconLock = createReactComponent("outline", "lock", "Lock", [
 		"key": "svg-2"
 	}]
 ]);
-/**
-* @license @tabler/icons-react v3.50.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var IconSearch = createReactComponent("outline", "search", "Search", [["path", {
-	"d": "M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0",
-	"key": "svg-0"
-}], ["path", {
-	"d": "M21 21l-6 -6",
-	"key": "svg-1"
-}]]);
 // src/shared/library/clipboard.js
 var copyText = (text, msg) => navigator.clipboard?.writeText(text).then(() => toast(msg, "info"));
-export { IconSearch as n, IconLock as r, copyText as t };
+export { IconLock as n, copyText as t };

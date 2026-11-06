@@ -31,6 +31,9 @@ export const adminCreateGiftCode = (data) => call('POST', '/administrator/giftco
 export const adminEditGiftCode = (code, patch) => call('PATCH', `/administrator/giftcodes/${enc(code)}`, patch);
 export const adminDeleteGiftCode = (code) => call('DELETE', `/administrator/giftcodes/${enc(code)}`);
 export const adminPlayer = (openid) => call('GET', `/administrator/players/${enc(openid)}`);
+export const adminPlayerFriends = (openid) => call('GET', `/administrator/players/${enc(openid)}/friends`);
+export const adminAddPlayerFriend = (openid, friendId) => call('POST', `/administrator/players/${enc(openid)}/friends/${enc(friendId)}`);
+export const adminDeletePlayerFriend = (openid, friendId) => call('DELETE', `/administrator/players/${enc(openid)}/friends/${enc(friendId)}`);
 export const adminRecord = (openid) => call('GET', `/administrator/players/${enc(openid)}/record`);
 export const adminSaveRecord = (openid, record) => call('PATCH', `/administrator/players/${enc(openid)}/record`, { record });
 export const adminEncryptRecordValue = (openid, type, value, key) => call('POST', `/administrator/players/${enc(openid)}/record/encrypt`, { type, ...(type === 'v1' ? { key } : {}), value });

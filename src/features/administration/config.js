@@ -28,13 +28,14 @@ export const EMPTY_USER_FORM = { openid: '', username: '', password: '', coin: '
 
 export const PLAYER_TABS = [
   ['player', 'Người chơi', IconUser],
+  ['friends', 'Bạn bè', IconUsers],
   ['record', 'Dữ liệu', IconDatabase]
 ];
 export const PLAYER_PAGE_SIZE = 10;
 
 export const DATA_TABS = [
-  ['musicians', 'Khách mời', IconMusic],
   ['shop', 'Cửa hàng', IconBuildingStore],
-  ['data', 'Dữ liệu', IconDatabase],
-  ['texts', 'Văn bản', IconFileText]
+  ['musicians', 'Khách mời', IconMusic],
+  ['texts', 'Văn bản', IconFileText],
+  ['data', 'Dữ liệu', IconDatabase]
 ];
