@@ -16410,20 +16410,12 @@ function normProduct(p, i) {
 		once: p.once === true
 	};
 }
-function parseShopData(shop) {
-	if (typeof shop === "string") try {
-		shop = JSON.parse(shop);
-	} catch {
-		return {};
-	}
-	return shop && typeof shop === "object" && !Array.isArray(shop) ? shop : {};
-}
 function normShop(shop) {
-	shop = parseShopData(shop);
-	return [...Object.keys(TAB_LABELS).filter((key) => key in shop), ...Object.keys(shop).filter((key) => !(key in TAB_LABELS))].map((key) => ({
-		id: key,
-		name: TAB_LABELS[key] || key,
-		products: toList(shop[key]).map(normProduct)
+	if (!shop) return [];
+	return [...Object.keys(TAB_LABELS).filter((k) => k in shop), ...Object.keys(shop).filter((k) => !(k in TAB_LABELS))].map((k) => ({
+		id: k,
+		name: TAB_LABELS[k] || k,
+		products: toList(shop[k]).map(normProduct)
 	}));
 }
 var normAdminUser = (u) => ({
@@ -17207,4 +17199,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)();
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }) }));
-export { Logo as $, adminUsers as A, useNavigate as At, redeemGiftCode as B, adminPlayer as C, IconDeviceFloppy as Ct, adminSaveData as D, createReactComponent as Dt, adminRecord as E, IconAlertTriangle as Et, buy as F, resetPassword as G, updateUser as H, changeOpenid as I, fileToAvatar as J, signup as K, getBuffetLink as L, createTransaction as M, require_react as Mt, getTransaction as N, __toESM as Nt, adminSaveRecord as O, Outlet as Ot, getTransactions as P, Coin as Q, getFriendLink as R, adminGiftCodes as S, IconInfoCircle as St, adminPlayers as T, IconBuildingStore as Tt, login as U, updateAvatar as V, passwordOtp as W, normShop as X, isAdmin as Y, parseShopData as Z, adminDeleteUser as _, Field as _t, formatShortDateTime as a, ErrorState as at, adminEditUser as b, IconX as bt, adminAddPlayerFriend as c, Tabs as ct, adminCreateGiftCode as d, SortSelect as dt, JsonEditor as et, adminCreateUser as f, Menu as ft, adminDeletePlayerFriend as g, toastError as gt, adminDeleteGiftCode as h, toast as ht, formatNumber as i, Skeleton as it, cancelTransaction as j, useParams as jt, adminUpdatePlayerAvatar as k, useLocation as kt, adminAddPlayerLike as l, PageSizeSelect as lt, adminDecryptRecordValue as m, OtpButton as mt, formatDate as n, PagerSkeleton as nt, formatVietnameseDong as o, Spinner as ot, adminData as p, Dialog as pt, signupOtp as q, formatDateTime as r, RowSkeleton as rt, adminAddCoin as s, Pager as st, compareByTime as t, Line as tt, adminAddPlayerStar as u, Select as ut, adminEditGiftCode as v, Button as vt, adminPlayerFriends as w, IconCircleCheck as wt, adminEncryptRecordValue as x, IconRefresh as xt, adminEditPlayer as y, require_jsx_runtime as yt, openidOtp as z };
+export { JsonEditor as $, adminUsers as A, useParams as At, redeemGiftCode as B, adminPlayer as C, IconCircleCheck as Ct, adminSaveData as D, Outlet as Dt, adminRecord as E, createReactComponent as Et, buy as F, resetPassword as G, updateUser as H, changeOpenid as I, fileToAvatar as J, signup as K, getBuffetLink as L, createTransaction as M, __toESM as Mt, getTransaction as N, adminSaveRecord as O, useLocation as Ot, getTransactions as P, Logo as Q, getFriendLink as R, adminGiftCodes as S, IconDeviceFloppy as St, adminPlayers as T, IconAlertTriangle as Tt, login as U, updateAvatar as V, passwordOtp as W, normShop as X, isAdmin as Y, Coin as Z, adminDeleteUser as _, Button as _t, formatShortDateTime as a, Spinner as at, adminEditUser as b, IconRefresh as bt, adminAddPlayerFriend as c, PageSizeSelect as ct, adminCreateGiftCode as d, Menu as dt, Line as et, adminCreateUser as f, Dialog as ft, adminDeletePlayerFriend as g, Field as gt, adminDeleteGiftCode as h, toastError as ht, formatNumber as i, ErrorState as it, cancelTransaction as j, require_react as jt, adminUpdatePlayerAvatar as k, useNavigate as kt, adminAddPlayerLike as l, Select as lt, adminDecryptRecordValue as m, toast as mt, formatDate as n, RowSkeleton as nt, formatVietnameseDong as o, Pager as ot, adminData as p, OtpButton as pt, signupOtp as q, formatDateTime as r, Skeleton as rt, adminAddCoin as s, Tabs as st, compareByTime as t, PagerSkeleton as tt, adminAddPlayerStar as u, SortSelect as ut, adminEditGiftCode as v, require_jsx_runtime as vt, adminPlayerFriends as w, IconBuildingStore as wt, adminEncryptRecordValue as x, IconInfoCircle as xt, adminEditPlayer as y, IconX as yt, openidOtp as z };
