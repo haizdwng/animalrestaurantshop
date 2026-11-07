@@ -8,9 +8,23 @@ import StatusBadge from '@/shared/components/payment/StatusBadge';
 import * as api from '@/shared/library/api';
 
 const POLL = 6000;
+const DIALOG_TTL_MS = 5 * 60 * 1000;
 const PAID_MSG = 'Thanh toán thành công (đã cộng xu)';
 
 const merge = (tx, r) => ({ ...tx, ...r.transaction, coin: tx.coin, status: r.status });
+
+function remainingMs(expiredAt) {
+  if (!expiredAt) return null;
+  return Math.max(0, new Date(expiredAt).getTime() - Date.now());
+};
+
+function formatCountdown(ms) {
+  if (ms == null || ms < 0) return null;
+  const s = Math.ceil(ms / 1000);
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${String(r).padStart(2, '0')}`;
+};
 
 function usePaymentPolling(tx, status, live, setAuto) {
   useEffect(() => {
@@ -23,16 +37,16 @@ function usePaymentPolling(tx, status, live, setAuto) {
         const r = await api.getTransaction(tx.code);
         if (stop) return;
         if (r.status !== 'pending') {
-          const { tx: cur, onChange, onPaid } = live.current;
+          const { tx: cur, onChange, onPaid, onClose } = live.current;
           onChange?.(merge(cur, r));
           if (r.status === 'success') {
             toast(r.message || PAID_MSG);
             onPaid?.();
-          };
+          } else if (r.status === 'expired') toast(r.message || 'Giao dịch đã hết hạn', 'info');
+          onClose?.();
           return;
         };
-      } catch {
-      } finally {
+      } catch {} finally {
         if (!stop) setAuto(false);
       };
       if (!stop) timer = setTimeout(tick, POLL);
@@ -43,6 +57,43 @@ function usePaymentPolling(tx, status, live, setAuto) {
       clearTimeout(timer);
     };
   }, [tx?.code, status]);
+};
+
+function useDialogCountdown(tx, status, onExpire) {
+  const [left, setLeft] = useState(() => {
+    if (status !== 'pending') return null;
+    if (tx?.expiredAt) return remainingMs(tx.expiredAt);
+    return DIALOG_TTL_MS;
+  });
+  const onExpireRef = useRef(onExpire);
+  onExpireRef.current = onExpire;
+  const started = useRef(null);
+
+  useEffect(() => {
+    if (status !== 'pending' || !tx?.code) {
+      setLeft(null);
+      return;
+    };
+    if (tx.expiredAt) setLeft(remainingMs(tx.expiredAt));
+    else {
+      if (!started.current || started.current.code !== tx.code) started.current = { code: tx.code, at: Date.now() };
+      setLeft(Math.max(0, DIALOG_TTL_MS - (Date.now() - started.current.at)));
+    };
+  }, [tx?.code, tx?.expiredAt, status]);
+
+  useEffect(() => {
+    if (status !== 'pending' || left == null) return;
+    if (left <= 0) {
+      onExpireRef.current?.();
+      return;
+    };
+    const id = setTimeout(() => {
+      if (tx?.expiredAt) setLeft(remainingMs(tx.expiredAt));
+      else if (started.current?.code === tx?.code) setLeft(Math.max(0, DIALOG_TTL_MS - (Date.now() - started.current.at)));
+    }, 250);
+    return () => clearTimeout(id);
+  }, [left, status, tx?.code, tx?.expiredAt]);
+  return left;
 };
 
 function Amount({ tx }) {
@@ -82,9 +133,16 @@ export default function PaymentDialog({ tx, onClose, onChange, onPaid }) {
   const [auto, setAuto] = useState(false);
   const status = tx?.status || 'pending';
   const live = useRef({});
-  live.current = { tx, onChange, onPaid };
-
+  live.current = { tx, onChange, onPaid, onClose };
   usePaymentPolling(tx, status, live, setAuto);
+  const handleExpire = () => {
+    if (!tx) return;
+    onChange?.({ ...tx, status: 'expired' });
+    toast('Giao dịch đã hết hạn', 'info');
+    onClose?.();
+  };
+
+  const left = useDialogCountdown(tx, status, handleExpire);
   useEffect(() => setConfirmCancel(false), [tx?.code]);
   if (!tx) return null;
 
@@ -106,7 +164,14 @@ export default function PaymentDialog({ tx, onClose, onChange, onPaid }) {
     if (next === 'success') {
       toast(r.message || PAID_MSG);
       onPaid?.();
-    } else toast(r.message || (next === 'pending' ? 'Chưa nhận được thanh toán' : STATUS[next]?.label), next === 'pending' ? 'info' : 'ok');
+      onClose?.();
+    } else if (next === 'expired') {
+      toast(r.message || 'Giao dịch đã hết hạn', 'info');
+      onClose?.();
+    } else {
+      toast(r.message || (next === 'pending' ? 'Chưa nhận được thanh toán' : STATUS[next]?.label), next === 'pending' ? 'info' : 'ok');
+      if (next !== 'pending') onClose?.();
+    };
   });
 
   const cancel = () => run('cancel', async () => {
@@ -114,13 +179,22 @@ export default function PaymentDialog({ tx, onClose, onChange, onPaid }) {
     onChange?.({ ...tx, status: 'cancelled' });
     setConfirmCancel(false);
     toast(r.message || 'Đã huỷ giao dịch', 'info');
+    onClose?.();
   });
 
+  const countdownLabel = status === 'pending' ? formatCountdown(left) : null;
   return (
     <Dialog open title='Thanh toán mua xu' onClose={() => !busy && onClose()}>
       <div className='flex items-start justify-between gap-3'>
         <Amount tx={tx} />
-        <StatusBadge status={status} />
+        <div className='flex flex-col items-end gap-1'>
+          <StatusBadge status={status} />
+          {countdownLabel != null && (
+            <p className={`text-[11px] font-bold tabular-nums ${left != null && left <= 60_000 ? 'text-bad' : 'text-mute'}`}>
+              Còn {countdownLabel}
+            </p>
+          )}
+        </div>
       </div>
 
       <QrCode tx={tx} status={status} />
@@ -140,7 +214,8 @@ export default function PaymentDialog({ tx, onClose, onChange, onPaid }) {
       {status === 'pending' && (
         <p className='flex items-start gap-2 text-[11px] leading-relaxed text-mute'>
           {auto ? <Spinner size={12} className='mt-0.5 shrink-0 text-lime' /> : <span className='mt-1.5 size-1.5 shrink-0 animate-pulse rounded-full bg-ok' />}
-          Quét mã bằng app ngân hàng, giữ nguyên nội dung chuyển khoản. App tự kiểm tra định kỳ (hoặc bấm “Kiểm tra”).
+          Quét mã bằng app ngân hàng, giữ nguyên nội dung chuyển khoản. Trang web sẽ tự kiểm tra định kỳ (hoặc bấm “Kiểm tra”).
+          {countdownLabel != null && <> Hết hạn sau <b className='text-fg'>{countdownLabel}</b></>}
         </p>
       )}
 

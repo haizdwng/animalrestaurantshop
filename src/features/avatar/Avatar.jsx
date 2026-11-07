@@ -92,7 +92,7 @@ export default function Avatar({ onUser }) {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = 'avatar.png';
+    anchor.download = `avatar.${Date.now()}.png`;
     anchor.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   });

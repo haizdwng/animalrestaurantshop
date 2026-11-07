@@ -57,7 +57,7 @@ function GiftCodeRow({ giftcode, onEdit, onDelete }) {
 function userId(user) {
 	return String(user?._id ?? user?.id ?? "");
 }
-function UserAssignment({ users, usersLoading, selected, onChange }) {
+function UserAssignment({ title, description, users, usersLoading, selected, onChange }) {
 	const [query, setQuery] = (0, import_react.useState)("");
 	const selectedSet = new Set(selected);
 	const filtered = (users || []).filter((user) => {
@@ -70,10 +70,10 @@ function UserAssignment({ users, usersLoading, selected, onChange }) {
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 				className: "text-xs font-bold",
-				children: "Người dùng được phép dùng"
+				children: title
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 				className: "mt-1 text-[10px] text-mute",
-				children: "Chỉ các tài khoản được chọn mới dùng được mã đổi thưởng này."
+				children: description
 			})] }),
 			selectedUsers.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "flex flex-wrap gap-1.5",
@@ -128,42 +128,7 @@ function UserAssignment({ users, usersLoading, selected, onChange }) {
 		]
 	});
 }
-function UsedUsers({ used, users }) {
-	const entries = used.map((id) => {
-		const user = (users || []).find((item) => userId(item) === id);
-		return {
-			id,
-			label: user?.username || user?.playerName || user?.openid || id
-		};
-	});
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
-		className: "space-y-2 rounded-xl border border-line bg-bg p-3",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "flex items-center justify-between gap-2",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "text-xs font-bold",
-				children: "Đã sử dụng"
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "mt-1 text-[10px] text-mute",
-				children: "Lịch sử đổi thưởng."
-			})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-				className: "rounded-full bg-raise px-2 py-1 text-[10px] font-bold tabular-nums text-mute",
-				children: used.length
-			})]
-		}), entries.length ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			className: "flex max-h-24 flex-wrap gap-1.5 overflow-y-auto",
-			children: entries.map(({ id, label }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-				title: id,
-				className: "max-w-full truncate rounded-full bg-raise px-2.5 py-1 text-[10px] text-mute",
-				children: label
-			}, id))
-		}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-			className: "text-[11px] text-mute",
-			children: "Chưa có người dùng nào sử dụng."
-		})]
-	});
-}
-function GiftCodeDialog({ dlg, form, setForm, busy, onClose, onCreate, onEdit, users, usersLoading, selectedUsers, setSelectedUsers }) {
+function GiftCodeDialog({ dlg, form, setForm, busy, onClose, onCreate, onEdit, users, usersLoading, selectedUsers, setSelectedUsers, selectedUsed, setSelectedUsed }) {
 	const set = (key) => (e) => setForm((state) => ({
 		...state,
 		[key]: e.target.value
@@ -202,13 +167,19 @@ function GiftCodeDialog({ dlg, form, setForm, busy, onClose, onCreate, onEdit, u
 					onChange: set("date")
 				}),
 				editing && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(UserAssignment, {
+					title: "Người dùng được phép dùng",
+					description: "Chỉ các tài khoản được chọn mới dùng được mã đổi thưởng này.",
 					users,
 					usersLoading,
 					selected: selectedUsers,
 					onChange: setSelectedUsers
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(UsedUsers, {
-					used: dlg.giftcode.used || [],
-					users
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(UserAssignment, {
+					title: "Đã sử dụng",
+					description: "Danh sách người đã đổi thưởng. Có thể thêm hoặc bỏ để chỉnh trạng thái đã dùng.",
+					users,
+					usersLoading,
+					selected: selectedUsed,
+					onChange: setSelectedUsed
 				})] }),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 					type: "submit",
@@ -259,6 +230,7 @@ function GiftCodes() {
 	const [form, setForm] = (0, import_react.useState)(EMPTY_GIFT_CODE);
 	const [busy, setBusy] = (0, import_react.useState)(false);
 	const [selectedUsers, setSelectedUsers] = (0, import_react.useState)([]);
+	const [selectedUsed, setSelectedUsed] = (0, import_react.useState)([]);
 	const shown = (0, import_react.useMemo)(() => {
 		const query = q.trim().toLowerCase();
 		return list?.filter((item) => !query || String(item.code ?? "").toLowerCase().includes(query));
@@ -268,6 +240,7 @@ function GiftCodes() {
 	const openCreate = () => {
 		setForm(EMPTY_GIFT_CODE);
 		setSelectedUsers([]);
+		setSelectedUsed([]);
 		setDlg({ kind: "create" });
 	};
 	const openEdit = (giftcode) => {
@@ -277,6 +250,7 @@ function GiftCodes() {
 			date: giftcode.date ? String(giftcode.date).slice(0, 16) : ""
 		});
 		setSelectedUsers((giftcode.users || []).map((user) => String(typeof user === "object" ? user._id ?? user.id : user)).filter(Boolean));
+		setSelectedUsed((giftcode.used || []).map((user) => String(typeof user === "object" ? user._id ?? user.id : user)).filter(Boolean));
 		setDlg({
 			kind: "edit",
 			giftcode
@@ -322,6 +296,8 @@ function GiftCodes() {
 		if (value.date !== oldDate) patch.date = value.date;
 		const previousUsers = (dlg.giftcode.users || []).map((user) => String(typeof user === "object" ? user._id ?? user.id : user)).filter(Boolean);
 		if (JSON.stringify(selectedUsers) !== JSON.stringify(previousUsers)) patch.users = selectedUsers;
+		const previousUsed = (dlg.giftcode.used || []).map((user) => String(typeof user === "object" ? user._id ?? user.id : user)).filter(Boolean);
+		if (JSON.stringify(selectedUsed) !== JSON.stringify(previousUsed)) patch.used = selectedUsed;
 		if (!Object.keys(patch).length) return toast("Chưa có thay đổi nào", "info");
 		run(() => adminEditGiftCode(dlg.giftcode.code, patch), "Đã cập nhật mã đổi thưởng");
 	};
@@ -401,7 +377,9 @@ function GiftCodes() {
 			users,
 			usersLoading,
 			selectedUsers,
-			setSelectedUsers
+			setSelectedUsers,
+			selectedUsed,
+			setSelectedUsed
 		}),
 		/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DeleteDialog, {
 			giftcode: dlg?.kind === "delete" ? dlg.giftcode : null,

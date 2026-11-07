@@ -36,7 +36,7 @@ function userId(user) {
   return String(user?._id ?? user?.id ?? '');
 };
 
-function UserAssignment({ users, usersLoading, selected, onChange }) {
+function UserAssignment({ title, description, users, usersLoading, selected, onChange }) {
   const [query, setQuery] = useState('');
   const selectedSet = new Set(selected);
   const filtered = (users || []).filter((user) => {
@@ -48,8 +48,8 @@ function UserAssignment({ users, usersLoading, selected, onChange }) {
   return (
     <section className='space-y-2 rounded-xl border border-line bg-bg p-3'>
       <div>
-        <p className='text-xs font-bold'>Người dùng được phép dùng</p>
-        <p className='mt-1 text-[10px] text-mute'>Chỉ các tài khoản được chọn mới dùng được mã đổi thưởng này.</p>
+        <p className='text-xs font-bold'>{title}</p>
+        <p className='mt-1 text-[10px] text-mute'>{description}</p>
       </div>
       {selectedUsers.length > 0 && (
         <div className='flex flex-wrap gap-1.5'>
@@ -101,37 +101,7 @@ function UserAssignment({ users, usersLoading, selected, onChange }) {
   );
 };
 
-function UsedUsers({ used, users }) {
-  const entries = used.map((id) => {
-    const user = (users || []).find((item) => userId(item) === id);
-    return { id, label: user?.username || user?.playerName || user?.openid || id };
-  });
-
-  return (
-    <section className='space-y-2 rounded-xl border border-line bg-bg p-3'>
-      <div className='flex items-center justify-between gap-2'>
-        <div>
-          <p className='text-xs font-bold'>Đã sử dụng</p>
-          <p className='mt-1 text-[10px] text-mute'>Lịch sử đổi thưởng.</p>
-        </div>
-        <span className='rounded-full bg-raise px-2 py-1 text-[10px] font-bold tabular-nums text-mute'>{used.length}</span>
-      </div>
-      {entries.length ? (
-        <div className='flex max-h-24 flex-wrap gap-1.5 overflow-y-auto'>
-          {entries.map(({ id, label }) => (
-            <span key={id} title={id} className='max-w-full truncate rounded-full bg-raise px-2.5 py-1 text-[10px] text-mute'>
-              {label}
-            </span>
-          ))}
-        </div>
-      ) : (
-        <p className='text-[11px] text-mute'>Chưa có người dùng nào sử dụng.</p>
-      )}
-    </section>
-  );
-};
-
-function GiftCodeDialog({ dlg, form, setForm, busy, onClose, onCreate, onEdit, users, usersLoading, selectedUsers, setSelectedUsers }) {
+function GiftCodeDialog({ dlg, form, setForm, busy, onClose, onCreate, onEdit, users, usersLoading, selectedUsers, setSelectedUsers, selectedUsed, setSelectedUsed }) {
   const set = (key) => (e) => setForm((state) => ({ ...state, [key]: e.target.value }));
   const editing = dlg?.kind === 'edit';
   return (
@@ -142,8 +112,22 @@ function GiftCodeDialog({ dlg, form, setForm, busy, onClose, onCreate, onEdit, u
         <Field label='Ngày hết hạn' type='datetime-local' hint='để trống nếu không giới hạn' value={form.date} onChange={set('date')} />
         {editing && (
           <>
-            <UserAssignment users={users} usersLoading={usersLoading} selected={selectedUsers} onChange={setSelectedUsers} />
-            <UsedUsers used={dlg.giftcode.used || []} users={users} />
+            <UserAssignment
+              title='Người dùng được phép dùng'
+              description='Chỉ các tài khoản được chọn mới dùng được mã đổi thưởng này.'
+              users={users}
+              usersLoading={usersLoading}
+              selected={selectedUsers}
+              onChange={setSelectedUsers}
+            />
+            <UserAssignment
+              title='Đã sử dụng'
+              description='Danh sách người đã đổi thưởng. Có thể thêm hoặc bỏ để chỉnh trạng thái đã dùng.'
+              users={users}
+              usersLoading={usersLoading}
+              selected={selectedUsed}
+              onChange={setSelectedUsed}
+            />
           </>
         )}
         <Button type='submit' className='w-full' loading={busy}>
@@ -177,6 +161,7 @@ export default function GiftCodes() {
   const [form, setForm] = useState(EMPTY_GIFT_CODE);
   const [busy, setBusy] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [selectedUsed, setSelectedUsed] = useState([]);
 
   const shown = useMemo(() => {
     const query = q.trim().toLowerCase();
@@ -187,11 +172,13 @@ export default function GiftCodes() {
   const openCreate = () => {
     setForm(EMPTY_GIFT_CODE);
     setSelectedUsers([]);
+    setSelectedUsed([]);
     setDlg({ kind: 'create' });
   };
   const openEdit = (giftcode) => {
     setForm({ code: giftcode.code ?? '', coin: String(giftcode.coin ?? ''), date: giftcode.date ? String(giftcode.date).slice(0, 16) : '' });
     setSelectedUsers((giftcode.users || []).map((user) => String(typeof user === 'object' ? user._id ?? user.id : user)).filter(Boolean));
+    setSelectedUsed((giftcode.used || []).map((user) => String(typeof user === 'object' ? user._id ?? user.id : user)).filter(Boolean));
     setDlg({ kind: 'edit', giftcode });
   };
   const run = async (fn, message) => {
@@ -230,6 +217,8 @@ export default function GiftCodes() {
     if (value.date !== oldDate) patch.date = value.date;
     const previousUsers = (dlg.giftcode.users || []).map((user) => String(typeof user === 'object' ? user._id ?? user.id : user)).filter(Boolean);
     if (JSON.stringify(selectedUsers) !== JSON.stringify(previousUsers)) patch.users = selectedUsers;
+    const previousUsed = (dlg.giftcode.used || []).map((user) => String(typeof user === 'object' ? user._id ?? user.id : user)).filter(Boolean);
+    if (JSON.stringify(selectedUsed) !== JSON.stringify(previousUsed)) patch.used = selectedUsed;
     if (!Object.keys(patch).length) return toast('Chưa có thay đổi nào', 'info');
     run(() => api.adminEditGiftCode(dlg.giftcode.code, patch), 'Đã cập nhật mã đổi thưởng');
   };
@@ -278,6 +267,8 @@ export default function GiftCodes() {
         usersLoading={usersLoading}
         selectedUsers={selectedUsers}
         setSelectedUsers={setSelectedUsers}
+        selectedUsed={selectedUsed}
+        setSelectedUsed={setSelectedUsed}
       />
       <DeleteDialog giftcode={dlg?.kind === 'delete' ? dlg.giftcode : null} busy={busy} onClose={close} onConfirm={remove} />
     </>

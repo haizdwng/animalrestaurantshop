@@ -168,7 +168,7 @@ var IconWheat = createReactComponent("outline", "wheat", "Wheat", [
 ]);
 // src/features/shop/config.js
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
-var TOPUP = "__topup";
+var TOPUP = "topup";
 var CATEGORY_ICONS = {
 	letters: IconMail,
 	customers: IconUsers,

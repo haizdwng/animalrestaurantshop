@@ -16516,18 +16516,27 @@ var createTransaction = (coin) => call("POST", "/user/transactions", { coin });
 var getTransaction = async (code) => {
 	const r = await call("GET", `/user/transactions/${enc(code)}`);
 	const tx = r.transaction || {};
+	const status = String(tx.status ?? r.status ?? "pending").toLowerCase();
 	return {
 		...r,
-		transaction: tx,
-		status: String(tx.status ?? r.status ?? "pending").toLowerCase()
+		transaction: {
+			...tx,
+			expiredAt: tx.expiredAt ?? r.expiredAt
+		},
+		status
 	};
 };
 var cancelTransaction = (code) => call("DELETE", `/user/transactions/${enc(code)}`);
 var getTransactions = async () => {
 	const r = await call("GET", "/user/transactions");
+	const transactions = (r.transactions || []).map((t) => ({
+		...t,
+		status: String(t.status ?? "pending").toLowerCase(),
+		expiredAt: t.expiredAt || null
+	})).slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 	return {
 		...r,
-		transactions: (r.transactions || []).slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+		transactions
 	};
 };
 // src/shared/library/api/admin.js

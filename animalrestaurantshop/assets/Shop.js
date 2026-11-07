@@ -153,7 +153,8 @@ function TopUp({ user, onPaid }) {
 				qr: r.qr,
 				coin: n,
 				amount: r.amount,
-				status: "pending"
+				status: "pending",
+				expiredAt: r.expiredAt || r.transaction?.expiredAt || null
 			});
 			toast(r.message || "Đã tạo giao dịch", "info");
 		} catch (err) {
@@ -809,7 +810,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 			navigate(`/shop/${tabs[0].id}`, { replace: true });
 			return;
 		}
-		if (section !== "__topup" && !tabs.some((tab) => tab.id === section)) navigate(`/shop/${tabs[0].id}`, { replace: true });
+		if (section !== "topup" && !tabs.some((tab) => tab.id === section)) navigate(`/shop/${tabs[0].id}`, { replace: true });
 	}, [
 		tabs,
 		section,

@@ -52,7 +52,14 @@ export default function TopUp({ user, onPaid }) {
     setBusy(true);
     try {
       const r = await api.createTransaction(n);
-      setTx({ code: r.code, qr: r.qr, coin: n, amount: r.amount, status: 'pending' });
+      setTx({
+        code: r.code,
+        qr: r.qr,
+        coin: n,
+        amount: r.amount,
+        status: 'pending',
+        expiredAt: r.expiredAt || r.transaction?.expiredAt || null
+      });
       toast(r.message || 'Đã tạo giao dịch', 'info');
     } catch (err) {
       toastError(err);

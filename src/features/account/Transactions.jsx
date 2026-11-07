@@ -67,6 +67,11 @@ export default function Transactions({ onPaid }) {
     };
   };
 
+  const closePayment = () => {
+    setOpen(null);
+    load();
+  };
+
   const emptyText = list?.length ? (q.trim() ? `Không tìm thấy giao dịch có mã “${q.trim()}”` : 'Không có giao dịch nào với trạng thái này') : 'Chưa có giao dịch mua xu nào';
 
   return (
@@ -100,7 +105,14 @@ export default function Transactions({ onPaid }) {
       ) : shown?.length ? (
         <ul className={`divide-y divide-line transition-opacity ${loading ? 'opacity-50' : ''}`}>
           {rows.map((t, index) => (
-            <TransactionRow key={`${t.code || 'transaction'}-${index}`} tx={t} cancelling={cancelling === t.code} onPay={() => setOpen(t)} onCancel={() => setConfirm(t)} />
+            <TransactionRow
+              key={`${t.code || 'transaction'}-${index}`}
+              tx={t}
+              cancelling={cancelling === t.code}
+              onPay={() => setOpen(t)}
+              onCancel={() => setConfirm(t)}
+              onExpire={load}
+            />
           ))}
         </ul>
       ) : (
@@ -108,7 +120,7 @@ export default function Transactions({ onPaid }) {
       )}
       {pager && <div className='border-t border-line px-4 py-2.5 sm:px-5'>{pager}</div>}
       <ConfirmCancel tx={confirm} onClose={() => setConfirm(null)} onConfirm={cancel} />
-      <PaymentDialog tx={open} onClose={() => setOpen(null)} onChange={update} onPaid={onPaid} />
+      <PaymentDialog tx={open} onClose={closePayment} onChange={update} onPaid={onPaid} />
     </section>
   );
 };

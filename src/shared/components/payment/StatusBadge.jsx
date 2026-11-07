@@ -1,9 +1,10 @@
-import { IconBan, IconCircleCheck, IconClockHour4 } from '@tabler/icons-react';
+import { IconBan, IconCircleCheck, IconClock, IconHourglassEmpty } from '@tabler/icons-react';
 
 export const STATUS = {
-  pending: { label: 'Chờ thanh toán', cls: 'bg-coin/15 text-coin', Icon: IconClockHour4 },
+  pending: { label: 'Chờ thanh toán', cls: 'bg-coin/15 text-coin', Icon: IconClock },
   success: { label: 'Thành công', cls: 'bg-ok/15 text-ok', Icon: IconCircleCheck },
-  cancelled: { label: 'Đã huỷ', cls: 'bg-raise text-mute', Icon: IconBan }
+  cancelled: { label: 'Đã huỷ', cls: 'bg-raise text-mute', Icon: IconBan },
+  expired: { label: 'Hết hạn', cls: 'bg-raise text-mute', Icon: IconHourglassEmpty }
 };
 
 export default function StatusBadge({ status }) {
