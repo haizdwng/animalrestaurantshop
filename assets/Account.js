@@ -726,7 +726,46 @@ function TransactionFilters({ list, statuses, q, onQ, status, onStatus, size, on
 	});
 }
 // src/features/account/TransactionRow.jsx
-function TransactionRow({ tx: t, cancelling, onPay, onCancel }) {
+function remainingMs(expiredAt) {
+	if (!expiredAt) return null;
+	return Math.max(0, new Date(expiredAt).getTime() - Date.now());
+}
+function formatCountdown(ms) {
+	if (ms == null || ms < 0) return null;
+	const s = Math.ceil(ms / 1e3);
+	const m = Math.floor(s / 60);
+	const r = s % 60;
+	return `${m}:${String(r).padStart(2, "0")}`;
+}
+function PendingCountdown({ expiredAt, onExpire }) {
+	const [left, setLeft] = (0, import_react.useState)(() => remainingMs(expiredAt));
+	const onExpireRef = (0, import_react.useRef)(onExpire);
+	onExpireRef.current = onExpire;
+	(0, import_react.useEffect)(() => {
+		if (!expiredAt) {
+			setLeft(null);
+			return;
+		}
+		setLeft(remainingMs(expiredAt));
+	}, [expiredAt]);
+	(0, import_react.useEffect)(() => {
+		if (left == null) return;
+		if (left <= 0) {
+			onExpireRef.current?.();
+			return;
+		}
+		const id = setTimeout(() => setLeft(remainingMs(expiredAt)), 250);
+		return () => clearTimeout(id);
+	}, [left, expiredAt]);
+	if (left == null) return null;
+	const label = formatCountdown(left);
+	if (!label) return null;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+		className: `tabular-nums ${left <= 6e4 ? "text-bad" : "text-mute"}`,
+		children: ["· Còn ", label]
+	});
+}
+function TransactionRow({ tx: t, cancelling, onPay, onCancel, onExpire }) {
 	const pending = t.status === "pending";
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
 		className: "flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 sm:px-5",
@@ -741,7 +780,11 @@ function TransactionRow({ tx: t, cancelling, onPay, onCancel }) {
 					children: [
 						t.code,
 						" · ",
-						t.createdAt ? formatShortDateTime(t.createdAt) : ""
+						t.createdAt ? formatShortDateTime(t.createdAt) : "",
+						pending && t.expiredAt ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PendingCountdown, {
+							expiredAt: t.expiredAt,
+							onExpire
+						}) : null
 					]
 				})]
 			}),
@@ -856,6 +899,10 @@ function Transactions({ onPaid }) {
 			setCancelling("");
 		}
 	};
+	const closePayment = () => {
+		setOpen(null);
+		load();
+	};
 	const emptyText = list?.length ? q.trim() ? `Không tìm thấy giao dịch có mã “${q.trim()}”` : "Không có giao dịch nào với trạng thái này" : "Chưa có giao dịch mua xu nào";
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 		className: "rounded-2xl border border-line bg-panel",
@@ -923,7 +970,8 @@ function Transactions({ onPaid }) {
 					tx: t,
 					cancelling: cancelling === t.code,
 					onPay: () => setOpen(t),
-					onCancel: () => setConfirm(t)
+					onCancel: () => setConfirm(t),
+					onExpire: load
 				}, `${t.code || "transaction"}-${index}`))
 			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 				className: "p-8 text-center text-xs text-mute",
@@ -940,7 +988,7 @@ function Transactions({ onPaid }) {
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PaymentDialog, {
 				tx: open,
-				onClose: () => setOpen(null),
+				onClose: closePayment,
 				onChange: update,
 				onPaid
 			})
