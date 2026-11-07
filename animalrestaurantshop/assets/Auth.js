@@ -1,7 +1,8 @@
-import { $ as Logo, Dt as createReactComponent, Et as IconAlertTriangle, G as passwordOtp, J as signupOtp, K as resetPassword, Mt as require_react, Nt as __toESM, W as login, _t as Field, ht as toast, mt as OtpButton, q as signup, vt as Button, yt as require_jsx_runtime } from "./index.js";
-import { n as IconArrowLeft, t as IconArrowRight } from "./IconArrowRight.js";
+import { $ as resetPassword, Et as require_jsx_runtime, Ft as IconAlertTriangle, Ht as __toESM, It as createReactComponent, Q as passwordOtp, St as toast, Tt as Button, Vt as require_react, Z as login, et as signup, ot as Logo, tt as signupOtp, wt as Field, xt as OtpButton } from "./index.js";
+import { t as IconArrowRight } from "./IconArrowRight.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
 import { t as StrengthBar } from "./StrengthBar.js";
+import { t as IconArrowLeft } from "./IconArrowLeft.js";
 /**
 * @license @tabler/icons-react v3.50.0 - MIT
 *

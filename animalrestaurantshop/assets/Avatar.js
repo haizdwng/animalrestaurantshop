@@ -1,4 +1,4 @@
-import { Dt as createReactComponent, H as updateAvatar, Mt as require_react, Nt as __toESM, ct as Tabs, ht as toast, it as Skeleton, ot as Spinner, vt as Button, xt as IconRefresh, yt as require_jsx_runtime } from "./index.js";
+import { Et as require_jsx_runtime, Ht as __toESM, It as createReactComponent, St as toast, Tt as Button, Vt as require_react, Y as updateAvatar, dt as Skeleton, ht as Tabs, kt as IconRefresh, pt as Spinner } from "./index.js";
 import { n as IconCat, t as IconPhoto } from "./IconPhoto.js";
 import { t as IconCheck } from "./IconCheck.js";
 import { t as IconTrash } from "./IconTrash.js";

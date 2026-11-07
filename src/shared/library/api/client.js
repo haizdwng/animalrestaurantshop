@@ -43,8 +43,8 @@ export class ApiError extends Error {
 let onUnauthorized = () => {};
 export const setUnauthorizedHandler = (handler) => (onUnauthorized = handler);
 
-async function http(method, path, body) {
-  const finishRequest = trackRequest();
+async function http(method, path, body, silent = false) {
+  const finishRequest = silent ? () => {} : trackRequest();
   const isForm = body instanceof FormData;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
@@ -85,8 +85,8 @@ async function http(method, path, body) {
   };
 };
 
-export async function call(method, path, body, { auth = true } = {}) {
-  const response = await http(method, path, body);
+export async function call(method, path, body, { auth = true, silent = false } = {}) {
+  const response = await http(method, path, body, silent);
   if (!response || response.success !== true) {
     if (response && !response.code && /xác thực|đăng nhập lại|unauthori|token/i.test(response.message || '')) response.code = 'UNAUTHORIZED';
     const error = new ApiError(response?.message || 'Đã có lỗi xảy ra', response || {});

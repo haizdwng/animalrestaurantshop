@@ -7,3 +7,4 @@ export * from '@/shared/library/api/user';
 export * from '@/shared/library/api/shop';
 export * from '@/shared/library/api/transactions';
 export * from '@/shared/library/api/admin';
+export * from '@/shared/library/api/chat';

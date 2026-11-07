@@ -1,4 +1,4 @@
-import { IconDatabase, IconDeviceGamepad2, IconTicket, IconUsers } from '@tabler/icons-react';
+import { IconDatabase, IconDeviceGamepad2, IconMessages, IconTicket, IconUsers } from '@tabler/icons-react';
 import { IconBuildingStore, IconFileText, IconMusic, IconUser } from '@tabler/icons-react';
 import { compareByTime } from '@/shared/library/format';
 
@@ -6,6 +6,7 @@ export const ADMIN_TABS = [
   ['giftcodes', 'Mã đổi thưởng', IconTicket],
   ['users', 'Người dùng', IconUsers],
   ['players', 'Người chơi', IconDeviceGamepad2],
+  ['chat', 'Trò chuyện', IconMessages],
   ['data', 'Dữ liệu', IconDatabase]
 ];
 

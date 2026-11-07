@@ -1,8 +1,9 @@
-import { IconBuildingStore, IconPalette, IconSettings, IconUserCircle } from '@tabler/icons-react';
+import { IconBuildingStore, IconMessages, IconPalette, IconSettings, IconUserCircle } from '@tabler/icons-react';
 
 export const NAV = [
   ['shop', 'Cửa hàng', IconBuildingStore],
   ['avatar', 'Ảnh đại diện', IconPalette],
+  ['chat', 'Trò chuyện', IconMessages],
   ['user', 'Tài khoản', IconUserCircle]
 ];
 export const ADMIN_NAV = [
@@ -10,4 +11,4 @@ export const ADMIN_NAV = [
 ];
 export const DEFAULT_TAB = 'shop';
 export const TAB_KEYS = [...NAV, ...ADMIN_NAV].map((n) => n[0]);
-export const getNavigationItemsForRole = (admin) => (admin ? [NAV[0], NAV[1], ...ADMIN_NAV, NAV[2]] : NAV);
+export const getNavigationItemsForRole = (admin) => (admin ? [NAV[0], NAV[1], ...ADMIN_NAV, NAV[3]] : NAV);

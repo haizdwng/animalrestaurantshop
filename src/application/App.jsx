@@ -13,6 +13,8 @@ const Auth = lazy(() => import('@/features/authentication/Auth'));
 const Shop = lazy(() => import('@/features/shop/Shop'));
 const Account = lazy(() => import('@/features/account/Account'));
 const Avatar = lazy(() => import('@/features/avatar/Avatar'));
+const Chat = lazy(() => import('@/features/chat/Chat'));
+const AdminChat = lazy(() => import('@/features/chat/AdminChat'));
 const AdminPanel = lazy(() => import('@/features/administration/AdminPanel'));
 const AdminGiftCodes = lazy(() => import('@/features/administration/GiftCodes'));
 const AdminUsers = lazy(() => import('@/features/administration/Users'));
@@ -135,6 +137,7 @@ function AppContent() {
               <Route path='/' element={<StartRoute />} />
               <Route path='/shop/:section?' element={<Shop user={user} onUser={setUser} shop={shop} onReload={loadShop} onRefresh={refreshUser} />} />
               <Route path='/avatar' element={<Avatar onUser={setUser} />} />
+              <Route path='/chat' element={admin ? <Navigate to='/administrator/chat' replace /> : <Chat />} />
               <Route path='/administrator' element={admin ? <AdminPanel /> : <Navigate to='/shop' replace />}>
                 <Route index element={<Navigate to='giftcodes' replace />} />
                 <Route path='giftcodes' element={<AdminGiftCodes />} />
@@ -142,6 +145,8 @@ function AppContent() {
                 <Route path='players' element={<AdminPlayers />} />
                 <Route path='players/:openid' element={<PlayerRouteRedirect />} />
                 <Route path='players/:openid/:section' element={<AdminPlayers />} />
+                <Route path='chat' element={<AdminChat />} />
+                <Route path='chat/:userId' element={<AdminChat />} />
                 <Route path='data' element={<Navigate to='/administrator/data/shop' replace />} />
                 <Route path='data/:section' element={<AdminData />} />
                 <Route path='*' element={<Navigate to='/administrator/giftcodes' replace />} />

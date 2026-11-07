@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/PaymentDialog.js","assets/IconCopy.js","assets/clipboard.js","assets/Tile.js","assets/IconUsers.js","assets/IconPhoto.js","assets/IconCheck.js","assets/IconPlus.js","assets/IconSearch.js","assets/Account.js","assets/IconStarFilled.js","assets/IconPencil.js","assets/IconUserPlus.js","assets/useRemoteResource.js","assets/IconGift.js","assets/Avatar.js","assets/IconTrash.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/IconArrowLeft.js","assets/Shop.js","assets/PaymentDialog.js","assets/IconCopy.js","assets/clipboard.js","assets/IconBan.js","assets/Tile.js","assets/IconUsers.js","assets/IconPhoto.js","assets/IconCheck.js","assets/IconPlus.js","assets/IconSearch.js","assets/Account.js","assets/IconStarFilled.js","assets/IconPencil.js","assets/IconUserPlus.js","assets/useRemoteResource.js","assets/IconGift.js","assets/Avatar.js","assets/IconTrash.js","assets/Chat.js","assets/usePolling.js","assets/AdminChat.js","assets/Head.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
 // \0rolldown/runtime.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -14508,6 +14508,19 @@ var IconLoader2 = createReactComponent("outline", "loader-2", "Loader2", [["path
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
+var IconMessages = createReactComponent("outline", "messages", "Messages", [["path", {
+	"d": "M21 14l-3 -3h-7a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h9a1 1 0 0 1 1 1v10",
+	"key": "svg-0"
+}], ["path", {
+	"d": "M14 15v2a1 1 0 0 1 -1 1h-7l-3 3v-10a1 1 0 0 1 1 -1h2",
+	"key": "svg-1"
+}]]);
+/**
+* @license @tabler/icons-react v3.50.0 - MIT
+*
+* This source code is licensed under the MIT license.
+* See the LICENSE file in the root directory of this source tree.
+*/
 var IconPalette = createReactComponent("outline", "palette", "Palette", [
 	["path", {
 		"d": "M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25",
@@ -16201,8 +16214,8 @@ var ApiError = class extends Error {
 };
 var onUnauthorized = () => {};
 var setUnauthorizedHandler = (handler) => onUnauthorized = handler;
-async function http(method, path, body) {
-	const finishRequest = trackRequest();
+async function http(method, path, body, silent = false) {
+	const finishRequest = silent ? () => {} : trackRequest();
 	const isForm = body instanceof FormData;
 	const controller = new AbortController();
 	const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
@@ -16250,8 +16263,8 @@ async function http(method, path, body) {
 		finishRequest();
 	}
 }
-async function call(method, path, body, { auth = true } = {}) {
-	const response = await http(method, path, body);
+async function call(method, path, body, { auth = true, silent = false } = {}) {
+	const response = await http(method, path, body, silent);
 	if (!response || response.success !== true) {
 		if (response && !response.code && /xác thực|đăng nhập lại|unauthori|token/i.test(response.message || "")) response.code = "UNAUTHORIZED";
 		const error = new ApiError(response?.message || "Đã có lỗi xảy ra", response || {});
@@ -16604,6 +16617,14 @@ var adminData = (name) => call("GET", `/administrator/data/${name}`);
 var adminSaveData = (name, value) => call("PATCH", `/administrator/data/${name}`, { [name]: JSON.stringify(value) });
 var adminAddPlayerStar = (openid, star) => call("POST", `/administrator/players/${enc(openid)}/star`, { star });
 var adminAddPlayerLike = (openid, like) => call("POST", `/administrator/players/${enc(openid)}/like`, { like });
+// src/shared/library/api/chat.js
+var getChat = () => call("GET", "/user/chat", void 0, { silent: true });
+var sendChat = (text) => call("POST", "/user/chat", { text });
+var adminChats = () => call("GET", "/administrator/chat", void 0, { silent: true });
+var adminChatThread = (userId) => call("GET", `/administrator/chat/${enc(userId)}`, void 0, { silent: true });
+var adminSendChat = (userId, text) => call("POST", `/administrator/chat/${enc(userId)}`, { text });
+var adminDeleteChat = (userId, messageId) => call("DELETE", `/administrator/chat/${enc(userId)}/messages/${enc(messageId)}`);
+var adminBanChat = (userId, banned) => call("PATCH", `/administrator/chat/${enc(userId)}/ban`, { banned });
 // src/shared/configuration/navigation.js
 var NAV = [
 	[
@@ -16615,6 +16636,11 @@ var NAV = [
 		"avatar",
 		"Ảnh đại diện",
 		IconPalette
+	],
+	[
+		"chat",
+		"Trò chuyện",
+		IconMessages
 	],
 	[
 		"user",
@@ -16633,7 +16659,7 @@ var getNavigationItemsForRole = (admin) => admin ? [
 	NAV[0],
 	NAV[1],
 	...ADMIN_NAV,
-	NAV[2]
+	NAV[3]
 ] : NAV;
 // src/shared/library/format.js
 var formatNumber = (n) => Number(n || 0).toLocaleString("vi-VN");
@@ -16984,15 +17010,17 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 	});
 };
 // src/application/App.jsx
-var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([0,1,2,3])));
-var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11,12,13])));
-var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([14,7,15,2,3,16,6,17,5,18,13,19])));
-var Avatar = (0, import_react.lazy)(() => __vitePreload(() => import("./Avatar.js"), __vite__mapDeps([20,10,11,21,6])));
-var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([22,23,9])));
-var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([24,19,16,12,21,23,9,18])));
-var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([25,13,17,23,9,2,18,26,16,21])));
-var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([27,1,13,23,9,15,6,7,12,21,8,10,18,26,16,2])));
-var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([28,23,9,26,16,12,21,8,10])));
+var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([0,1,2,3,4])));
+var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([5,6,7,8,9,10,11,12,13,14,15])));
+var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([16,8,17,2,3,18,7,19,6,9,20,15,21])));
+var Avatar = (0, import_react.lazy)(() => __vitePreload(() => import("./Avatar.js"), __vite__mapDeps([22,12,13,23,7])));
+var Chat = (0, import_react.lazy)(() => __vitePreload(() => import("./Chat.js"), __vite__mapDeps([24,25,23])));
+var AdminChat = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminChat.js"), __vite__mapDeps([26,4,9,27,25,23])));
+var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([28,29,11])));
+var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([30,21,18,14,23,29,11,20])));
+var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([31,15,19,29,11,2,20,27,18,23])));
+var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([32,4,1,15,29,11,17,7,8,14,23,10,12,20,27,18,2])));
+var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([33,29,11,27,18,14,23,10,12])));
 function StartRoute() {
 	const location = useLocation();
 	const redirect = new URLSearchParams(location.search).get("redirect");
@@ -17130,6 +17158,13 @@ function AppContent() {
 								path: "/avatar",
 								element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Avatar, { onUser: setUser })
 							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+								path: "/chat",
+								element: admin ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
+									to: "/administrator/chat",
+									replace: true
+								}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Chat, {})
+							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Route, {
 								path: "/administrator",
 								element: admin ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminPanel, {}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
@@ -17163,6 +17198,14 @@ function AppContent() {
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
 										path: "players/:openid/:section",
 										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminPlayers, {})
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+										path: "chat",
+										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminChat, {})
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+										path: "chat/:userId",
+										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminChat, {})
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
 										path: "data",
@@ -17218,4 +17261,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)();
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.StrictMode, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }) }));
-export { Logo as $, adminUsers as A, useNavigate as At, redeemGiftCode as B, adminPlayer as C, IconDeviceFloppy as Ct, adminSaveData as D, createReactComponent as Dt, adminRecord as E, IconAlertTriangle as Et, buy as F, passwordOtp as G, updateAvatar as H, changeOpenid as I, signupOtp as J, resetPassword as K, getBuffetLink as L, createTransaction as M, require_react as Mt, getTransaction as N, __toESM as Nt, adminSaveRecord as O, Outlet as Ot, getTransactions as P, Coin as Q, getFriendLink as R, adminGiftCodes as S, IconInfoCircle as St, adminPlayers as T, IconBuildingStore as Tt, updateUser as U, submitInvite as V, login as W, isAdmin as X, fileToAvatar as Y, normShop as Z, adminDeleteUser as _, Field as _t, formatShortDateTime as a, ErrorState as at, adminEditUser as b, IconX as bt, adminAddPlayerFriend as c, Tabs as ct, adminCreateGiftCode as d, SortSelect as dt, JsonEditor as et, adminCreateUser as f, Menu as ft, adminDeletePlayerFriend as g, toastError as gt, adminDeleteGiftCode as h, toast as ht, formatNumber as i, Skeleton as it, cancelTransaction as j, useParams as jt, adminUpdatePlayerAvatar as k, useLocation as kt, adminAddPlayerLike as l, PageSizeSelect as lt, adminDecryptRecordValue as m, OtpButton as mt, formatDate as n, PagerSkeleton as nt, formatVietnameseDong as o, Spinner as ot, adminData as p, Dialog as pt, signup as q, formatDateTime as r, RowSkeleton as rt, adminAddCoin as s, Pager as st, compareByTime as t, Line as tt, adminAddPlayerStar as u, Select as ut, adminEditGiftCode as v, Button as vt, adminPlayerFriends as w, IconCircleCheck as wt, adminEncryptRecordValue as x, IconRefresh as xt, adminEditPlayer as y, require_jsx_runtime as yt, openidOtp as z };
+export { resetPassword as $, adminPlayer as A, IconMessages as At, getTransaction as B, useParams as Bt, adminDeletePlayerFriend as C, toastError as Ct, adminEditUser as D, IconX as Dt, adminEditPlayer as E, require_jsx_runtime as Et, adminSaveRecord as F, IconAlertTriangle as Ft, getFriendLink as G, buy as H, __toESM as Ht, adminUpdatePlayerAvatar as I, createReactComponent as It, submitInvite as J, openidOtp as K, adminUsers as L, Outlet as Lt, adminPlayers as M, IconDeviceFloppy as Mt, adminRecord as N, IconCircleCheck as Nt, adminEncryptRecordValue as O, IconSend as Ot, adminSaveData as P, IconBuildingStore as Pt, passwordOtp as Q, cancelTransaction as R, useLocation as Rt, adminDeleteGiftCode as S, toast as St, adminEditGiftCode as T, Button as Tt, changeOpenid as U, getTransactions as V, require_react as Vt, getBuffetLink as W, updateUser as X, updateAvatar as Y, login as Z, adminAddPlayerStar as _, Select as _t, formatShortDateTime as a, Coin as at, adminData as b, Dialog as bt, adminChatThread as c, Line as ct, adminSendChat as d, Skeleton as dt, signup as et, getChat as f, ErrorState as ft, adminAddPlayerLike as g, PageSizeSelect as gt, adminAddPlayerFriend as h, Tabs as ht, formatNumber as i, normShop as it, adminPlayerFriends as j, IconInfoCircle as jt, adminGiftCodes as k, IconRefresh as kt, adminChats as l, PagerSkeleton as lt, adminAddCoin as m, Pager as mt, formatDate as n, fileToAvatar as nt, formatVietnameseDong as o, Logo as ot, sendChat as p, Spinner as pt, redeemGiftCode as q, formatDateTime as r, isAdmin as rt, adminBanChat as s, JsonEditor as st, compareByTime as t, signupOtp as tt, adminDeleteChat as u, RowSkeleton as ut, adminCreateGiftCode as v, SortSelect as vt, adminDeleteUser as w, Field as wt, adminDecryptRecordValue as x, OtpButton as xt, adminCreateUser as y, Menu as yt, createTransaction as z, useNavigate as zt };

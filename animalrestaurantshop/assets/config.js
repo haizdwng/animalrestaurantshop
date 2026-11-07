@@ -1,4 +1,4 @@
-import { Dt as createReactComponent, Tt as IconBuildingStore, t as compareByTime } from "./index.js";
+import { At as IconMessages, It as createReactComponent, Pt as IconBuildingStore, t as compareByTime } from "./index.js";
 import { n as IconMusic, t as IconUsers } from "./IconUsers.js";
 /**
 * @license @tabler/icons-react v3.50.0 - MIT
@@ -129,6 +129,11 @@ var ADMIN_TABS = [
 		"players",
 		"Người chơi",
 		IconDeviceGamepad2
+	],
+	[
+		"chat",
+		"Trò chuyện",
+		IconMessages
 	],
 	[
 		"data",

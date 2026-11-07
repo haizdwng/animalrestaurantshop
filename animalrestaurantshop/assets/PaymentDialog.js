@@ -1,19 +1,7 @@
-import { Dt as createReactComponent, Mt as require_react, N as getTransaction, Nt as __toESM, Q as Coin, bt as IconX, gt as toastError, ht as toast, i as formatNumber, j as cancelTransaction, o as formatVietnameseDong, ot as Spinner, pt as Dialog, vt as Button, wt as IconCircleCheck, xt as IconRefresh, yt as require_jsx_runtime } from "./index.js";
+import { B as getTransaction, Ct as toastError, Dt as IconX, Et as require_jsx_runtime, Ht as __toESM, It as createReactComponent, Nt as IconCircleCheck, R as cancelTransaction, St as toast, Tt as Button, Vt as require_react, at as Coin, bt as Dialog, i as formatNumber, kt as IconRefresh, o as formatVietnameseDong, pt as Spinner } from "./index.js";
 import { t as IconCopy } from "./IconCopy.js";
 import { t as copyText } from "./clipboard.js";
-/**
-* @license @tabler/icons-react v3.50.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var IconBan = createReactComponent("outline", "ban", "Ban", [["path", {
-	"d": "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0",
-	"key": "svg-0"
-}], ["path", {
-	"d": "M5.7 5.7l12.6 12.6",
-	"key": "svg-1"
-}]]);
+import { t as IconBan } from "./IconBan.js";
 /**
 * @license @tabler/icons-react v3.50.0 - MIT
 *
