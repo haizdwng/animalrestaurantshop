@@ -1,50 +1,31 @@
 import { useState } from 'react';
-import { IconCheck, IconLock, IconX } from '@tabler/icons-react';
+import { IconCheck, IconLock, IconShoppingCart, IconX } from '@tabler/icons-react';
 import { formatNumber } from '@/shared/library/format';
-import { Button, Coin, Dialog, toast, toastError } from '@/shared/components/ui';
+import { Button, Coin, Dialog } from '@/shared/components/ui';
 import { hasPrice } from '@/features/shop/shopUtilities';
 import QuantityPicker from '@/features/shop/QuantityPicker';
 import Tile from '@/features/shop/Tile';
-import * as api from '@/shared/library/api';
+import { clampCartQuantity } from '@/features/shop/cartUtils';
 
-const ALREADY_OWNED = /đã (mua|sở hữu|có)|already/i;
-
-export default function BuyDialog({ item, category, user, onUser, onOwned, onBought, onClose, onTopUp }) {
-  const [qty, setQty] = useState(1);
-  const [buying, setBuying] = useState(false);
-
+export default function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, onAdd, onClose, onTopUp }) {
+  const [qty, setQty] = useState(() => clampCartQuantity(cartQuantity || 1, item?.once));
   const once = !!item?.once;
   const priced = hasPrice(item);
   const conditions = Array.isArray(item?.conditions) ? item.conditions : [];
   const blocked = conditions.some((condition) => condition?.already === false);
   const hasCurrent = item?.current !== undefined && item?.current !== null;
-  const maxQty = once ? 1 : item ? Math.max(1, priced && item.price > 0 ? Math.min(api.MAX_QTY, Math.floor(user.coins / item.price)) : api.MAX_QTY) : 1;
+  const maxQty = once ? 1 : 100;
   const total = priced ? item.price * qty : 0;
-  const short = priced ? total - user.coins : 0;
-
-  const confirm = async () => {
-    if (buying || blocked || short > 0) return;
-    setBuying(true);
-    try {
-      const response = await api.buy(item.id, once ? 1 : qty);
-      if (response.user) onUser(response.user);
-      if (once) onOwned(item.id);
-      toast(response.message || (once ? `Đã mua ${item.name}` : `Đã mua ${qty} × ${item.name}`));
-      onBought?.();
-      onClose();
-    } catch (error) {
-      if (once && ALREADY_OWNED.test(error.message)) {
-        onOwned(item.id);
-        onClose();
-      };
-      toastError(error);
-    } finally {
-      setBuying(false);
-    };
+  const newCartTotal = cartTotal - (priced ? item.price * cartQuantity : 0) + total;
+  const short = Math.max(0, newCartTotal - user.coins);
+  const add = () => {
+    if (!item || blocked) return;
+    onAdd(item, once ? 1 : qty, category);
+    onClose();
   };
 
   return (
-    <Dialog open={!!item} title='Mua vật phẩm' onClose={() => !buying && onClose()}>
+    <Dialog open={!!item} title={cartQuantity ? 'Chỉnh sửa vật phẩm' : 'Thêm vào giỏ hàng'} onClose={onClose}>
       {item && (
         <>
           <div className='flex items-center gap-3'>
@@ -78,11 +59,7 @@ export default function BuyDialog({ item, category, user, onUser, onOwned, onBou
                   const satisfied = condition?.already === true;
                   return (
                     <li key={`${condition?.name || 'condition'}-${index}`} className='flex items-start gap-2 text-xs'>
-                      {satisfied ? (
-                        <IconCheck size={16} stroke={2.6} className='mt-0.5 shrink-0 text-ok' />
-                      ) : (
-                        <IconX size={16} stroke={2.6} className='mt-0.5 shrink-0 text-bad' />
-                      )}
+                      {satisfied ? <IconCheck size={16} stroke={2.6} className='mt-0.5 shrink-0 text-ok' /> : <IconX size={16} stroke={2.6} className='mt-0.5 shrink-0 text-bad' />}
                       <span className={satisfied ? 'text-mute' : 'text-fg'}>{condition?.name || 'Điều kiện chưa được mô tả'}</span>
                     </li>
                   );
@@ -90,7 +67,7 @@ export default function BuyDialog({ item, category, user, onUser, onOwned, onBou
               </ul>
               {blocked && (
                 <p className='rounded-lg bg-bad/10 px-3 py-2 text-[11px] font-medium text-bad'>
-                  Bạn chưa đáp ứng đủ điều kiện để mua vật phẩm này.
+                  Bạn chưa đáp ứng đủ điều kiện để thêm vật phẩm này.
                 </p>
               )}
             </div>
@@ -101,7 +78,7 @@ export default function BuyDialog({ item, category, user, onUser, onOwned, onBou
               <IconLock size={15} className='shrink-0 text-lime' /> Vật phẩm chỉ mua được một lần
             </p>
           ) : (
-            <QuantityPicker value={qty} max={maxQty} disabled={buying || blocked} onChange={setQty} onEnter={confirm} />
+            <QuantityPicker value={qty} max={maxQty} disabled={blocked} onChange={setQty} onEnter={add} />
           )}
 
           <dl className='space-y-2 rounded-xl bg-bg p-4 text-xs'>
@@ -109,38 +86,28 @@ export default function BuyDialog({ item, category, user, onUser, onOwned, onBou
               <dt>Số dư hiện tại</dt>
               <dd className='tabular-nums'>{formatNumber(user.coins)}</dd>
             </div>
-            {priced && (
-              <>
-                <div className='flex justify-between text-mute'>
-                  <dt>Số dư sau khi mua</dt>
-                  <dd className={`tabular-nums ${short > 0 ? 'text-bad' : ''}`}>
-                    {short > 0 ? `Thiếu ${formatNumber(short)}` : formatNumber(user.coins - total)}
-                  </dd>
-                </div>
-                <div className='flex items-center justify-between border-t border-line pt-2'>
-                  <dt className='font-bold'>Tổng</dt>
-                  <dd className={`flex items-center gap-1.5 text-lg font-extrabold tabular-nums ${short > 0 ? 'text-bad' : 'text-coin'}`}>
-                    <Coin size={18} /> {formatNumber(total)}
-                  </dd>
-                </div>
-              </>
-            )}
+            <div className='flex justify-between text-mute'>
+              <dt>Tổng giỏ sau khi thêm</dt>
+              <dd className='tabular-nums'>{formatNumber(newCartTotal)}</dd>
+            </div>
+            <div className='flex items-center justify-between border-t border-line pt-2'>
+              <dt className='font-bold'>Thành tiền vật phẩm</dt>
+              <dd className='flex items-center gap-1.5 text-lg font-extrabold tabular-nums text-coin'>
+                <Coin size={18} /> {formatNumber(total)}
+              </dd>
+            </div>
           </dl>
 
-          {blocked ? (
-            <Button className='w-full' disabled>
-              <IconLock size={16} /> Chưa đủ điều kiện mua
-            </Button>
-          ) : short > 0 ? (
-            <Button className='w-full bg-coin!' onClick={onTopUp}>
-              <Coin size={16} /> Không đủ xu — Mua thêm
-            </Button>
-          ) : (
-            <Button className='w-full' loading={buying} onClick={confirm}>
-              <IconCheck size={16} stroke={2.6} /> Xác nhận mua
-            </Button>
+          {short > 0 && (
+            <div className='flex items-center justify-between gap-2 rounded-lg border border-coin/30 bg-coin/10 px-3 py-2 text-[11px]'>
+              <span className='text-coin'>Giỏ hàng sẽ thiếu {formatNumber(short)} xu</span>
+              <button type='button' onClick={onTopUp} className='shrink-0 cursor-pointer font-bold text-coin underline underline-offset-2'>Mua thêm xu</button>
+            </div>
           )}
-          {buying && <p className='text-center text-[11px] text-mute'>Đang xử lý…</p>}
+          <Button className='w-full' disabled={blocked} onClick={add}>
+            {blocked ? <IconLock size={16} /> : <IconShoppingCart size={16} />}
+            {blocked ? 'Chưa đủ điều kiện' : cartQuantity ? 'Cập nhật giỏ hàng' : 'Thêm vào giỏ hàng'}
+          </Button>
         </>
       )}
     </Dialog>

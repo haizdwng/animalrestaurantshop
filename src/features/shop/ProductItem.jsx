@@ -1,10 +1,10 @@
-import { IconCheck, IconShoppingBag } from '@tabler/icons-react';
+import { IconCheck, IconPlus, IconShoppingCart } from '@tabler/icons-react';
 import { formatNumber } from '@/shared/library/format';
 import { Coin } from '@/shared/components/ui';
 import { hasPrice } from '@/features/shop/shopUtilities';
 import Tile from '@/features/shop/Tile';
 
-export default function ProductItem({ p, poor, owned, onBuy }) {
+export default function ProductItem({ p, poor, owned, cartQuantity = 0, onBuy }) {
   return (
     <li>
       <button
@@ -23,6 +23,10 @@ export default function ProductItem({ p, poor, owned, onBuy }) {
             <span className='flex items-center gap-1 rounded-full bg-ok/15 px-2 py-0.5 text-[10px] font-bold text-ok'>
               <IconCheck size={12} stroke={2.6} /> Đã mua
             </span>
+          ) : cartQuantity > 0 ? (
+            <span className='flex items-center gap-1 rounded-full bg-lime/15 px-2 py-0.5 text-[10px] font-bold text-lime'>
+              <IconShoppingCart size={12} /> Đã thêm {formatNumber(cartQuantity)}
+            </span>
           ) : (
             hasPrice(p) && (
               <span className={`flex items-center gap-1 text-xs font-bold tabular-nums ${poor ? 'text-mute' : 'text-coin'}`}>
@@ -32,7 +36,7 @@ export default function ProductItem({ p, poor, owned, onBuy }) {
           )}
           {!owned && (
             <span className='grid size-7 place-items-center rounded-lg bg-raise text-mute transition group-hover:bg-lime group-hover:text-bg'>
-              <IconShoppingBag size={15} stroke={2.4} />
+              {cartQuantity ? <IconCheck size={15} stroke={2.4} /> : <IconPlus size={15} stroke={2.4} />}
             </span>
           )}
         </span>
