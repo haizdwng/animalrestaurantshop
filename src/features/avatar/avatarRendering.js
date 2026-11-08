@@ -1,0 +1,136 @@
+import { BACKGROUNDS, FACES, ROLES, imageUrl } from '@/features/avatar/manifest';
+import { EXPORT_SIZE, STAGE } from '@/features/avatar/config';
+import { CLOSE_RADIUS, getCloseButtonPosition, getItemSize } from '@/features/avatar/geometry';
+import { preloadImages } from '@/features/avatar/imageLoading';
+
+export const getAvatarLayerIdentifiers = (avatarDocument) => [
+  BACKGROUNDS[avatarDocument.background],
+  ROLES[avatarDocument.role],
+  FACES[avatarDocument.role][avatarDocument.emoji]
+];
+
+export const getAvatarDocumentImageUrls = (avatarDocument) => [
+  ...getAvatarLayerIdentifiers(avatarDocument),
+  ...avatarDocument.items.map((item) => item.src)
+].map(imageUrl);
+
+function drawBaseLayer(avatarDocument, pixelSize, images) {
+  const baseImages = getAvatarLayerIdentifiers(avatarDocument).map((identifier) => images.get(imageUrl(identifier)));
+  if (baseImages.some((image) => !image)) return null;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = pixelSize;
+  const canvasContext = canvas.getContext('2d');
+  canvasContext.imageSmoothingQuality = 'high';
+  baseImages.forEach((image) => canvasContext.drawImage(image, 0, 0, pixelSize, pixelSize));
+  return canvas;
+};
+
+function drawStrokes(canvasContext, strokes, pixelSize) {
+  if (!strokes?.length) return;
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = pixelSize;
+  const drawingContext = canvas.getContext('2d');
+  drawingContext.setTransform(pixelSize / STAGE, 0, 0, pixelSize / STAGE, 0, 0);
+  drawingContext.lineCap = 'round';
+  drawingContext.lineJoin = 'round';
+
+  for (const stroke of strokes) {
+    if (!stroke.points.length) continue;
+    drawingContext.save();
+    drawingContext.globalCompositeOperation = stroke.tool === 'eraser' ? 'destination-out' : 'source-over';
+    drawingContext.globalAlpha = stroke.tool === 'eraser' ? 1 : stroke.opacity / 100;
+    drawingContext.lineWidth = stroke.size;
+    drawingContext.strokeStyle = stroke.tool === 'eraser' ? '#000000' : stroke.color;
+    drawingContext.fillStyle = drawingContext.strokeStyle;
+    const [firstX, firstY] = stroke.points[0];
+    drawingContext.beginPath();
+    if (stroke.points.length === 1) {
+      drawingContext.arc(firstX, firstY, stroke.size / 2, 0, Math.PI * 2);
+      drawingContext.fill();
+    } else {
+      drawingContext.moveTo(firstX, firstY);
+      for (const [x, y] of stroke.points.slice(1)) drawingContext.lineTo(x, y);
+      drawingContext.stroke();
+    };
+    drawingContext.restore();
+  };
+
+  canvasContext.drawImage(canvas, 0, 0, STAGE, STAGE);
+};
+
+function drawSelection(canvasContext, selectedItem, userInterfaceScale, images) {
+  const itemSize = getItemSize(selectedItem, images);
+  if (!itemSize) return;
+
+  canvasContext.save();
+  canvasContext.translate(selectedItem.x, selectedItem.y);
+  canvasContext.rotate((selectedItem.rotation * Math.PI) / 180);
+  canvasContext.scale(selectedItem.scale, selectedItem.scale);
+  canvasContext.lineWidth = (2 * userInterfaceScale) / selectedItem.scale;
+  canvasContext.strokeStyle = '#d4ff3a';
+  canvasContext.setLineDash([(8 * userInterfaceScale) / selectedItem.scale]);
+  canvasContext.strokeRect(-itemSize.w / 2, -itemSize.h / 2, itemSize.w, itemSize.h);
+  canvasContext.restore();
+
+  const closeButtonPosition = getCloseButtonPosition(selectedItem, images);
+  const closeButtonRadius = CLOSE_RADIUS * userInterfaceScale;
+  const closeLineOffset = closeButtonRadius * 0.4;
+  canvasContext.fillStyle = '#ff5d47';
+  canvasContext.beginPath();
+  canvasContext.arc(closeButtonPosition.x, closeButtonPosition.y, closeButtonRadius, 0, Math.PI * 2);
+  canvasContext.fill();
+  canvasContext.strokeStyle = '#0c0d0f';
+  canvasContext.lineWidth = 2 * userInterfaceScale;
+  canvasContext.setLineDash([]);
+  canvasContext.beginPath();
+  canvasContext.moveTo(closeButtonPosition.x - closeLineOffset, closeButtonPosition.y - closeLineOffset);
+  canvasContext.lineTo(closeButtonPosition.x + closeLineOffset, closeButtonPosition.y + closeLineOffset);
+  canvasContext.moveTo(closeButtonPosition.x + closeLineOffset, closeButtonPosition.y - closeLineOffset);
+  canvasContext.lineTo(closeButtonPosition.x - closeLineOffset, closeButtonPosition.y + closeLineOffset);
+  canvasContext.stroke();
+};
+
+export function drawAvatar(canvasContext, avatarDocument, { selectedId = null, userInterfaceScale = 1, images = new Map() } = {}) {
+  const pixelSize = canvasContext.canvas.width;
+  canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+  canvasContext.clearRect(0, 0, pixelSize, pixelSize);
+  const baseLayer = drawBaseLayer(avatarDocument, pixelSize, images);
+  if (baseLayer) canvasContext.drawImage(baseLayer, 0, 0);
+  else getAvatarLayerIdentifiers(avatarDocument).forEach((identifier) => {
+    const image = images.get(imageUrl(identifier));
+    if (image) canvasContext.drawImage(image, 0, 0, pixelSize, pixelSize);
+  });
+
+  canvasContext.setTransform(pixelSize / STAGE, 0, 0, pixelSize / STAGE, 0, 0);
+  canvasContext.imageSmoothingQuality = 'high';
+  for (const item of avatarDocument.items) {
+    const image = images.get(imageUrl(item.src));
+    if (!image) continue;
+    canvasContext.save();
+    canvasContext.translate(item.x, item.y);
+    canvasContext.rotate((item.rotation * Math.PI) / 180);
+    canvasContext.scale(item.scale, item.scale);
+    canvasContext.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
+    canvasContext.restore();
+  };
+
+  drawStrokes(canvasContext, avatarDocument.strokes, pixelSize);
+  const selectedItem = avatarDocument.items.find((item) => item.id === selectedId);
+  if (selectedItem) drawSelection(canvasContext, selectedItem, userInterfaceScale, images);
+};
+
+export async function renderAvatarToBlob(avatarDocument, exportSize = EXPORT_SIZE) {
+  const imageUrls = getAvatarDocumentImageUrls(avatarDocument);
+  const images = await preloadImages(imageUrls);
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = exportSize;
+  const canvasContext = canvas.getContext('2d');
+  canvasContext.fillStyle = '#fff';
+  canvasContext.fillRect(0, 0, exportSize, exportSize);
+  const avatarLayerCanvas = document.createElement('canvas');
+  avatarLayerCanvas.width = avatarLayerCanvas.height = exportSize;
+  drawAvatar(avatarLayerCanvas.getContext('2d'), avatarDocument, { images });
+  canvasContext.drawImage(avatarLayerCanvas, 0, 0);
+  return new Promise((resolve, reject) => canvas.toBlob((imageBlob) => (imageBlob ? resolve(imageBlob) : reject(new Error('Không tạo được ảnh'))), 'image/png'));
+};
