@@ -17285,7 +17285,7 @@ function AppContent() {
 					current: activeTab,
 					onNavigate: navigateTab,
 					coins: user.coins,
-					syncing: session.syncing,
+					syncing: requestsPending,
 					onRefresh: refreshUser,
 					badgeKeys: checkin.showBadge ? ["user"] : []
 				}),
