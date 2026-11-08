@@ -2,7 +2,9 @@ import { API_BASE_URL, REQUEST_TIMEOUT } from '@/shared/configuration/environmen
 
 const TOKEN_KEY = 'token';
 let activeRequests = 0;
+let activeCoinRequests = 0;
 const requestListeners = new Set();
+const coinRequestListeners = new Set();
 let requestQueue = Promise.resolve();
 
 function enqueueRequest(fn) {
@@ -21,16 +23,30 @@ export const subscribeToRequests = (listener) => {
 };
 
 export const getPendingRequestCount = () => activeRequests;
+export const subscribeToCoinRequests = (listener) => {
+  coinRequestListeners.add(listener);
+  return () => coinRequestListeners.delete(listener);
+};
 
-function trackRequest() {
+export const getPendingCoinRequestCount = () => activeCoinRequests;
+
+function trackRequest(coin = false) {
   activeRequests += 1;
   notifyRequestListeners();
+  if (coin) {
+    activeCoinRequests += 1;
+    coinRequestListeners.forEach((listener) => listener());
+  };
   let finished = false;
   return () => {
     if (finished) return;
     finished = true;
     activeRequests = Math.max(0, activeRequests - 1);
     notifyRequestListeners();
+    if (coin) {
+      activeCoinRequests = Math.max(0, activeCoinRequests - 1);
+      coinRequestListeners.forEach((listener) => listener());
+    };
   };
 };
 
@@ -50,9 +66,9 @@ export class ApiError extends Error {
 let onUnauthorized = () => {};
 export const setUnauthorizedHandler = (handler) => (onUnauthorized = handler);
 
-async function http(method, path, body, { track = true } = {}) {
+async function http(method, path, body, { track = true, coin = false } = {}) {
   return enqueueRequest(async () => {
-    const finishRequest = track ? trackRequest() : () => {};
+    const finishRequest = track ? trackRequest(coin) : () => {};
     const isForm = body instanceof FormData;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
@@ -94,8 +110,8 @@ async function http(method, path, body, { track = true } = {}) {
   });
 };
 
-export async function call(method, path, body, { auth = true, track = true } = {}) {
-  const response = await http(method, path, body, { track });
+export async function call(method, path, body, { auth = true, track = true, coin = false } = {}) {
+  const response = await http(method, path, body, { track, coin });
   if (!response || response.success !== true) {
     if (response && !response.code && /xác thực|đăng nhập lại|unauthori|token/i.test(response.message || '')) response.code = 'UNAUTHORIZED';
     const error = new ApiError(response?.message || 'Đã có lỗi xảy ra', response || {});

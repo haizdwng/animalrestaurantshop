@@ -8,4 +8,4 @@ export const rewardForDay = (day) => {
   return CHECKIN_REWARDS[d - 1];
 };
 export const getCheckin = () => call('GET', '/user/checkin', undefined, { track: false });
-export const claimCheckin = async () => withUser(await call('POST', '/user/checkin'));
+export const claimCheckin = async () => withUser(await call('POST', '/user/checkin', undefined, { coin: true }));

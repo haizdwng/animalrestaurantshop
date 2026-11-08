@@ -1,4 +1,4 @@
-export { ApiError, getToken, setToken, hasToken, clearToken, setUnauthorizedHandler, subscribeToRequests, getPendingRequestCount } from '@/shared/library/api/client';
+export { ApiError, getToken, setToken, hasToken, clearToken, setUnauthorizedHandler, subscribeToRequests, getPendingRequestCount, subscribeToCoinRequests, getPendingCoinRequestCount } from '@/shared/library/api/client';
 export { normUser, isAdmin } from '@/shared/library/api/normalize';
 export { validate, cleanOtp, passwordStrength } from '@/shared/library/validate';
 export { fileToAvatar } from '@/shared/library/image';
