@@ -16167,7 +16167,15 @@ var API_BASE_URL = DEFAULT_API_BASE_URL.replace(/\/+$/, "");
 var REQUEST_TIMEOUT = DEFAULT_REQUEST_TIMEOUT;
 // src/shared/library/api/client.js
 var TOKEN_KEY = "token";
+var COIN_REQUESTS = /* @__PURE__ */ new Set([
+	"GET /user",
+	"POST /user/invite",
+	"POST /user/shop",
+	"POST /user/giftcode",
+	"POST /user/checkin"
+]);
 var activeRequests = 0;
+var activeCoinRequests = 0;
 var requestListeners = /* @__PURE__ */ new Set();
 var requestQueue = Promise.resolve();
 function enqueueRequest(fn) {
@@ -16183,14 +16191,17 @@ var subscribeToRequests = (listener) => {
 	return () => requestListeners.delete(listener);
 };
 var getPendingRequestCount = () => activeRequests;
-function trackRequest() {
+var getPendingCoinRequestCount = () => activeCoinRequests;
+function trackRequest(coin = false) {
 	activeRequests += 1;
+	if (coin) activeCoinRequests += 1;
 	notifyRequestListeners();
 	let finished = false;
 	return () => {
 		if (finished) return;
 		finished = true;
 		activeRequests = Math.max(0, activeRequests - 1);
+		if (coin) activeCoinRequests = Math.max(0, activeCoinRequests - 1);
 		notifyRequestListeners();
 	};
 }
@@ -16209,7 +16220,8 @@ var onUnauthorized = () => {};
 var setUnauthorizedHandler = (handler) => onUnauthorized = handler;
 async function http(method, path, body, { track = true } = {}) {
 	return enqueueRequest(async () => {
-		const finishRequest = track ? trackRequest() : () => {};
+		const coinRequest = COIN_REQUESTS.has(`${method.toUpperCase()} ${path.split("?")[0]}`);
+		const finishRequest = track ? trackRequest(coinRequest) : () => {};
 		const isForm = body instanceof FormData;
 		const controller = new AbortController();
 		const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
@@ -16692,7 +16704,7 @@ var formatDateTime = (t) => t ? new Date(t).toLocaleString("vi-VN", {
 var formatDate = (t) => new Date(t).toLocaleDateString("vi-VN");
 var compareByTime = (k, dir) => (a, b) => dir * ((+new Date(a[k]) || 0) - (+new Date(b[k]) || 0));
 // src/shared/components/layout/AppHeader.jsx
-function AppHeader({ nav, current, onNavigate, coins, syncing, onRefresh, badgeKeys = [] }) {
+function AppHeader({ nav, current, onNavigate, coins, syncing, coinSyncing, onRefresh, badgeKeys = [] }) {
 	const badges = new Set(badgeKeys);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
 		className: "sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur-md supports-backdrop-filter:bg-bg/75",
@@ -16721,7 +16733,7 @@ function AppHeader({ nav, current, onNavigate, coins, syncing, onRefresh, badgeK
 					onClick: onRefresh,
 					title: "Số xu hiện có (bấm để cập nhật)",
 					className: "ml-auto flex h-9 shrink-0 cursor-pointer items-center gap-2 rounded-full border border-coin/30 bg-coin/10 pr-3.5 pl-1.5 text-sm font-bold tabular-nums text-coin transition hover:bg-coin/15",
-					children: [syncing ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 20 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 22 }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					children: [coinSyncing ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 20 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 22 }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 						className: "animate-rise",
 						children: formatNumber(coins)
 					}, coins)]
@@ -17183,7 +17195,10 @@ function AppContent() {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const lockedPath = (0, import_react.useRef)("");
-	const requestsPending = (0, import_react.useSyncExternalStore)(subscribeToRequests, getPendingRequestCount, getPendingRequestCount) > 0;
+	const pendingRequestCount = (0, import_react.useSyncExternalStore)(subscribeToRequests, getPendingRequestCount, getPendingRequestCount);
+	const pendingCoinRequestCount = (0, import_react.useSyncExternalStore)(subscribeToRequests, getPendingCoinRequestCount, getPendingCoinRequestCount);
+	const requestsPending = pendingRequestCount > 0;
+	const coinSyncing = pendingCoinRequestCount > 0;
 	const pathSegment = location.pathname.split("/").filter(Boolean)[0];
 	const current = pathSegment || "shop";
 	const admin = isAdmin(user);
@@ -17286,6 +17301,7 @@ function AppContent() {
 					onNavigate: navigateTab,
 					coins: user.coins,
 					syncing: requestsPending,
+					coinSyncing,
 					onRefresh: refreshUser,
 					badgeKeys: checkin.showBadge ? ["user"] : []
 				}),

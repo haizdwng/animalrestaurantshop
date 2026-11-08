@@ -1,7 +1,15 @@
 import { API_BASE_URL, REQUEST_TIMEOUT } from '@/shared/configuration/environment';
 
 const TOKEN_KEY = 'token';
+const COIN_REQUESTS = new Set([
+  'GET /user',
+  'POST /user/invite',
+  'POST /user/shop',
+  'POST /user/giftcode',
+  'POST /user/checkin'
+]);
 let activeRequests = 0;
+let activeCoinRequests = 0;
 const requestListeners = new Set();
 let requestQueue = Promise.resolve();
 
@@ -21,15 +29,18 @@ export const subscribeToRequests = (listener) => {
 };
 
 export const getPendingRequestCount = () => activeRequests;
+export const getPendingCoinRequestCount = () => activeCoinRequests;
 
-function trackRequest() {
+function trackRequest(coin = false) {
   activeRequests += 1;
+  if (coin) activeCoinRequests += 1;
   notifyRequestListeners();
   let finished = false;
   return () => {
     if (finished) return;
     finished = true;
     activeRequests = Math.max(0, activeRequests - 1);
+    if (coin) activeCoinRequests = Math.max(0, activeCoinRequests - 1);
     notifyRequestListeners();
   };
 };
@@ -52,7 +63,8 @@ export const setUnauthorizedHandler = (handler) => (onUnauthorized = handler);
 
 async function http(method, path, body, { track = true } = {}) {
   return enqueueRequest(async () => {
-    const finishRequest = track ? trackRequest() : () => {};
+    const coinRequest = COIN_REQUESTS.has(`${method.toUpperCase()} ${path.split('?')[0]}`);
+    const finishRequest = track ? trackRequest(coinRequest) : () => {};
     const isForm = body instanceof FormData;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);

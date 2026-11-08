@@ -1,7 +1,7 @@
 import { Coin, Logo, Spinner } from '@/shared/components/ui';
 import { formatNumber } from '@/shared/library/format';
 
-export default function AppHeader({ nav, current, onNavigate, coins, syncing, onRefresh, badgeKeys = [] }) {
+export default function AppHeader({ nav, current, onNavigate, coins, syncing, coinSyncing, onRefresh, badgeKeys = [] }) {
   const badges = new Set(badgeKeys);
   return (
     <header className='sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur-md supports-backdrop-filter:bg-bg/75'>
@@ -27,7 +27,7 @@ export default function AppHeader({ nav, current, onNavigate, coins, syncing, on
           title='Số xu hiện có (bấm để cập nhật)'
           className='ml-auto flex h-9 shrink-0 cursor-pointer items-center gap-2 rounded-full border border-coin/30 bg-coin/10 pr-3.5 pl-1.5 text-sm font-bold tabular-nums text-coin transition hover:bg-coin/15'
         >
-          {syncing ? <Spinner size={20} /> : <Coin size={22} />}
+          {coinSyncing ? <Spinner size={20} /> : <Coin size={22} />}
           <span key={coins} className='animate-rise'>
             {formatNumber(coins)}
           </span>
