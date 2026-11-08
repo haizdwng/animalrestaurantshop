@@ -1,9 +1,10 @@
-import { At as useNavigate, Dt as createReactComponent, F as buy, M as createTransaction, Nt as require_react, Pt as __toESM, Q as Coin, _t as Field, at as ErrorState, bt as IconX, gt as toastError, ht as toast, i as formatNumber, it as Skeleton, jt as useParams, ot as Spinner, pt as Dialog, vt as Button, wt as IconCircleCheck, xt as IconRefresh, yt as require_jsx_runtime } from "./index.js";
+import { At as useNavigate, Dt as createReactComponent, Et as IconAlertTriangle, F as buy, M as createTransaction, Nt as require_react, Pt as __toESM, Q as Coin, _t as Field, at as ErrorState, bt as IconX, gt as toastError, ht as toast, i as formatNumber, it as Skeleton, jt as useParams, ot as Spinner, pt as Dialog, vt as Button, wt as IconCircleCheck, xt as IconRefresh, yt as require_jsx_runtime } from "./index.js";
 import { i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
 import { a as TOPUP, i as CATEGORY_ICONS, n as hasPrice, r as matches, s as IconBox, t as Tile } from "./Tile.js";
 import { t as IconCheck } from "./IconCheck.js";
 import { n as IconLock } from "./clipboard.js";
 import { t as IconPlus } from "./IconPlus.js";
+import { t as IconTrash } from "./IconTrash.js";
 import { t as IconSearch } from "./IconSearch.js";
 /**
 * @license @tabler/icons-react v3.50.0 - MIT
@@ -63,13 +64,24 @@ var IconPlayerPlay = createReactComponent("outline", "player-play", "PlayerPlay"
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconShoppingBag = createReactComponent("outline", "shopping-bag", "ShoppingBag", [["path", {
-	"d": "M6.331 8h11.339a2 2 0 0 1 1.977 2.304l-1.255 8.152a3 3 0 0 1 -2.966 2.544h-6.852a3 3 0 0 1 -2.965 -2.544l-1.255 -8.152a2 2 0 0 1 1.977 -2.304",
-	"key": "svg-0"
-}], ["path", {
-	"d": "M9 11v-5a3 3 0 0 1 6 0v5",
-	"key": "svg-1"
-}]]);
+var IconShoppingCart = createReactComponent("outline", "shopping-cart", "ShoppingCart", [
+	["path", {
+		"d": "M4 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0",
+		"key": "svg-0"
+	}],
+	["path", {
+		"d": "M15 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0",
+		"key": "svg-1"
+	}],
+	["path", {
+		"d": "M17 17h-11v-14h-2",
+		"key": "svg-2"
+	}],
+	["path", {
+		"d": "M6 5l14 1l-1 7h-13",
+		"key": "svg-3"
+	}]
+]);
 // src/shared/components/payment/TopUp.jsx
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var import_jsx_runtime = require_jsx_runtime();
@@ -241,6 +253,60 @@ function TopUp({ user, onPaid }) {
 		]
 	});
 }
+// src/features/shop/cartUtils.js
+var clampCartQuantity = (value, once = false, limit = 100) => {
+	const number = Number(value);
+	return Math.max(1, Math.min(once ? 1 : limit, Number.isFinite(number) ? Math.trunc(number) : 1));
+};
+function putInCart(cart, product, quantity, category = "") {
+	const entry = {
+		id: product.id,
+		quantity: clampCartQuantity(quantity, product.once),
+		product,
+		category
+	};
+	const index = cart.findIndex(({ id }) => String(id) === String(product.id));
+	if (index === -1) return [...cart, entry];
+	return cart.map((existing, i) => i === index ? entry : existing);
+}
+function changeCartQuantity(cart, id, quantity) {
+	return cart.map((entry) => String(entry.id) === String(id) ? {
+		...entry,
+		quantity: clampCartQuantity(quantity, entry.product.once)
+	} : entry);
+}
+function resolveCart(cart, tabs, isOwned = () => false) {
+	const loaded = Array.isArray(tabs);
+	const productIndex = /* @__PURE__ */ new Map();
+	for (const tab of tabs || []) for (const product of tab.products || []) productIndex.set(String(product.id), {
+		product,
+		category: tab.name
+	});
+	return cart.map((entry) => {
+		const latest = productIndex.get(String(entry.id));
+		const product = latest?.product || entry.product;
+		const price = Math.max(0, Number(product?.price) || 0);
+		let invalid = "";
+		if (loaded && !latest) invalid = "Vật phẩm không còn trong cửa hàng";
+		else if (loaded && (product.owned || isOwned(product))) invalid = "Vật phẩm đã được mua";
+		else if (loaded && product.conditions?.some((condition) => condition?.already === false)) invalid = "Chưa đáp ứng điều kiện mua";
+		else if (entry.quantity > (product.once ? 1 : 100)) invalid = "Số lượng vượt giới hạn";
+		return {
+			...entry,
+			product,
+			category: latest?.category || entry.category,
+			price,
+			total: price * entry.quantity,
+			invalid
+		};
+	});
+}
+var cartTotal = (entries) => entries.reduce((sum, entry) => sum + entry.total, 0);
+var cartCount = (entries) => entries.reduce((sum, entry) => sum + entry.quantity, 0);
+var cartPayload = (entries) => entries.map(({ id, quantity }) => ({
+	id,
+	quantity
+}));
 // src/features/shop/QuantityPicker.jsx
 function QuantityPicker({ value, max, disabled, onChange, onEnter }) {
 	const clamp = (n) => Math.min(max, Math.max(1, n));
@@ -306,42 +372,26 @@ function QuantityPicker({ value, max, disabled, onChange, onEnter }) {
 	] });
 }
 // src/features/shop/BuyDialog.jsx
-var ALREADY_OWNED = /đã (mua|sở hữu|có)|already/i;
-function BuyDialog({ item, category, user, onUser, onOwned, onBought, onClose, onTopUp }) {
-	const [qty, setQty] = (0, import_react.useState)(1);
-	const [buying, setBuying] = (0, import_react.useState)(false);
+function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, onAdd, onClose, onTopUp }) {
+	const [qty, setQty] = (0, import_react.useState)(() => clampCartQuantity(cartQuantity || 1, item?.once));
 	const once = !!item?.once;
 	const priced = hasPrice(item);
 	const conditions = Array.isArray(item?.conditions) ? item.conditions : [];
 	const blocked = conditions.some((condition) => condition?.already === false);
 	const hasCurrent = item?.current !== void 0 && item?.current !== null;
-	const maxQty = once ? 1 : item ? Math.max(1, priced && item.price > 0 ? Math.min(100, Math.floor(user.coins / item.price)) : 100) : 1;
+	const maxQty = once ? 1 : 100;
 	const total = priced ? item.price * qty : 0;
-	const short = priced ? total - user.coins : 0;
-	const confirm = async () => {
-		if (buying || blocked || short > 0) return;
-		setBuying(true);
-		try {
-			const response = await buy(item.id, once ? 1 : qty);
-			if (response.user) onUser(response.user);
-			if (once) onOwned(item.id);
-			toast(response.message || (once ? `Đã mua ${item.name}` : `Đã mua ${qty} × ${item.name}`));
-			onBought?.();
-			onClose();
-		} catch (error) {
-			if (once && ALREADY_OWNED.test(error.message)) {
-				onOwned(item.id);
-				onClose();
-			}
-			toastError(error);
-		} finally {
-			setBuying(false);
-		}
+	const newCartTotal = cartTotal - (priced ? item.price * cartQuantity : 0) + total;
+	const short = Math.max(0, newCartTotal - user.coins);
+	const add = () => {
+		if (!item || blocked) return;
+		onAdd(item, once ? 1 : qty, category);
+		onClose();
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dialog, {
 		open: !!item,
-		title: "Mua vật phẩm",
-		onClose: () => !buying && onClose(),
+		title: cartQuantity ? "Chỉnh sửa vật phẩm" : "Thêm vào giỏ hàng",
+		onClose,
 		children: item && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "flex items-center gap-3",
@@ -415,7 +465,7 @@ function BuyDialog({ item, category, user, onUser, onOwned, onBought, onClose, o
 					}),
 					blocked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 						className: "rounded-lg bg-bad/10 px-3 py-2 text-[11px] font-medium text-bad",
-						children: "Bạn chưa đáp ứng đủ điều kiện để mua vật phẩm này."
+						children: "Bạn chưa đáp ứng đủ điều kiện để thêm vật phẩm này."
 					})
 				]
 			}),
@@ -428,61 +478,283 @@ function BuyDialog({ item, category, user, onUser, onOwned, onBought, onClose, o
 			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuantityPicker, {
 				value: qty,
 				max: maxQty,
-				disabled: buying || blocked,
+				disabled: blocked,
 				onChange: setQty,
-				onEnter: confirm
+				onEnter: add
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dl", {
 				className: "space-y-2 rounded-xl bg-bg p-4 text-xs",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex justify-between text-mute",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số dư hiện tại" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
-						className: "tabular-nums",
-						children: formatNumber(user.coins)
-					})]
-				}), priced && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex justify-between text-mute",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số dư sau khi mua" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
-						className: `tabular-nums ${short > 0 ? "text-bad" : ""}`,
-						children: short > 0 ? `Thiếu ${formatNumber(short)}` : formatNumber(user.coins - total)
-					})]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex items-center justify-between border-t border-line pt-2",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", {
-						className: "font-bold",
-						children: "Tổng"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dd", {
-						className: `flex items-center gap-1.5 text-lg font-extrabold tabular-nums ${short > 0 ? "text-bad" : "text-coin"}`,
-						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 18 }),
-							" ",
-							formatNumber(total)
-						]
-					})]
-				})] })]
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex justify-between text-mute",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số dư hiện tại" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
+							className: "tabular-nums",
+							children: formatNumber(user.coins)
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex justify-between text-mute",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Tổng giỏ sau khi thêm" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
+							className: "tabular-nums",
+							children: formatNumber(newCartTotal)
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex items-center justify-between border-t border-line pt-2",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", {
+							className: "font-bold",
+							children: "Thành tiền vật phẩm"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dd", {
+							className: "flex items-center gap-1.5 text-lg font-extrabold tabular-nums text-coin",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 18 }),
+								" ",
+								formatNumber(total)
+							]
+						})]
+					})
+				]
 			}),
-			blocked ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-				className: "w-full",
-				disabled: true,
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 16 }), " Chưa đủ điều kiện mua"]
-			}) : short > 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-				className: "w-full bg-coin!",
-				onClick: onTopUp,
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 16 }), " Không đủ xu — Mua thêm"]
-			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-				className: "w-full",
-				loading: buying,
-				onClick: confirm,
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCheck, {
-					size: 16,
-					stroke: 2.6
-				}), " Xác nhận mua"]
+			short > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex items-center justify-between gap-2 rounded-lg border border-coin/30 bg-coin/10 px-3 py-2 text-[11px]",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+					className: "text-coin",
+					children: [
+						"Giỏ hàng sẽ thiếu ",
+						formatNumber(short),
+						" xu"
+					]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					type: "button",
+					onClick: onTopUp,
+					className: "shrink-0 cursor-pointer font-bold text-coin underline underline-offset-2",
+					children: "Mua thêm xu"
+				})]
 			}),
-			buying && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "text-center text-[11px] text-mute",
-				children: "Đang xử lý…"
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+				className: "w-full",
+				disabled: blocked,
+				onClick: add,
+				children: [blocked ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 16 }), blocked ? "Chưa đủ điều kiện" : cartQuantity ? "Cập nhật giỏ hàng" : "Thêm vào giỏ hàng"]
 			})
 		] })
+	});
+}
+// src/features/shop/CartDialog.jsx
+function CompactQuantity({ value, once, disabled, onChange }) {
+	const max = once ? 1 : 100;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "flex h-8 items-center overflow-hidden rounded-lg border border-line bg-bg",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+				type: "button",
+				"aria-label": "Giảm số lượng",
+				disabled: disabled || value <= 1,
+				onClick: () => onChange(value - 1),
+				className: "grid size-8 cursor-pointer place-items-center text-mute hover:bg-raise hover:text-fg disabled:cursor-not-allowed disabled:opacity-30",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconMinus, { size: 14 })
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+				type: "number",
+				min: 1,
+				max,
+				inputMode: "numeric",
+				"aria-label": "Số lượng vật phẩm",
+				value,
+				disabled: disabled || once,
+				onChange: (event) => onChange(clampCartQuantity(event.target.value, once)),
+				className: "w-11 min-w-0 bg-transparent text-center text-xs font-bold tabular-nums outline-none disabled:opacity-70"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+				type: "button",
+				"aria-label": "Tăng số lượng",
+				disabled: disabled || value >= max,
+				onClick: () => onChange(value + 1),
+				className: "grid size-8 cursor-pointer place-items-center text-mute hover:bg-raise hover:text-fg disabled:cursor-not-allowed disabled:opacity-30",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlus, { size: 14 })
+			})
+		]
+	});
+}
+function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, onRemove, onClear, onBuy, onTopUp }) {
+	const total = cartTotal(entries);
+	const short = Math.max(0, total - coins);
+	const invalid = entries.filter((entry) => entry.invalid);
+	const canBuy = entries.length > 0 && ready && !buying && invalid.length === 0 && short === 0;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Dialog, {
+		open,
+		title: "Giỏ hàng",
+		onClose: () => !buying && onClose(),
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex items-center justify-between gap-3",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+					className: "text-[11px] text-mute",
+					children: [
+						formatNumber(entries.length),
+						" loại vật phẩm · ",
+						formatNumber(cartCount(entries)),
+						" sản phẩm"
+					]
+				}), entries.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+					type: "button",
+					disabled: buying,
+					onClick: onClear,
+					className: "flex shrink-0 cursor-pointer items-center gap-1 text-[11px] font-bold text-mute transition hover:text-bad disabled:opacity-40",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconTrash, { size: 14 }), " Xóa tất cả"]
+				})]
+			}),
+			entries.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex flex-col items-center gap-2 rounded-xl border border-dashed border-line py-8 text-center text-xs text-mute",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, {
+					size: 30,
+					stroke: 1.5
+				}), " Chưa có vật phẩm nào trong giỏ."]
+			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+				className: "space-y-2",
+				children: entries.map((entry) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+					className: `rounded-xl border bg-bg p-3 ${entry.invalid ? "border-bad/40" : "border-line"}`,
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex items-start gap-3",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tile, { p: entry.product }),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+									className: "min-w-0 flex-1",
+									children: [
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+											className: "truncate text-[10px] text-mute",
+											children: entry.category
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+											className: "line-clamp-2 text-xs font-bold",
+											children: entry.product.name
+										}),
+										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+											className: "mt-1 flex items-center gap-1 text-[11px] text-coin",
+											children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 13 }),
+												" ",
+												formatNumber(entry.price),
+												" / cái"
+											]
+										})
+									]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+									type: "button",
+									"aria-label": `Xóa ${entry.product.name} khỏi giỏ`,
+									title: "Xóa vật phẩm",
+									disabled: buying,
+									onClick: () => onRemove(entry.id),
+									className: "grid size-7 shrink-0 cursor-pointer place-items-center rounded-lg text-mute hover:bg-bad/10 hover:text-bad disabled:opacity-40",
+									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, { size: 16 })
+								})
+							]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "mt-2.5 flex items-center justify-between gap-2 border-t border-line pt-2.5",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CompactQuantity, {
+								value: entry.quantity,
+								once: entry.product.once,
+								disabled: buying || !ready,
+								onChange: (value) => onQuantity(entry.id, value)
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+								className: "flex items-center gap-1 text-xs font-bold text-coin tabular-nums",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 14 }),
+									" ",
+									formatNumber(entry.total)
+								]
+							})]
+						}),
+						entry.invalid && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+							className: "mt-2 flex items-center gap-1.5 text-[11px] text-bad",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconAlertTriangle, { size: 14 }),
+								" ",
+								entry.invalid
+							]
+						})
+					]
+				}, String(entry.id)))
+			}),
+			entries.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dl", {
+					className: "space-y-2 rounded-xl border border-line bg-bg p-3.5 text-xs",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex items-center justify-between text-mute",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số dư hiện tại" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
+								className: "tabular-nums",
+								children: formatNumber(coins)
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex items-center justify-between text-mute",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số dư sau khi mua" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
+								className: `tabular-nums ${short ? "text-bad" : ""}`,
+								children: short ? `Thiếu ${formatNumber(short)}` : formatNumber(coins - total)
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex items-center justify-between border-t border-line pt-2.5",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", {
+								className: "font-extrabold",
+								children: "Tổng thanh toán"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dd", {
+								className: "flex items-center gap-1.5 text-lg font-extrabold text-coin tabular-nums",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 18 }),
+									" ",
+									formatNumber(total)
+								]
+							})]
+						})
+					]
+				}),
+				!ready && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "rounded-lg bg-raise p-2.5 text-[11px] text-mute",
+					children: "Đang tải hoặc kiểm tra dữ liệu cửa hàng. Vui lòng tải lại trước khi mua."
+				}),
+				invalid.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+					className: "flex items-start gap-2 rounded-lg bg-bad/10 p-3 text-[11px] text-bad",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconAlertTriangle, {
+							size: 16,
+							className: "shrink-0"
+						}),
+						" Giỏ có ",
+						invalid.length,
+						" vật phẩm chưa hợp lệ. Hãy xóa hoặc điều chỉnh trước khi mua."
+					]
+				}),
+				short > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+					variant: "ghost",
+					className: "w-full text-coin!",
+					disabled: buying,
+					onClick: onTopUp,
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 16 }),
+						" Thiếu ",
+						formatNumber(short),
+						" xu — Mua thêm"
+					]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+					className: "w-full",
+					disabled: !canBuy,
+					loading: buying,
+					onClick: onBuy,
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 17 }),
+						" Mua tất cả · ",
+						formatNumber(entries.length),
+						" loại vật phẩm"
+					]
+				})
+			] })
+		]
 	});
 }
 // src/features/shop/CategoryNav.jsx
@@ -576,7 +848,7 @@ function EmptyProducts({ searching, tabs, hits, onSelect }) {
 	});
 }
 // src/features/shop/ProductItem.jsx
-function ProductItem({ p, poor, owned, onBuy }) {
+function ProductItem({ p, poor, owned, cartQuantity = 0, onBuy }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 		type: "button",
 		onClick: onBuy,
@@ -602,6 +874,13 @@ function ProductItem({ p, poor, owned, onBuy }) {
 						size: 12,
 						stroke: 2.6
 					}), " Đã mua"]
+				}) : cartQuantity > 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+					className: "flex items-center gap-1 rounded-full bg-lime/15 px-2 py-0.5 text-[10px] font-bold text-lime",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 12 }),
+						" Đã thêm ",
+						formatNumber(cartQuantity)
+					]
 				}) : hasPrice(p) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 					className: `flex items-center gap-1 text-xs font-bold tabular-nums ${poor ? "text-mute" : "text-coin"}`,
 					children: [
@@ -611,7 +890,10 @@ function ProductItem({ p, poor, owned, onBuy }) {
 					]
 				}), !owned && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 					className: "grid size-7 place-items-center rounded-lg bg-raise text-mute transition group-hover:bg-lime group-hover:text-bg",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingBag, {
+					children: cartQuantity ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCheck, {
+						size: 15,
+						stroke: 2.4
+					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlus, {
 						size: 15,
 						stroke: 2.4
 					})
@@ -800,6 +1082,9 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 	const [q, setQ] = (0, import_react.useState)("");
 	const [shown, setShown] = (0, import_react.useState)(60);
 	const [item, setItem] = (0, import_react.useState)(null);
+	const [cart, setCart] = (0, import_react.useState)([]);
+	const [cartOpen, setCartOpen] = (0, import_react.useState)(false);
+	const [buying, setBuying] = (0, import_react.useState)(false);
 	const [guide, setGuide] = (0, import_react.useState)(false);
 	const [done, setDone] = (0, import_react.useState)(false);
 	const { isOwned, markOwned } = useOwned(shop.tabs);
@@ -825,9 +1110,49 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 		const products = Array.isArray(t.products) ? t.products : [];
 		return [t.id, needle ? products.filter((p) => matches(p, needle)).length : products.length];
 	})), [tabs, needle]);
+	const entries = (0, import_react.useMemo)(() => resolveCart(cart, shop.tabs, isOwned), [
+		cart,
+		shop.tabs,
+		isOwned
+	]);
+	const total = cartTotal(entries);
+	const selectedQuantity = (item ? cart.find(({ id }) => String(id) === String(item.id)) : null)?.quantity || 0;
+	const cartQuantities = (0, import_react.useMemo)(() => new Map(cart.map(({ id, quantity }) => [String(id), quantity])), [cart]);
+	const cartReady = shop.ready === true && Array.isArray(shop.tabs) && !shop.loading;
+	const canPurchase = cartReady && entries.every(({ invalid }) => !invalid) && total <= user.coins;
 	const open = (p) => {
-		if (isOwned(p)) return;
+		if (isOwned(p) || buying) return;
 		setItem(p);
+	};
+	const addToCart = (product, quantity, category) => {
+		const exists = cart.some(({ id }) => String(id) === String(product.id));
+		setCart((items) => putInCart(items, product, quantity, category));
+		toast(exists ? "Đã cập nhật số lượng trong giỏ" : "Đã thêm vật phẩm vào giỏ");
+	};
+	const removeFromCart = (id) => {
+		setCart((items) => items.filter((entry) => String(entry.id) !== String(id)));
+		if (cart.length === 1) setCartOpen(false);
+	};
+	const clearCart = () => {
+		setCart([]);
+		setCartOpen(false);
+	};
+	const purchase = async () => {
+		if (buying || cart.length === 0 || !canPurchase) return;
+		setBuying(true);
+		try {
+			const response = await buy(cartPayload(entries));
+			if (response.user) onUser(response.user);
+			for (const { product } of entries) if (product.once) markOwned(product.id);
+			setCart([]);
+			setCartOpen(false);
+			setDone(true);
+			toast(response.message || `Đã mua ${entries.length} loại vật phẩm thành công`);
+		} catch (error) {
+			toastError(error);
+		} finally {
+			setBuying(false);
+		}
 	};
 	const renderCatalogue = () => {
 		if (shop.ready === false) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -885,6 +1210,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 					p,
 					owned: isOwned(p),
 					poor: hasPrice(p) && p.price > user.coins,
+					cartQuantity: cartQuantities.get(String(p.id)) || 0,
 					onBuy: () => open(p)
 				}, p.id))
 			}, tabId),
@@ -917,25 +1243,83 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 				onSelect: selectTab
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
-				className: "app-screen min-w-0 md:p-0",
+				className: `app-screen min-w-0 md:p-0 ${cart.length > 0 ? "pb-28 md:pb-24" : ""}`,
 				children: topup && shop.ready !== false ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TopUp, {
 					user,
 					onPaid: onRefresh
 				}) : renderCatalogue()
 			}),
+			cart.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "fixed inset-x-3 bottom-[calc(var(--app-bottom-nav-h)+.75rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-md md:right-5 md:bottom-5 md:left-auto md:mx-0",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+					type: "button",
+					onClick: () => setCartOpen(true),
+					className: "flex w-full cursor-pointer items-center gap-3 rounded-2xl border border-lime/35 bg-panel px-3 py-3 text-left shadow-xl shadow-black/40 backdrop-blur-md transition hover:border-lime hover:bg-raise focus-visible:outline-2 focus-visible:outline-lime",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+							className: "relative grid size-10 shrink-0 place-items-center rounded-xl bg-lime text-bg",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, {
+								size: 20,
+								stroke: 2.2
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "absolute -top-2 -right-2 grid min-w-5 h-5 place-items-center rounded-full bg-fg px-1 text-[10px] font-extrabold text-bg tabular-nums",
+								children: formatNumber(cart.length)
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+							className: "min-w-0 flex-1",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+								className: "block text-xs font-extrabold",
+								children: [
+									"Giỏ hàng · ",
+									formatNumber(cartCount(entries)),
+									" vật phẩm"
+								]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+								className: "mt-0.5 flex items-center gap-1 text-xs font-bold text-coin",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 13 }),
+									" ",
+									formatNumber(total)
+								]
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "shrink-0 rounded-lg bg-lime px-3 py-2 text-[11px] font-extrabold text-bg",
+							children: "Xem giỏ & mua"
+						})
+					]
+				})
+			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(BuyDialog, {
 				item,
 				category: current?.name,
 				user,
-				onUser,
-				onOwned: markOwned,
-				onBought: () => setDone(true),
+				cartQuantity: selectedQuantity,
+				cartTotal: total,
+				onAdd: addToCart,
 				onClose: () => setItem(null),
 				onTopUp: () => {
 					setItem(null);
 					selectTab(TOPUP);
 				}
 			}, item?.id ?? ""),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CartDialog, {
+				open: cartOpen,
+				entries,
+				coins: user.coins,
+				ready: cartReady,
+				buying,
+				onClose: () => setCartOpen(false),
+				onQuantity: (id, quantity) => setCart((items) => changeCartQuantity(items, id, quantity)),
+				onRemove: removeFromCart,
+				onClear: clearCart,
+				onBuy: purchase,
+				onTopUp: () => {
+					setCartOpen(false);
+					selectTab(TOPUP);
+				}
+			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PurchaseDoneDialog, {
 				open: done,
 				onClose: () => setDone(false)
