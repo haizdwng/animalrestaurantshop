@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useSyncExternalStore } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Toaster } from '@/shared/components/ui';
-import { getPendingCoinRequestCount, isAdmin, subscribeToCoinRequests } from '@/shared/library/api';
+import { getPendingRequestCount, isAdmin, subscribeToRequests } from '@/shared/library/api';
 import { DEFAULT_TAB, getNavigationItemsForRole, getLoginDestination, getRequestedDestination } from '@/shared/configuration/navigation';
 import AppHeader from '@/shared/components/layout/AppHeader';
 import BottomNav from '@/shared/components/layout/BottomNav';
@@ -38,8 +38,8 @@ function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
   const lockedPath = useRef('');
-  const pendingCoinRequestCount = useSyncExternalStore(subscribeToCoinRequests, getPendingCoinRequestCount, getPendingCoinRequestCount);
-  const requestsPending = pendingCoinRequestCount > 0;
+  const pendingRequestCount = useSyncExternalStore(subscribeToRequests, getPendingRequestCount, getPendingRequestCount);
+  const requestsPending = pendingRequestCount > 0;
   const pathSegment = location.pathname.split('/').filter(Boolean)[0];
   const current = pathSegment || DEFAULT_TAB;
   const admin = isAdmin(user);

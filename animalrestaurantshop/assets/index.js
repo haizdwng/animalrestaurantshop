@@ -16168,9 +16168,7 @@ var REQUEST_TIMEOUT = DEFAULT_REQUEST_TIMEOUT;
 // src/shared/library/api/client.js
 var TOKEN_KEY = "token";
 var activeRequests = 0;
-var activeCoinRequests = 0;
 var requestListeners = /* @__PURE__ */ new Set();
-var coinRequestListeners = /* @__PURE__ */ new Set();
 var requestQueue = Promise.resolve();
 function enqueueRequest(fn) {
 	const run = requestQueue.then(() => fn());
@@ -16180,28 +16178,20 @@ function enqueueRequest(fn) {
 function notifyRequestListeners() {
 	requestListeners.forEach((listener) => listener());
 }
-var subscribeToCoinRequests = (listener) => {
-	coinRequestListeners.add(listener);
-	return () => coinRequestListeners.delete(listener);
+var subscribeToRequests = (listener) => {
+	requestListeners.add(listener);
+	return () => requestListeners.delete(listener);
 };
-var getPendingCoinRequestCount = () => activeCoinRequests;
-function trackRequest(coin = false) {
+var getPendingRequestCount = () => activeRequests;
+function trackRequest() {
 	activeRequests += 1;
 	notifyRequestListeners();
-	if (coin) {
-		activeCoinRequests += 1;
-		coinRequestListeners.forEach((listener) => listener());
-	}
 	let finished = false;
 	return () => {
 		if (finished) return;
 		finished = true;
 		activeRequests = Math.max(0, activeRequests - 1);
 		notifyRequestListeners();
-		if (coin) {
-			activeCoinRequests = Math.max(0, activeCoinRequests - 1);
-			coinRequestListeners.forEach((listener) => listener());
-		}
 	};
 }
 var getToken = () => localStorage.getItem(TOKEN_KEY) || "";
@@ -16217,9 +16207,9 @@ var ApiError = class extends Error {
 };
 var onUnauthorized = () => {};
 var setUnauthorizedHandler = (handler) => onUnauthorized = handler;
-async function http(method, path, body, { track = true, coin = false } = {}) {
+async function http(method, path, body, { track = true } = {}) {
 	return enqueueRequest(async () => {
-		const finishRequest = track ? trackRequest(coin) : () => {};
+		const finishRequest = track ? trackRequest() : () => {};
 		const isForm = body instanceof FormData;
 		const controller = new AbortController();
 		const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
@@ -16268,11 +16258,8 @@ async function http(method, path, body, { track = true, coin = false } = {}) {
 		}
 	});
 }
-async function call(method, path, body, { auth = true, track = true, coin = false } = {}) {
-	const response = await http(method, path, body, {
-		track,
-		coin
-	});
+async function call(method, path, body, { auth = true, track = true } = {}) {
+	const response = await http(method, path, body, { track });
 	if (!response || response.success !== true) {
 		if (response && !response.code && /xác thực|đăng nhập lại|unauthori|token/i.test(response.message || "")) response.code = "UNAUTHORIZED";
 		const error = new ApiError(response?.message || "Đã có lỗi xảy ra", response || {});
@@ -16463,10 +16450,7 @@ function fileToAvatar(file) {
 }
 // src/shared/library/api/auth.js
 var getMe = async () => {
-	const r = await call("GET", "/user", void 0, {
-		auth: false,
-		coin: true
-	});
+	const r = await call("GET", "/user", void 0, { auth: false });
 	if (!r.user && !r.username) throw new ApiError(r.message || "Không lấy được thông tin tài khoản");
 	return {
 		...r,
@@ -16514,8 +16498,8 @@ var changeOpenid = async (openid, otp) => withUser(await call("PATCH", "/user/op
 	openid,
 	otp
 }));
-var redeemGiftCode = async (code) => withUser(await call("POST", "/user/giftcode", { code }, { coin: true }));
-var submitInvite = (invite) => call("POST", "/user/invite", { invite }, { coin: true });
+var redeemGiftCode = async (code) => withUser(await call("POST", "/user/giftcode", { code }));
+var submitInvite = (invite) => call("POST", "/user/invite", { invite });
 var getFriendLink = () => call("GET", "/user/links/friend");
 var getBuffetLink = () => call("GET", "/user/links/buffet");
 var checkShopReady = () => call("GET", "/user/shop/ready");
@@ -16537,7 +16521,7 @@ var getShop = async () => {
 var buy = async (id, quantity) => withUser(await call("POST", "/user/shop", {
 	id,
 	quantity
-}, { coin: true }));
+}));
 var createTransaction = (coin) => call("POST", "/user/transactions", { coin });
 var getTransaction = async (code) => {
 	const r = await call("GET", `/user/transactions/${enc(code)}`);
@@ -16641,7 +16625,7 @@ var CHECKIN_REWARDS = [
 	30
 ];
 var getCheckin = () => call("GET", "/user/checkin", void 0, { track: false });
-var claimCheckin = async () => withUser(await call("POST", "/user/checkin", void 0, { coin: true }));
+var claimCheckin = async () => withUser(await call("POST", "/user/checkin"));
 // src/shared/configuration/navigation.js
 var DEFAULT_DESTINATION = "/shop";
 var AUTHENTICATION_PATH = /^\/(?:login|register|forgot)(?:\/|$)/i;
@@ -17199,7 +17183,7 @@ function AppContent() {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const lockedPath = (0, import_react.useRef)("");
-	const requestsPending = (0, import_react.useSyncExternalStore)(subscribeToCoinRequests, getPendingCoinRequestCount, getPendingCoinRequestCount) > 0;
+	const requestsPending = (0, import_react.useSyncExternalStore)(subscribeToRequests, getPendingRequestCount, getPendingRequestCount) > 0;
 	const pathSegment = location.pathname.split("/").filter(Boolean)[0];
 	const current = pathSegment || "shop";
 	const admin = isAdmin(user);
