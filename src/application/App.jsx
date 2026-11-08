@@ -134,7 +134,7 @@ function AppContent() {
     >
       <Toaster />
       <div inert={requestsPending}>
-        <AppHeader nav={navigationItems} current={activeTab} onNavigate={navigateTab} coins={user.coins} syncing={session.syncing} onRefresh={refreshUser} badgeKeys={checkin.showBadge ? ['user'] : []} />
+        <AppHeader nav={navigationItems} current={activeTab} onNavigate={navigateTab} coins={user.coins} syncing={requestsPending} onRefresh={refreshUser} badgeKeys={checkin.showBadge ? ['user'] : []} />
         <main className='mx-auto w-full max-w-6xl'>
           <Suspense fallback={null}>
             <Routes>
