@@ -1,5 +1,6 @@
 import { call, enc } from '@/shared/library/api/client';
 import { normAdminUser } from '@/shared/library/api/normalize';
+import { compressJsonBrotli } from '@/shared/library/compression/brotli';
 
 export const adminUsers = async () => {
   const r = await call('GET', '/administrator/users');
@@ -39,6 +40,9 @@ export const adminSaveRecord = (openid, record) => call('PATCH', `/administrator
 export const adminEncryptRecordValue = (openid, type, value, key) => call('POST', `/administrator/players/${enc(openid)}/record/encrypt`, { type, ...(type === 'v1' ? { key } : {}), value });
 export const adminDecryptRecordValue = (openid, type, value) => call('POST', `/administrator/players/${enc(openid)}/record/decrypt`, { type, value });
 export const adminData = (name) => call('GET', `/administrator/data/${name}`);
-export const adminSaveData = (name, value) => call('PATCH', `/administrator/data/${name}`, { [name]: JSON.stringify(value) });
+export const adminSaveData = async (name, value) => {
+  const body = await compressJsonBrotli({ [name]: value });
+  return await call('PATCH', `/administrator/data/${name}`, body, { contentEncoding: 'br' })
+};
 export const adminAddPlayerStar = (openid, star) => call('POST', `/administrator/players/${enc(openid)}/star`, { star });
 export const adminAddPlayerLike = (openid, like) => call('POST', `/administrator/players/${enc(openid)}/like`, { like });

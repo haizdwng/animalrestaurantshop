@@ -61,11 +61,12 @@ export class ApiError extends Error {
 let onUnauthorized = () => {};
 export const setUnauthorizedHandler = (handler) => (onUnauthorized = handler);
 
-async function http(method, path, body, { track = true } = {}) {
+async function http(method, path, body, { track = true, contentEncoding } = {}) {
   return enqueueRequest(async () => {
     const coinRequest = COIN_REQUESTS.has(`${method.toUpperCase()} ${path.split('?')[0]}`);
     const finishRequest = track ? trackRequest(coinRequest) : () => {};
     const isForm = body instanceof FormData;
+    const isBinary = body instanceof Uint8Array;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
@@ -76,9 +77,10 @@ async function http(method, path, body, { track = true } = {}) {
         cache: 'no-store',
         headers: {
           ...(!isForm && body !== undefined && { 'Content-Type': 'application/json' }),
+          ...(contentEncoding && { 'Content-Encoding': contentEncoding }),
           ...(token && { token })
         },
-        body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
+        body: body === undefined ? undefined : isForm || isBinary ? body : JSON.stringify(body),
         signal: controller.signal
       });
 
@@ -106,8 +108,8 @@ async function http(method, path, body, { track = true } = {}) {
   });
 };
 
-export async function call(method, path, body, { auth = true, track = true } = {}) {
-  const response = await http(method, path, body, { track });
+export async function call(method, path, body, { auth = true, track = true, contentEncoding } = {}) {
+  const response = await http(method, path, body, { track, contentEncoding });
   if (!response || response.success !== true) {
     if (response && !response.code && /xác thực|đăng nhập lại|unauthori|token/i.test(response.message || '')) response.code = 'UNAUTHORIZED';
     const error = new ApiError(response?.message || 'Đã có lỗi xảy ra', response || {});

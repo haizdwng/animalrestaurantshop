@@ -1,4 +1,5 @@
-import { Nt as require_react, Pt as __toESM, st as Pager, yt as require_jsx_runtime } from "./index.js";
+import { r as __toESM } from "./rolldown-runtime.js";
+import { Nt as require_react, st as Pager, yt as require_jsx_runtime } from "./index.js";
 // src/shared/hooks/usePaginatedData.jsx
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var import_jsx_runtime = require_jsx_runtime();
