@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { IconPlayerPlay, IconRefresh, IconShoppingCart } from '@tabler/icons-react';
+import { IconPlayerPlay, IconRefresh, IconShoppingCart, IconTrash } from '@tabler/icons-react';
 import { formatNumber } from '@/shared/library/format';
 import { Button, Coin, ErrorState, toast, toastError } from '@/shared/components/ui';
 import * as api from '@/shared/library/api';
 import TopUp from '@/shared/components/payment/TopUp';
 import { PAGE, TOPUP } from '@/features/shop/config';
 import { hasPrice, matches } from '@/features/shop/shopUtilities';
-import { cartCount, cartPayload, cartTotal, changeCartQuantity, putInCart, resolveCart } from '@/features/shop/cartUtils';
+import { addCategoryToCart, cartCount, cartPayload, cartTotal, changeCartQuantity, eligibleCategoryProducts, putInCart, removeCategoryFromCart, resolveCart } from '@/features/shop/cartUtils';
 import BuyDialog from '@/features/shop/BuyDialog';
 import CartDialog from '@/features/shop/CartDialog';
 import CategoryNav from '@/features/shop/CategoryNav';
@@ -42,6 +42,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
   const [guide, setGuide] = useState(false);
   const [done, setDone] = useState(false);
   const { isOwned, markOwned } = useOwned(shop.tabs);
+  const maxQuantity = api.isAdmin(user) ? 1000 : api.MAX_QTY;
   const selectTab = (next) => navigate(`/shop/${next}`);
 
   useEffect(() => {
@@ -63,11 +64,15 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
     return [t.id, needle ? products.filter((p) => matches(p, needle)).length : products.length];
   })), [tabs, needle]);
 
-  const entries = useMemo(() => resolveCart(cart, shop.tabs, isOwned), [cart, shop.tabs, isOwned]);
+  const entries = useMemo(() => resolveCart(cart, shop.tabs, isOwned, maxQuantity), [cart, shop.tabs, isOwned, maxQuantity]);
   const total = cartTotal(entries);
   const selected = item ? cart.find(({ id }) => String(id) === String(item.id)) : null;
   const selectedQuantity = selected?.quantity || 0;
   const cartQuantities = useMemo(() => new Map(cart.map(({ id, quantity }) => [String(id), quantity])), [cart]);
+  const categoryProducts = Array.isArray(current?.products) ? current.products : [];
+  const eligible = eligibleCategoryProducts(categoryProducts, isOwned);
+  const categoryAddedCount = eligible.filter((p) => cartQuantities.has(String(p.id))).length;
+  const allCategoryAdded = eligible.length > 0 && categoryAddedCount === eligible.length;
   const cartReady = shop.ready === true && Array.isArray(shop.tabs) && !shop.loading;
   const canPurchase = cartReady && entries.every(({ invalid }) => !invalid) && total <= user.coins;
 
@@ -77,8 +82,18 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
   };
   const addToCart = (product, quantity, category) => {
     const exists = cart.some(({ id }) => String(id) === String(product.id));
-    setCart((items) => putInCart(items, product, quantity, category));
+    setCart((items) => putInCart(items, product, quantity, category, maxQuantity));
     toast(exists ? 'Đã cập nhật số lượng trong giỏ' : 'Đã thêm vật phẩm vào giỏ');
+  };
+  const toggleCategoryCart = () => {
+    if (!cartReady || buying || eligible.length === 0) return;
+    if (allCategoryAdded) {
+      setCart((items) => removeCategoryFromCart(items, categoryProducts));
+      toast(`Đã xóa vật phẩm thuộc ${current.name} khỏi giỏ`);
+    } else {
+      setCart((items) => addCategoryToCart(items, categoryProducts, current.name, isOwned, maxQuantity));
+      toast(`Đã thêm các vật phẩm còn lại của ${current.name} vào giỏ`);
+    };
   };
   const removeFromCart = (id) => {
     setCart((items) => items.filter((entry) => String(entry.id) !== String(id)));
@@ -127,6 +142,26 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
     return (
       <>
         <ShopToolbar title={current?.name} count={products.length} ownedCount={products.filter((p) => isOwned(p)).length} query={q} onQuery={setQ} loading={shop.loading} onReload={onReload} />
+
+        {!topup && (
+          <div className='mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-panel px-3 py-2.5'>
+            <p className='text-[11px] text-mute'>
+              Trong danh mục: <strong className='text-fg tabular-nums'>{formatNumber(categoryAddedCount)} / {formatNumber(eligible.length)}</strong> loại đã thêm
+              <span className='hidden sm:inline'> · Áp dụng cả vật phẩm chưa hiển thị</span>
+            </p>
+            <Button
+              size='sm'
+              variant={allCategoryAdded ? 'ghost' : 'solid'}
+              className={allCategoryAdded ? 'text-bad!' : ''}
+              disabled={!cartReady || buying || eligible.length === 0}
+              onClick={toggleCategoryCart}
+              title={allCategoryAdded ? 'Xóa các vật phẩm thuộc danh mục hiện tại khỏi giỏ' : 'Thêm các vật phẩm đủ điều kiện thuộc toàn bộ danh mục'}
+            >
+              {allCategoryAdded ? <IconTrash size={15} /> : <IconShoppingCart size={15} />}
+              {allCategoryAdded ? 'Xóa tất cả' : 'Thêm tất cả vào giỏ'}
+            </Button>
+          </div>
+        )}
 
         {products.length === 0 ? (
           <EmptyProducts searching={!!needle} tabs={tabs} hits={hits} onSelect={selectTab} />
@@ -187,6 +222,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
         user={user}
         cartQuantity={selectedQuantity}
         cartTotal={total}
+        maxQuantity={maxQuantity}
         onAdd={addToCart}
         onClose={() => setItem(null)}
         onTopUp={() => {
@@ -200,8 +236,9 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
         coins={user.coins}
         ready={cartReady}
         buying={buying}
+        maxQuantity={maxQuantity}
         onClose={() => setCartOpen(false)}
-        onQuantity={(id, quantity) => setCart((items) => changeCartQuantity(items, id, quantity))}
+        onQuantity={(id, quantity) => setCart((items) => changeCartQuantity(items, id, quantity, maxQuantity))}
         onRemove={removeFromCart}
         onClear={clearCart}
         onBuy={purchase}

@@ -25,7 +25,7 @@ export default function ProductItem({ p, poor, owned, cartQuantity = 0, onBuy })
             </span>
           ) : cartQuantity > 0 ? (
             <span className='flex items-center gap-1 rounded-full bg-lime/15 px-2 py-0.5 text-[10px] font-bold text-lime'>
-              <IconShoppingCart size={12} /> Đã thêm {formatNumber(cartQuantity)}
+              <IconShoppingCart size={12} /> {p.once ? 'Đã thêm' : `Đã thêm ${formatNumber(cartQuantity)}`}
             </span>
           ) : (
             hasPrice(p) && (

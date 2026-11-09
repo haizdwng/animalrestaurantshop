@@ -7,15 +7,15 @@ import QuantityPicker from '@/features/shop/QuantityPicker';
 import Tile from '@/features/shop/Tile';
 import { clampCartQuantity } from '@/features/shop/cartUtils';
 
-export default function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, onAdd, onClose, onTopUp }) {
-  const [qty, setQty] = useState(() => clampCartQuantity(cartQuantity || 1, item?.once));
+export default function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQuantity = 100, onAdd, onClose, onTopUp }) {
+  const [qty, setQty] = useState(() => clampCartQuantity(cartQuantity || 1, item?.once, maxQuantity));
   const description = typeof item?.description === 'string' ? item.description.trim() : '';
   const once = !!item?.once;
   const priced = hasPrice(item);
   const conditions = Array.isArray(item?.conditions) ? item.conditions : [];
   const blocked = conditions.some((condition) => condition?.already === false);
   const hasCurrent = item?.current !== undefined && item?.current !== null;
-  const maxQty = once ? 1 : 100;
+  const maxQty = once ? 1 : maxQuantity;
   const total = priced ? item.price * qty : 0;
   const newCartTotal = cartTotal - (priced ? item.price * cartQuantity : 0) + total;
   const short = Math.max(0, newCartTotal - user.coins);

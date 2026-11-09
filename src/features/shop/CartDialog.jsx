@@ -4,8 +4,7 @@ import { Button, Coin, Dialog } from '@/shared/components/ui';
 import Tile from '@/features/shop/Tile';
 import { cartCount, cartTotal, clampCartQuantity } from '@/features/shop/cartUtils';
 
-function CompactQuantity({ value, once, disabled, onChange }) {
-  const max = once ? 1 : 100;
+function CompactQuantity({ value, max, disabled, onChange }) {
   return (
     <div className='flex h-8 items-center overflow-hidden rounded-lg border border-line bg-bg'>
       <button type='button' aria-label='Giảm số lượng' disabled={disabled || value <= 1} onClick={() => onChange(value - 1)} className='grid size-8 cursor-pointer place-items-center text-mute hover:bg-raise hover:text-fg disabled:cursor-not-allowed disabled:opacity-30'>
@@ -18,9 +17,9 @@ function CompactQuantity({ value, once, disabled, onChange }) {
         inputMode='numeric'
         aria-label='Số lượng vật phẩm'
         value={value}
-        disabled={disabled || once}
-        onChange={(event) => onChange(clampCartQuantity(event.target.value, once))}
-        className='w-11 min-w-0 bg-transparent text-center text-xs font-bold tabular-nums outline-none disabled:opacity-70'
+        disabled={disabled}
+        onChange={(event) => onChange(clampCartQuantity(event.target.value, false, max))}
+        className='w-16 min-w-0 bg-transparent text-center text-xs font-bold tabular-nums outline-none disabled:opacity-70'
       />
       <button type='button' aria-label='Tăng số lượng' disabled={disabled || value >= max} onClick={() => onChange(value + 1)} className='grid size-8 cursor-pointer place-items-center text-mute hover:bg-raise hover:text-fg disabled:cursor-not-allowed disabled:opacity-30'>
         <IconPlus size={14} />
@@ -29,7 +28,7 @@ function CompactQuantity({ value, once, disabled, onChange }) {
   );
 };
 
-export default function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, onRemove, onClear, onBuy, onTopUp }) {
+export default function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, onRemove, onClear, onBuy, onTopUp, maxQuantity = 100 }) {
   const total = cartTotal(entries);
   const short = Math.max(0, total - coins);
   const invalid = entries.filter((entry) => entry.invalid);
@@ -73,7 +72,11 @@ export default function CartDialog({ open, entries, coins, ready, buying, onClos
                 </button>
               </div>
               <div className='mt-2.5 flex items-center justify-between gap-2 border-t border-line pt-2.5'>
-                <CompactQuantity value={entry.quantity} once={entry.product.once} disabled={buying || !ready} onChange={(value) => onQuantity(entry.id, value)} />
+                {entry.product.once ? (
+                  <span className='rounded-lg border border-line bg-raise px-2.5 py-1.5 text-[11px] font-medium text-mute'>Chỉ mua một lần</span>
+                ) : (
+                  <CompactQuantity value={entry.quantity} max={maxQuantity} disabled={buying || !ready} onChange={(value) => onQuantity(entry.id, value)} />
+                )}
                 <span className='flex items-center gap-1 text-xs font-bold text-coin tabular-nums'>
                   <Coin size={14} /> {formatNumber(entry.total)}
                 </span>

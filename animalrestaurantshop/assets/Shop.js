@@ -1,10 +1,10 @@
-import { At as useNavigate, Dt as createReactComponent, Et as IconAlertTriangle, F as buy, M as createTransaction, Nt as require_react, Pt as __toESM, Q as Coin, _t as Field, at as ErrorState, bt as IconX, gt as toastError, ht as toast, i as formatNumber, it as Skeleton, jt as useParams, ot as Spinner, pt as Dialog, vt as Button, wt as IconCircleCheck, xt as IconRefresh, yt as require_jsx_runtime } from "./index.js";
+import { At as useNavigate, Dt as createReactComponent, Et as IconAlertTriangle, F as buy, M as createTransaction, Nt as require_react, Pt as __toESM, Q as Coin, X as isAdmin, _t as Field, at as ErrorState, bt as IconX, gt as toastError, ht as toast, i as formatNumber, it as Skeleton, jt as useParams, ot as Spinner, pt as Dialog, vt as Button, wt as IconCircleCheck, xt as IconRefresh, yt as require_jsx_runtime } from "./index.js";
+import { t as IconTrash } from "./IconTrash.js";
 import { i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
 import { a as TOPUP, i as CATEGORY_ICONS, n as hasPrice, r as matches, s as IconBox, t as Tile } from "./Tile.js";
 import { t as IconCheck } from "./IconCheck.js";
 import { n as IconLock } from "./clipboard.js";
 import { t as IconPlus } from "./IconPlus.js";
-import { t as IconTrash } from "./IconTrash.js";
 import { t as IconSearch } from "./IconSearch.js";
 /**
 * @license @tabler/icons-react v3.51.0 - MIT
@@ -258,10 +258,10 @@ var clampCartQuantity = (value, once = false, limit = 100) => {
 	const number = Number(value);
 	return Math.max(1, Math.min(once ? 1 : limit, Number.isFinite(number) ? Math.trunc(number) : 1));
 };
-function putInCart(cart, product, quantity, category = "") {
+function putInCart(cart, product, quantity, category = "", limit = 100) {
 	const entry = {
 		id: product.id,
-		quantity: clampCartQuantity(quantity, product.once),
+		quantity: clampCartQuantity(quantity, product.once, limit),
 		product,
 		category
 	};
@@ -269,13 +269,13 @@ function putInCart(cart, product, quantity, category = "") {
 	if (index === -1) return [...cart, entry];
 	return cart.map((existing, i) => i === index ? entry : existing);
 }
-function changeCartQuantity(cart, id, quantity) {
+function changeCartQuantity(cart, id, quantity, limit = 100) {
 	return cart.map((entry) => String(entry.id) === String(id) ? {
 		...entry,
-		quantity: clampCartQuantity(quantity, entry.product.once)
+		quantity: clampCartQuantity(quantity, entry.product.once, limit)
 	} : entry);
 }
-function resolveCart(cart, tabs, isOwned = () => false) {
+function resolveCart(cart, tabs, isOwned = () => false, limit = 100) {
 	const loaded = Array.isArray(tabs);
 	const productIndex = /* @__PURE__ */ new Map();
 	for (const tab of tabs || []) for (const product of tab.products || []) productIndex.set(String(product.id), {
@@ -290,7 +290,7 @@ function resolveCart(cart, tabs, isOwned = () => false) {
 		if (loaded && !latest) invalid = "Vật phẩm không còn trong cửa hàng";
 		else if (loaded && (product.owned || isOwned(product))) invalid = "Vật phẩm đã được mua";
 		else if (loaded && product.conditions?.some((condition) => condition?.already === false)) invalid = "Chưa đáp ứng điều kiện mua";
-		else if (entry.quantity > (product.once ? 1 : 100)) invalid = "Số lượng vượt giới hạn";
+		else if (!Number.isInteger(entry.quantity) || entry.quantity < 1 || entry.quantity > (product.once ? 1 : limit)) invalid = "Số lượng vượt giới hạn";
 		return {
 			...entry,
 			product,
@@ -307,6 +307,27 @@ var cartPayload = (entries) => entries.map(({ id, quantity }) => ({
 	id,
 	quantity
 }));
+var eligibleCategoryProducts = (products, isOwned = () => false) => (products || []).filter((p) => p && !(p.once && (p.owned || isOwned(p))) && !p.conditions?.some((condition) => condition?.already !== true));
+function addCategoryToCart(cart, products, category = "", isOwned = () => false, limit = 100) {
+	const existing = new Set(cart.map(({ id }) => String(id)));
+	const result = [...cart];
+	for (const product of eligibleCategoryProducts(products, isOwned)) {
+		const id = String(product.id);
+		if (existing.has(id)) continue;
+		existing.add(id);
+		result.push({
+			id: product.id,
+			quantity: 1,
+			product,
+			category
+		});
+	}
+	return result;
+}
+function removeCategoryFromCart(cart, products) {
+	const ids = new Set((products || []).map(({ id }) => String(id)));
+	return cart.filter(({ id }) => !ids.has(String(id)));
+}
 // src/features/shop/QuantityPicker.jsx
 function QuantityPicker({ value, max, disabled, onChange, onEnter }) {
 	const clamp = (n) => Math.min(max, Math.max(1, n));
@@ -372,15 +393,15 @@ function QuantityPicker({ value, max, disabled, onChange, onEnter }) {
 	] });
 }
 // src/features/shop/BuyDialog.jsx
-function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, onAdd, onClose, onTopUp }) {
-	const [qty, setQty] = (0, import_react.useState)(() => clampCartQuantity(cartQuantity || 1, item?.once));
+function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQuantity = 100, onAdd, onClose, onTopUp }) {
+	const [qty, setQty] = (0, import_react.useState)(() => clampCartQuantity(cartQuantity || 1, item?.once, maxQuantity));
 	const description = typeof item?.description === "string" ? item.description.trim() : "";
 	const once = !!item?.once;
 	const priced = hasPrice(item);
 	const conditions = Array.isArray(item?.conditions) ? item.conditions : [];
 	const blocked = conditions.some((condition) => condition?.already === false);
 	const hasCurrent = item?.current !== void 0 && item?.current !== null;
-	const maxQty = once ? 1 : 100;
+	const maxQty = once ? 1 : maxQuantity;
 	const total = priced ? item.price * qty : 0;
 	const newCartTotal = cartTotal - (priced ? item.price * cartQuantity : 0) + total;
 	const short = Math.max(0, newCartTotal - user.coins);
@@ -552,8 +573,7 @@ function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, onAd
 	});
 }
 // src/features/shop/CartDialog.jsx
-function CompactQuantity({ value, once, disabled, onChange }) {
-	const max = once ? 1 : 100;
+function CompactQuantity({ value, max, disabled, onChange }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "flex h-8 items-center overflow-hidden rounded-lg border border-line bg-bg",
 		children: [
@@ -572,9 +592,9 @@ function CompactQuantity({ value, once, disabled, onChange }) {
 				inputMode: "numeric",
 				"aria-label": "Số lượng vật phẩm",
 				value,
-				disabled: disabled || once,
-				onChange: (event) => onChange(clampCartQuantity(event.target.value, once)),
-				className: "w-11 min-w-0 bg-transparent text-center text-xs font-bold tabular-nums outline-none disabled:opacity-70"
+				disabled,
+				onChange: (event) => onChange(clampCartQuantity(event.target.value, false, max)),
+				className: "w-16 min-w-0 bg-transparent text-center text-xs font-bold tabular-nums outline-none disabled:opacity-70"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 				type: "button",
@@ -587,7 +607,7 @@ function CompactQuantity({ value, once, disabled, onChange }) {
 		]
 	});
 }
-function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, onRemove, onClear, onBuy, onTopUp }) {
+function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, onRemove, onClear, onBuy, onTopUp, maxQuantity = 100 }) {
 	const total = cartTotal(entries);
 	const short = Math.max(0, total - coins);
 	const invalid = entries.filter((entry) => entry.invalid);
@@ -670,9 +690,12 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "mt-2.5 flex items-center justify-between gap-2 border-t border-line pt-2.5",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CompactQuantity, {
+							children: [entry.product.once ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "rounded-lg border border-line bg-raise px-2.5 py-1.5 text-[11px] font-medium text-mute",
+								children: "Chỉ mua một lần"
+							}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CompactQuantity, {
 								value: entry.quantity,
-								once: entry.product.once,
+								max: maxQuantity,
 								disabled: buying || !ready,
 								onChange: (value) => onQuantity(entry.id, value)
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
@@ -894,8 +917,8 @@ function ProductItem({ p, poor, owned, cartQuantity = 0, onBuy }) {
 					className: "flex items-center gap-1 rounded-full bg-lime/15 px-2 py-0.5 text-[10px] font-bold text-lime",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 12 }),
-						" Đã thêm ",
-						formatNumber(cartQuantity)
+						" ",
+						p.once ? "Đã thêm" : `Đã thêm ${formatNumber(cartQuantity)}`
 					]
 				}) : hasPrice(p) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 					className: `flex items-center gap-1 text-xs font-bold tabular-nums ${poor ? "text-mute" : "text-coin"}`,
@@ -1104,6 +1127,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 	const [guide, setGuide] = (0, import_react.useState)(false);
 	const [done, setDone] = (0, import_react.useState)(false);
 	const { isOwned, markOwned } = useOwned(shop.tabs);
+	const maxQuantity = isAdmin(user) ? 1e3 : 100;
 	const selectTab = (next) => navigate(`/shop/${next}`);
 	(0, import_react.useEffect)(() => {
 		if (!tabs.length) return;
@@ -1126,14 +1150,19 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 		const products = Array.isArray(t.products) ? t.products : [];
 		return [t.id, needle ? products.filter((p) => matches(p, needle)).length : products.length];
 	})), [tabs, needle]);
-	const entries = (0, import_react.useMemo)(() => resolveCart(cart, shop.tabs, isOwned), [
+	const entries = (0, import_react.useMemo)(() => resolveCart(cart, shop.tabs, isOwned, maxQuantity), [
 		cart,
 		shop.tabs,
-		isOwned
+		isOwned,
+		maxQuantity
 	]);
 	const total = cartTotal(entries);
 	const selectedQuantity = (item ? cart.find(({ id }) => String(id) === String(item.id)) : null)?.quantity || 0;
 	const cartQuantities = (0, import_react.useMemo)(() => new Map(cart.map(({ id, quantity }) => [String(id), quantity])), [cart]);
+	const categoryProducts = Array.isArray(current?.products) ? current.products : [];
+	const eligible = eligibleCategoryProducts(categoryProducts, isOwned);
+	const categoryAddedCount = eligible.filter((p) => cartQuantities.has(String(p.id))).length;
+	const allCategoryAdded = eligible.length > 0 && categoryAddedCount === eligible.length;
 	const cartReady = shop.ready === true && Array.isArray(shop.tabs) && !shop.loading;
 	const canPurchase = cartReady && entries.every(({ invalid }) => !invalid) && total <= user.coins;
 	const open = (p) => {
@@ -1142,8 +1171,18 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 	};
 	const addToCart = (product, quantity, category) => {
 		const exists = cart.some(({ id }) => String(id) === String(product.id));
-		setCart((items) => putInCart(items, product, quantity, category));
+		setCart((items) => putInCart(items, product, quantity, category, maxQuantity));
 		toast(exists ? "Đã cập nhật số lượng trong giỏ" : "Đã thêm vật phẩm vào giỏ");
+	};
+	const toggleCategoryCart = () => {
+		if (!cartReady || buying || eligible.length === 0) return;
+		if (allCategoryAdded) {
+			setCart((items) => removeCategoryFromCart(items, categoryProducts));
+			toast(`Đã xóa vật phẩm thuộc ${current.name} khỏi giỏ`);
+		} else {
+			setCart((items) => addCategoryToCart(items, categoryProducts, current.name, isOwned, maxQuantity));
+			toast(`Đã thêm các vật phẩm còn lại của ${current.name} vào giỏ`);
+		}
 	};
 	const removeFromCart = (id) => {
 		setCart((items) => items.filter((entry) => String(entry.id) !== String(id)));
@@ -1214,6 +1253,36 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 				onQuery: setQ,
 				loading: shop.loading,
 				onReload
+			}),
+			!topup && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-panel px-3 py-2.5",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+					className: "text-[11px] text-mute",
+					children: [
+						"Trong danh mục: ",
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("strong", {
+							className: "text-fg tabular-nums",
+							children: [
+								formatNumber(categoryAddedCount),
+								" / ",
+								formatNumber(eligible.length)
+							]
+						}),
+						" loại đã thêm",
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "hidden sm:inline",
+							children: " · Áp dụng cả vật phẩm chưa hiển thị"
+						})
+					]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+					size: "sm",
+					variant: allCategoryAdded ? "ghost" : "solid",
+					className: allCategoryAdded ? "text-bad!" : "",
+					disabled: !cartReady || buying || eligible.length === 0,
+					onClick: toggleCategoryCart,
+					title: allCategoryAdded ? "Xóa các vật phẩm thuộc danh mục hiện tại khỏi giỏ" : "Thêm các vật phẩm đủ điều kiện thuộc toàn bộ danh mục",
+					children: [allCategoryAdded ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconTrash, { size: 15 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 15 }), allCategoryAdded ? "Xóa tất cả" : "Thêm tất cả vào giỏ"]
+				})]
 			}),
 			products.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(EmptyProducts, {
 				searching: !!needle,
@@ -1313,6 +1382,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 				user,
 				cartQuantity: selectedQuantity,
 				cartTotal: total,
+				maxQuantity,
 				onAdd: addToCart,
 				onClose: () => setItem(null),
 				onTopUp: () => {
@@ -1326,8 +1396,9 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 				coins: user.coins,
 				ready: cartReady,
 				buying,
+				maxQuantity,
 				onClose: () => setCartOpen(false),
-				onQuantity: (id, quantity) => setCart((items) => changeCartQuantity(items, id, quantity)),
+				onQuantity: (id, quantity) => setCart((items) => changeCartQuantity(items, id, quantity, maxQuantity)),
 				onRemove: removeFromCart,
 				onClear: clearCart,
 				onBuy: purchase,

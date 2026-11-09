@@ -8,4 +8,4 @@ export const getShop = async () => {
   const r = await call('GET', '/user/shop');
   return { ...r, tabs: normShop(r.shop) };
 };
-export const buy = async (items) => withUser(await call('POST', '/user/shop', items));
+export const buy = async (items) => withUser(await call('POST', '/user/shop', { items: JSON.stringify(items) }));

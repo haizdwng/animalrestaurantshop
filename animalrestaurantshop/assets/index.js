@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/PaymentDialog.js","assets/IconCopy.js","assets/clipboard.js","assets/Tile.js","assets/IconUsers.js","assets/IconPhoto.js","assets/IconCheck.js","assets/IconPlus.js","assets/IconTrash.js","assets/IconSearch.js","assets/Account.js","assets/IconStarFilled.js","assets/IconPencil.js","assets/IconUserPlus.js","assets/useRemoteResource.js","assets/IconGift.js","assets/Avatar.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/IconCopy.js","assets/clipboard.js","assets/Tile.js","assets/IconUsers.js","assets/IconPhoto.js","assets/IconCheck.js","assets/IconPlus.js","assets/IconSearch.js","assets/Account.js","assets/IconStarFilled.js","assets/IconPencil.js","assets/IconUserPlus.js","assets/useRemoteResource.js","assets/IconGift.js","assets/Avatar.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
 // \0rolldown/runtime.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -16523,7 +16523,6 @@ async function updateAvatar(image, onProgress) {
 	form.append("avatar", blob, `avatar.${blob.type.split("/")[1]}`);
 	return withUser(await callStream("PATCH", "/user/avatar", form, onProgress, { timeout: 12e4 }));
 }
-// src/shared/library/api/shop.js
 var getShop = async () => {
 	const r = await call("GET", "/user/shop");
 	return {
@@ -16531,7 +16530,7 @@ var getShop = async () => {
 		tabs: normShop(r.shop)
 	};
 };
-var buy = async (items) => withUser(await call("POST", "/user/shop", items));
+var buy = async (items) => withUser(await call("POST", "/user/shop", { items: JSON.stringify(items) }));
 var createTransaction = (coin) => call("POST", "/user/transactions", { coin });
 var getTransaction = async (code) => {
 	const r = await call("GET", `/user/transactions/${enc(code)}`);
@@ -17161,13 +17160,13 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 // src/application/App.jsx
 var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([0,1,2,3])));
 var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11,12,13,14])));
-var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([15,7,16,2,3,17,6,18,5,19,14,20])));
-var Avatar = (0, import_react.lazy)(() => __vitePreload(() => import("./Avatar.js"), __vite__mapDeps([21,10,11,13,6])));
-var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([22,23,9])));
-var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([24,20,17,12,13,23,9,19])));
-var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([25,14,18,23,9,2,19,26,17,13])));
-var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([27,1,14,23,9,16,6,7,12,13,8,10,19,26,17,2])));
-var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([28,23,9,26,17,12,13,8,10])));
+var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([15,8,16,2,3,17,7,18,6,19,14,20])));
+var Avatar = (0, import_react.lazy)(() => __vitePreload(() => import("./Avatar.js"), __vite__mapDeps([21,11,12,5,7])));
+var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([22,23,10])));
+var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([24,20,17,13,5,23,10,19])));
+var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([25,14,18,23,10,2,19,26,17,5])));
+var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([27,1,14,23,10,16,7,8,13,5,9,11,19,26,17,2])));
+var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([28,23,10,26,17,13,5,9,11])));
 var AUTHENTICATION_PATHS = [
 	"/login",
 	"/register",
