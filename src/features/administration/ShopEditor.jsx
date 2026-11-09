@@ -6,7 +6,7 @@ import { normShop } from '@/shared/library/api/normalize';
 import Tile from '@/features/shop/Tile';
 import * as api from '@/shared/library/api';
 
-const EMPTY_FORM = { id: '', name: '', price: '0' };
+const EMPTY_FORM = { id: '', name: '', price: '0', description: '' };
 const shopData = (value) => (value || []).reduce((result, category) => ({
   ...result,
   [category.id]: category.products
@@ -80,6 +80,19 @@ function ProductDialog({ category, form, setForm, onClose, onSubmit, editing, di
         <Field label='Mã vật phẩm' value={form.id} disabled={disabled} required onChange={(e) => setForm((f) => ({ ...f, id: e.target.value }))} />
         <Field label='Tên vật phẩm' value={form.name} disabled={disabled} required onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
         <Field label='Giá' type='number' min='0' step='1' value={form.price} disabled={disabled} required onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} />
+        <label className='block'>
+          <span className='mb-1.5 flex items-baseline justify-between gap-2 text-[11px] font-medium text-mute'>
+            Mô tả vật phẩm <span className='text-[10px] text-mute/70'>Không bắt buộc</span>
+          </span>
+          <textarea
+            rows={3}
+            value={form.description}
+            disabled={disabled}
+            placeholder='Nhập mô tả về vật phẩm…'
+            onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+            className='block min-h-24 w-full resize-y rounded-lg border border-line bg-bg px-3 py-3 text-base leading-relaxed outline-none transition placeholder:text-mute/50 focus:border-lime focus:ring-2 focus:ring-lime/20 disabled:opacity-50 sm:text-sm'
+          />
+        </label>
         <Button type='submit' className='w-full' disabled={disabled}>
           {editing ? 'Cập nhật vật phẩm' : 'Thêm vật phẩm'}
         </Button>
@@ -121,12 +134,12 @@ export default function ShopEditor() {
 
   const openAdd = (category) => {
     if (busy) return;
-    setForm({ id: `${category.id}_${category.products.length + 1}`, name: `${category.id.charAt(0).toUpperCase() + category.id.slice(1)} ${category.products.length + 1}`, price: 0 });
+    setForm({ id: `${category.id}_${category.products.length + 1}`, name: `${category.id.charAt(0).toUpperCase() + category.id.slice(1)} ${category.products.length + 1}`, price: 0, description: '' });
     setDialog({ category: category.id, product: null });
   };
   const openEdit = (category, product) => {
     if (busy) return;
-    setForm({ id: product.id, name: product.name, price: String(product.price ?? 0) });
+    setForm({ id: product.id, name: product.name, price: String(product.price ?? 0), description: typeof product.description === 'string' ? product.description : '' });
     setDialog({ category: category.id, product });
   };
   const close = () => setDialog(null);
@@ -138,6 +151,7 @@ export default function ShopEditor() {
     const id = form.id.trim();
     const name = form.name.trim();
     const price = Number(form.price);
+    const description = form.description.trim();
     if (!id || !name || !Number.isFinite(price) || price < 0) {
       toast('Nhập đầy đủ mã, tên và giá hợp lệ', 'err');
       return;
@@ -152,6 +166,8 @@ export default function ShopEditor() {
     setShop((current) => current.map((category) => {
       if (category.id !== dialog.category) return category;
       const product = { ...(dialog.product || {}), id, name, price };
+      if (description) product.description = description;
+      else delete product.description;
       const products = dialog.product ? category.products.map((item) => item.id === dialog.product.id ? product : item) : [...category.products, product];
       return { ...category, products };
     }));

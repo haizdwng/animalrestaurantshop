@@ -2,7 +2,7 @@ import { Dt as createReactComponent, Nt as require_react, Pt as __toESM, Tt as I
 import { n as IconMusic, t as IconUsers } from "./IconUsers.js";
 import { n as IconCat, t as IconPhoto } from "./IconPhoto.js";
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -22,7 +22,7 @@ var IconBottle = createReactComponent("outline", "bottle", "Bottle", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -46,7 +46,7 @@ var IconBox = createReactComponent("outline", "box", "Box", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -59,7 +59,7 @@ var IconChefHat = createReactComponent("outline", "chef-hat", "ChefHat", [["path
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -83,7 +83,7 @@ var IconFish = createReactComponent("outline", "fish", "Fish", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -96,7 +96,7 @@ var IconFlower = createReactComponent("outline", "flower", "Flower", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -109,7 +109,7 @@ var IconMail = createReactComponent("outline", "mail", "Mail", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -133,7 +133,7 @@ var IconMotorbike = createReactComponent("outline", "motorbike", "Motorbike", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -143,7 +143,7 @@ var IconStar = createReactComponent("outline", "star", "Star", [["path", {
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.

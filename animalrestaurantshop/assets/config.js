@@ -1,7 +1,7 @@
 import { Dt as createReactComponent, Tt as IconBuildingStore, t as compareByTime } from "./index.js";
 import { n as IconMusic, t as IconUsers } from "./IconUsers.js";
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -21,7 +21,7 @@ var IconDatabase = createReactComponent("outline", "database", "Database", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -49,7 +49,7 @@ var IconDeviceGamepad2 = createReactComponent("outline", "device-gamepad-2", "De
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -77,7 +77,7 @@ var IconFileText = createReactComponent("outline", "file-text", "FileText", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -101,7 +101,7 @@ var IconTicket = createReactComponent("outline", "ticket", "Ticket", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.

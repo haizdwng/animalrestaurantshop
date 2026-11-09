@@ -9,6 +9,7 @@ import { clampCartQuantity } from '@/features/shop/cartUtils';
 
 export default function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, onAdd, onClose, onTopUp }) {
   const [qty, setQty] = useState(() => clampCartQuantity(cartQuantity || 1, item?.once));
+  const description = typeof item?.description === 'string' ? item.description.trim() : '';
   const once = !!item?.once;
   const priced = hasPrice(item);
   const conditions = Array.isArray(item?.conditions) ? item.conditions : [];
@@ -43,6 +44,13 @@ export default function BuyDialog({ item, category, user, cartQuantity = 0, cart
               </p>
             </div>
           </div>
+
+          {description && (
+            <div className='rounded-xl border border-line bg-bg p-3'>
+              <p className='mb-1.5 text-[11px] font-bold'>Mô tả vật phẩm</p>
+              <p className='whitespace-pre-wrap wrap-break-word text-xs leading-relaxed text-mute'>{description}</p>
+            </div>
+          )}
 
           {hasCurrent && (
             <div className='flex items-center justify-between rounded-lg border border-line bg-bg px-3 py-2.5 text-xs'>

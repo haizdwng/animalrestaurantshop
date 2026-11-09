@@ -61,6 +61,9 @@ export default function CartDialog({ open, entries, coins, ready, buying, onClos
                 <div className='min-w-0 flex-1'>
                   <p className='truncate text-[10px] text-mute'>{entry.category}</p>
                   <p className='line-clamp-2 text-xs font-bold'>{entry.product.name}</p>
+                  {typeof entry.product.description === 'string' && entry.product.description.trim() && (
+                    <p className='mt-1 line-clamp-2 whitespace-pre-line wrap-break-word text-[11px] leading-relaxed text-mute' title={entry.product.description.trim()}>{entry.product.description.trim()}</p>
+                  )}
                   <p className='mt-1 flex items-center gap-1 text-[11px] text-coin'>
                     <Coin size={13} /> {formatNumber(entry.price)} / cái
                   </p>

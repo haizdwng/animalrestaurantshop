@@ -11,7 +11,7 @@ export default function ProductItem({ p, poor, owned, cartQuantity = 0, onBuy })
         type='button'
         onClick={onBuy}
         disabled={owned}
-        className='group disabled:cursor-default disabled:opacity-55 disabled:hover:border-line disabled:hover:bg-panel flex h-19.5 w-full cursor-pointer items-center gap-3 rounded-xl border border-line bg-panel p-3 text-left transition hover:border-mute/60 hover:bg-raise focus-visible:outline-2 focus-visible:outline-lime'
+        className='group disabled:cursor-default disabled:opacity-55 disabled:hover:border-line disabled:hover:bg-panel flex min-h-19.5 w-full cursor-pointer items-center gap-3 rounded-xl border border-line bg-panel p-3 text-left transition hover:border-mute/60 hover:bg-raise focus-visible:outline-2 focus-visible:outline-lime'
       >
         <Tile p={p} />
         <span className='min-w-0 flex-1'>
