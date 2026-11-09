@@ -1,26 +1,5 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/IconCopy.js","assets/clipboard.js","assets/Tile.js","assets/IconUsers.js","assets/IconPhoto.js","assets/IconCheck.js","assets/IconPlus.js","assets/IconSearch.js","assets/Account.js","assets/IconStarFilled.js","assets/IconPencil.js","assets/IconUserPlus.js","assets/useRemoteResource.js","assets/IconGift.js","assets/Avatar.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
-// \0rolldown/runtime.js
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod, mod.exports), cb = null), mod.exports);
-var __copyProps = (to, from, except, desc) => {
-	if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames(from), i = 0, n = keys.length, key; i < n; i++) {
-		key = keys[i];
-		if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
-			get: ((k) => from[k]).bind(null, key),
-			enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
-		});
-	}
-	return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule || !__hasOwnProp.call(mod, "default") ? __defProp(target, "default", {
-	value: mod,
-	enumerable: true
-}) : target, mod));
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/index.web.js","assets/rolldown-runtime.js","assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/IconCopy.js","assets/clipboard.js","assets/Tile.js","assets/IconUsers.js","assets/IconPhoto.js","assets/IconCheck.js","assets/IconPlus.js","assets/IconSearch.js","assets/Account.js","assets/IconStarFilled.js","assets/IconPencil.js","assets/IconUserPlus.js","assets/useRemoteResource.js","assets/IconGift.js","assets/Avatar.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
+import { r as __toESM, t as __commonJSMin } from "./rolldown-runtime.js";
 // \0vite/modulepreload-polyfill.js
 (function polyfill() {
 	const relList = document.createElement("link").relList;
@@ -16218,11 +16197,12 @@ var ApiError = class extends Error {
 };
 var onUnauthorized = () => {};
 var setUnauthorizedHandler = (handler) => onUnauthorized = handler;
-async function http(method, path, body, { track = true } = {}) {
+async function http(method, path, body, { track = true, contentEncoding } = {}) {
 	return enqueueRequest(async () => {
 		const coinRequest = COIN_REQUESTS.has(`${method.toUpperCase()} ${path.split("?")[0]}`);
 		const finishRequest = track ? trackRequest(coinRequest) : () => {};
 		const isForm = body instanceof FormData;
+		const isBinary = body instanceof Uint8Array;
 		const controller = new AbortController();
 		const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 		try {
@@ -16232,9 +16212,10 @@ async function http(method, path, body, { track = true } = {}) {
 				cache: "no-store",
 				headers: {
 					...!isForm && body !== void 0 && { "Content-Type": "application/json" },
+					...contentEncoding && { "Content-Encoding": contentEncoding },
 					...token && { token }
 				},
-				body: body === void 0 ? void 0 : isForm ? body : JSON.stringify(body),
+				body: body === void 0 ? void 0 : isForm || isBinary ? body : JSON.stringify(body),
 				signal: controller.signal
 			});
 			if (response.status === 204) return { success: true };
@@ -16270,8 +16251,11 @@ async function http(method, path, body, { track = true } = {}) {
 		}
 	});
 }
-async function call(method, path, body, { auth = true, track = true } = {}) {
-	const response = await http(method, path, body, { track });
+async function call(method, path, body, { auth = true, track = true, contentEncoding } = {}) {
+	const response = await http(method, path, body, {
+		track,
+		contentEncoding
+	});
 	if (!response || response.success !== true) {
 		if (response && !response.code && /xác thực|đăng nhập lại|unauthori|token/i.test(response.message || "")) response.code = "UNAUTHORIZED";
 		const error = new ApiError(response?.message || "Đã có lỗi xảy ra", response || {});
@@ -16523,6 +16507,115 @@ async function updateAvatar(image, onProgress) {
 	form.append("avatar", blob, `avatar.${blob.type.split("/")[1]}`);
 	return withUser(await callStream("PATCH", "/user/avatar", form, onProgress, { timeout: 12e4 }));
 }
+// \0vite/preload-helper.js
+var scriptRel = "modulepreload";
+var assetsURL = function(dep) {
+	return "/animalrestaurantshop/" + dep;
+};
+var seen = {};
+var isCssPreloadUrl = function isCssPreloadUrl(url) {
+	return url.pathname.endsWith(".css");
+};
+var preloadOnce = function preloadOnce(seen, href, preload) {
+	if (href in seen) return seen[href];
+	const promise = preload();
+	if (!promise) {
+		seen[href] = void 0;
+		return;
+	}
+	const preloadPromise = promise.then(() => {
+		seen[href] = void 0;
+	}, (err) => {
+		seen[href] = void 0;
+		throw err;
+	});
+	seen[href] = preloadPromise;
+	return preloadPromise;
+};
+var __vitePreload = function preload(baseModule, deps, importerUrl) {
+	let promise = Promise.resolve();
+	if (deps && deps.length > 0) {
+		let preloadedHrefs;
+		const cspNonceMeta = document.querySelector("meta[property=csp-nonce]");
+		const cspNonce = cspNonceMeta?.nonce || cspNonceMeta?.getAttribute("nonce");
+		function allSettled(promises) {
+			return Promise.all(promises.map((p) => Promise.resolve(p).then((value) => ({
+				status: "fulfilled",
+				value
+			}), (reason) => ({
+				status: "rejected",
+				reason
+			}))));
+		}
+		function importMetaResolve(specifier) {
+			if (import.meta.resolve) return new URL(import.meta.resolve(specifier));
+			return new URL(
+				specifier,
+				/** #__KEEP__ */
+				import.meta.url
+			);
+		}
+		promise = allSettled(deps.map((depString) => {
+			depString = assetsURL(depString, importerUrl);
+			const dep = importMetaResolve(depString);
+			const isCss = isCssPreloadUrl(dep);
+			return preloadOnce(seen, dep.href, () => {
+				if (preloadedHrefs === void 0) {
+					preloadedHrefs = {
+						all: /* @__PURE__ */ new Set(),
+						styles: /* @__PURE__ */ new Set()
+					};
+					const links = document.getElementsByTagName("link");
+					for (let i = links.length - 1; i >= 0; i--) {
+						const link = links[i];
+						preloadedHrefs.all.add(link.href);
+						if (link.rel === "stylesheet") preloadedHrefs.styles.add(link.href);
+					}
+				}
+				if ((isCss ? preloadedHrefs.styles : preloadedHrefs.all).has(dep.href)) return;
+				const link = document.createElement("link");
+				link.rel = isCss ? "stylesheet" : scriptRel;
+				if (!isCss) link.as = "script";
+				link.crossOrigin = "";
+				link.href = dep.href;
+				if (cspNonce) link.setAttribute("nonce", cspNonce);
+				document.head.appendChild(link);
+				if (isCss) return new Promise((res, rej) => {
+					const handleSettle = (e) => {
+						link.removeEventListener("load", handleSettle);
+						link.removeEventListener("error", handleSettle);
+						if (e.type === "error") rej(/* @__PURE__ */ new Error(`Unable to preload CSS for ${dep}`));
+						else res(e);
+					};
+					link.addEventListener("load", handleSettle);
+					link.addEventListener("error", handleSettle);
+				});
+			});
+		}).filter((p) => p !== void 0));
+	}
+	function handlePreloadError(err) {
+		const e = new Event("vite:preloadError", { cancelable: true });
+		e.payload = err;
+		window.dispatchEvent(e);
+		if (!e.defaultPrevented) throw err;
+	}
+	return promise.then((res) => {
+		for (const item of res || []) {
+			if (item.status !== "rejected") continue;
+			handlePreloadError(item.reason);
+		}
+		return baseModule().catch(handlePreloadError);
+	});
+};
+// src/shared/library/compression/brotli.js
+async function compressJsonBrotli(value) {
+	const input = new TextEncoder().encode(JSON.stringify(value));
+	const { default: brotliPromise } = await __vitePreload(async () => {
+		const { default: brotliPromise } = await import("./index.web.js");
+		return { default: brotliPromise };
+	}, __vite__mapDeps([0,1]));
+	return (await brotliPromise).compress(input, { quality: 4 });
+}
 var getShop = async () => {
 	const r = await call("GET", "/user/shop");
 	return {
@@ -16530,7 +16623,9 @@ var getShop = async () => {
 		tabs: normShop(r.shop)
 	};
 };
-var buy = async (items) => withUser(await call("POST", "/user/shop", { items: JSON.stringify(items) }));
+var buy = async (items) => {
+	return withUser(await call("POST", "/user/shop", await compressJsonBrotli({ items }), { contentEncoding: "br" }));
+};
 var createTransaction = (coin) => call("POST", "/user/transactions", { coin });
 var getTransaction = async (code) => {
 	const r = await call("GET", `/user/transactions/${enc(code)}`);
@@ -16620,7 +16715,10 @@ var adminDecryptRecordValue = (openid, type, value) => call("POST", `/administra
 	value
 });
 var adminData = (name) => call("GET", `/administrator/data/${name}`);
-var adminSaveData = (name, value) => call("PATCH", `/administrator/data/${name}`, { [name]: JSON.stringify(value) });
+var adminSaveData = async (name, value) => {
+	const body = await compressJsonBrotli({ [name]: value });
+	return await call("PATCH", `/administrator/data/${name}`, body, { contentEncoding: "br" });
+};
 var adminAddPlayerStar = (openid, star) => call("POST", `/administrator/players/${enc(openid)}/star`, { star });
 var adminAddPlayerLike = (openid, like) => call("POST", `/administrator/players/${enc(openid)}/like`, { like });
 // src/shared/library/api/checkin.js
@@ -17057,116 +17155,16 @@ function useCheckin(enabled = true) {
 		showBadge: state.loaded && state.canClaim
 	};
 }
-// \0vite/preload-helper.js
-var scriptRel = "modulepreload";
-var assetsURL = function(dep) {
-	return "/animalrestaurantshop/" + dep;
-};
-var seen = {};
-var isCssPreloadUrl = function isCssPreloadUrl(url) {
-	return url.pathname.endsWith(".css");
-};
-var preloadOnce = function preloadOnce(seen, href, preload) {
-	if (href in seen) return seen[href];
-	const promise = preload();
-	if (!promise) {
-		seen[href] = void 0;
-		return;
-	}
-	const preloadPromise = promise.then(() => {
-		seen[href] = void 0;
-	}, (err) => {
-		seen[href] = void 0;
-		throw err;
-	});
-	seen[href] = preloadPromise;
-	return preloadPromise;
-};
-var __vitePreload = function preload(baseModule, deps, importerUrl) {
-	let promise = Promise.resolve();
-	if (deps && deps.length > 0) {
-		let preloadedHrefs;
-		const cspNonceMeta = document.querySelector("meta[property=csp-nonce]");
-		const cspNonce = cspNonceMeta?.nonce || cspNonceMeta?.getAttribute("nonce");
-		function allSettled(promises) {
-			return Promise.all(promises.map((p) => Promise.resolve(p).then((value) => ({
-				status: "fulfilled",
-				value
-			}), (reason) => ({
-				status: "rejected",
-				reason
-			}))));
-		}
-		function importMetaResolve(specifier) {
-			if (import.meta.resolve) return new URL(import.meta.resolve(specifier));
-			return new URL(
-				specifier,
-				/** #__KEEP__ */
-				import.meta.url
-			);
-		}
-		promise = allSettled(deps.map((depString) => {
-			depString = assetsURL(depString, importerUrl);
-			const dep = importMetaResolve(depString);
-			const isCss = isCssPreloadUrl(dep);
-			return preloadOnce(seen, dep.href, () => {
-				if (preloadedHrefs === void 0) {
-					preloadedHrefs = {
-						all: /* @__PURE__ */ new Set(),
-						styles: /* @__PURE__ */ new Set()
-					};
-					const links = document.getElementsByTagName("link");
-					for (let i = links.length - 1; i >= 0; i--) {
-						const link = links[i];
-						preloadedHrefs.all.add(link.href);
-						if (link.rel === "stylesheet") preloadedHrefs.styles.add(link.href);
-					}
-				}
-				if ((isCss ? preloadedHrefs.styles : preloadedHrefs.all).has(dep.href)) return;
-				const link = document.createElement("link");
-				link.rel = isCss ? "stylesheet" : scriptRel;
-				if (!isCss) link.as = "script";
-				link.crossOrigin = "";
-				link.href = dep.href;
-				if (cspNonce) link.setAttribute("nonce", cspNonce);
-				document.head.appendChild(link);
-				if (isCss) return new Promise((res, rej) => {
-					const handleSettle = (e) => {
-						link.removeEventListener("load", handleSettle);
-						link.removeEventListener("error", handleSettle);
-						if (e.type === "error") rej(/* @__PURE__ */ new Error(`Unable to preload CSS for ${dep}`));
-						else res(e);
-					};
-					link.addEventListener("load", handleSettle);
-					link.addEventListener("error", handleSettle);
-				});
-			});
-		}).filter((p) => p !== void 0));
-	}
-	function handlePreloadError(err) {
-		const e = new Event("vite:preloadError", { cancelable: true });
-		e.payload = err;
-		window.dispatchEvent(e);
-		if (!e.defaultPrevented) throw err;
-	}
-	return promise.then((res) => {
-		for (const item of res || []) {
-			if (item.status !== "rejected") continue;
-			handlePreloadError(item.reason);
-		}
-		return baseModule().catch(handlePreloadError);
-	});
-};
 // src/application/App.jsx
-var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([0,1,2,3])));
-var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11,12,13,14])));
-var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([15,8,16,2,3,17,7,18,6,19,14,20])));
-var Avatar = (0, import_react.lazy)(() => __vitePreload(() => import("./Avatar.js"), __vite__mapDeps([21,11,12,5,7])));
-var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([22,23,10])));
-var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([24,20,17,13,5,23,10,19])));
-var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([25,14,18,23,10,2,19,26,17,5])));
-var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([27,1,14,23,10,16,7,8,13,5,9,11,19,26,17,2])));
-var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([28,23,10,26,17,13,5,9,11])));
+var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([2,1,3,4,5])));
+var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([6,1,7,8,9,10,11,12,13,14,15,16])));
+var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([17,1,10,18,4,5,19,9,20,8,21,16,22])));
+var Avatar = (0, import_react.lazy)(() => __vitePreload(() => import("./Avatar.js"), __vite__mapDeps([23,1,13,14,7,9])));
+var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([24,25,12])));
+var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([26,1,22,19,15,7,25,12,21])));
+var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([27,1,16,20,25,12,4,21,28,19,7])));
+var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([29,1,3,16,25,12,18,9,10,15,7,11,13,21,28,19,4])));
+var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([30,1,25,12,28,19,15,7,11,13])));
 var AUTHENTICATION_PATHS = [
 	"/login",
 	"/register",
@@ -17415,4 +17413,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)();
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
-export { Logo as $, adminUsers as A, useNavigate as At, redeemGiftCode as B, adminPlayer as C, IconDeviceFloppy as Ct, adminSaveData as D, createReactComponent as Dt, adminRecord as E, IconAlertTriangle as Et, buy as F, passwordOtp as G, updateAvatar as H, changeOpenid as I, signupOtp as J, resetPassword as K, getBuffetLink as L, createTransaction as M, require_react_dom as Mt, getTransaction as N, require_react as Nt, adminSaveRecord as O, Outlet as Ot, getTransactions as P, __toESM as Pt, Coin as Q, getFriendLink as R, adminGiftCodes as S, IconInfoCircle as St, adminPlayers as T, IconBuildingStore as Tt, updateUser as U, submitInvite as V, login as W, isAdmin as X, fileToAvatar as Y, normShop as Z, adminDeleteUser as _, Field as _t, formatShortDateTime as a, ErrorState as at, adminEditUser as b, IconX as bt, adminAddPlayerFriend as c, Tabs as ct, adminCreateGiftCode as d, SortSelect as dt, JsonEditor as et, adminCreateUser as f, Menu as ft, adminDeletePlayerFriend as g, toastError as gt, adminDeleteGiftCode as h, toast as ht, formatNumber as i, Skeleton as it, cancelTransaction as j, useParams as jt, adminUpdatePlayerAvatar as k, useLocation as kt, adminAddPlayerLike as l, PageSizeSelect as lt, adminDecryptRecordValue as m, OtpButton as mt, formatDate as n, PagerSkeleton as nt, formatVietnameseDong as o, Spinner as ot, adminData as p, Dialog as pt, signup as q, formatDateTime as r, RowSkeleton as rt, adminAddCoin as s, Pager as st, compareByTime as t, Line as tt, adminAddPlayerStar as u, Select as ut, adminEditGiftCode as v, Button as vt, adminPlayerFriends as w, IconCircleCheck as wt, adminEncryptRecordValue as x, IconRefresh as xt, adminEditPlayer as y, require_jsx_runtime as yt, openidOtp as z };
+export { Logo as $, adminUsers as A, useNavigate as At, redeemGiftCode as B, adminPlayer as C, IconDeviceFloppy as Ct, adminSaveData as D, createReactComponent as Dt, adminRecord as E, IconAlertTriangle as Et, buy as F, passwordOtp as G, updateAvatar as H, changeOpenid as I, signupOtp as J, resetPassword as K, getBuffetLink as L, createTransaction as M, require_react_dom as Mt, getTransaction as N, require_react as Nt, adminSaveRecord as O, Outlet as Ot, getTransactions as P, Coin as Q, getFriendLink as R, adminGiftCodes as S, IconInfoCircle as St, adminPlayers as T, IconBuildingStore as Tt, updateUser as U, submitInvite as V, login as W, isAdmin as X, fileToAvatar as Y, normShop as Z, adminDeleteUser as _, Field as _t, formatShortDateTime as a, ErrorState as at, adminEditUser as b, IconX as bt, adminAddPlayerFriend as c, Tabs as ct, adminCreateGiftCode as d, SortSelect as dt, JsonEditor as et, adminCreateUser as f, Menu as ft, adminDeletePlayerFriend as g, toastError as gt, adminDeleteGiftCode as h, toast as ht, formatNumber as i, Skeleton as it, cancelTransaction as j, useParams as jt, adminUpdatePlayerAvatar as k, useLocation as kt, adminAddPlayerLike as l, PageSizeSelect as lt, adminDecryptRecordValue as m, OtpButton as mt, formatDate as n, PagerSkeleton as nt, formatVietnameseDong as o, Spinner as ot, adminData as p, Dialog as pt, signup as q, formatDateTime as r, RowSkeleton as rt, adminAddCoin as s, Pager as st, compareByTime as t, Line as tt, adminAddPlayerStar as u, Select as ut, adminEditGiftCode as v, Button as vt, adminPlayerFriends as w, IconCircleCheck as wt, adminEncryptRecordValue as x, IconRefresh as xt, adminEditPlayer as y, require_jsx_runtime as yt, openidOtp as z };
