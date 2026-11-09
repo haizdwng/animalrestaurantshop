@@ -1023,6 +1023,28 @@ function Transactions({ onPaid }) {
 		]
 	});
 }
+// src/features/account/loginStreakProgress.js
+var DAYS = 7;
+function getLoginStreakProgress({ streak = 0, claimedToday = false, canClaim = false, rewards = [] } = {}) {
+	const count = Math.min(DAYS, Math.max(0, Math.trunc(Number(streak) || 0)));
+	const newCycle = canClaim && !claimedToday && count === DAYS;
+	const completed = newCycle ? 0 : count;
+	const todayDay = canClaim ? Math.min(completed + 1, DAYS) : claimedToday ? completed : null;
+	return {
+		completed,
+		newCycle,
+		todayDay,
+		days: Array.from({ length: DAYS }, (_, index) => {
+			const day = index + 1;
+			return {
+				day,
+				reward: rewards[index] ?? (day === DAYS ? 30 : 5),
+				done: day <= completed,
+				isToday: todayDay === day
+			};
+		})
+	};
+}
 // src/features/account/LoginStreak.jsx
 function LoginStreak({ checkin, onClaim, onUser }) {
 	const { streak = 0, claimedToday = false, canClaim = false, nextReward = 5, rewards = [
@@ -1034,26 +1056,24 @@ function LoginStreak({ checkin, onClaim, onUser }) {
 		5,
 		30
 	], loading = false, claiming = false, error = "", loaded = false } = checkin || {};
+	const { completed, newCycle, days } = getLoginStreakProgress({
+		streak,
+		claimedToday,
+		canClaim,
+		rewards
+	});
+	const claimReward = newCycle ? rewards[0] ?? 5 : nextReward;
 	const handleClaim = async () => {
 		try {
 			const result = await onClaim();
 			if (!result) return;
-			const gained = result.reward ?? result.checkin?.reward ?? nextReward;
+			const gained = result.reward ?? result.checkin?.reward ?? claimReward;
 			if (result.user && onUser) onUser(result.user);
-			toast(`Đã nhận +${formatNumber(gained)} xu đăng nhập ngày ${result.checkin?.streak ?? streak + 1}!`, "ok");
+			toast(`Đã nhận +${formatNumber(gained)} xu đăng nhập ngày ${result.checkin?.streak ?? (newCycle ? 1 : completed + 1)}!`, "ok");
 		} catch (e) {
 			toast(e?.message || "Không nhận được thưởng", "err");
 		}
 	};
-	const days = Array.from({ length: 7 }, (_, i) => {
-		const day = i + 1;
-		return {
-			day,
-			reward: rewards[i] ?? (day === 7 ? 30 : 5),
-			done: claimedToday ? day <= streak : day < streak,
-			isToday: canClaim ? day === Math.min(streak + 1, 7) : claimedToday && day === streak
-		};
-	});
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "relative overflow-hidden rounded-2xl border border-line bg-panel p-4",
 		children: [
@@ -1075,7 +1095,7 @@ function LoginStreak({ checkin, onClaim, onUser }) {
 							children: "Đăng nhập 7 ngày"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 							className: "text-[11px] text-mute",
-							children: loaded ? claimedToday ? `Chuỗi ${streak}/7 ngày · Đã nhận hôm nay` : `Chuỗi ${streak}/7 ngày · Nhận quà hôm nay` : "Đang tải tiến trình…"
+							children: loaded ? claimedToday ? `Chuỗi ${completed}/7 ngày · Đã nhận hôm nay` : newCycle ? "Đã hoàn thành 7 ngày · Bắt đầu chu kỳ mới" : `Chuỗi ${completed}/7 ngày · Nhận quà hôm nay` : "Đang tải tiến trình…"
 						})] })]
 					})
 				}), canClaim && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -1086,6 +1106,7 @@ function LoginStreak({ checkin, onClaim, onUser }) {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "relative mt-4 grid grid-cols-7 gap-1.5",
 				children: days.map(({ day, reward, done, isToday }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					"aria-label": `Ngày ${day}: ${done ? "đã hoàn thành" : isToday ? "có thể nhận hôm nay" : "chưa đến lượt"}`,
 					className: `relative flex flex-col items-center gap-1 rounded-xl px-0.5 py-2 text-center transition ${done ? "bg-ok/15 ring-1 ring-ok/30" : isToday ? "bg-coin/15 ring-1 ring-coin/40" : "bg-bg ring-1 ring-line"}`,
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
@@ -1117,7 +1138,7 @@ function LoginStreak({ checkin, onClaim, onUser }) {
 					onClick: handleClaim,
 					children: claiming ? "Đang nhận…" : canClaim ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 						"Nhận +",
-						formatNumber(nextReward),
+						formatNumber(claimReward),
 						" xu hôm nay"
 					] }) : claimedToday ? "Đã nhận quà hôm nay" : loading ? "Đang tải…" : "Chưa thể nhận"
 				})]

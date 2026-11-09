@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IconCheck, IconLock, IconShoppingCart, IconX } from '@tabler/icons-react';
+import { IconCheck, IconLock, IconShoppingCart, IconTrash, IconX } from '@tabler/icons-react';
 import { formatNumber } from '@/shared/library/format';
 import { Button, Coin, Dialog } from '@/shared/components/ui';
 import { hasPrice } from '@/features/shop/shopUtilities';
@@ -7,7 +7,7 @@ import QuantityPicker from '@/features/shop/QuantityPicker';
 import Tile from '@/features/shop/Tile';
 import { clampCartQuantity } from '@/features/shop/cartUtils';
 
-export default function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQuantity = 100, onAdd, onClose, onTopUp }) {
+export default function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQuantity = 100, onAdd, onRemove, onClose, onTopUp }) {
   const [qty, setQty] = useState(() => clampCartQuantity(cartQuantity || 1, item?.once, maxQuantity));
   const description = typeof item?.description === 'string' ? item.description.trim() : '';
   const once = !!item?.once;
@@ -19,6 +19,11 @@ export default function BuyDialog({ item, category, user, cartQuantity = 0, cart
   const total = priced ? item.price * qty : 0;
   const newCartTotal = cartTotal - (priced ? item.price * cartQuantity : 0) + total;
   const short = Math.max(0, newCartTotal - user.coins);
+  const remove = () => {
+    if (!item || !cartQuantity) return;
+    onRemove(item.id);
+    onClose();
+  };
   const add = () => {
     if (!item || blocked) return;
     onAdd(item, once ? 1 : qty, category);
@@ -26,7 +31,7 @@ export default function BuyDialog({ item, category, user, cartQuantity = 0, cart
   };
 
   return (
-    <Dialog open={!!item} title={cartQuantity ? 'Chỉnh sửa vật phẩm' : 'Thêm vào giỏ hàng'} onClose={onClose}>
+    <Dialog open={!!item} title={cartQuantity ? once ? 'Vật phẩm đã thêm' : 'Chỉnh sửa vật phẩm' : 'Thêm vào giỏ hàng'} onClose={onClose}>
       {item && (
         <>
           <div className='flex items-center gap-3'>
@@ -112,10 +117,19 @@ export default function BuyDialog({ item, category, user, cartQuantity = 0, cart
               <button type='button' onClick={onTopUp} className='shrink-0 cursor-pointer font-bold text-coin underline underline-offset-2'>Mua thêm xu</button>
             </div>
           )}
-          <Button className='w-full' disabled={blocked} onClick={add}>
-            {blocked ? <IconLock size={16} /> : <IconShoppingCart size={16} />}
-            {blocked ? 'Chưa đủ điều kiện' : cartQuantity ? 'Cập nhật giỏ hàng' : 'Thêm vào giỏ hàng'}
-          </Button>
+          <div className={`grid gap-2 ${cartQuantity && !once ? 'grid-cols-2' : ''}`}>
+            {cartQuantity > 0 && (
+              <Button variant='ghost' className='w-full px-2! text-[11px]! text-bad!' onClick={remove}>
+                <IconTrash size={16} /> Xóa khỏi giỏ
+              </Button>
+            )}
+            {(!once || !cartQuantity) && (
+              <Button className='w-full px-2! text-[11px]!' disabled={blocked} onClick={add}>
+                {blocked ? <IconLock size={16} /> : <IconShoppingCart size={16} />}
+                {blocked ? 'Chưa đủ điều kiện' : cartQuantity ? 'Cập nhật giỏ hàng' : 'Thêm vào giỏ hàng'}
+              </Button>
+            )}
+          </div>
         </>
       )}
     </Dialog>

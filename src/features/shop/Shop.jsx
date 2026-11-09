@@ -224,6 +224,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
         cartTotal={total}
         maxQuantity={maxQuantity}
         onAdd={addToCart}
+        onRemove={removeFromCart}
         onClose={() => setItem(null)}
         onTopUp={() => {
           setItem(null);

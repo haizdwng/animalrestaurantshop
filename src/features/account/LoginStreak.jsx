@@ -2,6 +2,7 @@ import { IconCalendarCheck, IconGift } from '@tabler/icons-react';
 import { Button, Coin, toast } from '@/shared/components/ui';
 import { formatNumber } from '@/shared/library/format';
 import { CHECKIN_DAYS } from '@/shared/library/api/checkin';
+import { getLoginStreakProgress } from '@/features/account/loginStreakProgress';
 
 export default function LoginStreak({ checkin, onClaim, onUser }) {
   const {
@@ -15,26 +16,20 @@ export default function LoginStreak({ checkin, onClaim, onUser }) {
     error = '',
     loaded = false
   } = checkin || {};
+  const { completed, newCycle, days } = getLoginStreakProgress({ streak, claimedToday, canClaim, rewards });
+  const claimReward = newCycle ? rewards[0] ?? 5 : nextReward;
 
   const handleClaim = async () => {
     try {
       const result = await onClaim();
       if (!result) return;
-      const gained = result.reward ?? result.checkin?.reward ?? nextReward;
+      const gained = result.reward ?? result.checkin?.reward ?? claimReward;
       if (result.user && onUser) onUser(result.user);
-      toast(`Đã nhận +${formatNumber(gained)} xu đăng nhập ngày ${result.checkin?.streak ?? streak + 1}!`, 'ok');
+      toast(`Đã nhận +${formatNumber(gained)} xu đăng nhập ngày ${result.checkin?.streak ?? (newCycle ? 1 : completed + 1)}!`, 'ok');
     } catch (e) {
       toast(e?.message || 'Không nhận được thưởng', 'err');
     };
   };
-
-  const days = Array.from({ length: CHECKIN_DAYS }, (_, i) => {
-    const day = i + 1;
-    const reward = rewards[i] ?? (day === 7 ? 30 : 5);
-    const done = claimedToday ? day <= streak : day < streak;
-    const isToday = canClaim ? day === Math.min(streak + 1, CHECKIN_DAYS) : claimedToday && day === streak;
-    return { day, reward, done, isToday };
-  });
 
   return (
     <div className='relative overflow-hidden rounded-2xl border border-line bg-panel p-4'>
@@ -48,7 +43,7 @@ export default function LoginStreak({ checkin, onClaim, onUser }) {
             <div>
               <h2 className='text-sm font-extrabold tracking-tight'>Đăng nhập 7 ngày</h2>
               <p className='text-[11px] text-mute'>
-                {loaded ? claimedToday ? `Chuỗi ${streak}/${CHECKIN_DAYS} ngày · Đã nhận hôm nay` : `Chuỗi ${streak}/${CHECKIN_DAYS} ngày · Nhận quà hôm nay` : 'Đang tải tiến trình…'}
+                {loaded ? claimedToday ? `Chuỗi ${completed}/${CHECKIN_DAYS} ngày · Đã nhận hôm nay` : newCycle ? 'Đã hoàn thành 7 ngày · Bắt đầu chu kỳ mới' : `Chuỗi ${completed}/${CHECKIN_DAYS} ngày · Nhận quà hôm nay` : 'Đang tải tiến trình…'}
               </p>
             </div>
           </div>
@@ -62,6 +57,7 @@ export default function LoginStreak({ checkin, onClaim, onUser }) {
         {days.map(({ day, reward, done, isToday }) => (
           <div
             key={day}
+            aria-label={`Ngày ${day}: ${done ? 'đã hoàn thành' : isToday ? 'có thể nhận hôm nay' : 'chưa đến lượt'}`}
             className={`relative flex flex-col items-center gap-1 rounded-xl px-0.5 py-2 text-center transition ${
               done ? 'bg-ok/15 ring-1 ring-ok/30' : isToday ? 'bg-coin/15 ring-1 ring-coin/40' : 'bg-bg ring-1 ring-line'
             }`}
@@ -107,7 +103,7 @@ export default function LoginStreak({ checkin, onClaim, onUser }) {
         >
           {claiming ? 'Đang nhận…' : canClaim ? (
             <>
-              Nhận +{formatNumber(nextReward)} xu hôm nay
+              Nhận +{formatNumber(claimReward)} xu hôm nay
             </>
           ) : claimedToday ? 'Đã nhận quà hôm nay' : loading ? 'Đang tải…' : 'Chưa thể nhận'}
         </Button>
