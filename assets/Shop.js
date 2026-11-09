@@ -393,7 +393,7 @@ function QuantityPicker({ value, max, disabled, onChange, onEnter }) {
 	] });
 }
 // src/features/shop/BuyDialog.jsx
-function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQuantity = 100, onAdd, onClose, onTopUp }) {
+function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQuantity = 100, onAdd, onRemove, onClose, onTopUp }) {
 	const [qty, setQty] = (0, import_react.useState)(() => clampCartQuantity(cartQuantity || 1, item?.once, maxQuantity));
 	const description = typeof item?.description === "string" ? item.description.trim() : "";
 	const once = !!item?.once;
@@ -405,6 +405,11 @@ function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQ
 	const total = priced ? item.price * qty : 0;
 	const newCartTotal = cartTotal - (priced ? item.price * cartQuantity : 0) + total;
 	const short = Math.max(0, newCartTotal - user.coins);
+	const remove = () => {
+		if (!item || !cartQuantity) return;
+		onRemove(item.id);
+		onClose();
+	};
 	const add = () => {
 		if (!item || blocked) return;
 		onAdd(item, once ? 1 : qty, category);
@@ -412,7 +417,7 @@ function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQ
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dialog, {
 		open: !!item,
-		title: cartQuantity ? "Chỉnh sửa vật phẩm" : "Thêm vào giỏ hàng",
+		title: cartQuantity ? once ? "Vật phẩm đã thêm" : "Chỉnh sửa vật phẩm" : "Thêm vào giỏ hàng",
 		onClose,
 		children: item && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -563,11 +568,19 @@ function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQ
 					children: "Mua thêm xu"
 				})]
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-				className: "w-full",
-				disabled: blocked,
-				onClick: add,
-				children: [blocked ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 16 }), blocked ? "Chưa đủ điều kiện" : cartQuantity ? "Cập nhật giỏ hàng" : "Thêm vào giỏ hàng"]
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: `grid gap-2 ${cartQuantity && !once ? "grid-cols-2" : ""}`,
+				children: [cartQuantity > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+					variant: "ghost",
+					className: "w-full px-2! text-[11px]! text-bad!",
+					onClick: remove,
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconTrash, { size: 16 }), " Xóa khỏi giỏ"]
+				}), (!once || !cartQuantity) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+					className: "w-full px-2! text-[11px]!",
+					disabled: blocked,
+					onClick: add,
+					children: [blocked ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 16 }), blocked ? "Chưa đủ điều kiện" : cartQuantity ? "Cập nhật giỏ hàng" : "Thêm vào giỏ hàng"]
+				})]
 			})
 		] })
 	});
@@ -1384,6 +1397,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 				cartTotal: total,
 				maxQuantity,
 				onAdd: addToCart,
+				onRemove: removeFromCart,
 				onClose: () => setItem(null),
 				onTopUp: () => {
 					setItem(null);
