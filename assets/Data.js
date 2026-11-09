@@ -11,7 +11,8 @@ var import_jsx_runtime = require_jsx_runtime();
 var EMPTY_FORM = {
 	id: "",
 	name: "",
-	price: "0"
+	price: "0",
+	description: ""
 };
 var shopData = (value) => (value || []).reduce((result, category) => ({
 	...result,
@@ -136,6 +137,26 @@ function ProductDialog({ category, form, setForm, onClose, onSubmit, editing, di
 						price: e.target.value
 					}))
 				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+					className: "block",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+						className: "mb-1.5 flex items-baseline justify-between gap-2 text-[11px] font-medium text-mute",
+						children: ["Mô tả vật phẩm ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "text-[10px] text-mute/70",
+							children: "Không bắt buộc"
+						})]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", {
+						rows: 3,
+						value: form.description,
+						disabled,
+						placeholder: "Nhập mô tả về vật phẩm…",
+						onChange: (e) => setForm((f) => ({
+							...f,
+							description: e.target.value
+						})),
+						className: "block min-h-24 w-full resize-y rounded-lg border border-line bg-bg px-3 py-3 text-base leading-relaxed outline-none transition placeholder:text-mute/50 focus:border-lime focus:ring-2 focus:ring-lime/20 disabled:opacity-50 sm:text-sm"
+					})]
+				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 					type: "submit",
 					className: "w-full",
@@ -179,7 +200,8 @@ function ShopEditor() {
 		setForm({
 			id: `${category.id}_${category.products.length + 1}`,
 			name: `${category.id.charAt(0).toUpperCase() + category.id.slice(1)} ${category.products.length + 1}`,
-			price: 0
+			price: 0,
+			description: ""
 		});
 		setDialog({
 			category: category.id,
@@ -191,7 +213,8 @@ function ShopEditor() {
 		setForm({
 			id: product.id,
 			name: product.name,
-			price: String(product.price ?? 0)
+			price: String(product.price ?? 0),
+			description: typeof product.description === "string" ? product.description : ""
 		});
 		setDialog({
 			category: category.id,
@@ -206,6 +229,7 @@ function ShopEditor() {
 		const id = form.id.trim();
 		const name = form.name.trim();
 		const price = Number(form.price);
+		const description = form.description.trim();
 		if (!id || !name || !Number.isFinite(price) || price < 0) {
 			toast("Nhập đầy đủ mã, tên và giá hợp lệ", "err");
 			return;
@@ -222,6 +246,8 @@ function ShopEditor() {
 				name,
 				price
 			};
+			if (description) product.description = description;
+			else delete product.description;
 			const products = dialog.product ? category.products.map((item) => item.id === dialog.product.id ? product : item) : [...category.products, product];
 			return {
 				...category,

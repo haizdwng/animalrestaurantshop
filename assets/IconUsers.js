@@ -1,6 +1,6 @@
 import { Dt as createReactComponent } from "./index.js";
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -24,7 +24,7 @@ var IconMusic = createReactComponent("outline", "music", "Music", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.

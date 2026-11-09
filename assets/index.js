@@ -14174,7 +14174,7 @@ var require_disable_devtool_min = /* @__PURE__ */ __commonJSMin(((exports, modul
 }));
 // node_modules/@tabler/icons-react/dist/esm/defaultAttributes.mjs
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14202,7 +14202,7 @@ var defaultAttributes = {
 };
 // node_modules/@tabler/icons-react/dist/esm/createReactComponent.mjs
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14232,7 +14232,7 @@ var createReactComponent = (type, iconName, iconNamePascal, iconNode) => {
 	return Component;
 };
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14252,7 +14252,7 @@ var IconAlertTriangle = createReactComponent("outline", "alert-triangle", "Alert
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14265,7 +14265,7 @@ var IconArrowsSort = createReactComponent("outline", "arrows-sort", "ArrowsSort"
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14278,7 +14278,7 @@ var IconBraces = createReactComponent("outline", "braces", "Braces", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14306,7 +14306,7 @@ var IconBuildingStore = createReactComponent("outline", "building-store", "Build
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14316,7 +14316,7 @@ var IconChevronLeft = createReactComponent("outline", "chevron-left", "ChevronLe
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14326,7 +14326,7 @@ var IconChevronRight = createReactComponent("outline", "chevron-right", "Chevron
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14339,7 +14339,7 @@ var IconCircleCheck = createReactComponent("outline", "circle-check", "CircleChe
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14352,7 +14352,7 @@ var IconCloudOff = createReactComponent("outline", "cloud-off", "CloudOff", [["p
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14372,7 +14372,7 @@ var IconDeviceFloppy = createReactComponent("outline", "device-floppy", "DeviceF
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14392,7 +14392,7 @@ var IconDotsVertical = createReactComponent("outline", "dots-vertical", "DotsVer
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14412,7 +14412,7 @@ var IconEyeOff = createReactComponent("outline", "eye-off", "EyeOff", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14425,7 +14425,7 @@ var IconEye = createReactComponent("outline", "eye", "Eye", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14445,7 +14445,7 @@ var IconHexagonLetterA = createReactComponent("outline", "hexagon-letter-a", "He
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14465,7 +14465,7 @@ var IconInfoCircle = createReactComponent("outline", "info-circle", "InfoCircle"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14493,7 +14493,7 @@ var IconListNumbers = createReactComponent("outline", "list-numbers", "ListNumbe
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14503,7 +14503,7 @@ var IconLoader2 = createReactComponent("outline", "loader-2", "Loader2", [["path
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14527,7 +14527,7 @@ var IconPalette = createReactComponent("outline", "palette", "Palette", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14540,7 +14540,7 @@ var IconRefresh = createReactComponent("outline", "refresh", "Refresh", [["path"
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14553,7 +14553,7 @@ var IconSelector = createReactComponent("outline", "selector", "Selector", [["pa
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14566,7 +14566,7 @@ var IconSend = createReactComponent("outline", "send", "Send", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14579,7 +14579,7 @@ var IconSettings = createReactComponent("outline", "settings", "Settings", [["pa
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14599,7 +14599,7 @@ var IconUserCircle = createReactComponent("outline", "user-circle", "UserCircle"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.

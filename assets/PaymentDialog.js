@@ -2,7 +2,7 @@ import { Dt as createReactComponent, N as getTransaction, Nt as require_react, P
 import { t as IconCopy } from "./IconCopy.js";
 import { t as copyText } from "./clipboard.js";
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -15,7 +15,7 @@ var IconBan = createReactComponent("outline", "ban", "Ban", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -28,7 +28,7 @@ var IconClock = createReactComponent("outline", "clock", "Clock", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -41,7 +41,7 @@ var IconHourglassEmpty = createReactComponent("outline", "hourglass-empty", "Hou
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.

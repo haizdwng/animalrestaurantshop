@@ -7,7 +7,7 @@ import { t as IconPlus } from "./IconPlus.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { t as IconSearch } from "./IconSearch.js";
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -17,7 +17,7 @@ var IconMinus = createReactComponent("outline", "minus", "Minus", [["path", {
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -49,7 +49,7 @@ var IconPackageOff = createReactComponent("outline", "package-off", "PackageOff"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -59,7 +59,7 @@ var IconPlayerPlay = createReactComponent("outline", "player-play", "PlayerPlay"
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.50.0 - MIT
+* @license @tabler/icons-react v3.51.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -374,6 +374,7 @@ function QuantityPicker({ value, max, disabled, onChange, onEnter }) {
 // src/features/shop/BuyDialog.jsx
 function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, onAdd, onClose, onTopUp }) {
 	const [qty, setQty] = (0, import_react.useState)(() => clampCartQuantity(cartQuantity || 1, item?.once));
+	const description = typeof item?.description === "string" ? item.description.trim() : "";
 	const once = !!item?.once;
 	const priced = hasPrice(item);
 	const conditions = Array.isArray(item?.conditions) ? item.conditions : [];
@@ -423,6 +424,16 @@ function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, onAd
 							] })]
 						})
 					]
+				})]
+			}),
+			description && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "rounded-xl border border-line bg-bg p-3",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "mb-1.5 text-[11px] font-bold",
+					children: "Mô tả vật phẩm"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "whitespace-pre-wrap wrap-break-word text-xs leading-relaxed text-mute",
+					children: description
 				})]
 			}),
 			hasCurrent && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -629,6 +640,11 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 											className: "line-clamp-2 text-xs font-bold",
 											children: entry.product.name
+										}),
+										typeof entry.product.description === "string" && entry.product.description.trim() && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+											className: "mt-1 line-clamp-2 whitespace-pre-line wrap-break-word text-[11px] leading-relaxed text-mute",
+											title: entry.product.description.trim(),
+											children: entry.product.description.trim()
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 											className: "mt-1 flex items-center gap-1 text-[11px] text-coin",
@@ -853,7 +869,7 @@ function ProductItem({ p, poor, owned, cartQuantity = 0, onBuy }) {
 		type: "button",
 		onClick: onBuy,
 		disabled: owned,
-		className: "group disabled:cursor-default disabled:opacity-55 disabled:hover:border-line disabled:hover:bg-panel flex h-19.5 w-full cursor-pointer items-center gap-3 rounded-xl border border-line bg-panel p-3 text-left transition hover:border-mute/60 hover:bg-raise focus-visible:outline-2 focus-visible:outline-lime",
+		className: "group disabled:cursor-default disabled:opacity-55 disabled:hover:border-line disabled:hover:bg-panel flex min-h-19.5 w-full cursor-pointer items-center gap-3 rounded-xl border border-line bg-panel p-3 text-left transition hover:border-mute/60 hover:bg-raise focus-visible:outline-2 focus-visible:outline-lime",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tile, { p }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
