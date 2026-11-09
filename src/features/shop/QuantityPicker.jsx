@@ -34,7 +34,7 @@ export default function QuantityPicker({ value, max, disabled, onChange, onEnter
             onClick={() => onChange(n)}
             className={`h-8 cursor-pointer rounded-md text-[11px] font-bold tabular-nums transition disabled:cursor-not-allowed disabled:opacity-30 ${value === n ? 'bg-lime text-bg' : 'bg-raise text-mute hover:text-fg'}`}
           >
-            {n === max && n > 10 ? `Tối đa ${n}` : n}
+            {n}
           </button>
         ))}
       </div>

@@ -43,7 +43,7 @@ export default function BuyDialog({ item, category, user, cartQuantity = 0, cart
                 {item.id}
                 {priced && (
                   <>
-                    · <Coin size={12} /> <span className='text-coin'>{formatNumber(item.price)}</span> / cái
+                    · <Coin size={12} /> <span className='text-coin'>{formatNumber(item.price)}</span>{!once &&  ' / cái'}
                   </>
                 )}
               </p>
@@ -59,14 +59,14 @@ export default function BuyDialog({ item, category, user, cartQuantity = 0, cart
 
           {hasCurrent && (
             <div className='flex items-center justify-between rounded-lg border border-line bg-bg px-3 py-2.5 text-xs'>
-              <span className='text-mute'>Số lượng đã có</span>
+              <span className='text-mute'>Đã có</span>
               <strong className='tabular-nums'>{formatNumber(Number(item.current) || 0)}</strong>
             </div>
           )}
 
           {conditions.length > 0 && (
             <div className='space-y-2 rounded-xl border border-line bg-bg p-3'>
-              <p className='text-[11px] font-bold'>Điều kiện mua hàng</p>
+              <p className='text-[11px] font-bold'>Điều kiện</p>
               <ul className='space-y-2'>
                 {conditions.map((condition, index) => {
                   const satisfied = condition?.already === true;
@@ -78,33 +78,16 @@ export default function BuyDialog({ item, category, user, cartQuantity = 0, cart
                   );
                 })}
               </ul>
-              {blocked && (
-                <p className='rounded-lg bg-bad/10 px-3 py-2 text-[11px] font-medium text-bad'>
-                  Bạn chưa đáp ứng đủ điều kiện để thêm vật phẩm này.
-                </p>
-              )}
             </div>
           )}
 
-          {once ? (
-            <p className='flex items-center gap-2 rounded-lg border border-dashed border-line p-3 text-[11px] text-mute'>
-              <IconLock size={15} className='shrink-0 text-lime' /> Vật phẩm chỉ mua được một lần
-            </p>
-          ) : (
+          {!once && (
             <QuantityPicker value={qty} max={maxQty} disabled={blocked} onChange={setQty} onEnter={add} />
           )}
 
           <dl className='space-y-2 rounded-xl bg-bg p-4 text-xs'>
-            <div className='flex justify-between text-mute'>
-              <dt>Số dư hiện tại</dt>
-              <dd className='tabular-nums'>{formatNumber(user.coins)}</dd>
-            </div>
-            <div className='flex justify-between text-mute'>
-              <dt>Tổng giỏ sau khi thêm</dt>
-              <dd className='tabular-nums'>{formatNumber(newCartTotal)}</dd>
-            </div>
-            <div className='flex items-center justify-between border-t border-line pt-2'>
-              <dt className='font-bold'>Thành tiền vật phẩm</dt>
+            <div className='flex items-center justify-between'>
+              <dt className='font-bold'>Tổng số xu</dt>
               <dd className='flex items-center gap-1.5 text-lg font-extrabold tabular-nums text-coin'>
                 <Coin size={18} /> {formatNumber(total)}
               </dd>
@@ -120,7 +103,7 @@ export default function BuyDialog({ item, category, user, cartQuantity = 0, cart
           <div className={`grid gap-2 ${cartQuantity && !once ? 'grid-cols-2' : ''}`}>
             {cartQuantity > 0 && (
               <Button variant='ghost' className='w-full px-2! text-[11px]! text-bad!' onClick={remove}>
-                <IconTrash size={16} /> Xóa khỏi giỏ
+                <IconTrash size={16} /> Xóa khỏi giỏ hàng
               </Button>
             )}
             {(!once || !cartQuantity) && (

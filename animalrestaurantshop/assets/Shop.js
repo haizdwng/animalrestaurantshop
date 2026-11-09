@@ -387,7 +387,7 @@ function QuantityPicker({ value, max, disabled, onChange, onEnter }) {
 				disabled: n > max || disabled,
 				onClick: () => onChange(n),
 				className: `h-8 cursor-pointer rounded-md text-[11px] font-bold tabular-nums transition disabled:cursor-not-allowed disabled:opacity-30 ${value === n ? "bg-lime text-bg" : "bg-raise text-mute hover:text-fg"}`,
-				children: n === max && n > 10 ? `Tối đa ${n}` : n
+				children: n
 			}, n))
 		})
 	] });
@@ -446,7 +446,7 @@ function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQ
 									className: "text-coin",
 									children: formatNumber(item.price)
 								}),
-								" / cái"
+								!once && " / cái"
 							] })]
 						})
 					]
@@ -466,7 +466,7 @@ function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQ
 				className: "flex items-center justify-between rounded-lg border border-line bg-bg px-3 py-2.5 text-xs",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 					className: "text-mute",
-					children: "Số lượng đã có"
+					children: "Đã có"
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
 					className: "tabular-nums",
 					children: formatNumber(Number(item.current) || 0)
@@ -474,83 +474,54 @@ function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQ
 			}),
 			conditions.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "space-y-2 rounded-xl border border-line bg-bg p-3",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						className: "text-[11px] font-bold",
-						children: "Điều kiện mua hàng"
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
-						className: "space-y-2",
-						children: conditions.map((condition, index) => {
-							const satisfied = condition?.already === true;
-							return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-								className: "flex items-start gap-2 text-xs",
-								children: [satisfied ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCheck, {
-									size: 16,
-									stroke: 2.6,
-									className: "mt-0.5 shrink-0 text-ok"
-								}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, {
-									size: 16,
-									stroke: 2.6,
-									className: "mt-0.5 shrink-0 text-bad"
-								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: satisfied ? "text-mute" : "text-fg",
-									children: condition?.name || "Điều kiện chưa được mô tả"
-								})]
-							}, `${condition?.name || "condition"}-${index}`);
-						})
-					}),
-					blocked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						className: "rounded-lg bg-bad/10 px-3 py-2 text-[11px] font-medium text-bad",
-						children: "Bạn chưa đáp ứng đủ điều kiện để thêm vật phẩm này."
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "text-[11px] font-bold",
+					children: "Điều kiện"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+					className: "space-y-2",
+					children: conditions.map((condition, index) => {
+						const satisfied = condition?.already === true;
+						return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+							className: "flex items-start gap-2 text-xs",
+							children: [satisfied ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCheck, {
+								size: 16,
+								stroke: 2.6,
+								className: "mt-0.5 shrink-0 text-ok"
+							}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, {
+								size: 16,
+								stroke: 2.6,
+								className: "mt-0.5 shrink-0 text-bad"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: satisfied ? "text-mute" : "text-fg",
+								children: condition?.name || "Điều kiện chưa được mô tả"
+							})]
+						}, `${condition?.name || "condition"}-${index}`);
 					})
-				]
+				})]
 			}),
-			once ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-				className: "flex items-center gap-2 rounded-lg border border-dashed border-line p-3 text-[11px] text-mute",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, {
-					size: 15,
-					className: "shrink-0 text-lime"
-				}), " Vật phẩm chỉ mua được một lần"]
-			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuantityPicker, {
+			!once && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuantityPicker, {
 				value: qty,
 				max: maxQty,
 				disabled: blocked,
 				onChange: setQty,
 				onEnter: add
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dl", {
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dl", {
 				className: "space-y-2 rounded-xl bg-bg p-4 text-xs",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "flex justify-between text-mute",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số dư hiện tại" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
-							className: "tabular-nums",
-							children: formatNumber(user.coins)
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "flex justify-between text-mute",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Tổng giỏ sau khi thêm" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
-							className: "tabular-nums",
-							children: formatNumber(newCartTotal)
-						})]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "flex items-center justify-between border-t border-line pt-2",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", {
-							className: "font-bold",
-							children: "Thành tiền vật phẩm"
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dd", {
-							className: "flex items-center gap-1.5 text-lg font-extrabold tabular-nums text-coin",
-							children: [
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 18 }),
-								" ",
-								formatNumber(total)
-							]
-						})]
-					})
-				]
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex items-center justify-between",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", {
+						className: "font-bold",
+						children: "Tổng số xu"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dd", {
+						className: "flex items-center gap-1.5 text-lg font-extrabold tabular-nums text-coin",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 18 }),
+							" ",
+							formatNumber(total)
+						]
+					})]
+				})
 			}),
 			short > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "flex items-center justify-between gap-2 rounded-lg border border-coin/30 bg-coin/10 px-3 py-2 text-[11px]",
@@ -574,7 +545,7 @@ function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQ
 					variant: "ghost",
 					className: "w-full px-2! text-[11px]! text-bad!",
 					onClick: remove,
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconTrash, { size: 16 }), " Xóa khỏi giỏ"]
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconTrash, { size: 16 }), " Xóa khỏi giỏ hàng"]
 				}), (!once || !cartQuantity) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 					className: "w-full px-2! text-[11px]!",
 					disabled: blocked,
@@ -634,12 +605,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 				className: "flex items-center justify-between gap-3",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 					className: "text-[11px] text-mute",
-					children: [
-						formatNumber(entries.length),
-						" loại vật phẩm · ",
-						formatNumber(cartCount(entries)),
-						" sản phẩm"
-					]
+					children: [formatNumber(cartCount(entries)), " vật phẩm"]
 				}), entries.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 					type: "button",
 					disabled: buying,
@@ -685,7 +651,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 13 }),
 												" ",
 												formatNumber(entry.price),
-												" / cái"
+												!entry.product.once && " / cái"
 											]
 										})
 									]
@@ -701,12 +667,9 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 								})
 							]
 						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						!entry.product.once && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "mt-2.5 flex items-center justify-between gap-2 border-t border-line pt-2.5",
-							children: [entry.product.once ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								className: "rounded-lg border border-line bg-raise px-2.5 py-1.5 text-[11px] font-medium text-mute",
-								children: "Chỉ mua một lần"
-							}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CompactQuantity, {
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CompactQuantity, {
 								value: entry.quantity,
 								max: maxQuantity,
 								disabled: buying || !ready,
@@ -737,14 +700,14 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "flex items-center justify-between text-mute",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số dư hiện tại" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số xu hiện tại" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
 								className: "tabular-nums",
 								children: formatNumber(coins)
 							})]
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "flex items-center justify-between text-mute",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số dư sau khi mua" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số xu sau khi mua" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
 								className: `tabular-nums ${short ? "text-bad" : ""}`,
 								children: short ? `Thiếu ${formatNumber(short)}` : formatNumber(coins - total)
 							})]
@@ -753,7 +716,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 							className: "flex items-center justify-between border-t border-line pt-2.5",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", {
 								className: "font-extrabold",
-								children: "Tổng thanh toán"
+								children: "Tổng số xu"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dd", {
 								className: "flex items-center gap-1.5 text-lg font-extrabold text-coin tabular-nums",
 								children: [
@@ -767,7 +730,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 				}),
 				!ready && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 					className: "rounded-lg bg-raise p-2.5 text-[11px] text-mute",
-					children: "Đang tải hoặc kiểm tra dữ liệu cửa hàng. Vui lòng tải lại trước khi mua."
+					children: "Đang tải dữ liệu cửa hàng. Vui lòng tải lại trước khi mua."
 				}),
 				invalid.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 					className: "flex items-start gap-2 rounded-lg bg-bad/10 p-3 text-[11px] text-bad",
@@ -776,7 +739,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 							size: 16,
 							className: "shrink-0"
 						}),
-						" Giỏ có ",
+						" Giỏ hàng có ",
 						invalid.length,
 						" vật phẩm chưa hợp lệ. Hãy xóa hoặc điều chỉnh trước khi mua."
 					]
@@ -790,7 +753,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 16 }),
 						" Thiếu ",
 						formatNumber(short),
-						" xu — Mua thêm"
+						" xu"
 					]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
@@ -798,12 +761,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 					disabled: !canBuy,
 					loading: buying,
 					onClick: onBuy,
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 17 }),
-						" Mua tất cả · ",
-						formatNumber(entries.length),
-						" loại vật phẩm"
-					]
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 17 }), " Mua tất cả"]
 				})
 			] })
 		]
@@ -1272,7 +1230,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 					className: "text-[11px] text-mute",
 					children: [
-						"Trong danh mục: ",
+						"Đã thêm ",
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("strong", {
 							className: "text-fg tabular-nums",
 							children: [
@@ -1281,11 +1239,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 								formatNumber(eligible.length)
 							]
 						}),
-						" loại đã thêm",
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "hidden sm:inline",
-							children: " · Áp dụng cả vật phẩm chưa hiển thị"
-						})
+						" loại trong danh mục vào giỏ hàng"
 					]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 					size: "sm",
@@ -1294,7 +1248,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 					disabled: !cartReady || buying || eligible.length === 0,
 					onClick: toggleCategoryCart,
 					title: allCategoryAdded ? "Xóa các vật phẩm thuộc danh mục hiện tại khỏi giỏ" : "Thêm các vật phẩm đủ điều kiện thuộc toàn bộ danh mục",
-					children: [allCategoryAdded ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconTrash, { size: 15 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 15 }), allCategoryAdded ? "Xóa tất cả" : "Thêm tất cả vào giỏ"]
+					children: [allCategoryAdded ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconTrash, { size: 15 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 15 }), allCategoryAdded ? "Xóa tất cả" : "Thêm tất cả vào giỏ hàng"]
 				})]
 			}),
 			products.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(EmptyProducts, {
@@ -1366,13 +1320,9 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 							className: "min-w-0 flex-1",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 								className: "block text-xs font-extrabold",
-								children: [
-									"Giỏ hàng · ",
-									formatNumber(cartCount(entries)),
-									" vật phẩm"
-								]
+								children: "Giỏ hàng"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 								className: "mt-0.5 flex items-center gap-1 text-xs font-bold text-coin",
 								children: [
@@ -1384,7 +1334,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "shrink-0 rounded-lg bg-lime px-3 py-2 text-[11px] font-extrabold text-bg",
-							children: "Xem giỏ & mua"
+							children: "Xem giỏ hàng và mua"
 						})
 					]
 				})

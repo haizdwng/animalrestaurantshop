@@ -146,8 +146,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
         {!topup && (
           <div className='mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-panel px-3 py-2.5'>
             <p className='text-[11px] text-mute'>
-              Trong danh mục: <strong className='text-fg tabular-nums'>{formatNumber(categoryAddedCount)} / {formatNumber(eligible.length)}</strong> loại đã thêm
-              <span className='hidden sm:inline'> · Áp dụng cả vật phẩm chưa hiển thị</span>
+              Đã thêm <strong className='text-fg tabular-nums'>{formatNumber(categoryAddedCount)} / {formatNumber(eligible.length)}</strong> loại trong danh mục vào giỏ hàng
             </p>
             <Button
               size='sm'
@@ -158,7 +157,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
               title={allCategoryAdded ? 'Xóa các vật phẩm thuộc danh mục hiện tại khỏi giỏ' : 'Thêm các vật phẩm đủ điều kiện thuộc toàn bộ danh mục'}
             >
               {allCategoryAdded ? <IconTrash size={15} /> : <IconShoppingCart size={15} />}
-              {allCategoryAdded ? 'Xóa tất cả' : 'Thêm tất cả vào giỏ'}
+              {allCategoryAdded ? 'Xóa tất cả' : 'Thêm tất cả vào giỏ hàng'}
             </Button>
           </div>
         )}
@@ -207,10 +206,10 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
               <span className='absolute -top-2 -right-2 grid min-w-5 h-5 place-items-center rounded-full bg-fg px-1 text-[10px] font-extrabold text-bg tabular-nums'>{formatNumber(cart.length)}</span>
             </span>
             <span className='min-w-0 flex-1'>
-              <span className='block text-xs font-extrabold'>Giỏ hàng · {formatNumber(cartCount(entries))} vật phẩm</span>
+              <span className='block text-xs font-extrabold'>Giỏ hàng</span>
               <span className='mt-0.5 flex items-center gap-1 text-xs font-bold text-coin'><Coin size={13} /> {formatNumber(total)}</span>
             </span>
-            <span className='shrink-0 rounded-lg bg-lime px-3 py-2 text-[11px] font-extrabold text-bg'>Xem giỏ & mua</span>
+            <span className='shrink-0 rounded-lg bg-lime px-3 py-2 text-[11px] font-extrabold text-bg'>Xem giỏ hàng và mua</span>
           </button>
         </div>
       )}
