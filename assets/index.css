@@ -1960,6 +1960,10 @@
     padding-block: var(--spacing);
   }
 
+  .py-1\.5 {
+    padding-block: calc(var(--spacing) * 1.5);
+  }
+
   .py-2 {
     padding-block: calc(var(--spacing) * 2);
   }
@@ -2222,6 +2226,10 @@
 
   .text-bad {
     color: var(--color-bad);
+  }
+
+  .text-bad\! {
+    color: var(--color-bad) !important;
   }
 
   .text-bg {
@@ -2846,6 +2854,10 @@
 
     .sm\:hidden {
       display: none;
+    }
+
+    .sm\:inline {
+      display: inline;
     }
 
     .sm\:h-8 {
