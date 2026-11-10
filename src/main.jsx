@@ -4,7 +4,7 @@ import { HashRouter } from 'react-router-dom';
 import DisableDevtool from 'disable-devtool';
 import App from '@/application/App';
 
-DisableDevtool();
+DisableDevtool({ md5: 'hoangvankhanh' });
 
 createRoot(document.getElementById('root')).render(
   <HashRouter>
