@@ -1,8 +1,8 @@
-import { Dt as createReactComponent, H as updateAvatar, Mt as require_react_dom, Nt as require_react, Pt as __toESM, ct as Tabs, ht as toast, it as Skeleton, ot as Spinner, vt as Button, xt as IconRefresh, yt as require_jsx_runtime } from "./index.js";
+import { Ft as __toESM, Nt as require_react_dom, Ot as createReactComponent, Pt as require_react, St as IconRefresh, U as updateAvatar, at as Skeleton, bt as require_jsx_runtime, gt as toast, lt as Tabs, st as Spinner, xt as IconX, yt as Button } from "./index.js";
 import { n as IconCat, t as IconPhoto } from "./IconPhoto.js";
 import { t as IconCheck } from "./IconCheck.js";
 import { t as IconTrash } from "./IconTrash.js";
-import { t as IconCopy } from "./IconCopy.js";
+import { r as IconCopy } from "./clipboard.js";
 /**
 * @license @tabler/icons-react v3.51.0 - MIT
 *
@@ -204,6 +204,38 @@ var IconPhotoOff = createReactComponent("outline", "photo-off", "PhotoOff", [
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
+var IconPhotoPlus = createReactComponent("outline", "photo-plus", "PhotoPlus", [
+	["path", {
+		"d": "M15 8h.01",
+		"key": "svg-0"
+	}],
+	["path", {
+		"d": "M12.5 21h-6.5a3 3 0 0 1 -3 -3v-12a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v6.5",
+		"key": "svg-1"
+	}],
+	["path", {
+		"d": "M3 16l5 -5c.928 -.893 2.072 -.893 3 0l4 4",
+		"key": "svg-2"
+	}],
+	["path", {
+		"d": "M14 14l1 -1c.67 -.644 1.45 -.824 2.182 -.54",
+		"key": "svg-3"
+	}],
+	["path", {
+		"d": "M16 19h6",
+		"key": "svg-4"
+	}],
+	["path", {
+		"d": "M19 16v6",
+		"key": "svg-5"
+	}]
+]);
+/**
+* @license @tabler/icons-react v3.51.0 - MIT
+*
+* This source code is licensed under the MIT license.
+* See the LICENSE file in the root directory of this source tree.
+*/
 var IconPointer = createReactComponent("outline", "pointer", "Pointer", [["path", {
 	"d": "M7.904 17.563a1.2 1.2 0 0 0 2.228 .308l2.09 -3.093l4.907 4.907a1.067 1.067 0 0 0 1.509 0l1.047 -1.047a1.067 1.067 0 0 0 0 -1.509l-4.907 -4.907l3.113 -2.09a1.2 1.2 0 0 0 -.309 -2.228l-13.582 -3.904l3.904 13.563",
 	"key": "svg-0"
@@ -316,6 +348,7 @@ var IconZoomOut = createReactComponent("outline", "zoom-out", "ZoomOut", [
 ]);
 // src/features/avatar/manifest.js
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
+var import_react_dom = /* @__PURE__ */ __toESM(require_react_dom(), 1);
 var ROLE_SLUGS = [
 	"adao",
 	"ahua",
@@ -386,7 +419,7 @@ var TABS = [
 		key: "emoji",
 		label: "Biểu cảm",
 		Icon: IconMoodSmile,
-		hint: "Chọn biểu cảm của nhân vật",
+		hint: "Chọn biểu cảm",
 		ids: (role) => FACES[role]
 	},
 	{
@@ -405,11 +438,49 @@ var TABS = [
 		key: "background",
 		label: "Nền",
 		Icon: IconPhoto,
-		hint: "Chọn ảnh nền",
+		hint: "Chọn nền",
 		ids: () => BACKGROUNDS
 	}
 ];
 var isItemTab = (key) => key === "itemA" || key === "itemB";
+// src/features/avatar/avatarPhoto.js
+var ACCEPTED_TYPES = /* @__PURE__ */ new Set([
+	"image/jpeg",
+	"image/png",
+	"image/webp"
+]);
+var MAX_FILE_BYTES = 8388608;
+var OUTPUT_SIZE = 960;
+async function prepareAvatarPhoto(file) {
+	if (!file || !ACCEPTED_TYPES.has(file.type)) throw new Error("Chỉ hỗ trợ ảnh JPG, PNG hoặc WebP");
+	if (file.size > MAX_FILE_BYTES) throw new Error("Ảnh tải lên tối đa 8 MB");
+	const url = URL.createObjectURL(file);
+	try {
+		const image = await new Promise((resolve, reject) => {
+			const candidate = new Image();
+			candidate.onload = () => resolve(candidate);
+			candidate.onerror = () => reject(/* @__PURE__ */ new Error("Không đọc được ảnh đã chọn"));
+			candidate.src = url;
+		});
+		if (!image.naturalWidth || !image.naturalHeight) throw new Error("Ảnh không hợp lệ");
+		const canvas = document.createElement("canvas");
+		canvas.width = canvas.height = OUTPUT_SIZE;
+		const context = canvas.getContext("2d");
+		if (!context) throw new Error("Trình duyệt không hỗ trợ xử lý ảnh");
+		const crop = Math.min(image.naturalWidth, image.naturalHeight);
+		const left = (image.naturalWidth - crop) / 2;
+		const top = (image.naturalHeight - crop) / 2;
+		context.imageSmoothingEnabled = true;
+		context.imageSmoothingQuality = "high";
+		context.fillStyle = "#ffffff";
+		context.fillRect(0, 0, OUTPUT_SIZE, OUTPUT_SIZE);
+		context.drawImage(image, left, top, crop, crop, 0, 0, OUTPUT_SIZE, OUTPUT_SIZE);
+		return canvas.toDataURL("image/jpeg", .85);
+	} finally {
+		URL.revokeObjectURL(url);
+	}
+}
+var isAvatarPhoto = (value) => typeof value === "string" && value.length < 3e6 && /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/i.test(value);
 // src/features/avatar/geometry.js
 function getItemSize(item, images) {
 	const image = images?.get(imageUrl(item.src));
@@ -480,13 +551,21 @@ async function preloadImages(urls) {
 }
 var areAllImagesLoaded = (urls, images) => urls.every((url) => images?.has(url));
 // src/features/avatar/avatarRendering.js
-var getAvatarLayerIdentifiers = (avatarDocument) => [
+var getAvatarLayerIdentifiers = (avatarDocument) => avatarDocument.photo ? [] : [
 	BACKGROUNDS[avatarDocument.background],
 	ROLES[avatarDocument.role],
 	FACES[avatarDocument.role][avatarDocument.emoji]
 ];
-var getAvatarDocumentImageUrls = (avatarDocument) => [...getAvatarLayerIdentifiers(avatarDocument), ...avatarDocument.items.map((item) => item.src)].map(imageUrl);
+var getAvatarDocumentImageUrls = (avatarDocument) => [...avatarDocument.photo ? [avatarDocument.photo] : getAvatarLayerIdentifiers(avatarDocument).map(imageUrl), ...avatarDocument.items.map((item) => imageUrl(item.src))];
 function drawBaseLayer(avatarDocument, pixelSize, images) {
+	if (avatarDocument.photo) {
+		const photo = images.get(avatarDocument.photo);
+		if (!photo) return null;
+		const canvas = document.createElement("canvas");
+		canvas.width = canvas.height = pixelSize;
+		canvas.getContext("2d").drawImage(photo, 0, 0, pixelSize, pixelSize);
+		return canvas;
+	}
 	const baseImages = getAvatarLayerIdentifiers(avatarDocument).map((identifier) => images.get(imageUrl(identifier)));
 	if (baseImages.some((image) => !image)) return null;
 	const canvas = document.createElement("canvas");
@@ -582,7 +661,9 @@ function drawAvatar(canvasContext, avatarDocument, { selectedId = null, userInte
 	if (selectedItem) drawSelection(canvasContext, selectedItem, userInterfaceScale, images);
 }
 async function renderAvatarToBlob(avatarDocument, exportSize = 512) {
-	const images = await preloadImages(getAvatarDocumentImageUrls(avatarDocument));
+	const imageUrls = getAvatarDocumentImageUrls(avatarDocument);
+	const images = await preloadImages(imageUrls);
+	if (imageUrls.some((url) => !images.has(url))) throw new Error("Chưa tải đủ ảnh để xuất avatar");
 	const canvas = document.createElement("canvas");
 	canvas.width = canvas.height = exportSize;
 	const canvasContext = canvas.getContext("2d");
@@ -634,13 +715,14 @@ var Tile = (0, import_react.memo)(function Tile({ id, index, active, onPick }) {
 		]
 	}) });
 });
-function AssetPicker({ tab, onTab, role, emoji, background, itemKey, dispatch }) {
+function AssetPicker({ tab, onTab, role, emoji, background, photo, itemKey, dispatch, onPhoto, uploading, disabled = false }) {
 	const current = TABS.find((t) => t.key === tab);
 	const ids = current.ids(role);
 	const used = (0, import_react.useMemo)(() => new Set(itemKey ? itemKey.split("|") : []), [itemKey]);
 	const itemTab = isItemTab(tab);
-	const isActive = (id, i) => tab === "role" ? role === i : tab === "emoji" ? emoji === i : tab === "background" ? background === i : used.has(id);
+	const isActive = (id, i) => tab === "role" ? !photo && role === i : tab === "emoji" ? !photo && emoji === i : tab === "background" ? !photo && background === i : used.has(id);
 	const pick = (0, import_react.useCallback)((id, index) => {
+		if (disabled) return;
 		if (itemTab) {
 			if (!used.has(id) && used.size >= 5) return toast(`Tối đa 5 phụ kiện, hãy bỏ bớt một cái`, "info");
 			return dispatch({
@@ -653,6 +735,7 @@ function AssetPicker({ tab, onTab, role, emoji, background, itemKey, dispatch })
 			index
 		});
 	}, [
+		disabled,
 		itemTab,
 		tab,
 		used,
@@ -661,19 +744,58 @@ function AssetPicker({ tab, onTab, role, emoji, background, itemKey, dispatch })
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: "flex min-h-0 flex-1 flex-col",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "shrink-0 space-y-1.5 pb-2",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tabs, {
-				tabs: TABS.map((t) => [
-					t.key,
-					t.label,
-					t.Icon
-				]),
-				value: tab,
-				onChange: onTab
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "h-4 truncate px-1 text-[11px] leading-4 text-mute tabular-nums",
-				children: itemTab ? `Đã dùng ${used.size}/5 phụ kiện · bấm lần nữa để bỏ` : current.hint
-			})]
+			className: "shrink-0 space-y-2 pb-2",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: `flex flex-wrap items-center gap-2 rounded-xl border px-3 py-2.5 ${photo ? "border-lime/40 bg-lime/5" : "border-line bg-bg"}`,
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							className: "min-w-0 flex-1 text-xs font-bold",
+							children: "Ảnh của bạn hoặc nhân vật"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+							className: `inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg border border-line bg-raise px-2.5 text-[11px] font-bold text-fg transition hover:border-lime ${disabled || uploading ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`,
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPhotoPlus, { size: 16 }),
+								" ",
+								uploading ? "Đang mở ảnh…" : photo ? "Đổi ảnh" : "Tải ảnh lên",
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+									type: "file",
+									accept: "image/jpeg,image/png,image/webp",
+									disabled: disabled || uploading,
+									className: "sr-only",
+									"aria-label": "Tải ảnh JPG, PNG hoặc WebP lên để chỉnh sửa avatar",
+									onChange: (event) => {
+										const file = event.target.files?.[0];
+										event.target.value = "";
+										if (file) onPhoto(file);
+									}
+								})
+							]
+						}),
+						photo && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+							type: "button",
+							disabled: disabled || uploading,
+							onClick: () => dispatch({ type: "remove-photo" }),
+							className: "inline-flex h-9 shrink-0 cursor-pointer items-center gap-1 rounded-lg px-2 text-[11px] font-bold text-mute transition hover:bg-raise hover:text-fg disabled:opacity-50",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconTrash, { size: 15 }), " Dùng nhân vật"]
+						})
+					]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tabs, {
+					tabs: TABS.map((t) => [
+						t.key,
+						t.label,
+						t.Icon
+					]),
+					value: tab,
+					onChange: onTab
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "min-h-4 px-1 text-[11px] leading-4 text-mute tabular-nums",
+					children: itemTab ? `${used.size}/5` : current.hint
+				})
+			]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			className: "min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1 pb-3 scrollbar-gutter-stable",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
@@ -961,7 +1083,6 @@ function AvatarStage({ doc, selectedId, dispatch, tool, brush, eraserSize }) {
 	});
 }
 // src/features/avatar/DrawingTools.jsx
-var import_react_dom = /* @__PURE__ */ __toESM(require_react_dom(), 1);
 var TOOLS = [
 	[
 		"select",
@@ -1348,6 +1469,7 @@ var INITIAL_DOC = {
 	background: 0,
 	role: 0,
 	emoji: 0,
+	photo: null,
 	items: [],
 	strokes: []
 };
@@ -1395,6 +1517,7 @@ function sanitizeDoc(raw) {
 		background,
 		role,
 		emoji: inRange(raw.emoji, FACES[role].length) ? raw.emoji : 0,
+		photo: isAvatarPhoto(raw.photo) ? raw.photo : null,
 		items: (Array.isArray(raw.items) ? raw.items : []).filter((item) => item && KNOWN.has(item.src)).slice(0, 5).map(fixItem),
 		strokes: (Array.isArray(raw.strokes) ? raw.strokes : []).slice(0, 300).map(fixStroke).filter(Boolean)
 	};
@@ -1418,18 +1541,29 @@ var mapItem = (doc, id, transform) => ({
 function reducer(state, action) {
 	const { doc } = state;
 	switch (action.type) {
-		case "background": return action.index === doc.background ? state : commit(state, {
+		case "photo": return isAvatarPhoto(action.photo) && action.photo !== doc.photo ? commit(state, {
 			...doc,
-			background: action.index
+			photo: action.photo
+		}, { selectedId: null }) : state;
+		case "remove-photo": return doc.photo ? commit(state, {
+			...doc,
+			photo: null
+		}, { selectedId: null }) : state;
+		case "background": return action.index === doc.background && !doc.photo ? state : commit(state, {
+			...doc,
+			background: action.index,
+			photo: null
 		});
-		case "role": return action.index === doc.role ? state : commit(state, {
+		case "role": return action.index === doc.role && !doc.photo ? state : commit(state, {
 			...doc,
 			role: action.index,
-			emoji: 0
+			emoji: 0,
+			photo: null
 		});
-		case "emoji": return action.index === doc.emoji ? state : commit(state, {
+		case "emoji": return action.index === doc.emoji && !doc.photo ? state : commit(state, {
 			...doc,
-			emoji: action.index
+			emoji: action.index,
+			photo: null
 		});
 		case "toggle": {
 			const existing = doc.items.find((item) => item.src === action.src);
@@ -1462,7 +1596,7 @@ function reducer(state, action) {
 			};
 			return {
 				...state,
-				selectedId: action.id,
+				selectedId: item.id,
 				doc: {
 					...doc,
 					items: [...doc.items.filter((entry) => entry !== item), item]
@@ -1549,6 +1683,7 @@ function reducer(state, action) {
 		}
 		case "reset": return commit(state, {
 			...doc,
+			photo: null,
 			background: 0,
 			items: [],
 			strokes: []
@@ -1564,6 +1699,7 @@ function reducer(state, action) {
 				background: pick(BACKGROUNDS.length),
 				role,
 				emoji: pick(FACES[role].length),
+				photo: null,
 				items,
 				strokes: []
 			}, { selectedId: null });
@@ -1582,15 +1718,22 @@ function loadDraft() {
 }
 function useAvatarEditor() {
 	const [state, dispatch] = (0, import_react.useReducer)(reducer, void 0, () => initialState(loadDraft()));
+	const latestDoc = (0, import_react.useRef)(state.doc);
+	latestDoc.current = state.doc;
 	(0, import_react.useEffect)(() => {
-		const t = setTimeout(() => {
+		const timeout = setTimeout(() => {
 			try {
 				localStorage.setItem(DRAFT_KEY, JSON.stringify(state.doc));
 			} catch {}
 		}, 400);
-		return () => clearTimeout(t);
+		return () => clearTimeout(timeout);
 	}, [state.doc]);
-	const selected = (0, import_react.useMemo)(() => state.doc.items.find((i) => i.id === state.selectedId) || null, [state.doc, state.selectedId]);
+	(0, import_react.useEffect)(() => () => {
+		try {
+			localStorage.setItem(DRAFT_KEY, JSON.stringify(latestDoc.current));
+		} catch {}
+	}, []);
+	const selected = (0, import_react.useMemo)(() => state.doc.items.find((item) => item.id === state.selectedId) || null, [state.doc, state.selectedId]);
 	return {
 		doc: state.doc,
 		selected,
@@ -1605,17 +1748,12 @@ function useShortcuts(dispatch, selectedId) {
 	(0, import_react.useEffect)(() => {
 		const onKey = (event) => {
 			if (event.target.closest?.("input, textarea, select, [contenteditable]")) return;
-			const modifier = event.ctrlKey || event.metaKey;
 			const key = event.key.toLowerCase();
-			if (modifier && !event.ctrlKey && key === "z") dispatch({ type: event.shiftKey ? "redo" : "undo" });
-			else if (modifier && !event.ctrlKey && key === "y") dispatch({ type: "redo" });
-			else if ((event.key === "Delete" || event.key === "Backspace") && selectedId) dispatch({
+			if (event.metaKey && !event.altKey && key === "z") dispatch({ type: event.shiftKey ? "redo" : "undo" });
+			else if (event.metaKey && !event.altKey && key === "y") dispatch({ type: "redo" });
+			else if ((key === "delete" || key === "backspace") && selectedId && !event.ctrlKey && !event.metaKey) dispatch({
 				type: "remove",
 				id: selectedId
-			});
-			else if (event.key === "Escape") dispatch({
-				type: "select",
-				id: null
 			});
 			else return;
 			event.preventDefault();
@@ -1624,9 +1762,9 @@ function useShortcuts(dispatch, selectedId) {
 		return () => window.removeEventListener("keydown", onKey);
 	}, [dispatch, selectedId]);
 }
-function Avatar({ onUser }) {
+function Avatar({ onUser, onClose }) {
 	const { doc, selected, selectedId, canUndo, canRedo, dispatch } = useAvatarEditor();
-	const [tab, setTab] = (0, import_react.useState)("role");
+	const [tab, setTab] = (0, import_react.useState)(() => doc.photo ? "itemA" : "role");
 	const [tool, setTool] = (0, import_react.useState)("select");
 	const [brush, setBrush] = (0, import_react.useState)({
 		size: 16,
@@ -1635,13 +1773,54 @@ function Avatar({ onUser }) {
 	});
 	const [eraserSize, setEraserSize] = (0, import_react.useState)(32);
 	const [busy, setBusy] = (0, import_react.useState)(false);
+	const [uploading, setUploading] = (0, import_react.useState)(false);
 	const [progress, setProgress] = (0, import_react.useState)(0);
 	const [progressMessage, setProgressMessage] = (0, import_react.useState)("");
 	const progressRef = (0, import_react.useRef)({
 		current: 0,
 		target: 0
 	});
+	const closeButton = (0, import_react.useRef)(null);
+	const modalRef = (0, import_react.useRef)(null);
+	const titleId = (0, import_react.useId)();
+	const locked = busy || uploading;
+	const lockedRef = (0, import_react.useRef)(locked);
+	const onCloseRef = (0, import_react.useRef)(onClose);
+	lockedRef.current = locked;
+	onCloseRef.current = onClose;
 	useShortcuts(dispatch, selectedId);
+	(0, import_react.useEffect)(() => {
+		const previousOverflow = document.body.style.overflow;
+		const focusedBeforeOpen = document.activeElement;
+		document.body.style.overflow = "hidden";
+		closeButton.current?.focus();
+		const onKey = (event) => {
+			if (event.key === "Escape") {
+				event.stopPropagation();
+				if (!lockedRef.current) onCloseRef.current();
+				return;
+			}
+			if (event.key !== "Tab") return;
+			const candidates = [...modalRef.current?.querySelectorAll("button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex=\"-1\"])") || []].filter((element) => element.getClientRects().length > 0);
+			if (!candidates.length) return;
+			const first = candidates[0];
+			const last = candidates[candidates.length - 1];
+			const active = document.activeElement;
+			if (event.shiftKey && (active === first || !modalRef.current?.contains(active))) {
+				event.preventDefault();
+				last.focus();
+			} else if (!event.shiftKey && (active === last || !modalRef.current?.contains(active))) {
+				event.preventDefault();
+				first.focus();
+			}
+		};
+		document.addEventListener("keydown", onKey, true);
+		return () => {
+			document.body.style.overflow = previousOverflow;
+			document.removeEventListener("keydown", onKey, true);
+			focusedBeforeOpen?.focus?.();
+		};
+	}, []);
 	(0, import_react.useEffect)(() => {
 		if (!busy) return;
 		const interval = setInterval(() => {
@@ -1654,6 +1833,24 @@ function Avatar({ onUser }) {
 		return () => clearInterval(interval);
 	}, [busy]);
 	const itemKey = (0, import_react.useMemo)(() => doc.items.map((item) => item.src).join("|"), [doc.items]);
+	const uploadPhoto = async (file) => {
+		if (locked) return;
+		setUploading(true);
+		try {
+			const photo = await prepareAvatarPhoto(file);
+			dispatch({
+				type: "photo",
+				photo
+			});
+			setTab("itemA");
+			setTool("select");
+			toast("Đã chọn ảnh · bạn có thể tiếp tục thêm phụ kiện");
+		} catch (error) {
+			toast(error.message || "Không xử lý được ảnh", "err");
+		} finally {
+			setUploading(false);
+		}
+	};
 	const waitForProgress = () => new Promise((resolve) => {
 		const interval = setInterval(() => {
 			if (progressRef.current.current >= 100) {
@@ -1663,13 +1860,14 @@ function Avatar({ onUser }) {
 		}, 20);
 	});
 	const run = async (task) => {
+		if (locked) return;
 		setBusy(true);
 		progressRef.current = {
 			current: 0,
 			target: 0
 		};
 		setProgress(0);
-		setProgressMessage("Đang chuẩn bị");
+		setProgressMessage("Đang chuẩn bị ảnh");
 		try {
 			await task(await renderAvatarToBlob(doc, 512));
 		} catch (error) {
@@ -1694,6 +1892,7 @@ function Avatar({ onUser }) {
 		await waitForProgress();
 		if (response.user) onUser(response.user);
 		toast(response.message || "Đã đổi ảnh đại diện");
+		onClose();
 	});
 	const download = () => run((blob) => {
 		const url = URL.createObjectURL(blob);
@@ -1710,94 +1909,150 @@ function Avatar({ onUser }) {
 			id: null
 		});
 	};
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "flex h-[calc(100svh-var(--app-header-h)-var(--app-bottom-nav-h)-env(safe-area-inset-bottom))] flex-col overflow-hidden md:h-[calc(100svh-var(--app-header-h))] md:flex-row md:gap-6 md:p-6",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("aside", {
-			className: "max-h-[58svh] shrink-0 overflow-y-auto border-b border-line px-4 py-3 md:max-h-full md:w-90 md:self-start md:rounded-2xl md:border md:bg-panel md:p-5",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "grid grid-cols-[minmax(0,44%)_minmax(0,1fr)] items-start gap-3 md:block md:space-y-3",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarStage, {
-					doc,
-					selectedId,
-					dispatch,
-					tool,
-					brush,
-					eraserSize
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex min-w-0 flex-col justify-start gap-2 md:gap-3",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarToolbar, {
-						doc,
-						selected,
-						canUndo,
-						canRedo,
-						dispatch,
-						tool,
-						onTool: selectTool,
-						brush,
-						onBrush: setBrush,
-						eraserSize,
-						onEraserSize: setEraserSize
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "flex gap-2",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-							variant: "ghost",
-							size: "sm",
-							className: "h-9 w-9 shrink-0 px-0",
-							disabled: busy,
-							onClick: download,
-							"aria-label": "Tải ảnh về máy",
-							title: "Tải ảnh về máy",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDownload, { size: 16 })
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-							size: "sm",
-							className: "h-9 min-w-0 flex-1 px-2",
-							loading: busy,
-							onClick: useAsAvatar,
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUserCheck, {
-								size: 15,
-								className: "hidden md:block"
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								className: "truncate",
-								children: "Đặt làm ảnh đại diện"
+	const close = () => {
+		if (!locked) onClose();
+	};
+	return (0, import_react_dom.createPortal)(/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		className: "fixed inset-0 z-50 flex animate-fade items-center justify-center bg-black/75 backdrop-blur-sm sm:p-3",
+		onMouseDown: (event) => event.target === event.currentTarget && close(),
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			ref: modalRef,
+			role: "dialog",
+			"aria-modal": "true",
+			"aria-labelledby": titleId,
+			className: "flex h-dvh w-full max-w-5xl animate-pop flex-col overflow-hidden border border-line bg-panel shadow-2xl shadow-black/60 sm:h-[min(94dvh,900px)] sm:rounded-2xl",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
+					className: "flex shrink-0 items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-5",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+						id: titleId,
+						className: "min-w-0 text-sm font-extrabold sm:text-base",
+						children: "Chỉnh sửa ảnh đại diện"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						ref: closeButton,
+						onClick: close,
+						disabled: locked,
+						"aria-label": "Đóng trình chỉnh sửa ảnh đại diện",
+						className: "grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg text-mute transition hover:bg-raise hover:text-fg focus-visible:outline-2 focus-visible:outline-lime disabled:opacity-40",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, { size: 19 })
+					})]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "min-h-0 flex-1 overflow-y-auto overscroll-contain lg:overflow-hidden",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: `flex min-h-full flex-col gap-4 p-3 sm:p-4 lg:grid lg:h-full lg:min-h-0 lg:grid-cols-[minmax(0,355px)_minmax(0,1fr)] ${locked ? "pointer-events-none opacity-65" : ""}`,
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("aside", {
+							className: "min-w-0 space-y-3 rounded-xl border border-line bg-bg p-3 sm:p-4 lg:min-h-0 lg:overflow-y-auto",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "mx-auto w-full max-w-[min(52dvh,15rem)] sm:max-w-[min(52dvh,20rem)] lg:max-w-full",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarStage, {
+									doc,
+									selectedId,
+									dispatch,
+									tool,
+									brush,
+									eraserSize
+								})
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarToolbar, {
+								doc,
+								selected,
+								canUndo,
+								canRedo,
+								dispatch,
+								tool,
+								onTool: selectTool,
+								brush,
+								onBrush: setBrush,
+								eraserSize,
+								onEraserSize: setEraserSize
 							})]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
+							className: "flex min-h-76 min-w-0 flex-1 flex-col rounded-xl border border-line bg-panel p-3 lg:min-h-0 lg:overflow-hidden",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AssetPicker_default, {
+								tab,
+								onTab: setTab,
+								role: doc.role,
+								emoji: doc.emoji,
+								background: doc.background,
+								photo: doc.photo,
+								itemKey,
+								dispatch,
+								onPhoto: uploadPhoto,
+								uploading,
+								disabled: locked
+							})
 						})]
-					})]
-				})]
-			}), busy && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "mt-3 space-y-2",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex items-center justify-between gap-3 text-xs",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						className: "truncate text-mute",
-						children: progressMessage
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-						className: "shrink-0 font-semibold tabular-nums text-fg",
-						children: [progress, "%"]
-					})]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "h-2 overflow-hidden rounded-full bg-bg",
-					role: "progressbar",
-					"aria-valuenow": progress,
-					"aria-valuemin": 0,
-					"aria-valuemax": 100,
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "h-full rounded-full bg-lime transition-[width] duration-300 ease-out",
-						style: { width: `${progress}%` }
 					})
-				})]
-			})]
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
-			className: "flex min-h-0 flex-1 flex-col px-4 pt-3 md:px-0 md:pt-0",
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AssetPicker_default, {
-				tab,
-				onTab: setTab,
-				role: doc.role,
-				emoji: doc.emoji,
-				background: doc.background,
-				itemKey,
-				dispatch
-			})
-		})]
-	});
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("footer", {
+					className: "shrink-0 border-t border-line bg-panel px-4 py-3 pb-[max(.75rem,env(safe-area-inset-bottom))] sm:px-5",
+					children: [busy && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "mb-3 space-y-1.5",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "flex items-center justify-between gap-3 text-xs",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "truncate text-mute",
+								children: progressMessage
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+								className: "shrink-0 font-semibold tabular-nums",
+								children: [progress, "%"]
+							})]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+							className: "h-1.5 overflow-hidden rounded-full bg-bg",
+							role: "progressbar",
+							"aria-valuenow": progress,
+							"aria-valuemin": 0,
+							"aria-valuemax": 100,
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "h-full rounded-full bg-lime transition-[width] duration-300 ease-out",
+								style: { width: `${progress}%` }
+							})
+						})]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex items-center justify-end gap-2",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+								variant: "ghost",
+								size: "sm",
+								disabled: locked,
+								onClick: close,
+								children: "Hủy"
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+								variant: "ghost",
+								size: "sm",
+								disabled: locked,
+								onClick: download,
+								title: "Tải ảnh PNG về máy",
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDownload, { size: 17 }),
+									" ",
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "hidden sm:inline",
+										children: "Tải về"
+									})
+								]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+								size: "sm",
+								loading: busy,
+								disabled: locked,
+								onClick: useAsAvatar,
+								children: [
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUserCheck, { size: 17 }),
+									" ",
+									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+										className: "truncate",
+										children: "Đặt làm ảnh đại diện"
+									})
+								]
+							})
+						]
+					})]
+				})
+			]
+		})
+	}), document.body);
 }
 export { Avatar as default };
