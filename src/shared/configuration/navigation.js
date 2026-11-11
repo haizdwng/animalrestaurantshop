@@ -1,11 +1,10 @@
-import { IconBuildingStore, IconPalette, IconSettings, IconUserCircle } from '@tabler/icons-react';
+import { IconBuildingStore, IconSettings, IconUserCircle } from '@tabler/icons-react';
 
 const DEFAULT_DESTINATION = '/shop';
 const AUTHENTICATION_PATH = /^\/(?:login|register|forgot)(?:\/|$)/i;
 
 export const NAV = [
   ['shop', 'Cửa hàng', IconBuildingStore],
-  ['avatar', 'Ảnh đại diện', IconPalette],
   ['user', 'Tài khoản', IconUserCircle]
 ];
 export const ADMIN_NAV = [
@@ -13,7 +12,7 @@ export const ADMIN_NAV = [
 ];
 export const DEFAULT_TAB = 'shop';
 export const TAB_KEYS = [...NAV, ...ADMIN_NAV].map((n) => n[0]);
-export const getNavigationItemsForRole = (admin) => (admin ? [NAV[0], NAV[1], ...ADMIN_NAV, NAV[2]] : NAV);
+export const getNavigationItemsForRole = (admin) => (admin ? [NAV[0], ...ADMIN_NAV, NAV[1]] : NAV);
 
 const getSafeDestination = (destination) => {
   if (typeof destination !== 'string' || !destination.startsWith('/') || destination.startsWith('//')) return DEFAULT_DESTINATION;

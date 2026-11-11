@@ -9,38 +9,36 @@ export default function useProfileForm(onUser) {
   const [open, setOpen] = useState(null);
   const [f, setF] = useState(EMPTY);
   const [errors, setErrors] = useState({});
-  const [preview, setPreview] = useState('');
   const [busy, setBusy] = useState(false);
 
-  const show = (k, init = {}) => {
-    setF({ ...EMPTY, ...init });
+  const show = (kind, initialValues = {}) => {
+    setF({ ...EMPTY, ...initialValues });
     setErrors({});
-    setPreview('');
-    setOpen(k);
+    setOpen(kind);
   };
   const close = () => !busy && setOpen(null);
-  const set = (k) => (e) => {
-    const v = k === 'otp' ? cleanOtp(e.target.value) : e.target.value;
-    setF((s) => ({ ...s, [k]: v }));
-    setErrors((s) => ({ ...s, [k]: '' }));
+  const set = (field) => (event) => {
+    const value = field === 'otp' ? cleanOtp(event.target.value) : event.target.value;
+    setF((current) => ({ ...current, [field]: value }));
+    setErrors((current) => ({ ...current, [field]: '' }));
   };
 
-  const submit = async (localErrors, call, msg) => {
+  const submit = async (localErrors, call, message) => {
     if (hasErrors(localErrors)) return setErrors(localErrors);
     setBusy(true);
     try {
-      const r = await call();
-      if (r.user) onUser(r.user);
-      toast(r.message || msg);
+      const result = await call();
+      if (result.user) onUser(result.user);
+      toast(result.message || message);
       setOpen(null);
-    } catch (e) {
-      if (e.code === 'UNAUTHORIZED') return;
-      if (e.field) setErrors((s) => ({ ...s, [VALUE_FIELDS.includes(e.field) ? 'value' : e.field]: e.message }));
-      toast(e.message, 'err');
+    } catch (error) {
+      if (error.code === 'UNAUTHORIZED') return;
+      if (error.field) setErrors((current) => ({ ...current, [VALUE_FIELDS.includes(error.field) ? 'value' : error.field]: error.message }));
+      toast(error.message, 'err');
     } finally {
       setBusy(false);
     };
   };
 
-  return { open, f, errors, setErrors, preview, setPreview, busy, show, close, set, submit };
+  return { open, f, errors, setErrors, busy, show, close, set, submit };
 };

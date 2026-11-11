@@ -1,7 +1,8 @@
 import { ACCESSORIES, BACKGROUNDS, FACES, ROLES } from '@/features/avatar/manifest';
 import { DRAWING_SIZE, HISTORY_LIMIT, MAX_ITEMS, MAX_STROKES, MAX_STROKE_POINTS, SCALE, STAGE } from '@/features/avatar/config';
+import { isAvatarPhoto } from '@/features/avatar/avatarPhoto';
 
-export const INITIAL_DOC = { background: 0, role: 0, emoji: 0, items: [], strokes: [] };
+export const INITIAL_DOC = { background: 0, role: 0, emoji: 0, photo: null, items: [], strokes: [] };
 export const initialState = (doc = INITIAL_DOC) => ({ doc, past: [], future: [], selectedId: null });
 
 const KNOWN = new Set(ACCESSORIES);
@@ -43,9 +44,10 @@ export function sanitizeDoc(raw) {
   const background = inRange(raw.background, BACKGROUNDS.length) ? raw.background : 0;
   const role = inRange(raw.role, ROLES.length) ? raw.role : 0;
   const emoji = inRange(raw.emoji, FACES[role].length) ? raw.emoji : 0;
+  const photo = isAvatarPhoto(raw.photo) ? raw.photo : null;
   const items = (Array.isArray(raw.items) ? raw.items : []).filter((item) => item && KNOWN.has(item.src)).slice(0, MAX_ITEMS).map(fixItem);
   const strokes = (Array.isArray(raw.strokes) ? raw.strokes : []).slice(0, MAX_STROKES).map(fixStroke).filter(Boolean);
-  return { background, role, emoji, items, strokes };
+  return { background, role, emoji, photo, items, strokes };
 };
 
 const push = (list, doc) => [...list, doc].slice(-HISTORY_LIMIT);
@@ -56,12 +58,16 @@ const mapItem = (doc, id, transform) => ({ ...doc, items: doc.items.map((item) =
 export function reducer(state, action) {
   const { doc } = state;
   switch (action.type) {
+    case 'photo':
+      return isAvatarPhoto(action.photo) && action.photo !== doc.photo ? commit(state, { ...doc, photo: action.photo }, { selectedId: null }) : state;
+    case 'remove-photo':
+      return doc.photo ? commit(state, { ...doc, photo: null }, { selectedId: null }) : state;
     case 'background':
-      return action.index === doc.background ? state : commit(state, { ...doc, background: action.index });
+      return action.index === doc.background && !doc.photo ? state : commit(state, { ...doc, background: action.index, photo: null });
     case 'role':
-      return action.index === doc.role ? state : commit(state, { ...doc, role: action.index, emoji: 0 });
+      return action.index === doc.role && !doc.photo ? state : commit(state, { ...doc, role: action.index, emoji: 0, photo: null });
     case 'emoji':
-      return action.index === doc.emoji ? state : commit(state, { ...doc, emoji: action.index });
+      return action.index === doc.emoji && !doc.photo ? state : commit(state, { ...doc, emoji: action.index, photo: null });
     case 'toggle': {
       const existing = doc.items.find((item) => item.src === action.src);
       if (existing) return commit(state, { ...doc, items: doc.items.filter((item) => item !== existing) }, { selectedId: state.selectedId === existing.id ? null : state.selectedId });
@@ -76,7 +82,7 @@ export function reducer(state, action) {
       if (action.id === state.selectedId) return state;
       const item = doc.items.find((item) => item.id === action.id);
       if (!item) return { ...state, selectedId: null };
-      return { ...state, selectedId: action.id, doc: { ...doc, items: [...doc.items.filter((entry) => entry !== item), item] } };
+      return { ...state, selectedId: item.id, doc: { ...doc, items: [...doc.items.filter((entry) => entry !== item), item] } };
     };
     case 'checkpoint':
       return { ...state, past: push(state.past, doc), future: [] };
@@ -117,11 +123,11 @@ export function reducer(state, action) {
       return { ...state, doc: next, future: state.future.slice(0, -1), past: push(state.past, doc), selectedId: keepSelection(next, state.selectedId) };
     };
     case 'reset':
-      return commit(state, { ...doc, background: 0, items: [], strokes: [] }, { selectedId: null });
+      return commit(state, { ...doc, photo: null, background: 0, items: [], strokes: [] }, { selectedId: null });
     case 'random': {
       const role = pick(ROLES.length);
       const items = [...ACCESSORIES].sort(() => Math.random() - 0.5).slice(0, pick(4)).map((src, index) => fixItem({ src, x: STAGE / 2 + index * 24, y: STAGE / 2 + index * 24 }));
-      return commit(state, { background: pick(BACKGROUNDS.length), role, emoji: pick(FACES[role].length), items, strokes: [] }, { selectedId: null });
+      return commit(state, { background: pick(BACKGROUNDS.length), role, emoji: pick(FACES[role].length), photo: null, items, strokes: [] }, { selectedId: null });
     };
     case 'load':
       return commit(state, sanitizeDoc(action.doc), { selectedId: null });

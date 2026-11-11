@@ -1,10 +1,9 @@
-import { At as useNavigate, C as adminPlayer, Dt as createReactComponent, E as adminRecord, Nt as require_react, O as adminSaveRecord, Pt as __toESM, St as IconInfoCircle, T as adminPlayers, Y as fileToAvatar, _t as Field, at as ErrorState, c as adminAddPlayerFriend, ct as Tabs, et as JsonEditor, ft as Menu, g as adminDeletePlayerFriend, gt as toastError, ht as toast, i as formatNumber, it as Skeleton, jt as useParams, k as adminUpdatePlayerAvatar, l as adminAddPlayerLike, lt as PageSizeSelect, m as adminDecryptRecordValue, nt as PagerSkeleton, ot as Spinner, pt as Dialog, tt as Line, u as adminAddPlayerStar, ut as Select, vt as Button, w as adminPlayerFriends, x as adminEncryptRecordValue, xt as IconRefresh, y as adminEditPlayer, yt as require_jsx_runtime } from "./index.js";
+import { A as adminUpdatePlayerAvatar, Ct as IconInfoCircle, D as adminRecord, E as adminPlayers, Ft as __toESM, Mt as useParams, Ot as createReactComponent, Pt as require_react, S as adminEncryptRecordValue, St as IconRefresh, T as adminPlayerFriends, X as fileToAvatar, _ as adminDeletePlayerFriend, _t as toastError, a as formatNumber, at as Skeleton, b as adminEditPlayer, bt as require_jsx_runtime, d as adminAddPlayerStar, dt as Select, gt as toast, h as adminDecryptRecordValue, jt as useNavigate, k as adminSaveRecord, l as adminAddPlayerFriend, lt as Tabs, mt as Dialog, nt as Line, ot as ErrorState, pt as Menu, rt as PagerSkeleton, st as Spinner, tt as JsonEditor, u as adminAddPlayerLike, ut as PageSizeSelect, vt as Field, w as adminPlayer, yt as Button } from "./index.js";
 import { n as IconArrowLeft, t as IconArrowRight } from "./IconArrowRight.js";
 import { t as IconSearch } from "./IconSearch.js";
 import { c as IconUser, o as PLAYER_TABS } from "./config.js";
-import { n as IconUpload, t as IconStarFilled } from "./IconStarFilled.js";
-import { t as IconCopy } from "./IconCopy.js";
-import { n as IconLock, t as copyText } from "./clipboard.js";
+import { t as IconStarFilled } from "./IconStarFilled.js";
+import { n as IconLock, r as IconCopy, t as copyText } from "./clipboard.js";
 import { t as IconPlus } from "./IconPlus.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { o as IconStar, t as Tile } from "./Tile.js";
@@ -42,6 +41,26 @@ var IconThumbUp = createReactComponent("outline", "thumb-up", "ThumbUp", [["path
 	"d": "M7 11v8a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1v-7a1 1 0 0 1 1 -1h3a4 4 0 0 0 4 -4v-1a2 2 0 0 1 4 0v5h3a2 2 0 0 1 2 2l-1 5a2 3 0 0 1 -2 2h-7a3 3 0 0 1 -3 -3",
 	"key": "svg-0"
 }]]);
+/**
+* @license @tabler/icons-react v3.51.0 - MIT
+*
+* This source code is licensed under the MIT license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var IconUpload = createReactComponent("outline", "upload", "Upload", [
+	["path", {
+		"d": "M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2",
+		"key": "svg-0"
+	}],
+	["path", {
+		"d": "M7 9l5 -5l5 5",
+		"key": "svg-1"
+	}],
+	["path", {
+		"d": "M12 4l0 12",
+		"key": "svg-2"
+	}]
+]);
 // src/features/administration/PlayerCard.jsx
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var import_jsx_runtime = require_jsx_runtime();

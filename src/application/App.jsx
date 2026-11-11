@@ -13,7 +13,6 @@ import useCheckin from '@/shared/hooks/useCheckin';
 const Auth = lazy(() => import('@/features/authentication/Auth'));
 const Shop = lazy(() => import('@/features/shop/Shop'));
 const Account = lazy(() => import('@/features/account/Account'));
-const Avatar = lazy(() => import('@/features/avatar/Avatar'));
 const AdminPanel = lazy(() => import('@/features/administration/AdminPanel'));
 const AdminGiftCodes = lazy(() => import('@/features/administration/GiftCodes'));
 const AdminUsers = lazy(() => import('@/features/administration/Users'));
@@ -142,7 +141,6 @@ function AppContent() {
             <Routes>
               <Route path='/' element={<StartRoute />} />
               <Route path='/shop/:section?' element={<Shop user={user} onUser={setUser} shop={shop} onReload={loadShop} onRefresh={refreshUser} />} />
-              <Route path='/avatar' element={<Avatar onUser={setUser} />} />
               <Route path='/administrator' element={admin ? <AdminPanel /> : <Navigate to='/shop' replace />}>
                 <Route index element={<Navigate to='giftcodes' replace />} />
                 <Route path='giftcodes' element={<AdminGiftCodes />} />

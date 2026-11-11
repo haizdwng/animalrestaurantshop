@@ -1,10 +1,10 @@
-import { B as redeemGiftCode, Dt as createReactComponent, H as updateAvatar, I as changeOpenid, L as getBuffetLink, Nt as require_react, P as getTransactions, Pt as __toESM, Q as Coin, R as getFriendLink, U as updateUser, V as submitInvite, Y as fileToAvatar, _t as Field, a as formatShortDateTime, bt as IconX, dt as SortSelect, ft as Menu, gt as toastError, ht as toast, i as formatNumber, j as cancelTransaction, lt as PageSizeSelect, mt as OtpButton, n as formatDate, nt as PagerSkeleton, o as formatVietnameseDong, ot as Spinner, pt as Dialog, rt as RowSkeleton, t as compareByTime, ut as Select, vt as Button, xt as IconRefresh, yt as require_jsx_runtime, z as openidOtp } from "./index.js";
-import { n as IconLock, t as copyText } from "./clipboard.js";
-import { n as IconUpload, t as IconStarFilled } from "./IconStarFilled.js";
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Avatar.js","assets/index.js","assets/index.css","assets/IconPhoto.js","assets/IconCheck.js","assets/IconTrash.js","assets/clipboard.js"])))=>i.map(i=>d[i]);
+import { $ as Coin, B as openidOtp, F as getTransactions, Ft as __toESM, H as submitInvite, L as changeOpenid, M as cancelTransaction, Ot as createReactComponent, Pt as require_react, R as getBuffetLink, St as IconRefresh, V as redeemGiftCode, W as updateUser, _t as toastError, a as formatNumber, bt as require_jsx_runtime, dt as Select, ft as SortSelect, gt as toast, ht as OtpButton, it as RowSkeleton, mt as Dialog, n as compareByTime, o as formatShortDateTime, pt as Menu, r as formatDate, rt as PagerSkeleton, s as formatVietnameseDong, st as Spinner, t as __vitePreload, ut as PageSizeSelect, vt as Field, xt as IconX, yt as Button, z as getFriendLink } from "./index.js";
+import { n as IconLock, r as IconCopy, t as copyText } from "./clipboard.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
 import { t as StrengthBar } from "./StrengthBar.js";
 import { t as IconPencil } from "./IconPencil.js";
-import { t as IconCopy } from "./IconCopy.js";
+import { t as IconStarFilled } from "./IconStarFilled.js";
 import { t as IconUserPlus } from "./IconUserPlus.js";
 import { i as IconQrcode, n as STATUS, r as StatusBadge, t as PaymentDialog } from "./PaymentDialog.js";
 import { n as usePaginatedData, t as useRemoteResource } from "./useRemoteResource.js";
@@ -204,112 +204,6 @@ function FormDialog({ form, kind, title, onSubmit, children }) {
 			},
 			children
 		})
-	});
-}
-function AvatarDialog({ form, user }) {
-	const [progress, setProgress] = (0, import_react.useState)(0);
-	const [progressMessage, setProgressMessage] = (0, import_react.useState)("");
-	const progressRef = (0, import_react.useRef)({
-		current: 0,
-		target: 0
-	});
-	const { preview, setPreview, busy, submit } = form;
-	(0, import_react.useEffect)(() => () => preview?.url && URL.revokeObjectURL(preview.url), [preview]);
-	const pickFile = async (e) => {
-		const file = e.target.files?.[0];
-		e.target.value = "";
-		if (!file) return;
-		try {
-			const original = fileToAvatar(file);
-			setPreview({
-				file: original,
-				url: URL.createObjectURL(original)
-			});
-		} catch (err) {
-			toast(err.message, "err");
-		}
-	};
-	(0, import_react.useEffect)(() => {
-		if (!busy) return;
-		const interval = setInterval(() => {
-			const state = progressRef.current;
-			if (state.current < state.target) {
-				state.current = Math.min(state.current + 1, state.target);
-				setProgress(state.current);
-			}
-		}, 40);
-		return () => clearInterval(interval);
-	}, [busy]);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Dialog, {
-		open: form.open === "avatar",
-		title: "Đổi ảnh đại diện",
-		onClose: form.close,
-		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
-				className: "mx-auto grid aspect-square w-full max-w-[min(100%,50dvh)] cursor-pointer place-items-center overflow-hidden rounded-2xl border border-dashed border-line bg-bg hover:border-lime",
-				children: [preview?.url || user.avatar ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-					src: preview?.url || user.avatar,
-					alt: "Xem trước",
-					className: "size-full object-cover"
-				}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-					className: "flex flex-col items-center gap-2 text-xs text-mute",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUpload, { size: 28 }), " Chọn ảnh đại diện"]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-					type: "file",
-					accept: ".jpg,.jpeg,.png",
-					className: "hidden",
-					onChange: pickFile
-				})]
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "text-center text-[11px] text-mute",
-				children: preview ? "Bấm vào ảnh đại diện để chọn ảnh khác" : "JPG, JPEG, PNG · tối đa 8MB · ảnh gốc được giữ nguyên"
-			}),
-			busy && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "space-y-2",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex items-center justify-between gap-3 text-xs",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						className: "truncate text-mute",
-						children: progressMessage
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-						className: "shrink-0 font-semibold tabular-nums text-fg",
-						children: [progress, "%"]
-					})]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "h-2 overflow-hidden rounded-full bg-bg",
-					role: "progressbar",
-					"aria-valuenow": progress,
-					"aria-valuemin": 0,
-					"aria-valuemax": 100,
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "h-full rounded-full bg-lime transition-[width] duration-300 ease-out",
-						style: { width: `${progress}%` }
-					})
-				})]
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "flex gap-2",
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-					className: "flex-1",
-					disabled: !preview,
-					loading: busy,
-					onClick: () => {
-						progressRef.current = {
-							current: 0,
-							target: 0
-						};
-						setProgress(0);
-						setProgressMessage("Đang chuẩn bị");
-						submit({}, () => updateAvatar(preview.file, (value, message) => {
-							progressRef.current.target = value;
-							setProgressMessage(message);
-						}), "Đã đổi ảnh đại diện");
-					},
-					children: "Đổi ảnh đại diện"
-				})
-			})
-		]
 	});
 }
 function UsernameDialog({ form, user }) {
@@ -1164,44 +1058,42 @@ function useProfileForm(onUser) {
 	const [open, setOpen] = (0, import_react.useState)(null);
 	const [f, setF] = (0, import_react.useState)(EMPTY);
 	const [errors, setErrors] = (0, import_react.useState)({});
-	const [preview, setPreview] = (0, import_react.useState)("");
 	const [busy, setBusy] = (0, import_react.useState)(false);
-	const show = (k, init = {}) => {
+	const show = (kind, initialValues = {}) => {
 		setF({
 			...EMPTY,
-			...init
+			...initialValues
 		});
 		setErrors({});
-		setPreview("");
-		setOpen(k);
+		setOpen(kind);
 	};
 	const close = () => !busy && setOpen(null);
-	const set = (k) => (e) => {
-		const v = k === "otp" ? cleanOtp(e.target.value) : e.target.value;
-		setF((s) => ({
-			...s,
-			[k]: v
+	const set = (field) => (event) => {
+		const value = field === "otp" ? cleanOtp(event.target.value) : event.target.value;
+		setF((current) => ({
+			...current,
+			[field]: value
 		}));
-		setErrors((s) => ({
-			...s,
-			[k]: ""
+		setErrors((current) => ({
+			...current,
+			[field]: ""
 		}));
 	};
-	const submit = async (localErrors, call, msg) => {
+	const submit = async (localErrors, call, message) => {
 		if (hasErrors(localErrors)) return setErrors(localErrors);
 		setBusy(true);
 		try {
-			const r = await call();
-			if (r.user) onUser(r.user);
-			toast(r.message || msg);
+			const result = await call();
+			if (result.user) onUser(result.user);
+			toast(result.message || message);
 			setOpen(null);
-		} catch (e) {
-			if (e.code === "UNAUTHORIZED") return;
-			if (e.field) setErrors((s) => ({
-				...s,
-				[VALUE_FIELDS.includes(e.field) ? "value" : e.field]: e.message
+		} catch (error) {
+			if (error.code === "UNAUTHORIZED") return;
+			if (error.field) setErrors((current) => ({
+				...current,
+				[VALUE_FIELDS.includes(error.field) ? "value" : error.field]: error.message
 			}));
-			toast(e.message, "err");
+			toast(error.message, "err");
 		} finally {
 			setBusy(false);
 		}
@@ -1211,8 +1103,6 @@ function useProfileForm(onUser) {
 		f,
 		errors,
 		setErrors,
-		preview,
-		setPreview,
 		busy,
 		show,
 		close,
@@ -1412,10 +1302,12 @@ function LinkDialog({ request, title, open, onClose }) {
 	});
 }
 // src/features/account/Account.jsx
+var AvatarEditorDialog = (0, import_react.lazy)(() => __vitePreload(() => import("./Avatar.js"), __vite__mapDeps([0,1,2,3,4,5,6])));
 function Account({ user, onUser, onLogout, onRefresh, checkin }) {
 	const form = useProfileForm(onUser);
 	const { show } = form;
 	const [linkDialog, setLinkDialog] = (0, import_react.useState)(null);
+	const [avatarOpen, setAvatarOpen] = (0, import_react.useState)(false);
 	const openLink = (0, import_react.useCallback)((kind, title, request) => setLinkDialog({
 		kind,
 		title,
@@ -1431,7 +1323,7 @@ function Account({ user, onUser, onLogout, onRefresh, checkin }) {
 				className: "space-y-4 md:sticky md:top-20 md:self-start",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProfileCard, {
 					user,
-					onEditAvatar: () => show("avatar"),
+					onEditAvatar: () => setAvatarOpen(true),
 					onLogout: () => show("logout"),
 					onRedeemGiftCode: () => show("giftcode"),
 					onRedeemInvite: () => show("invite"),
@@ -1478,9 +1370,12 @@ function Account({ user, onUser, onLogout, onRefresh, checkin }) {
 					]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Transactions, { onPaid: onRefresh })]
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarDialog, {
-				form,
-				user
+			avatarOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.Suspense, {
+				fallback: null,
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AvatarEditorDialog, {
+					onUser,
+					onClose: () => setAvatarOpen(false)
+				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(UsernameDialog, {
 				form,

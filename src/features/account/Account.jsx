@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { IconAt, IconFingerprint, IconId, IconLock } from '@tabler/icons-react';
-import { AvatarDialog, LogoutDialog, OpenidDialog, PasswordDialog, PlayerNameDialog, UsernameDialog } from '@/features/account/ProfileDialogs';
+import { LogoutDialog, OpenidDialog, PasswordDialog, PlayerNameDialog, UsernameDialog } from '@/features/account/ProfileDialogs';
 import FieldRow from '@/features/account/FieldRow';
 import ProfileCard from '@/features/account/ProfileCard';
 import Transactions from '@/features/account/Transactions';
@@ -11,10 +11,13 @@ import InviteCodeDialog from '@/features/account/InviteCodeDialog';
 import LinkDialog from '@/features/account/LinkDialog';
 import * as api from '@/shared/library/api';
 
+const AvatarEditorDialog = lazy(() => import('@/features/avatar/Avatar'));
+
 export default function Account({ user, onUser, onLogout, onRefresh, checkin }) {
   const form = useProfileForm(onUser);
   const { show } = form;
   const [linkDialog, setLinkDialog] = useState(null);
+  const [avatarOpen, setAvatarOpen] = useState(false);
   const openLink = useCallback((kind, title, request) => setLinkDialog({ kind, title, request }), []);
 
   useEffect(() => {
@@ -26,7 +29,7 @@ export default function Account({ user, onUser, onLogout, onRefresh, checkin }) 
       <div className='space-y-4 md:sticky md:top-20 md:self-start'>
         <ProfileCard
           user={user}
-          onEditAvatar={() => show('avatar')}
+          onEditAvatar={() => setAvatarOpen(true)}
           onLogout={() => show('logout')}
           onRedeemGiftCode={() => show('giftcode')}
           onRedeemInvite={() => show('invite')}
@@ -54,7 +57,11 @@ export default function Account({ user, onUser, onLogout, onRefresh, checkin }) 
         <Transactions onPaid={onRefresh} />
       </div>
 
-      <AvatarDialog form={form} user={user} />
+      {avatarOpen && (
+        <Suspense fallback={null}>
+          <AvatarEditorDialog onUser={onUser} onClose={() => setAvatarOpen(false)} />
+        </Suspense>
+      )}
       <UsernameDialog form={form} user={user} />
       <PlayerNameDialog form={form} />
       <PasswordDialog form={form} />

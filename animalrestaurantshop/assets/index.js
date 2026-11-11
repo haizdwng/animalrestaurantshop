@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/IconCopy.js","assets/clipboard.js","assets/Tile.js","assets/IconUsers.js","assets/IconPhoto.js","assets/IconCheck.js","assets/IconPlus.js","assets/IconSearch.js","assets/Account.js","assets/IconStarFilled.js","assets/IconPencil.js","assets/IconUserPlus.js","assets/useRemoteResource.js","assets/IconGift.js","assets/Avatar.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/clipboard.js","assets/Tile.js","assets/IconUsers.js","assets/IconPhoto.js","assets/IconCheck.js","assets/IconPlus.js","assets/IconSearch.js","assets/Account.js","assets/IconPencil.js","assets/IconStarFilled.js","assets/IconUserPlus.js","assets/useRemoteResource.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
 // \0rolldown/runtime.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -14508,30 +14508,6 @@ var IconLoader2 = createReactComponent("outline", "loader-2", "Loader2", [["path
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconPalette = createReactComponent("outline", "palette", "Palette", [
-	["path", {
-		"d": "M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25",
-		"key": "svg-0"
-	}],
-	["path", {
-		"d": "M7.5 10.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0",
-		"key": "svg-1"
-	}],
-	["path", {
-		"d": "M11.5 7.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0",
-		"key": "svg-2"
-	}],
-	["path", {
-		"d": "M15.5 10.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0",
-		"key": "svg-3"
-	}]
-]);
-/**
-* @license @tabler/icons-react v3.51.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
 var IconRefresh = createReactComponent("outline", "refresh", "Refresh", [["path", {
 	"d": "M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4",
 	"key": "svg-0"
@@ -16655,23 +16631,15 @@ var claimCheckin = async () => withUser(await call("POST", "/user/checkin"));
 // src/shared/configuration/navigation.js
 var DEFAULT_DESTINATION = "/shop";
 var AUTHENTICATION_PATH = /^\/(?:login|register|forgot)(?:\/|$)/i;
-var NAV = [
-	[
-		"shop",
-		"Cửa hàng",
-		IconBuildingStore
-	],
-	[
-		"avatar",
-		"Ảnh đại diện",
-		IconPalette
-	],
-	[
-		"user",
-		"Tài khoản",
-		IconUserCircle
-	]
-];
+var NAV = [[
+	"shop",
+	"Cửa hàng",
+	IconBuildingStore
+], [
+	"user",
+	"Tài khoản",
+	IconUserCircle
+]];
 var ADMIN_NAV = [[
 	"administrator",
 	"Quản trị viên",
@@ -16681,9 +16649,8 @@ var DEFAULT_TAB = "shop";
 [...NAV, ...ADMIN_NAV].map((n) => n[0]);
 var getNavigationItemsForRole = (admin) => admin ? [
 	NAV[0],
-	NAV[1],
 	...ADMIN_NAV,
-	NAV[2]
+	NAV[1]
 ] : NAV;
 var getSafeDestination = (destination) => {
 	if (typeof destination !== "string" || !destination.startsWith("/") || destination.startsWith("//")) return DEFAULT_DESTINATION;
@@ -17176,14 +17143,13 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 };
 // src/application/App.jsx
 var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([0,1,2,3])));
-var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11,12,13,14])));
-var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([15,8,16,2,3,17,7,18,6,19,14,20])));
-var Avatar = (0, import_react.lazy)(() => __vitePreload(() => import("./Avatar.js"), __vite__mapDeps([21,11,12,5,7])));
-var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([22,23,10])));
-var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([24,20,17,13,5,23,10,19])));
-var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([25,14,18,23,10,2,19,26,17,5])));
-var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([27,1,14,23,10,16,7,8,13,5,9,11,19,26,17,2])));
-var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([28,23,10,26,17,13,5,9,11])));
+var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11,12,13])));
+var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([14,7,2,3,15,16,17,6,18,13,19])));
+var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([20,21,9])));
+var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([22,19,15,12,5,21,9,18])));
+var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([23,13,17,21,9,2,18,24,15,5])));
+var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([25,1,13,21,9,16,7,12,5,8,10,18,24,15,2])));
+var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([26,21,9,24,15,12,5,8,10])));
 var AUTHENTICATION_PATHS = [
 	"/login",
 	"/register",
@@ -17338,10 +17304,6 @@ function AppContent() {
 									onRefresh: refreshUser
 								})
 							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-								path: "/avatar",
-								element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Avatar, { onUser: setUser })
-							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Route, {
 								path: "/administrator",
 								element: admin ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminPanel, {}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
@@ -17432,4 +17394,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)({ md5: "b750a6e2b3d860ae46efcc050e03db3b" });
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
-export { Logo as $, adminUsers as A, useNavigate as At, redeemGiftCode as B, adminPlayer as C, IconDeviceFloppy as Ct, adminSaveData as D, createReactComponent as Dt, adminRecord as E, IconAlertTriangle as Et, buy as F, passwordOtp as G, updateAvatar as H, changeOpenid as I, signupOtp as J, resetPassword as K, getBuffetLink as L, createTransaction as M, require_react_dom as Mt, getTransaction as N, require_react as Nt, adminSaveRecord as O, Outlet as Ot, getTransactions as P, __toESM as Pt, Coin as Q, getFriendLink as R, adminGiftCodes as S, IconInfoCircle as St, adminPlayers as T, IconBuildingStore as Tt, updateUser as U, submitInvite as V, login as W, isAdmin as X, fileToAvatar as Y, normShop as Z, adminDeleteUser as _, Field as _t, formatShortDateTime as a, ErrorState as at, adminEditUser as b, IconX as bt, adminAddPlayerFriend as c, Tabs as ct, adminCreateGiftCode as d, SortSelect as dt, JsonEditor as et, adminCreateUser as f, Menu as ft, adminDeletePlayerFriend as g, toastError as gt, adminDeleteGiftCode as h, toast as ht, formatNumber as i, Skeleton as it, cancelTransaction as j, useParams as jt, adminUpdatePlayerAvatar as k, useLocation as kt, adminAddPlayerLike as l, PageSizeSelect as lt, adminDecryptRecordValue as m, OtpButton as mt, formatDate as n, PagerSkeleton as nt, formatVietnameseDong as o, Spinner as ot, adminData as p, Dialog as pt, signup as q, formatDateTime as r, RowSkeleton as rt, adminAddCoin as s, Pager as st, compareByTime as t, Line as tt, adminAddPlayerStar as u, Select as ut, adminEditGiftCode as v, Button as vt, adminPlayerFriends as w, IconCircleCheck as wt, adminEncryptRecordValue as x, IconRefresh as xt, adminEditPlayer as y, require_jsx_runtime as yt, openidOtp as z };
+export { Coin as $, adminUpdatePlayerAvatar as A, useLocation as At, openidOtp as B, adminGiftCodes as C, IconInfoCircle as Ct, adminRecord as D, IconAlertTriangle as Dt, adminPlayers as E, IconBuildingStore as Et, getTransactions as F, __toESM as Ft, login as G, submitInvite as H, buy as I, signup as J, passwordOtp as K, changeOpenid as L, cancelTransaction as M, useParams as Mt, createTransaction as N, require_react_dom as Nt, adminSaveData as O, createReactComponent as Ot, getTransaction as P, require_react as Pt, normShop as Q, getBuffetLink as R, adminEncryptRecordValue as S, IconRefresh as St, adminPlayerFriends as T, IconCircleCheck as Tt, updateAvatar as U, redeemGiftCode as V, updateUser as W, fileToAvatar as X, signupOtp as Y, isAdmin as Z, adminDeletePlayerFriend as _, toastError as _t, formatNumber as a, Skeleton as at, adminEditPlayer as b, require_jsx_runtime as bt, adminAddCoin as c, Pager as ct, adminAddPlayerStar as d, Select as dt, Logo as et, adminCreateGiftCode as f, SortSelect as ft, adminDeleteGiftCode as g, toast as gt, adminDecryptRecordValue as h, OtpButton as ht, formatDateTime as i, RowSkeleton as it, adminUsers as j, useNavigate as jt, adminSaveRecord as k, Outlet as kt, adminAddPlayerFriend as l, Tabs as lt, adminData as m, Dialog as mt, compareByTime as n, Line as nt, formatShortDateTime as o, ErrorState as ot, adminCreateUser as p, Menu as pt, resetPassword as q, formatDate as r, PagerSkeleton as rt, formatVietnameseDong as s, Spinner as st, __vitePreload as t, JsonEditor as tt, adminAddPlayerLike as u, PageSizeSelect as ut, adminDeleteUser as v, Field as vt, adminPlayer as w, IconDeviceFloppy as wt, adminEditUser as x, IconX as xt, adminEditGiftCode as y, Button as yt, getFriendLink as z };

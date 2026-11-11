@@ -1,8 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { IconUpload } from '@tabler/icons-react';
-import { fileToAvatar } from '@/shared/library/image';
 import { validate } from '@/shared/library/validate';
-import { Button, Dialog, Field, OtpButton, toast } from '@/shared/components/ui';
+import { Button, Dialog, Field, OtpButton } from '@/shared/components/ui';
 import StrengthBar from '@/shared/components/StrengthBar';
 import * as api from '@/shared/library/api';
 
@@ -15,107 +12,12 @@ function FormDialog({ form, kind, title, onSubmit, children }) {
         noValidate
         className='space-y-4'
         onSubmit={(e) => {
-          e.preventDefault()
-          onSubmit()
+          e.preventDefault();
+          onSubmit();
         }}
       >
         {children}
       </form>
-    </Dialog>
-  );
-};
-
-export function AvatarDialog({ form, user }) {
-  const [progress, setProgress] = useState(0);
-  const [progressMessage, setProgressMessage] = useState('');
-  const progressRef = useRef({
-    current: 0,
-    target: 0
-  });
-  const { preview, setPreview, busy, submit } = form;
-  useEffect(() => () => preview?.url && URL.revokeObjectURL(preview.url), [preview]);
-  const pickFile = async (e) => {
-    const file = e.target.files?.[0];
-    e.target.value = '';
-    if (!file) return;
-    try {
-      const original = fileToAvatar(file);
-      setPreview({ file: original, url: URL.createObjectURL(original) });
-    } catch (err) {
-      toast(err.message, 'err');
-    };
-  };
-  useEffect(() => {
-    if (!busy) return;
-    const interval = setInterval(() => {
-      const state = progressRef.current;
-      if (state.current < state.target) {
-        state.current = Math.min(state.current + 1, state.target);
-        setProgress(state.current);
-      };
-    }, 40);
-    return () => clearInterval(interval);
-  }, [busy]);
-  return (
-    <Dialog open={form.open === 'avatar'} title='Đổi ảnh đại diện' onClose={form.close}>
-      <label className='mx-auto grid aspect-square w-full max-w-[min(100%,50dvh)] cursor-pointer place-items-center overflow-hidden rounded-2xl border border-dashed border-line bg-bg hover:border-lime'>
-        {preview?.url || user.avatar ? (
-          <img src={preview?.url || user.avatar} alt='Xem trước' className='size-full object-cover' />
-        ) : (
-          <span className='flex flex-col items-center gap-2 text-xs text-mute'>
-            <IconUpload size={28} /> Chọn ảnh đại diện
-          </span>
-        )}
-        <input type='file' accept='.jpg,.jpeg,.png' className='hidden' onChange={pickFile} />
-      </label>
-      <p className='text-center text-[11px] text-mute'>{preview ? 'Bấm vào ảnh đại diện để chọn ảnh khác' : 'JPG, JPEG, PNG · tối đa 8MB · ảnh gốc được giữ nguyên'}</p>
-      
-        {busy && (
-          <div className='space-y-2'>
-            <div className='flex items-center justify-between gap-3 text-xs'>
-              <span className='truncate text-mute'>
-                {progressMessage}
-              </span>
-              <span className='shrink-0 font-semibold tabular-nums text-fg'>
-                {progress}%
-              </span>
-            </div>
-
-            <div
-              className='h-2 overflow-hidden rounded-full bg-bg'
-              role='progressbar'
-              aria-valuenow={progress}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <div
-                className='h-full rounded-full bg-lime transition-[width] duration-300 ease-out'
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-        )}
-        <div className='flex gap-2'>
-          <Button
-            className='flex-1'
-            disabled={!preview}
-            loading={busy}
-            onClick={() => {
-              progressRef.current = {
-                current: 0,
-                target: 0
-              };
-              setProgress(0);
-              setProgressMessage('Đang chuẩn bị');
-              submit({}, () => api.updateAvatar(preview.file, (value, message) => {
-                progressRef.current.target = value;
-                setProgressMessage(message);
-              }), 'Đã đổi ảnh đại diện');
-            }}
-          >
-            Đổi ảnh đại diện
-          </Button>
-        </div>
     </Dialog>
   );
 };
@@ -141,7 +43,7 @@ export function UsernameDialog({ form, user }) {
 };
 
 export function PlayerNameDialog({ form }) {
-  const { f, errors, busy, set, submit } = form
+  const { f, errors, busy, set, submit } = form;
   return (
     <FormDialog form={form} kind='playerName' title='Đổi tên người chơi' onSubmit={() => submit({ value: validate.playerName(f.value) }, () => api.updateUser({ name: f.value.trim() }), 'Đã đổi tên người chơi')}>
       <Field label='Tên người chơi mới' hint={`${f.value.trim().length}/32`} maxLength={32} autoFocus value={f.value} onChange={set('value')} error={errors.value} />

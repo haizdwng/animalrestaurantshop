@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useReducer } from 'react';
+import { useEffect, useMemo, useReducer, useRef } from 'react';
 import { DRAFT_KEY } from '@/features/avatar/config';
 import { INITIAL_DOC, initialState, reducer, sanitizeDoc } from '@/features/avatar/avatarEditorState';
 
@@ -12,18 +12,25 @@ function loadDraft() {
 
 export default function useAvatarEditor() {
   const [state, dispatch] = useReducer(reducer, undefined, () => initialState(loadDraft()));
+  const latestDoc = useRef(state.doc);
+  latestDoc.current = state.doc;
 
   useEffect(() => {
-    const t = setTimeout(() => {
+    const timeout = setTimeout(() => {
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify(state.doc));
-      } catch {
-      };
+      } catch {};
     }, 400);
-    return () => clearTimeout(t);
+    return () => clearTimeout(timeout);
   }, [state.doc]);
 
-  const selected = useMemo(() => state.doc.items.find((i) => i.id === state.selectedId) || null, [state.doc, state.selectedId]);
+  useEffect(() => () => {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(latestDoc.current));
+    } catch {};
+  }, []);
+
+  const selected = useMemo(() => state.doc.items.find((item) => item.id === state.selectedId) || null, [state.doc, state.selectedId]);
 
   return { doc: state.doc, selected, selectedId: state.selectedId, canUndo: state.past.length > 0, canRedo: state.future.length > 0, dispatch };
 };

@@ -3,18 +3,27 @@ import { EXPORT_SIZE, STAGE } from '@/features/avatar/config';
 import { CLOSE_RADIUS, getCloseButtonPosition, getItemSize } from '@/features/avatar/geometry';
 import { preloadImages } from '@/features/avatar/imageLoading';
 
-export const getAvatarLayerIdentifiers = (avatarDocument) => [
+export const getAvatarLayerIdentifiers = (avatarDocument) => avatarDocument.photo ? [] : [
   BACKGROUNDS[avatarDocument.background],
   ROLES[avatarDocument.role],
   FACES[avatarDocument.role][avatarDocument.emoji]
 ];
 
 export const getAvatarDocumentImageUrls = (avatarDocument) => [
-  ...getAvatarLayerIdentifiers(avatarDocument),
-  ...avatarDocument.items.map((item) => item.src)
-].map(imageUrl);
+  ...(avatarDocument.photo ? [avatarDocument.photo] : getAvatarLayerIdentifiers(avatarDocument).map(imageUrl)),
+  ...avatarDocument.items.map((item) => imageUrl(item.src))
+];
 
 function drawBaseLayer(avatarDocument, pixelSize, images) {
+  if (avatarDocument.photo) {
+    const photo = images.get(avatarDocument.photo);
+    if (!photo) return null;
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = pixelSize;
+    canvas.getContext('2d').drawImage(photo, 0, 0, pixelSize, pixelSize);
+    return canvas;
+  };
+
   const baseImages = getAvatarLayerIdentifiers(avatarDocument).map((identifier) => images.get(imageUrl(identifier)));
   if (baseImages.some((image) => !image)) return null;
 
@@ -123,6 +132,7 @@ export function drawAvatar(canvasContext, avatarDocument, { selectedId = null, u
 export async function renderAvatarToBlob(avatarDocument, exportSize = EXPORT_SIZE) {
   const imageUrls = getAvatarDocumentImageUrls(avatarDocument);
   const images = await preloadImages(imageUrls);
+  if (imageUrls.some((url) => !images.has(url))) throw new Error('Chưa tải đủ ảnh để xuất avatar');
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = exportSize;
   const canvasContext = canvas.getContext('2d');
