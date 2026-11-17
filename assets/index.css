@@ -1717,6 +1717,16 @@
     }
   }
 
+  .border-coin\/40 {
+    border-color: #ffc83d66;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .border-coin\/40 {
+      border-color: color-mix(in oklab, var(--color-coin) 40%, transparent);
+    }
+  }
+
   .border-lime {
     border-color: var(--color-lime);
   }
