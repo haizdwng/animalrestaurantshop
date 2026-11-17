@@ -1,62 +1,92 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: 'JetBrains Mono', ui-monospace, monospace;
+  --font-sans: 'JetBrains Mono', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  --color-bg: #0c0d0f;
-  --color-panel: #141518;
-  --color-raise: #1c1e22;
-  --color-line: #2a2c31;
-  --color-fg: #eceae3;
-  --color-mute: #8d9097;
+  --color-bg: #0e1012;
+  --color-panel: #17191c;
+  --color-raise: #22252a;
+  --color-line: #353940;
+  --color-fg: #f1f2f3;
+  --color-mute: #a3a8b0;
   --color-lime: #d4ff3a;
   --color-coin: #ffc83d;
   --color-bad: #ff5d47;
   --color-ok: #3ddc84;
-
-  --animate-toast-in: toast-in 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  --animate-toast-in: toast-in .24s cubic-bezier(.2, .9, .25, 1);
   --animate-toast-bar: toast-bar linear forwards;
-  --animate-pop: pop 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.1);
-  --animate-fade: fade 0.18s ease-out;
-
+  --animate-pop: pop .22s cubic-bezier(.2, .8, .2, 1);
+  --animate-fade: fade .18s ease-out;
+  --animate-shimmer: shimmer 1.3s linear infinite;
+  --animate-indeterminate: indeterminate 1.15s ease-in-out infinite;
+  --animate-rise: rise .30s cubic-bezier(.2, .8, .2, 1) both;
   @keyframes toast-in {
-    from { opacity: 0; transform: translateY(-12px) scale(0.96); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    } to {
+      opacity: 1;
+      transform: none;
+    }
   }
   @keyframes toast-bar {
-    from { transform: scaleX(1); }
-    to { transform: scaleX(0); }
+    from {
+      transform: scaleX(1);
+    } to {
+      transform: scaleX(0);
+    }
   }
   @keyframes pop {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: none; }
-  }
-  --animate-shimmer: shimmer 1.3s linear infinite;
-  --animate-indeterminate: indeterminate 1.1s ease-in-out infinite;
-  --animate-bounce-slow: bounce-slow 1.4s ease-in-out infinite;
-  --animate-rise: rise 0.35s cubic-bezier(0.2, 0.9, 0.3, 1) both;
-
-  @keyframes shimmer {
-    from { background-position: 200% 0; }
-    to { background-position: -200% 0; }
-  }
-  @keyframes indeterminate {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(300%); }
-  }
-  @keyframes bounce-slow {
-    0%, 100% { transform: translateY(0) rotate(0); }
-    50% { transform: translateY(-8px) rotate(-6deg); }
-  }
-  @keyframes rise {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(.985);
+    } to {
+      opacity: 1;
+      transform: none;
+    }
   }
   @keyframes fade {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    } to {
+      opacity: 1;
+    }
   }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    } to {
+      background-position: -200% 0;
+    }
+  }
+  @keyframes indeterminate {
+    from {
+      transform: translateX(-100%);
+    } to {
+      transform: translateX(300%);
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(7px);
+    } to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --ui-radius-small: .625rem;
+  --ui-radius: .875rem;
+  --ui-radius-large: 1.125rem;
+  --ui-transition: 150ms ease;
+  --ui-shadow: 0 20px 60px rgb(0 0 0 / 35%);
+  --ui-focus: 0 0 0 3px color-mix(in srgb, var(--color-lime) 20%, transparent);
 }
 
 @layer base {
@@ -66,29 +96,143 @@
     overflow-x: clip;
   }
   body {
+    min-width: 320px;
+    min-height: 100dvh;
     background: var(--color-bg);
     color: var(--color-fg);
     color-scheme: dark;
     font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
   }
-  button,
-  select,
-  input {
+  button, select, input, textarea {
     font: inherit;
+  }
+  button, a, select, input, textarea {
+    touch-action: manipulation;
+  }
+  button {
+    user-select: none;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  :where(a, button, input, textarea, select, [role='button'], [tabindex]):focus-visible {
+    outline: 2px solid var(--color-lime);
+    outline-offset: 3px;
   }
   ::selection {
     background: var(--color-lime);
     color: var(--color-bg);
   }
-  input[type='number']::-webkit-inner-spin-button,
-  input[type='number']::-webkit-outer-spin-button {
+  input[type='number']::-webkit-inner-spin-button, input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
   input[type='number'] {
     -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  textarea {
+    resize: vertical;
+  }
+  :where(input,textarea)::placeholder {
+    color: var(--color-mute);
+    opacity: .72;
+  }
+  :where(input, textarea, select):disabled {
+    opacity: .6;
+  }
+  :where(pre, code, kbd, samp) {
+    font-family:
+    var(--font-mono);
+  }
+}
+
+@layer components {
+  .ui-card {
+    border: 1px solid var(--color-line);
+    border-radius: var(--ui-radius-large);
+    background: var(--color-panel);
+  }
+  .ui-panel {
+    border: 1px solid var(--color-line);
+    border-radius: var(--ui-radius);
+    background: var(--color-panel);
+  }
+  .ui-control {
+    min-height: 40px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--ui-radius-small);
+    background: var(--color-bg);
+    color: var(--color-fg);
+    transition: border-color var(--ui-transition), background-color var(--ui-transition), box-shadow var(--ui-transition);
+  }
+  .ui-control:hover:not(:disabled) {
+    border-color: var(--color-mute);
+  }
+  .ui-control:focus-within {
+    border-color: var(--color-lime);
+    box-shadow: var(--ui-focus);
+  }
+  .ui-heading {
+    font-size: clamp(1.125rem, 1.6vw, 1.5rem);
+    font-weight: 800; line-height: 1.25;
+    letter-spacing: -.03em;
+  }
+  .ui-description {
+    color: var(--color-mute);
+    font-size: .75rem;
+    line-height: 1.6;
+  }
+  .ui-nav-item { 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    min-height: 36px;
+    border-radius: var(--ui-radius-small);
+    padding: .45rem .75rem;
+    font-size: .76rem;
+    font-weight: 650;
+    color: var(--color-mute);
+    transition: background var(--ui-transition), color var(--ui-transition);
+  }
+  .ui-nav-item:hover {
+    background: var(--color-raise);
+    color: var(--color-fg);
+  }
+  .ui-nav-item[aria-current='page'], .ui-nav-item[aria-selected='true'] {
+    background: var(--color-raise);
+    color: var(--color-fg);
+  }
+  .ui-tooltip {
+    pointer-events: none;
+    position: absolute;
+    z-index: 80;
+    max-width: min(18rem, calc(100vw - 2rem));
+    border: 1px solid var(--color-line);
+    border-radius: .5rem;
+    background: var(--color-raise);
+    color: var(--color-fg);
+    padding: .375rem .625rem;
+    font-size: .7rem;
+    font-weight: 500;
+    line-height: 1.4;
+    box-shadow: var(--ui-shadow);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 120ms ease, transform 120ms ease;
+  }
+  .ui-tooltip-anchor:is(:hover,:focus-within) .ui-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .ui-form-stack {
+    display: grid;
+    gap: 1rem;
   }
 }
 
@@ -98,24 +242,21 @@
     display: none;
   }
 }
-
 @utility pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
 }
-
 @utility app-screen {
   padding: 1.25rem 1rem;
-
   @media (min-width: 768px) {
     padding: 1.5rem;
   }
 }
 
-@layer base {
-  @media (prefers-reduced-motion: reduce) {
-    *, ::before, ::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-    }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
   }
 }

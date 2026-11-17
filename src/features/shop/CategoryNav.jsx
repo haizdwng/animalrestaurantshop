@@ -3,38 +3,34 @@ import { formatNumber } from '@/shared/library/format';
 import { Coin, Skeleton } from '@/shared/components/ui';
 import { CATEGORY_ICONS, TOPUP } from '@/features/shop/config';
 
-const CoinIcon = ({ size }) => <Coin size={size} />
+const CoinIcon = ({ size }) => <Coin size={size} />;
 
-function CategoryButton({ id, name, Icon, count, accent, on, onSelect }) {
+function CategoryButton({ id, name, Icon, count, active, featured, onSelect }) {
   return (
-    <button
-      type='button'
-      role='tab'
-      aria-selected={on}
+    <button type='button' aria-current={active ? 'page' : undefined}
       onClick={() => {
-        onSelect(id)
-        if (window.scrollY > 0) window.scrollTo({ top: 0 })
+        onSelect(id);
+        if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: 'auto' });
       }}
-      className={`flex shrink-0 cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-bold transition md:w-full ${on ? (accent ? 'bg-coin text-bg' : 'bg-raise text-fg') : 'text-mute hover:bg-panel hover:text-fg'}`}
-    >
-      <Icon size={17} className={on && !accent ? 'text-lime' : ''} />
-      <span className='flex-1 whitespace-nowrap'>{name}</span>
-      {count !== undefined && <span className={`rounded px-1.5 text-[10px] tabular-nums ${on ? 'bg-bg/40' : 'bg-panel'} ${count === 0 ? 'opacity-40' : ''}`}>{formatNumber(count)}</span>}
+      className={`ui-nav-item relative w-full shrink-0 justify-start text-left md:w-full ${active && featured ? 'border-coin/30! bg-coin/10! text-coin!' : ''}`}>
+      <Icon size={17} className={`shrink-0 ${active && !featured ? 'text-lime' : ''}`} />
+      <span className='min-w-0 flex-1 whitespace-nowrap'>{name}</span>
+      {count !== undefined && <span className={`rounded-md px-1.5 text-[10px] tabular-nums ${active ? 'bg-bg/60' : 'bg-raise'} ${count === 0 ? 'opacity-50' : ''}`}>{formatNumber(count)}</span>}
     </button>
   );
 };
 
 export default function CategoryNav({ tabs, tabId, hits, onSelect }) {
-  const list = tabs || [];
-  const isOn = (id) => tabId === id || (!tabId && id === list[0]?.id);
+  const categories = tabs || [];
+  const active = (id) => tabId === id || (!tabId && id === categories[0]?.id);
   return (
-    <aside className='sticky top-(--app-header-h) z-20 border-b border-line bg-bg/90 backdrop-blur-md supports-backdrop-filter:bg-bg/75 md:top-[calc(var(--app-header-h)+1rem)] md:max-h-[calc(100dvh-var(--app-header-h)-2rem)] md:self-start md:overflow-y-auto md:border-0 md:bg-transparent md:backdrop-blur-none'>
-      <p className='hidden px-3 pb-2 text-[10px] font-bold tracking-[0.2em] text-mute uppercase md:block'>Danh mục</p>
-      <div role='tablist' className='no-scrollbar flex gap-1 overflow-x-auto px-3 py-2 md:flex-col md:overflow-visible md:p-0'>
-        {tabs ? list.map((t) => <CategoryButton key={t.id} id={t.id} name={t.name} Icon={CATEGORY_ICONS[t.id] || IconBox} count={hits[t.id]} on={isOn(t.id)} onSelect={onSelect} />) : Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className='h-8.25 w-28 shrink-0 rounded-lg md:w-full' />)}
-        <div className='mx-1 w-px shrink-0 bg-line md:mx-0 md:my-2 md:h-px md:w-auto' />
-        <CategoryButton key={TOPUP} id={TOPUP} name='Mua xu' Icon={CoinIcon} accent on={isOn(TOPUP)} onSelect={onSelect} />
-      </div>
+    <aside className='sticky top-(--app-header-h) z-20 min-w-0 border-b border-line bg-bg/95 backdrop-blur-xl md:top-[calc(var(--app-header-h)+1rem)] md:max-h-[calc(100dvh-var(--app-header-h)-2rem)] md:self-start md:overflow-y-auto md:border-0 md:bg-transparent md:backdrop-blur-none'>
+      <p className='hidden px-3 pb-2 text-[11px] font-bold tracking-wider text-mute uppercase md:block'>Danh mục</p>
+      <nav aria-label='Danh mục cửa hàng' className='no-scrollbar flex gap-1 overflow-x-auto px-3 py-2 md:flex-col md:p-0'>
+        {tabs ? categories.map(({ id, name }) => <CategoryButton key={id} id={id} name={name} Icon={CATEGORY_ICONS[id] || IconBox} count={hits[id]} active={active(id)} onSelect={onSelect} />) : Array.from({ length: 5 }, (_, index) => <Skeleton key={index} className='h-9 w-27 shrink-0 md:w-full' />)}
+        <div aria-hidden className='mx-1 w-px shrink-0 bg-line md:mx-0 md:my-2 md:h-px md:w-auto' />
+        <CategoryButton id={TOPUP} name='Mua xu' Icon={CoinIcon} active={active(TOPUP)} featured onSelect={onSelect} />
+      </nav>
     </aside>
   );
 };

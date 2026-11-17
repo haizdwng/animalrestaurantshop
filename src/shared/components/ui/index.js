@@ -1,3 +1,4 @@
+export { default as Badge } from '@/shared/components/ui/Badge';
 export { default as Button } from '@/shared/components/ui/Button';
 export { default as Field } from '@/shared/components/ui/Field';
 export { default as OtpButton } from '@/shared/components/ui/OtpButton';
@@ -8,6 +9,8 @@ export { default as Select, SortSelect, PageSizeSelect } from '@/shared/componen
 export { default as Tabs } from '@/shared/components/ui/Tabs';
 export { default as Pager } from '@/shared/components/ui/Pager';
 export { default as JsonEditor } from '@/shared/components/ui/JsonEditor';
+export { default as Tooltip } from '@/shared/components/ui/Tooltip';
+export { default as SearchInput } from '@/shared/components/ui/SearchInput';
 export { Skeleton, Line, RowSkeleton, PagerSkeleton } from '@/shared/components/ui/Skeleton';
 export { Spinner, Splash, ErrorState } from '@/shared/components/ui/Feedback';
 export { Coin, Logo } from '@/shared/components/ui/Brand';

@@ -1,9 +1,10 @@
-export default function Tabs({ tabs, value, onChange }) {
+export default function Tabs({ tabs, value, onChange, label = 'Điều hướng danh mục' }) {
   return (
-    <div className='flex gap-1 overflow-x-auto rounded-lg bg-panel p-1 scrollbar-none'>
-      {tabs.map(([k, l, Icon]) => (
-        <button key={k} onClick={() => onChange(k)} aria-current={value === k ? 'page' : undefined} className={`flex h-8 shrink-0 cursor-pointer items-center gap-2 rounded-md px-3 text-xs font-bold transition ${value === k ? 'bg-raise text-fg shadow-sm' : 'text-mute hover:text-fg'}`}>
-          {Icon && <Icon size={15} />} {l}
+    <div role='tablist' aria-label={label} className='no-scrollbar flex min-w-0 gap-1 overflow-x-auto rounded-xl border border-line bg-panel p-1'>
+      {tabs.map(([key, title, Icon]) => (
+        <button key={key} role='tab' type='button' aria-selected={value === key} onClick={() => onChange(key)}
+          className={`ui-nav-item shrink-0 whitespace-nowrap ${value === key ? 'bg-raise text-fg' : ''}`}>
+          {Icon && <Icon size={16} />} {title}
         </button>
       ))}
     </div>

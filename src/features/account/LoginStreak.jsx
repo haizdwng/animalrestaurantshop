@@ -1,21 +1,11 @@
 import { IconCalendarCheck, IconGift } from '@tabler/icons-react';
-import { Button, Coin, toast } from '@/shared/components/ui';
+import { Badge, Button, Coin, toast } from '@/shared/components/ui';
 import { formatNumber } from '@/shared/library/format';
 import { CHECKIN_DAYS } from '@/shared/library/api/checkin';
 import { getLoginStreakProgress } from '@/features/account/loginStreakProgress';
 
 export default function LoginStreak({ checkin, onClaim, onUser }) {
-  const {
-    streak = 0,
-    claimedToday = false,
-    canClaim = false,
-    nextReward = 5,
-    rewards = [5, 5, 5, 5, 5, 5, 30],
-    loading = false,
-    claiming = false,
-    error = '',
-    loaded = false
-  } = checkin || {};
+  const { streak = 0, claimedToday = false, canClaim = false, nextReward = 5, rewards = [5, 5, 5, 5, 5, 5, 30], loading = false, claiming = false, error = '', loaded = false } = checkin || {};
   const { completed, newCycle, days } = getLoginStreakProgress({ streak, claimedToday, canClaim, rewards });
   const claimReward = newCycle ? rewards[0] ?? 5 : nextReward;
 
@@ -23,91 +13,45 @@ export default function LoginStreak({ checkin, onClaim, onUser }) {
     try {
       const result = await onClaim();
       if (!result) return;
-      const gained = result.reward ?? result.checkin?.reward ?? claimReward;
       if (result.user && onUser) onUser(result.user);
-      toast(`Đã nhận +${formatNumber(gained)} xu đăng nhập ngày ${result.checkin?.streak ?? (newCycle ? 1 : completed + 1)}!`, 'ok');
-    } catch (e) {
-      toast(e?.message || 'Không nhận được thưởng', 'err');
+      const gained = result.reward ?? result.checkin?.reward ?? claimReward;
+      toast(`Đã nhận +${formatNumber(gained)} xu đăng nhập ngày ${result.checkin?.streak ?? (newCycle ? 1 : completed + 1)}!`);
+    } catch (requestError) {
+      toast(requestError?.message || 'Không nhận được phần thưởng', 'err');
     };
   };
 
   return (
-    <div className='relative overflow-hidden rounded-2xl border border-line bg-panel p-4'>
-      <div aria-hidden className='absolute inset-x-0 top-0 h-16 bg-[radial-gradient(70%_100%_at_100%_0%,color-mix(in_oklab,var(--color-coin)_16%,transparent),transparent)]' />
-      <div className='relative flex items-start justify-between gap-3'>
-        <div className='min-w-0'>
-          <div className='flex items-center gap-2'>
-            <span className='grid size-8 place-items-center rounded-xl bg-coin/15 text-coin'>
-              <IconCalendarCheck size={16} />
-            </span>
-            <div>
-              <h2 className='text-sm font-extrabold tracking-tight'>Đăng nhập 7 ngày</h2>
-              <p className='text-[11px] text-mute'>
-                {loaded ? claimedToday ? `Chuỗi ${completed}/${CHECKIN_DAYS} ngày · Đã nhận hôm nay` : newCycle ? 'Đã hoàn thành 7 ngày · Bắt đầu chu kỳ mới' : `Chuỗi ${completed}/${CHECKIN_DAYS} ngày · Nhận quà hôm nay` : 'Đang tải tiến trình…'}
-              </p>
-            </div>
-          </div>
+    <section className='ui-card space-y-4 p-4'>
+      <header className='flex items-center gap-3'>
+        <span className='grid size-10 shrink-0 place-items-center rounded-xl bg-coin/10 text-coin'><IconCalendarCheck size={21} /></span>
+        <div className='min-w-0 flex-1'>
+          <h2 className='text-sm font-extrabold'>Đăng nhập 7 ngày</h2>
+          <p className='mt-0.5 text-[11px] text-mute'>
+            {loaded ? claimedToday ? `Chuỗi ${completed}/${CHECKIN_DAYS} ngày · Đã nhận hôm nay` : newCycle ? 'Đã hoàn thành · Bắt đầu chu kỳ mới' : `Chuỗi ${completed}/${CHECKIN_DAYS} ngày` : 'Đang tải tiến trình…'}
+          </p>
         </div>
-        {canClaim && (
-          <span className='shrink-0 rounded-full bg-lime px-2 py-0.5 text-[10px] font-extrabold text-bg'>Mới</span>
-        )}
-      </div>
-
-      <div className='relative mt-4 grid grid-cols-7 gap-1.5'>
+        {canClaim && <Badge tone='accent'>Có quà</Badge>}
+      </header>
+      <div className='grid grid-cols-7 gap-1.5'>
         {days.map(({ day, reward, done, isToday }) => (
-          <div
-            key={day}
-            aria-label={`Ngày ${day}: ${done ? 'đã hoàn thành' : isToday ? 'có thể nhận hôm nay' : 'chưa đến lượt'}`}
-            className={`relative flex flex-col items-center gap-1 rounded-xl px-0.5 py-2 text-center transition ${
-              done ? 'bg-ok/15 ring-1 ring-ok/30' : isToday ? 'bg-coin/15 ring-1 ring-coin/40' : 'bg-bg ring-1 ring-line'
-            }`}
-          >
-            <span className={`text-[10px] font-bold ${done ? 'text-ok' : isToday ? 'text-coin' : 'text-mute'}`}>
-              Ngày {day}
+          <div key={day} aria-label={`Ngày ${day}: ${done ? 'đã nhận' : isToday ? 'có thể nhận' : 'chưa nhận'}`}
+            className={`flex min-w-0 flex-col items-center gap-1.5 rounded-lg border px-0.5 py-2 text-center ${done ? 'border-ok/25 bg-ok/10' : isToday ? 'border-coin/30 bg-coin/10' : 'border-line bg-bg'}`}>
+            <span className={`text-[10px] font-semibold ${done ? 'text-ok' : isToday ? 'text-coin' : 'text-mute'}`}>{day}</span>
+            <span className={`grid size-7 place-items-center rounded-full text-[11px] font-bold ${done ? 'bg-ok/20 text-ok' : isToday ? 'bg-coin/20 text-coin' : 'bg-raise text-mute'}`}>
+              {done ? '✓' : day === 7 ? <IconGift size={13} /> : reward}
             </span>
-            <span
-              className={`grid size-7 place-items-center rounded-full text-[10px] font-extrabold tabular-nums ${
-                done ? 'bg-ok/25 text-ok' : isToday ? 'bg-coin/25 text-coin' : 'bg-raise text-mute'
-              }`}
-            >
-              {done ? '✓' : day === 7 ? <IconGift size={12} /> : reward}
-            </span>
-            <span className={`flex items-center gap-0.5 text-[9px] font-bold tabular-nums ${done ? 'text-ok' : isToday ? 'text-coin' : 'text-mute'}`}>
-              {day === 7 && !done ? (
-                <>
-                  <Coin size={10} />
-                  {reward}
-                </>
-              ) : done ? (
-                'xong'
-              ) : (
-                <>
-                  <Coin size={10} />
-                  {reward}
-                </>
-              )}
+            <span className={`flex items-center gap-0.5 text-[10px] font-bold tabular-nums ${done ? 'text-ok' : isToday ? 'text-coin' : 'text-mute'}`}>
+              {!done && <Coin size={10} />}{done ? 'Xong' : reward}
             </span>
           </div>
         ))}
       </div>
-
-      <div className='relative mt-4'>
-        {error && !loading && <p className='mb-2 text-[11px] text-bad'>{error}</p>}
-        <Button
-          variant={canClaim ? 'solid' : 'ghost'}
-          size='sm'
-          className='w-full'
-          loading={claiming || loading}
-          disabled={!canClaim || claiming || loading}
-          onClick={handleClaim}
-        >
-          {claiming ? 'Đang nhận…' : canClaim ? (
-            <>
-              Nhận +{formatNumber(claimReward)} xu hôm nay
-            </>
-          ) : claimedToday ? 'Đã nhận quà hôm nay' : loading ? 'Đang tải…' : 'Chưa thể nhận'}
-        </Button>
-      </div>
-    </div>
+      {error && !loading && <p role='alert' className='text-xs text-bad'>{error}</p>}
+      <Button className='w-full' variant={canClaim ? 'solid' : 'ghost'} size='sm' loading={claiming || loading}
+        disabled={!canClaim || claiming || loading} onClick={handleClaim}>
+        {claiming ? 'Đang nhận…' : canClaim ? `Nhận +${formatNumber(claimReward)} xu hôm nay` : claimedToday ? 'Đã nhận quà hôm nay' : loading ? 'Đang tải…' : 'Chưa thể nhận'}
+      </Button>
+    </section>
   );
 };

@@ -1,4 +1,4 @@
-import { $t as require_react, Bt as require_jsx_runtime, D as formatVietnameseDong, Dt as Spinner, Ht as IconRefresh, It as toast, Lt as toastError, Pt as Dialog, Q as cancelTransaction, T as formatNumber, Vt as IconX, Wt as IconCircleCheck, en as __toESM, et as getTransaction, qt as createReactComponent, yt as Coin, zt as Button } from "./index.js";
+import { D as formatVietnameseDong, Ht as IconX, It as Dialog, Kt as IconCircleCheck, Q as cancelTransaction, Rt as toast, T as formatNumber, Vt as Button, Wt as IconRefresh, Xt as Badge, Yt as createReactComponent, Zt as require_jsx_runtime, et as getTransaction, in as __toESM, kt as Spinner, rn as require_react, yt as Coin, zt as toastError } from "./index.js";
 import { r as IconCopy, t as copyText } from "./clipboard.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
@@ -101,34 +101,31 @@ var import_jsx_runtime = require_jsx_runtime();
 var STATUS = {
 	pending: {
 		label: "Chờ thanh toán",
-		cls: "bg-coin/15 text-coin",
+		tone: "warning",
 		Icon: IconClock
 	},
 	success: {
 		label: "Thành công",
-		cls: "bg-ok/15 text-ok",
+		tone: "success",
 		Icon: IconCircleCheck
 	},
 	cancelled: {
-		label: "Đã huỷ",
-		cls: "bg-raise text-mute",
+		label: "Đã hủy",
+		tone: "neutral",
 		Icon: IconBan
 	},
 	expired: {
 		label: "Hết hạn",
-		cls: "bg-raise text-mute",
+		tone: "neutral",
 		Icon: IconHourglassEmpty
 	}
 };
 function StatusBadge({ status }) {
-	const s = STATUS[status] || STATUS.pending;
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-		className: `inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold whitespace-nowrap ${s.cls}`,
-		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(s.Icon, { size: 11 }),
-			" ",
-			s.label
-		]
+	const { Icon, tone, label } = STATUS[status] || STATUS.pending;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+		Icon,
+		tone,
+		children: label
 	});
 }
 // src/shared/components/payment/PaymentDialog.jsx

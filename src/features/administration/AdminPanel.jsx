@@ -5,15 +5,11 @@ import { ADMIN_TABS } from '@/features/administration/config';
 export default function AdminPanel() {
   const location = useLocation();
   const navigate = useNavigate();
-  const relativePath = location.pathname.replace(/^\/administrator\/?/, '');
-  const requestedTab = relativePath.split('/')[0] || 'giftcodes';
-  const tab = ADMIN_TABS.some(([key]) => key === requestedTab) ? requestedTab : 'giftcodes';
-
-  const visit = (next) => navigate(`/administrator/${next}`);
-
+  const requestedTab = location.pathname.replace(/^\/administrator\/?/, '').split('/')[0] || 'giftcodes';
+  const activeTab = ADMIN_TABS.some(([key]) => key === requestedTab) ? requestedTab : 'giftcodes';
   return (
-    <div className='app-screen space-y-4'>
-      <Tabs tabs={ADMIN_TABS} value={tab} onChange={visit} />
+    <div className='app-screen space-y-5'>
+      <Tabs tabs={ADMIN_TABS} value={activeTab} label='Quản trị viên' onChange={(next) => navigate(`/administrator/${next}`)} />
       <Outlet />
     </div>
   );

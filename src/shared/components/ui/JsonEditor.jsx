@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import { IconBraces, IconDeviceFloppy, IconRefresh } from '@tabler/icons-react';
+import Button from '@/shared/components/ui/Button';
 import { ErrorState, Spinner } from '@/shared/components/ui/Feedback';
 import { Skeleton } from '@/shared/components/ui/Skeleton';
 import { toast, toastError } from '@/shared/components/ui/Toast';
-import Button from '@/shared/components/ui/Button';
 
-const pretty = (v) => JSON.stringify(v, null, 2);
-const SKELETON_LINES = [40, 62, 55, 70, 48, 66, 35, 58, 44, 30];
-const EDITOR_HEIGHT_CLASS = 'h-[clamp(22rem,62dvh,48rem)] min-h-72';
-const MONACO_OPTIONS = {
+const formatJson = (value) => JSON.stringify(value, null, 2);
+const EDITOR_HEIGHT = 'h-[clamp(22rem,62dvh,48rem)] min-h-72';
+const LOADING_WIDTHS = [40, 62, 55, 70, 48, 66, 35, 58, 44, 30];
+const EDITOR_OPTIONS = {
   automaticLayout: true,
   minimap: { enabled: false },
   fontFamily: "'JetBrains Mono', ui-monospace, monospace",
@@ -27,120 +27,129 @@ const MONACO_OPTIONS = {
   quickSuggestions: false
 };
 
+function applyEditorTheme(monaco) {
+  const styles = getComputedStyle(document.documentElement);
+  const token = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
+  monaco.editor.defineTheme('animal-restaurant-shop', {
+    base: 'vs-dark', inherit: true, rules: [],
+    colors: {
+      'editor.background': token('--color-bg', '#0e1012'),
+      'editor.foreground': token('--color-fg', '#f1f2f3'),
+      'editorLineNumber.foreground': token('--color-mute', '#a3a8b0'),
+      'editorCursor.foreground': token('--color-lime', '#d4ff3a'),
+      'editor.selectionBackground': '#3b4641',
+      'editor.inactiveSelectionBackground': '#2a3230',
+      'editorWidget.background': token('--color-panel', '#17191c'),
+      'editorWidget.border': token('--color-line', '#353940'),
+      'input.background': token('--color-panel', '#17191c'),
+      'input.foreground': token('--color-fg', '#f1f2f3')
+    }
+  });
+  monaco.editor.setTheme('animal-restaurant-shop');
+};
+
 function EditorSkeleton() {
   return (
-    <div aria-busy='true' className='overflow-hidden rounded-2xl border border-line bg-panel'>
-      <div className='flex flex-wrap items-center gap-2 border-b border-line px-3 py-2'>
-        <span className='flex min-w-0 flex-1 items-center gap-1.5 text-[11px] text-mute'>
-          <Spinner size={14} className='text-lime' /> Đang tải dữ liệu…
-        </span>
-        <Skeleton className='h-8 w-20 rounded-lg' />
-        <Skeleton className='h-8 w-20 rounded-lg' />
-        <Skeleton className='h-8 w-16 rounded-lg' />
+    <section role='status' aria-busy='true' className='ui-card overflow-hidden'>
+      <header className='flex items-center gap-2 border-b border-line p-3'>
+        <Spinner size={15} /> <span className='mr-auto text-xs text-mute'>Đang tải dữ liệu…</span>
+        <Skeleton className='h-8 w-20' /><Skeleton className='h-8 w-20' />
+      </header>
+      <div className={`${EDITOR_HEIGHT} space-y-2.5 bg-bg p-4`}>
+        {LOADING_WIDTHS.map((width, index) => <Skeleton key={index} className='h-3' style={{ width: `${width}%`, marginLeft: `${(index % 3) * 1.5}rem` }} />)}
       </div>
-      <div className={`${EDITOR_HEIGHT_CLASS} space-y-2.5 bg-bg p-4`}>
-        {SKELETON_LINES.map((w, i) => (
-          <Skeleton key={i} className='h-3' style={{ width: `${w}%`, marginLeft: `${(i % 3) * 1.5}rem` }} />
-        ))}
-      </div>
-    </div>
+    </section>
   );
 };
 
 export default function JsonEditor({ load, save, deps = [], extraActions = null }) {
   const [text, setText] = useState('');
-  const [orig, setOrig] = useState('');
+  const [original, setOriginal] = useState('');
   const [state, setState] = useState({ loading: true, error: '' });
   const [saving, setSaving] = useState(false);
-  const live = useRef({ parseErr: '', dirty: false, onSave: null });
-  const bindCtrlS = (editor, monaco) => {
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
-      const current = live.current;
-      if (!current.parseErr && current.dirty) current.onSave?.();
-    });
-  };
+  const current = useRef({ parseError: '', dirty: false, save: null });
+  const request = useRef(0);
+  const loadRef = useRef(load);
+  loadRef.current = load;
 
-  const fetchIt = async () => {
+  const reload = async () => {
+    const requestId = ++request.current;
     setState({ loading: true, error: '' });
     try {
-      const t = pretty((await load()) ?? null);
-      setText(t);
-      setOrig(t);
+      const formatted = formatJson((await loadRef.current()) ?? null);
+      if (requestId !== request.current) return;
+      setText(formatted);
+      setOriginal(formatted);
       setState({ loading: false, error: '' });
-    } catch (e) {
-      setState({ loading: false, error: e.message });
+    } catch (error) {
+      if (requestId === request.current) setState({ loading: false, error: error?.message || 'Không tải được JSON' });
     };
   };
+
   useEffect(() => {
-    fetchIt();
+    reload();
+    return () => { request.current += 1; };
   }, deps);
 
-  let parseErr = '';
+  let parseError = '';
   try {
     if (!state.loading && !state.error) JSON.parse(text);
-  } catch (e) {
-    parseErr = e.message;
+  } catch (error) {
+    parseError = error?.message || 'JSON không hợp lệ';
   };
-  const dirty = text !== orig;
-  const onSave = async () => {
+  const dirty = text !== original;
+  const submit = async () => {
+    if (!dirty || parseError || saving) return;
     setSaving(true);
     try {
-      const v = JSON.parse(text);
-      const r = await save(v);
-      const t = pretty(v);
-      setText(t);
-      setOrig(t);
-      toast(r?.message || 'Đã lưu');
-    } catch (e) {
-      toastError(e);
+      const json = JSON.parse(text);
+      const result = await save(json);
+      const formatted = formatJson(json);
+      setOriginal(formatted);
+      setText(formatted);
+      toast(result?.message || 'Đã lưu dữ liệu');
+    } catch (error) {
+      toastError(error);
     } finally {
       setSaving(false);
     };
   };
   const format = () => {
-    try {
-      setText(pretty(JSON.parse(text)));
-    } catch {
-    };
+    if (parseError) return;
+    setText(formatJson(JSON.parse(text)));
   };
-  live.current = { parseErr, dirty, onSave };
+  current.current = { parseError, dirty, save: submit };
 
-  if (state.loading) return <EditorSkeleton />
-  if (state.error) return <ErrorState message={state.error} onRetry={fetchIt} />
+  const onMount = (editor, monaco) => {
+    applyEditorTheme(monaco);
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+      const snapshot = current.current;
+      if (!snapshot.parseError && snapshot.dirty) snapshot.save?.();
+    });
+  };
+
+  if (state.loading) return <EditorSkeleton />;
+  if (state.error) return <ErrorState message={state.error} onRetry={reload} />;
+
   return (
-    <div className={`overflow-hidden rounded-2xl border border-line bg-panel ${parseErr ? 'ring-1 ring-bad/40 ring-inset' : ''}`}>
-      <div className='flex flex-wrap items-center justify-end gap-2 border-b border-line px-3 py-2'>
+    <section className={`ui-card min-w-0 overflow-hidden ${parseError ? 'ring-1 ring-bad/40 ring-inset' : ''}`}>
+      <div className='flex flex-wrap items-center justify-end gap-2 border-b border-line p-3'>
         {extraActions}
-        <Button variant='quiet' size='sm' onClick={fetchIt} disabled={saving}>
-          <IconRefresh size={13} /> Tải lại
-        </Button>
-        <Button variant='quiet' size='sm' onClick={format} disabled={!!parseErr}>
-          Định dạng
-        </Button>
-        <Button size='sm' onClick={onSave} loading={saving} disabled={!dirty || !!parseErr}>
-          <IconDeviceFloppy size={14} /> Lưu
-        </Button>
+        <Button variant='quiet' size='sm' onClick={reload} disabled={saving}><IconRefresh size={15} /> Tải lại</Button>
+        <Button variant='ghost' size='sm' onClick={format} disabled={Boolean(parseError)}>Định dạng</Button>
+        <Button size='sm' onClick={submit} loading={saving} disabled={!dirty || Boolean(parseError)}><IconDeviceFloppy size={15} /> Lưu</Button>
       </div>
-      {parseErr && (
-        <div role='alert' className='flex items-start gap-2 border-b border-bad/30 bg-bad/10 px-3 py-2.5 text-xs text-bad'>
-          <IconBraces size={15} className='mt-0.5 shrink-0' />
-          <div className='min-w-0'>
-            <p className='font-bold'>JSON không hợp lệ</p>
-            <p className='mt-0.5 wrap-break-word text-[11px]'>{parseErr}. Kiểm tra dấu ngoặc, dấu phẩy và chuỗi ký tự.</p>
-          </div>
+      {parseError && (
+        <div role='alert' className='flex items-start gap-2 border-b border-bad/30 bg-bad/10 px-4 py-3 text-xs text-bad'>
+          <IconBraces size={17} className='mt-0.5 shrink-0' />
+          <div className='min-w-0'><p className='font-bold'>JSON không hợp lệ</p><p className='mt-1 break-words'>{parseError}</p></div>
         </div>
       )}
-      <div className={EDITOR_HEIGHT_CLASS}>
-        <Editor
-          value={text}
-          onChange={(value) => setText(value ?? '')}
-          language='json'
-          theme='vs-dark'
-          options={MONACO_OPTIONS}
-          onMount={bindCtrlS}
-          loading={<div className='grid size-full place-items-center bg-bg text-xs text-mute'>Đang khởi tạo editor…</div>}
-        />
+      <div className={EDITOR_HEIGHT}>
+        <Editor value={text} onChange={(value) => setText(value ?? '')} language='json' theme='animal-restaurant-shop'
+          options={EDITOR_OPTIONS} onMount={onMount}
+          loading={<div className='grid size-full place-items-center bg-bg text-xs text-mute'>Đang khởi tạo trình chỉnh sửa…</div>} />
       </div>
-    </div>
+    </section>
   );
 };

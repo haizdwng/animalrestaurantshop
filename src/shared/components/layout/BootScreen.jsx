@@ -1,14 +1,12 @@
-import { ErrorState, Splash } from '@/shared/components/ui';
+import { Button, ErrorState, Splash } from '@/shared/components/ui';
 
 export default function BootScreen({ error, onRetry, onSwitchAccount }) {
-  if (!error) return <Splash label='Đang kiểm tra đăng nhập…' />
+  if (!error) return <Splash label='Đang kiểm tra phiên đăng nhập…' />;
   return (
     <div className='grid min-h-dvh place-items-center p-4'>
-      <div className='w-full max-w-sm space-y-3'>
+      <div className='w-full max-w-md space-y-3'>
         <ErrorState message={error} onRetry={onRetry} />
-        <button onClick={onSwitchAccount} className='mx-auto block cursor-pointer text-[11px] text-mute hover:text-fg'>
-          Đăng nhập tài khoản khác
-        </button>
+        <Button variant='quiet' size='sm' className='mx-auto w-full' onClick={onSwitchAccount}>Đăng nhập tài khoản khác</Button>
       </div>
     </div>
   );

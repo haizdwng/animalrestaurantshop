@@ -1,4 +1,4 @@
-import { $ as createTransaction, $t as require_react, Bt as require_jsx_runtime, Dt as Spinner, Et as ErrorState, Gt as IconChevronRight, Ht as IconRefresh, It as toast, Kt as IconAlertTriangle, Lt as toastError, Pt as Dialog, Rt as Field, T as formatNumber, Tt as Skeleton, Vt as IconX, Wt as IconCircleCheck, Xt as useNavigate, Zt as useParams, _ as productOptions, a as cartTotal, b as resolveCart, c as eligibleCategoryProducts, d as getGroupRemaining, en as __toESM, f as getPurchaseLimit, g as isOwnedOnce, h as isOnce, i as cartPayload, jt as Select, l as getConditions, m as hasValidPrice, n as addCategoryToCart, nt as ADMIN_MAX_QTY, o as changeCartQuantity, p as hasOptions, qt as createReactComponent, r as cartCount, rt as buy, s as clampCartQuantity, u as getConflictingKeys, v as putInCart, vt as isAdmin, x as unmetConditions, y as removeCategoryFromCart, yt as Coin, zt as Button } from "./index.js";
+import { $ as createTransaction, Bt as Field, Dt as Skeleton, Ht as IconX, It as Dialog, Jt as IconAlertTriangle, Kt as IconCircleCheck, Nt as Select, Ot as ErrorState, Rt as toast, St as Tooltip, T as formatNumber, Vt as Button, Wt as IconRefresh, Xt as Badge, Yt as createReactComponent, Zt as require_jsx_runtime, _ as productOptions, a as cartTotal, b as resolveCart, c as eligibleCategoryProducts, d as getGroupRemaining, en as useNavigate, f as getPurchaseLimit, g as isOwnedOnce, h as isOnce, i as cartPayload, in as __toESM, kt as Spinner, l as getConditions, m as hasValidPrice, n as addCategoryToCart, nt as ADMIN_MAX_QTY, o as changeCartQuantity, p as hasOptions, qt as IconChevronRight, r as cartCount, rn as require_react, rt as buy, s as clampCartQuantity, tn as useParams, u as getConflictingKeys, v as putInCart, vt as isAdmin, x as unmetConditions, xt as SearchInput, y as removeCategoryFromCart, yt as Coin, zt as toastError } from "./index.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
 import { n as IconCheck, t as IconPhoto } from "./IconPhoto.js";
@@ -6,7 +6,6 @@ import { i as IconStar, n as hasPrice, r as matches, t as Tile } from "./Tile.js
 import { t as IconUsers } from "./IconUsers.js";
 import { n as IconLock } from "./clipboard.js";
 import { t as IconPlus } from "./IconPlus.js";
-import { t as IconSearch } from "./IconSearch.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
 *
@@ -234,21 +233,21 @@ var PRESETS = [
 	1e3
 ];
 var STEPS = [
-	"Chọn số xu & tạo mã QR",
-	"Quét mã bằng app ngân hàng",
-	"Xu được cộng tự động"
+	"Chọn số xu và tạo mã QR",
+	"Quét mã bằng ứng dụng ngân hàng",
+	"Xu được cộng khi thanh toán thành công"
 ];
 function BalanceAside({ coins, adding }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("aside", {
-		className: "flex flex-col gap-5 rounded-2xl border border-coin/20 bg-[radial-gradient(120%_80%_at_100%_0%,color-mix(in_oklab,var(--color-coin)_14%,transparent),transparent)] p-5 sm:p-6",
+		className: "ui-card flex flex-col gap-5 p-5 sm:p-6",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "text-[11px] text-mute",
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+					className: "text-xs font-semibold text-mute",
 					children: "Số dư hiện tại"
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-					className: "mt-1 flex items-center gap-2 text-3xl font-extrabold tabular-nums text-coin",
+					className: "mt-2 flex items-center gap-2 text-3xl font-extrabold text-coin tabular-nums",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 28 }),
 						" ",
@@ -257,29 +256,28 @@ function BalanceAside({ coins, adding }) {
 				}),
 				adding > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 					className: "mt-2 text-xs text-mute tabular-nums",
-					children: ["Số dư sau khi nạp: ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", {
+					children: ["Sau khi nạp: ", /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("strong", {
 						className: "text-fg",
-						children: formatNumber(coins + adding)
+						children: [formatNumber(coins + adding), " xu"]
 					})]
 				})
 			] }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ol", {
-				className: "space-y-3 text-xs",
-				children: STEPS.map((t, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-					className: "flex items-center gap-3",
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "grid size-6 shrink-0 place-items-center rounded-full bg-raise text-[10px] font-bold text-coin",
-							children: i + 1
-						}),
-						" ",
-						t
-					]
-				}, t))
+				className: "space-y-3 border-t border-line pt-4 text-xs text-mute",
+				children: STEPS.map((step, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+					className: "flex items-start gap-3",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "grid size-6 shrink-0 place-items-center rounded-lg bg-raise text-[11px] font-bold text-fg",
+						children: index + 1
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "pt-0.5 leading-relaxed",
+						children: step
+					})]
+				}, step))
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "mt-auto text-[10px] text-mute",
-				children: "Giao dịch chưa thanh toán xem lại ở trang Tài khoản."
+				className: "mt-auto border-t border-line pt-4 text-[11px] text-mute",
+				children: "Xem và tiếp tục giao dịch chưa thanh toán ở trang Tài khoản."
 			})
 		]
 	});
@@ -288,30 +286,33 @@ function TopUp({ user, onPaid }) {
 	const [coin, setCoin] = (0, import_react.useState)("");
 	const [error, setError] = (0, import_react.useState)("");
 	const [busy, setBusy] = (0, import_react.useState)(false);
-	const [tx, setTx] = (0, import_react.useState)(null);
-	const n = parseInt(coin) || 0;
-	const pick = (v) => {
-		setCoin(v);
+	const [transaction, setTransaction] = (0, import_react.useState)(null);
+	const amount = Number(coin) || 0;
+	const pick = (value) => {
+		setCoin(String(value));
 		setError("");
 	};
-	const submit = async (e) => {
-		e.preventDefault();
-		if (n < 20) return setError(`Tối thiểu 20 xu`);
+	const submit = async (event) => {
+		event.preventDefault();
+		if (!Number.isSafeInteger(amount) || amount < 20) {
+			setError(`Tối thiểu 20 xu`);
+			return;
+		}
 		setBusy(true);
 		try {
-			const r = await createTransaction(n);
-			setTx({
-				code: r.code,
-				qr: r.qr,
-				coin: n,
-				amount: r.amount,
+			const response = await createTransaction(amount);
+			setTransaction({
+				code: response.code,
+				qr: response.qr,
+				coin: amount,
+				amount: response.amount,
 				status: "pending",
-				expiredAt: r.expiredAt || r.transaction?.expiredAt || null
+				expiredAt: response.expiredAt || response.transaction?.expiredAt || null
 			});
-			toast(r.message || "Đã tạo giao dịch", "info");
-		} catch (err) {
-			toastError(err);
-			setError(err.message);
+			toast(response.message || "Đã tạo giao dịch", "info");
+		} catch (requestError) {
+			toastError(requestError);
+			setError(requestError.message || "Không tạo được giao dịch");
 		} finally {
 			setBusy(false);
 		}
@@ -322,69 +323,70 @@ function TopUp({ user, onPaid }) {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
 				onSubmit: submit,
 				noValidate: true,
-				className: "space-y-5 rounded-2xl border border-line bg-panel p-5 sm:p-6",
+				className: "ui-card min-w-0 space-y-5 p-5 sm:p-6",
 				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-						className: "text-xl font-extrabold tracking-tight sm:text-2xl",
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
+						className: "ui-heading",
 						children: "Mua xu"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-						className: "mt-1 text-xs text-mute",
-						children: [
-							"Chọn số xu (tối thiểu ",
-							20,
-							" xu) và thanh toán bằng mã QR ngân hàng."
-						]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "ui-description mt-1",
+						children: "Chọn số xu và thanh toán bằng mã QR ngân hàng."
 					})] }),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 						className: "grid grid-cols-3 gap-2 sm:grid-cols-6",
-						children: PRESETS.map((p) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						role: "group",
+						"aria-label": "Chọn nhanh số xu",
+						children: PRESETS.map((preset) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 							type: "button",
-							onClick: () => pick(String(p)),
-							className: `flex h-14 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl border text-sm font-bold tabular-nums transition ${n === p ? "border-coin bg-coin/10 text-coin" : "border-line bg-bg hover:border-mute"}`,
-							children: [formatNumber(p), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								className: "text-[9px] font-medium text-mute",
-								children: "xu"
-							})]
-						}, p))
+							onClick: () => pick(preset),
+							"aria-pressed": amount === preset,
+							className: `flex min-h-14 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl border text-sm font-bold tabular-nums transition-colors ${amount === preset ? "border-coin bg-coin/10 text-coin" : "border-line bg-bg text-fg hover:border-mute"}`,
+							children: [
+								formatNumber(preset),
+								" ",
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "text-[10px] font-medium text-mute",
+									children: "xu"
+								})
+							]
+						}, preset))
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Field, {
 						label: "Số xu",
-						hint: `tối thiểu 20 xu`,
+						hint: `Tối thiểu 20`,
 						inputMode: "numeric",
-						placeholder: "số xu",
+						placeholder: "Nhập số xu",
 						value: coin,
-						onChange: (e) => pick(e.target.value.replace(/\D/g, "").slice(0, 9)),
+						onChange: (event) => pick(event.target.value.replace(/\D/g, "").slice(0, 9)),
 						error,
-						className: "[&_input]:text-lg [&_input]:font-bold [&_input]:tabular-nums"
+						className: "[&_input]:font-bold [&_input]:tabular-nums"
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 						type: "submit",
 						loading: busy,
-						disabled: n < 20,
-						className: "h-12 w-full",
+						disabled: amount < 20,
+						className: "min-h-12 w-full",
 						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconQrcode, { size: 17 }),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconQrcode, { size: 18 }),
 							" Tạo mã QR ",
-							n >= 20 && `· ${formatNumber(n)} xu`
+							amount >= 20 && `· ${formatNumber(amount)} xu`
 						]
 					}),
 					busy && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-						className: "flex items-center gap-2 text-[11px] text-mute",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, {
-							size: 12,
-							className: "text-lime"
-						}), " Đang tạo giao dịch, có thể mất tới một phút…"]
+						role: "status",
+						className: "flex items-center gap-2 text-xs text-mute",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 14 }), " Đang tạo giao dịch…"]
 					})
 				]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(BalanceAside, {
 				coins: user.coins,
-				adding: n
+				adding: amount
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PaymentDialog, {
-				tx,
-				onClose: () => setTx(null),
-				onChange: setTx,
+				tx: transaction,
+				onClose: () => setTransaction(null),
+				onChange: setTransaction,
 				onPaid: () => {
 					setCoin("");
 					onPaid?.();
@@ -898,90 +900,99 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 }
 // src/features/shop/CategoryNav.jsx
 var CoinIcon = ({ size }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size });
-function CategoryButton({ id, name, Icon, count, accent, on, onSelect }) {
+function CategoryButton({ id, name, Icon, count, active, featured, onSelect }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 		type: "button",
-		role: "tab",
-		"aria-selected": on,
+		"aria-current": active ? "page" : void 0,
 		onClick: () => {
 			onSelect(id);
-			if (window.scrollY > 0) window.scrollTo({ top: 0 });
+			if (window.scrollY > 0) window.scrollTo({
+				top: 0,
+				behavior: "auto"
+			});
 		},
-		className: `flex shrink-0 cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-left text-xs font-bold transition md:w-full ${on ? accent ? "bg-coin text-bg" : "bg-raise text-fg" : "text-mute hover:bg-panel hover:text-fg"}`,
+		className: `ui-nav-item relative w-full shrink-0 justify-start text-left md:w-full ${active && featured ? "border-coin/30! bg-coin/10! text-coin!" : ""}`,
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
 				size: 17,
-				className: on && !accent ? "text-lime" : ""
+				className: `shrink-0 ${active && !featured ? "text-lime" : ""}`
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-				className: "flex-1 whitespace-nowrap",
+				className: "min-w-0 flex-1 whitespace-nowrap",
 				children: name
 			}),
 			count !== void 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-				className: `rounded px-1.5 text-[10px] tabular-nums ${on ? "bg-bg/40" : "bg-panel"} ${count === 0 ? "opacity-40" : ""}`,
+				className: `rounded-md px-1.5 text-[10px] tabular-nums ${active ? "bg-bg/60" : "bg-raise"} ${count === 0 ? "opacity-50" : ""}`,
 				children: formatNumber(count)
 			})
 		]
 	});
 }
 function CategoryNav({ tabs, tabId, hits, onSelect }) {
-	const list = tabs || [];
-	const isOn = (id) => tabId === id || !tabId && id === list[0]?.id;
+	const categories = tabs || [];
+	const active = (id) => tabId === id || !tabId && id === categories[0]?.id;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("aside", {
-		className: "sticky top-(--app-header-h) z-20 border-b border-line bg-bg/90 backdrop-blur-md supports-backdrop-filter:bg-bg/75 md:top-[calc(var(--app-header-h)+1rem)] md:max-h-[calc(100dvh-var(--app-header-h)-2rem)] md:self-start md:overflow-y-auto md:border-0 md:bg-transparent md:backdrop-blur-none",
+		className: "sticky top-(--app-header-h) z-20 min-w-0 border-b border-line bg-bg/95 backdrop-blur-xl md:top-[calc(var(--app-header-h)+1rem)] md:max-h-[calc(100dvh-var(--app-header-h)-2rem)] md:self-start md:overflow-y-auto md:border-0 md:bg-transparent md:backdrop-blur-none",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-			className: "hidden px-3 pb-2 text-[10px] font-bold tracking-[0.2em] text-mute uppercase md:block",
+			className: "hidden px-3 pb-2 text-[11px] font-bold tracking-wider text-mute uppercase md:block",
 			children: "Danh mục"
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			role: "tablist",
-			className: "no-scrollbar flex gap-1 overflow-x-auto px-3 py-2 md:flex-col md:overflow-visible md:p-0",
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
+			"aria-label": "Danh mục cửa hàng",
+			className: "no-scrollbar flex gap-1 overflow-x-auto px-3 py-2 md:flex-col md:p-0",
 			children: [
-				tabs ? list.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CategoryButton, {
-					id: t.id,
-					name: t.name,
-					Icon: CATEGORY_ICONS[t.id] || IconBox,
-					count: hits[t.id],
-					on: isOn(t.id),
+				tabs ? categories.map(({ id, name }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CategoryButton, {
+					id,
+					name,
+					Icon: CATEGORY_ICONS[id] || IconBox,
+					count: hits[id],
+					active: active(id),
 					onSelect
-				}, t.id)) : Array.from({ length: 5 }).map((_, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8.25 w-28 shrink-0 rounded-lg md:w-full" }, i)),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "mx-1 w-px shrink-0 bg-line md:mx-0 md:my-2 md:h-px md:w-auto" }),
+				}, id)) : Array.from({ length: 5 }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-9 w-27 shrink-0 md:w-full" }, index)),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					"aria-hidden": true,
+					className: "mx-1 w-px shrink-0 bg-line md:mx-0 md:my-2 md:h-px md:w-auto"
+				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CategoryButton, {
 					id: TOPUP,
 					name: "Mua xu",
 					Icon: CoinIcon,
-					accent: true,
-					on: isOn(TOPUP),
+					active: active(TOPUP),
+					featured: true,
 					onSelect
-				}, TOPUP)
+				})
 			]
 		})]
 	});
 }
 // src/features/shop/EmptyProducts.jsx
-function EmptyProducts({ searching, tabs, hits, onSelect }) {
-	const elsewhere = searching ? tabs.filter((t) => hits[t.id] > 0) : [];
+function EmptyProducts({ searching, tabs = [], hits = {}, onSelect }) {
+	const elsewhere = searching ? tabs.filter((tab) => hits[tab.id] > 0) : [];
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "flex flex-col items-center gap-3 rounded-2xl border border-dashed border-line py-16 text-center text-mute",
+		className: "ui-card flex min-h-56 flex-col items-center justify-center gap-3 p-6 text-center",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPackageOff, {
-				size: 34,
-				stroke: 1.4
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				className: "grid size-12 place-items-center rounded-2xl bg-raise text-mute",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPackageOff, {
+					size: 28,
+					stroke: 1.5
+				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "text-xs",
-				children: searching ? "Không có vật phẩm nào khớp trong danh mục này" : "Danh mục chưa có vật phẩm"
+				className: "max-w-xs text-xs leading-relaxed text-mute",
+				children: searching ? "Không có vật phẩm khớp với tìm kiếm trong danh mục này." : "Danh mục hiện chưa có vật phẩm."
 			}),
 			elsewhere.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "flex flex-wrap justify-center gap-1.5",
-				children: elsewhere.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-					onClick: () => onSelect(t.id),
-					className: "cursor-pointer rounded-full border border-line px-3 py-1 text-[11px] text-fg hover:border-lime",
+				className: "flex max-w-full flex-wrap justify-center gap-2",
+				children: elsewhere.map((tab) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+					variant: "ghost",
+					size: "sm",
+					onClick: () => onSelect(tab.id),
 					children: [
-						t.name,
+						tab.name,
 						" · ",
-						hits[t.id]
+						hits[tab.id]
 					]
-				}, t.id))
+				}, tab.id))
 			})
 		]
 	});
@@ -989,15 +1000,15 @@ function EmptyProducts({ searching, tabs, hits, onSelect }) {
 // src/features/shop/ProductItem.jsx
 function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__ */ new Set(), onBuy }) {
 	const grouped = hasOptions(p);
-	const choices = productOptions(p);
-	const owned = grouped ? choices.every((choice) => isOwnedOnce(choice, p)) : isOwnedOnce(p);
-	const conflicting = choices.some((choice) => conflictingKeys.has(choice.key));
-	const count = typeof p.owned === "number" ? `Đang có ${formatNumber(p.owned)}` : "";
+	const options = productOptions(p);
+	const owned = grouped ? options.every((option) => isOwnedOnce(option, p)) : isOwnedOnce(p);
+	const conflicting = options.some((option) => conflictingKeys.has(option.key));
+	const inventory = typeof p.owned === "number" ? `Đang có ${formatNumber(p.owned)}` : "";
 	const selected = typeof p.owned === "string" && p.owned ? `Đang chọn: ${p.owned}` : "";
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 		type: "button",
 		onClick: onBuy,
-		className: "group flex min-h-20 w-full cursor-pointer items-center gap-3 rounded-xl border border-line bg-panel p-3 text-left transition hover:border-mute/70 hover:bg-raise focus-visible:outline-2 focus-visible:outline-lime",
+		className: "ui-panel group flex min-h-20 w-full cursor-pointer items-center gap-3 p-3 text-left transition-colors hover:border-mute/70 hover:bg-raise focus-visible:outline-2 focus-visible:outline-lime",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tile, { p }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
@@ -1008,56 +1019,55 @@ function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__
 						children: p.name || p.key
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						className: "mt-0.5 block truncate text-[10px] text-mute",
+						className: "mt-0.5 block truncate font-mono text-[10px] text-mute",
 						children: p.key
 					}),
 					grouped && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-						className: "mt-1 block text-[10px] text-mute",
+						className: "mt-1 block text-[11px] text-mute",
 						children: [formatNumber(p.options.length), " lựa chọn"]
 					}),
-					count && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						className: "mt-1 block truncate text-[10px] text-mute",
-						children: count
+					inventory && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "mt-1 block truncate text-[11px] text-mute",
+						children: inventory
 					}),
 					selected && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						className: "mt-1 block truncate text-[10px] text-coin",
+						className: "mt-1 block truncate text-[11px] text-coin",
 						children: selected
 					}),
 					!owned && p.owned === true && !isOnce(p) && !grouped && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						className: "mt-1 block text-[10px] text-ok",
+						className: "mt-1 block text-[11px] text-ok",
 						children: "Đã sở hữu · có thể mua tiếp"
 					})
 				]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 				className: "flex shrink-0 flex-col items-end gap-1.5",
-				children: [owned ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-					className: "flex items-center gap-1 rounded-full bg-ok/15 px-2 py-0.5 text-[10px] font-bold text-ok",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCheck, { size: 12 }), " Đã mua"]
-				}) : conflicting ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-					className: "flex items-center gap-1 rounded-full bg-bad/10 px-2 py-0.5 text-[10px] font-bold text-bad",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 12 }), " Mã trùng"]
-				}) : cartQuantity > 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-					className: "flex items-center gap-1 rounded-full bg-lime/15 px-2 py-0.5 text-[10px] font-bold text-lime",
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 12 }),
-						" ",
-						formatNumber(cartQuantity),
-						" trong giỏ"
-					]
+				children: [owned ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+					Icon: IconCheck,
+					tone: "success",
+					children: "Đã mua"
+				}) : conflicting ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+					Icon: IconLock,
+					tone: "danger",
+					children: "Mã trùng"
+				}) : cartQuantity > 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
+					Icon: IconShoppingCart,
+					tone: "accent",
+					children: [formatNumber(cartQuantity), " trong giỏ"]
 				}) : grouped ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-					className: "text-[10px] font-medium text-mute",
+					className: "text-[11px] font-semibold text-mute",
 					children: "Chọn loại"
 				}) : hasPrice(p) ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-					className: `flex items-center gap-1 text-xs font-bold tabular-nums ${poor ? "text-mute" : "text-coin"}`,
+					className: `flex items-center gap-1 text-xs font-extrabold tabular-nums ${poor ? "text-mute" : "text-coin"}`,
 					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 14 }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 15 }),
 						" ",
 						formatNumber(p.price)
 					]
 				}) : null, !owned && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-					className: "grid size-7 place-items-center rounded-lg bg-raise text-mute transition group-hover:bg-line group-hover:text-fg",
-					children: grouped ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconChevronRight, { size: 15 }) : cartQuantity ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCheck, { size: 15 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlus, { size: 15 })
+					"aria-hidden": true,
+					className: "grid size-7 place-items-center rounded-lg bg-raise text-mute transition-colors group-hover:bg-line group-hover:text-fg",
+					children: grouped ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconChevronRight, { size: 16 }) : cartQuantity ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCheck, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlus, { size: 16 })
 				})]
 			})
 		]
@@ -1065,19 +1075,16 @@ function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__
 }
 // src/features/shop/ShopSkeleton.jsx
 function ShopSkeleton() {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 		"aria-busy": "true",
 		"aria-label": "Đang tải cửa hàng",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			className: "mb-4 flex flex-wrap items-end gap-3",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "min-w-0 flex-1",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-7 w-32 sm:h-8" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-					className: "mt-0.5 flex h-[16.5px] items-center gap-1.5 text-[11px] text-mute",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, {
-						size: 12,
-						className: "text-lime"
-					}), " Đang tải cửa hàng…"]
+				className: "min-w-0 flex-1 space-y-2",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-7 w-36" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+					className: "flex items-center gap-2 text-xs text-mute",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 13 }), " Đang tải cửa hàng…"]
 				})]
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "flex w-full items-center gap-2 sm:w-auto",
@@ -1085,17 +1092,17 @@ function ShopSkeleton() {
 			})]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 			className: "grid gap-2 sm:grid-cols-2 xl:grid-cols-3",
-			children: Array.from({ length: 9 }).map((_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-				className: `flex min-h-20 items-center gap-3 rounded-xl border border-line bg-panel p-3 ${index >= 6 ? "hidden sm:flex" : ""}`,
+			children: Array.from({ length: 9 }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+				className: `ui-panel flex min-h-20 items-center gap-3 p-3 ${index >= 6 ? "hidden sm:flex" : ""}`,
 				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-12 rounded-xl" }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-12 shrink-0 rounded-xl" }),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "min-w-0 flex-1 space-y-2",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3 w-3/4" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-1/3" })]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "flex flex-col items-end gap-1.5",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3.5 w-8" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-7 rounded-lg" })]
+						className: "space-y-2",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3.5 w-9" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "ml-auto size-7" })]
 					})
 				]
 			}, index))
@@ -1104,47 +1111,36 @@ function ShopSkeleton() {
 }
 // src/features/shop/ShopToolbar.jsx
 function ShopToolbar({ title, count, ownedCount, query, onQuery, loading, onReload }) {
-	const needle = query.trim();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
 		className: "mb-4 flex flex-wrap items-end gap-3",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			className: "min-w-0 flex-1",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-				className: "text-xl font-extrabold tracking-tight sm:text-2xl",
-				children: title
+				className: "ui-heading",
+				children: title || "Cửa hàng"
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-				className: "mt-0.5 truncate text-[11px] text-mute tabular-nums",
-				children: [needle ? `${formatNumber(count)} kết quả cho “${needle}”` : `${formatNumber(count)} vật phẩm`, ownedCount > 0 && ` · đã mua ${ownedCount}`]
+				className: "ui-description mt-1 truncate tabular-nums",
+				children: [query.trim() ? `${formatNumber(count)} kết quả cho “${query.trim()}”` : `${formatNumber(count)} vật phẩm`, ownedCount > 0 && ` · ${formatNumber(ownedCount)} đã sở hữu`]
 			})]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			className: "flex w-full items-center gap-2 sm:w-auto",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
-				className: "flex h-10 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-panel px-3 transition focus-within:border-lime sm:w-72",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconSearch, {
-						size: 15,
-						className: "shrink-0 text-mute"
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-						value: query,
-						onChange: (e) => onQuery(e.target.value),
-						placeholder: "Tìm theo tên hoặc mã…",
-						className: "min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-mute/60 sm:text-[13px]"
-					}),
-					query && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-						onClick: () => onQuery(""),
-						"aria-label": "Xoá tìm kiếm",
-						className: "grid size-6 cursor-pointer place-items-center rounded text-mute hover:text-fg",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, { size: 14 })
-					})
-				]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-				variant: "ghost",
-				className: "size-10! px-0!",
-				onClick: onReload,
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
+				label: "Tìm vật phẩm",
+				placeholder: "Tìm theo tên hoặc mã…",
+				value: query,
+				onChange: onQuery,
 				disabled: loading,
-				"aria-label": "Tải lại cửa hàng",
-				children: loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 16 })
+				className: "min-w-0 flex-1 sm:w-72"
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
+				text: "Tải lại dữ liệu cửa hàng",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+					variant: "ghost",
+					className: "size-10! px-0!",
+					onClick: onReload,
+					disabled: loading,
+					"aria-label": "Tải lại cửa hàng",
+					children: loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 17 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 17 })
+				})
 			})]
 		})]
 	});

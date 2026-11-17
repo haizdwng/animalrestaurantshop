@@ -1,28 +1,41 @@
 import { useId, useState } from 'react';
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
 
-export default function Field({ label, right, error, hint, className = '', type = 'text', ...p }) {
-  const [show, setShow] = useState(false);
+export default function Field({ label, right, error, hint, className = '', type = 'text', ...props }) {
   const generatedId = useId();
-  const id = p.id || `field-${generatedId}`;
-  const isPw = type === 'password';
+  const id = props.id || `input-${generatedId}`;
+  const [visible, setVisible] = useState(false);
+  const password = type === 'password';
+  const description = [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(' ') || undefined;
+
   return (
-    <label className={`block ${className}`}>
-      <span htmlFor={id} className='mb-1.5 flex items-baseline justify-between gap-2 text-[11px] font-medium text-mute'>
-        {label}
-        {hint && <span className='text-[10px] text-mute/70'>{hint}</span>}
-      </span>
-      <div className={`flex overflow-hidden rounded-lg border bg-bg transition focus-within:border-lime focus-within:ring-2 focus-within:ring-lime/20 ${error ? 'border-bad' : 'border-line'}`}>
-        <input {...p} id={id} name={p.name || id} type={isPw && show ? 'text' : type} aria-invalid={!!error} aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined} className='min-w-0 flex-1 bg-transparent px-3 py-3 text-base outline-none placeholder:text-mute/50 sm:text-sm' />
-        {isPw && (
-          <button type='button' tabIndex={-1} onClick={() => setShow(!show)} aria-label={show ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'} className='grid w-11 shrink-0 cursor-pointer place-items-center text-mute hover:text-fg'>
-            {show ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+    <div className={`min-w-0 ${className}`}>
+      {label && (
+        <div className='mb-1.5 flex items-center justify-between gap-2'>
+          <label htmlFor={id} className='text-xs font-semibold text-fg'>{label}</label>
+          {hint && <span id={`${id}-hint`} className='text-[11px] text-mute'>{hint}</span>}
+        </div>
+      )}
+      <div className={`ui-control flex min-w-0 items-center overflow-hidden ${error ? 'border-bad! focus-within:shadow-none' : ''}`}>
+        <input
+          {...props}
+          id={id}
+          name={props.name || id}
+          type={password && visible ? 'text' : type}
+          autoComplete={props.autoComplete}
+          aria-invalid={Boolean(error)}
+          aria-describedby={description}
+          className='min-h-10 min-w-0 flex-1 bg-transparent px-3 py-2.5 text-sm leading-snug outline-none placeholder:text-mute/60'
+        />
+        {password && (
+          <button type='button' onClick={() => setVisible((previous) => !previous)} aria-label={visible ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'} aria-pressed={visible}
+            className='grid size-10 shrink-0 cursor-pointer place-items-center text-mute hover:bg-raise hover:text-fg'>
+            {visible ? <IconEyeOff size={17} /> : <IconEye size={17} />}
           </button>
         )}
         {right}
       </div>
-      {hint && <span id={`${id}-hint`} className='sr-only'>{hint}</span>}
-      {error && <span id={`${id}-error`} role='alert' className='mt-1.5 block text-[11px] text-bad'>{error}</span>}
-    </label>
+      {error && <p role='alert' id={`${id}-error`} className='mt-1.5 text-xs text-bad'>{error}</p>}
+    </div>
   );
 };
