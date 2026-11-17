@@ -1,25 +1,21 @@
 import { useState } from 'react';
-import { hue, initials } from '@/features/shop/shopUtilities';
+import { initials } from '@/features/shop/shopUtilities';
 
-const isUsableImageUrl = (value) => typeof value === 'string' && /^(https?:\/\/|\/|data:image\/)/i.test(value);
+const usableImage = (value) => typeof value === 'string' && /^(https?:\/\/|\/|data:image\/)/i.test(value);
 
 export default function Tile({ p, size = 'md' }) {
-  const color = hue(p.key || p.name);
   const large = size === 'lg';
-  const [failedImage, setFailedImage] = useState('');
-  const imageUrl = isUsableImageUrl(p.image) ? p.image : null;
-
+  const [failed, setFailed] = useState('');
+  const src = usableImage(p?.image) ? p.image : '';
   return (
-    <div className={`relative grid shrink-0 place-items-center overflow-hidden rounded-xl ${large ? 'size-16' : 'size-12'}`}
-      style={{ background: `color-mix(in oklab, ${color} 14%, transparent)`, color }}>
-      {imageUrl && failedImage !== imageUrl ? (
-        <img src={imageUrl} alt='' loading='lazy' className='size-full object-cover' onError={() => setFailedImage(imageUrl)} />
+    <div className={`relative grid shrink-0 place-items-center overflow-hidden rounded-xl border border-line bg-raise text-mute ${large ? 'size-16' : 'size-12'}`}>
+      {src && src !== failed ? (
+        <img src={src} alt='' loading='lazy' className='size-full object-cover' onError={() => setFailed(src)} />
       ) : (
         <span className={`font-extrabold tracking-tight ${large ? 'text-xl' : 'text-sm'}`}>
-          {initials(p.name) || '?'}
+          {initials(p?.name || p?.key) || '?'}
         </span>
       )}
-      <span className='absolute inset-0 rounded-xl ring-1 ring-current/20 ring-inset' />
     </div>
   );
 };

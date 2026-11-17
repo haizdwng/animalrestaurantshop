@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/clipboard.js","assets/Tile.js","assets/IconPhoto.js","assets/IconUsers.js","assets/IconCheck.js","assets/IconPlus.js","assets/IconSearch.js","assets/Account.js","assets/useRemoteResource.js","assets/IconStarFilled.js","assets/IconUserPlus.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/clipboard.js","assets/IconPhoto.js","assets/Tile.js","assets/IconUsers.js","assets/IconPlus.js","assets/IconSearch.js","assets/Account.js","assets/useRemoteResource.js","assets/IconStarFilled.js","assets/IconUserPlus.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
 // \0rolldown/runtime.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -14826,41 +14826,69 @@ function OtpButton({ send, target, onSent, check }) {
 }
 // src/shared/components/ui/Dialog.jsx
 var import_react_dom = /* @__PURE__ */ __toESM(require_react_dom(), 1);
+var FOCUSABLE = "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex=\"-1\"])";
 function Dialog({ open, title, onClose, children }) {
 	const titleId = (0, import_react.useId)();
+	const panelRef = (0, import_react.useRef)(null);
+	const closeRef = (0, import_react.useRef)(onClose);
+	closeRef.current = onClose;
 	(0, import_react.useEffect)(() => {
 		if (!open) return;
-		const onKey = (e) => e.key === "Escape" && onClose();
+		const previouslyFocused = document.activeElement;
 		const previousOverflow = document.body.style.overflow;
-		document.addEventListener("keydown", onKey);
 		document.body.style.overflow = "hidden";
-		return () => {
-			document.removeEventListener("keydown", onKey);
-			document.body.style.overflow = previousOverflow;
+		panelRef.current?.focus({ preventScroll: true });
+		const onKeyDown = (event) => {
+			if (event.key === "Escape" && panelRef.current?.contains(document.activeElement)) {
+				event.preventDefault();
+				closeRef.current?.();
+			}
+			if (event.key !== "Tab" || !panelRef.current?.contains(document.activeElement)) return;
+			const focusables = [...panelRef.current.querySelectorAll(FOCUSABLE)].filter((element) => element.getClientRects().length > 0);
+			if (!focusables.length) return event.preventDefault();
+			const first = focusables[0];
+			const last = focusables[focusables.length - 1];
+			if (event.shiftKey && document.activeElement === first) {
+				event.preventDefault();
+				last.focus();
+			} else if (!event.shiftKey && document.activeElement === last) {
+				event.preventDefault();
+				first.focus();
+			}
 		};
-	}, [open, onClose]);
+		document.addEventListener("keydown", onKeyDown);
+		return () => {
+			document.removeEventListener("keydown", onKeyDown);
+			document.body.style.overflow = previousOverflow;
+			if (previouslyFocused instanceof HTMLElement && previouslyFocused.isConnected) previouslyFocused.focus({ preventScroll: true });
+		};
+	}, [open]);
 	if (!open) return null;
 	return (0, import_react_dom.createPortal)(/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 		className: "fixed inset-0 z-50 flex animate-fade items-end justify-center bg-black/70 backdrop-blur-sm sm:items-center sm:p-4",
-		onClick: onClose,
+		onClick: (event) => {
+			if (event.target === event.currentTarget) closeRef.current?.();
+		},
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			ref: panelRef,
+			tabIndex: -1,
 			role: "dialog",
 			"aria-modal": "true",
 			"aria-labelledby": titleId,
-			className: "flex max-h-[92dvh] w-full animate-pop flex-col rounded-t-2xl border border-line bg-panel shadow-2xl shadow-black/60 supports-backdrop-filter:bg-panel/90 supports-backdrop-filter:backdrop-blur-xl sm:max-w-md sm:rounded-2xl",
-			onClick: (e) => e.stopPropagation(),
+			className: "flex max-h-[92dvh] w-full animate-pop flex-col rounded-t-2xl border border-line bg-panel shadow-2xl shadow-black/60 outline-none supports-backdrop-filter:bg-panel/90 supports-backdrop-filter:backdrop-blur-xl sm:max-w-md sm:rounded-2xl",
 			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "mx-auto mt-2 h-1 w-10 rounded-full bg-line sm:hidden" }),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-line sm:hidden" }),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex shrink-0 items-center justify-between px-5 pt-4 pb-2",
+					className: "flex shrink-0 items-center justify-between gap-3 px-5 pt-4 pb-2",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
 						id: titleId,
-						className: "text-sm font-bold",
+						className: "min-w-0 text-sm font-bold",
 						children: title
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-						onClick: onClose,
-						className: "-mr-2 grid size-8 cursor-pointer place-items-center rounded-lg text-mute hover:bg-raise hover:text-fg",
-						"aria-label": "Đóng",
+						type: "button",
+						onClick: () => closeRef.current?.(),
+						className: "-mr-2 grid size-8 shrink-0 cursor-pointer place-items-center rounded-lg text-mute transition hover:bg-raise hover:text-fg focus-visible:outline-2 focus-visible:outline-lime",
+						"aria-label": "Đóng cửa sổ",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, { size: 18 })
 					})]
 				}),
@@ -14950,19 +14978,21 @@ var PAGE_SIZES = [
 	100
 ];
 // src/shared/components/ui/Select.jsx
-function Select({ value, onChange, Icon, label, className = "", children }) {
+function Select({ id, value, onChange, Icon, label, className = "", children, disabled = false }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
-		className: `relative flex h-10 items-center rounded-lg border border-line bg-panel text-xs font-bold focus-within:border-lime ${className}`,
+		className: `relative flex h-10 items-center rounded-lg border border-line bg-panel text-xs font-bold transition-colors focus-within:border-lime focus-within:ring-2 focus-within:ring-lime/15 ${className}`,
 		children: [
 			Icon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
 				size: 15,
 				className: "pointer-events-none absolute left-3 text-mute"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", {
+				id,
 				"aria-label": label,
 				value,
-				onChange: (e) => onChange(e.target.value),
-				className: `h-full w-full min-w-0 cursor-pointer appearance-none bg-transparent pr-8 outline-none [&>option]:bg-panel ${Icon ? "pl-9" : "pl-3"}`,
+				onChange: (event) => onChange(event.target.value),
+				disabled,
+				className: `h-full w-full min-w-0 cursor-pointer appearance-none bg-transparent pr-8 outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>option]:bg-panel ${Icon ? "pl-9" : "pl-3"}`,
 				children
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconSelector, {
@@ -14979,10 +15009,10 @@ function SortSelect({ sorts, value, onChange, className }) {
 		value,
 		onChange,
 		className,
-		children: sorts.map(([k, l]) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
-			value: k,
-			children: l
-		}, k))
+		children: sorts.map(([key, label]) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+			value: key,
+			children: label
+		}, key))
 	});
 }
 function PageSizeSelect({ value, onChange, className }) {
@@ -14990,12 +15020,12 @@ function PageSizeSelect({ value, onChange, className }) {
 		label: "Số dòng mỗi trang",
 		Icon: IconListNumbers,
 		value,
-		onChange: (v) => onChange(Number(v)),
+		onChange: (next) => onChange(Number(next)),
 		className,
-		children: PAGE_SIZES.map((n) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
-			value: n,
-			children: [n, " / trang"]
-		}, n))
+		children: PAGE_SIZES.map((size) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
+			value: size,
+			children: [size, " / trang"]
+		}, size))
 	});
 }
 // src/shared/components/ui/Tabs.jsx
@@ -16366,27 +16396,26 @@ async function callStream(method, path, body, onProgress, { auth = true, timeout
 }
 var enc = encodeURIComponent;
 // src/shared/library/api/normalize.js
-var num = (...values) => Number(values.find((value) => value !== void 0 && value !== null && value !== "") ?? 0);
 function normUser(user) {
 	if (!user || typeof user !== "object") return null;
 	return {
 		...user,
-		id: user.id ?? user._id,
-		username: user.username ?? "",
-		playerName: user.name ?? user.playerName ?? user.username ?? "",
-		openid: user.openid ?? user.openId ?? "",
-		avatar: user.avatar ?? user.avatarUrl ?? "",
-		frame: user.frame ?? "",
-		coins: num(user.coins, user.coin, user.money, user.gold, user.balance),
-		star: num(user.star, user.stars),
-		role: user.role ?? "",
-		invite: user.invite ?? "",
-		friendInvite: user.friendInvite ?? user.friend_invite ?? "",
-		createdAt: user.createdAt ?? user.created_at
+		id: user._id,
+		username: user.username,
+		playerName: user.name,
+		openid: user.openid,
+		avatar: user.avatar,
+		frame: user.frame,
+		coins: Number(user.coin),
+		star: Number(user.star),
+		role: user.role,
+		invite: user.invite,
+		friendInvite: user.friendInvite,
+		createdAt: user.createdAt
 	};
 }
-var pickUser = (response) => normUser(response.user ?? (response.username ? response : null));
-var isAdmin = (user) => String(user?.role || "").toLowerCase() === "administrator";
+var pickUser = (response) => normUser(response.user);
+var isAdmin = (user) => user?.role === "administrator";
 var SHOP_CATEGORIES = Object.freeze({
 	letters: "Thư",
 	customers: "Khách",
@@ -16400,70 +16429,66 @@ var SHOP_CATEGORIES = Object.freeze({
 	specials: "Đặc biệt",
 	items: "Vật phẩm"
 });
-var PRODUCT_KEYS = [
+var PRODUCT_FIELDS = [
 	"key",
 	"name",
 	"image",
 	"price",
 	"once",
 	"owned",
-	"conditions"
+	"conditions",
+	"limit"
 ];
-var OPTION_KEYS = [
+var OPTION_FIELDS = [
 	"key",
 	"name",
 	"image",
 	"price",
 	"once",
 	"owned",
-	"conditions"
+	"conditions",
+	"limit"
 ];
-function copyFields(source, keys) {
-	const result = {};
-	for (const key of keys) if (Object.hasOwn(source, key)) result[key] = source[key];
-	return result;
+function selectProductFields(product, fields) {
+	const selected = {};
+	for (const field of fields) if (Object.hasOwn(product, field)) selected[field] = product[field];
+	if (Array.isArray(selected.conditions)) selected.conditions = selected.conditions.filter((condition) => condition && typeof condition.name === "string" && typeof condition.already === "boolean").map(({ name, already }) => ({
+		name,
+		already
+	}));
+	else delete selected.conditions;
+	return selected;
 }
-function normProduct(product) {
-	if (!product || typeof product !== "object" || typeof product.key !== "string" || !product.key.trim()) return null;
-	const result = copyFields(product, PRODUCT_KEYS);
-	if (Array.isArray(result.conditions)) result.conditions = result.conditions.filter((condition) => condition && typeof condition === "object");
-	else delete result.conditions;
-	if (Array.isArray(product.options)) result.options = product.options.filter((option) => option && typeof option.key === "string" && option.key.trim()).map((option) => {
-		const choice = copyFields(option, OPTION_KEYS);
-		if (Array.isArray(choice.conditions)) choice.conditions = choice.conditions.filter((condition) => condition && typeof condition === "object");
-		else delete choice.conditions;
-		return choice;
-	});
+function normalizeProduct(product) {
+	if (!product || typeof product.key !== "string" || !product.key.trim()) return null;
+	const normalized = selectProductFields(product, PRODUCT_FIELDS);
+	if (Array.isArray(product.options)) normalized.options = product.options.filter((option) => option && typeof option.key === "string" && option.key.trim()).map((option) => selectProductFields(option, OPTION_FIELDS));
+	return normalized;
+}
+function normalizeCategory(products) {
+	const seen = /* @__PURE__ */ new Set();
+	const result = [];
+	for (const source of products) {
+		const product = normalizeProduct(source);
+		if (!product) continue;
+		const signature = JSON.stringify(product);
+		if (seen.has(signature)) continue;
+		seen.add(signature);
+		result.push(product);
+	}
 	return result;
 }
 function normShop(shop) {
 	if (!shop || typeof shop !== "object") return [];
-	const seenKeys = /* @__PURE__ */ new Set();
-	return Object.entries(SHOP_CATEGORIES).filter(([category]) => Array.isArray(shop[category])).map(([category, name]) => ({
-		id: category,
+	return Object.entries(SHOP_CATEGORIES).filter(([key]) => Array.isArray(shop[key])).map(([key, name]) => ({
+		id: key,
 		name,
-		products: shop[category].map(normProduct).filter(Boolean).flatMap((product) => {
-			if (!Array.isArray(product.options) || product.options.length === 0) {
-				if (seenKeys.has(product.key)) return [];
-				seenKeys.add(product.key);
-				return [product];
-			}
-			const options = product.options.filter((option) => {
-				if (seenKeys.has(option.key)) return false;
-				seenKeys.add(option.key);
-				return true;
-			});
-			return options.length > 0 ? [{
-				...product,
-				options
-			}] : [];
-		})
+		products: normalizeCategory(shop[key])
 	}));
 }
 var normAdminUser = (user) => ({
 	...user,
-	id: user._id ?? user.id,
-	coin: num(user.coin, user.coins)
+	id: user._id
 });
 // src/shared/library/image.js
 function fileToAvatar(file) {
@@ -16538,6 +16563,7 @@ async function compressJsonGZip(value) {
 	const output = new Blob([encoded]).stream().pipeThrough(stream);
 	return new Uint8Array(await new Response(output).arrayBuffer());
 }
+var ADMIN_MAX_QTY = 1e5;
 var getShop = async () => {
 	const response = await call("GET", "/user/shop");
 	return {
@@ -16881,6 +16907,175 @@ function useSession() {
 		}, [signOut])
 	};
 }
+// src/features/shop/cartUtils.js
+var hasOptions = (product) => Array.isArray(product?.options) && product.options.length > 0;
+var productOptions = (product) => hasOptions(product) ? product.options : [product];
+var isOnce = (product, group = product) => (product?.once ?? group?.once) === true;
+var isOwnedOnce = (product, group = product) => {
+	if (!isOnce(product, group)) return false;
+	const owned = product?.owned;
+	return owned === true || typeof owned === "number" && owned > 0 || typeof owned === "string" && owned.length > 0;
+};
+var hasValidPrice = (product) => Number.isSafeInteger(product?.price) && product.price >= 0;
+var getConditions = (product, group = product) => [...Array.isArray(group?.conditions) ? group.conditions : [], ...product === group ? [] : Array.isArray(product?.conditions) ? product.conditions : []];
+var unmetConditions = (product, group = product) => getConditions(product, group).some((condition) => condition?.already !== true);
+var positiveLimit = (value) => Number.isSafeInteger(value) && value > 0 ? value : Infinity;
+var getPurchaseLimit = (product, group = product, accountLimit = 100) => Math.min(isOnce(product, group) ? 1 : Infinity, positiveLimit(product?.limit), positiveLimit(group?.limit), positiveLimit(accountLimit));
+var clampCartQuantity = (value, limit = 100) => {
+	const number = Number(value);
+	return Math.max(1, Math.min(limit, Number.isFinite(number) ? Math.trunc(number) : 1));
+};
+var getGroupRemaining = (cart, group, selectedKey) => {
+	if (!hasOptions(group) || !Number.isSafeInteger(group.limit) || group.limit < 1) return Infinity;
+	const usedByOthers = cart.reduce((sum, entry) => sum + (entry.groupKey === group.key && entry.key !== selectedKey ? entry.amount : 0), 0);
+	return Math.max(0, group.limit - usedByOthers);
+};
+function indexShop(tabs) {
+	const index = /* @__PURE__ */ new Map();
+	for (const tab of tabs || []) for (const group of tab.products || []) for (const product of productOptions(group)) {
+		if (!product?.key || !hasValidPrice(product)) continue;
+		const entries = index.get(product.key) || [];
+		entries.push({
+			product,
+			group,
+			category: tab.name
+		});
+		index.set(product.key, entries);
+	}
+	return index;
+}
+function getConflictingKeys(tabs) {
+	const keys = /* @__PURE__ */ new Set();
+	for (const [key, entries] of indexShop(tabs)) {
+		const first = entries[0];
+		if (entries.some(({ product, group }) => product.price !== first.product.price || isOnce(product, group) !== isOnce(first.product, first.group) || isOwnedOnce(product, group) !== isOwnedOnce(first.product, first.group) || unmetConditions(product, group) !== unmetConditions(first.product, first.group))) keys.add(key);
+	}
+	return keys;
+}
+function isAvailable(product, group = product, conflicts = /* @__PURE__ */ new Set()) {
+	return !!product?.key && hasValidPrice(product) && !isOwnedOnce(product, group) && !unmetConditions(product, group) && !conflicts.has(product.key);
+}
+function putInCart(cart, product, amount, category = "", accountLimit = 100, group = product, conflicts = /* @__PURE__ */ new Set()) {
+	if (!isAvailable(product, group, conflicts)) return cart;
+	const result = hasOptions(group) && group.limit === 1 ? cart.filter((entry) => entry.groupKey !== group.key || entry.key === product.key) : cart;
+	const remaining = getGroupRemaining(result, group, product.key);
+	const limit = Math.min(getPurchaseLimit(product, group, accountLimit), remaining);
+	if (limit < 1) return cart;
+	const entry = {
+		key: product.key,
+		amount: clampCartQuantity(amount, limit),
+		groupKey: group.key,
+		product,
+		group,
+		category
+	};
+	const existing = result.findIndex((item) => item.key === product.key);
+	if (existing < 0) return [...result, entry];
+	return result.map((item, index) => index === existing ? entry : item);
+}
+function changeCartQuantity(cart, key, amount, accountLimit = 100) {
+	return cart.map((entry) => {
+		if (entry.key !== key) return entry;
+		const limit = Math.min(getPurchaseLimit(entry.product, entry.group, accountLimit), getGroupRemaining(cart, entry.group, key));
+		return limit < 1 ? entry : {
+			...entry,
+			amount: clampCartQuantity(amount, limit)
+		};
+	});
+}
+function resolveCart(cart, tabs, accountLimit = 100) {
+	const index = indexShop(tabs);
+	const conflicts = getConflictingKeys(tabs);
+	return cart.map((entry) => {
+		const matches = index.get(entry.key) || [];
+		const latest = matches.find((candidate) => candidate.group.key === entry.groupKey) || matches[0];
+		const product = latest?.product || entry.product;
+		const group = latest?.group || entry.group;
+		const limit = getPurchaseLimit(product, group, accountLimit);
+		const groupAmount = cart.reduce((sum, item) => sum + (item.groupKey === entry.groupKey ? item.amount : 0), 0);
+		let invalid = "";
+		if (!latest) invalid = "Vật phẩm không còn trong cửa hàng";
+		else if (conflicts.has(entry.key)) invalid = "Mã vật phẩm trùng với cấu hình khác nhau";
+		else if (isOwnedOnce(product, group)) invalid = "Vật phẩm đã sở hữu";
+		else if (unmetConditions(product, group)) invalid = "Chưa đáp ứng điều kiện mua";
+		else if (!Number.isSafeInteger(entry.amount) || entry.amount < 1 || entry.amount > limit || groupAmount > (hasOptions(group) ? positiveLimit(group.limit) : Infinity)) invalid = "Số lượng vượt giới hạn mỗi lần mua";
+		const price = hasValidPrice(product) ? product.price : 0;
+		const total = price * entry.amount;
+		if (!hasValidPrice(product) || !Number.isSafeInteger(total)) invalid = "Giá vật phẩm không hợp lệ";
+		return {
+			...entry,
+			product,
+			group,
+			category: latest?.category || entry.category,
+			price,
+			total,
+			invalid,
+			limit
+		};
+	});
+}
+var cartTotal = (entries) => entries.reduce((sum, entry) => sum + entry.total, 0);
+var cartCount = (entries) => entries.reduce((sum, entry) => sum + entry.amount, 0);
+var cartPayload = (entries) => entries.map(({ key, amount }) => ({
+	key,
+	amount
+}));
+var eligibleCategoryProducts = (products, conflicts = /* @__PURE__ */ new Set()) => (products || []).filter((product) => !hasOptions(product) && isAvailable(product, product, conflicts));
+function addCategoryToCart(cart, products, category = "", accountLimit = 100, conflicts = /* @__PURE__ */ new Set()) {
+	let result = cart;
+	for (const product of eligibleCategoryProducts(products, conflicts)) {
+		if (result.some((entry) => entry.key === product.key)) continue;
+		result = putInCart(result, product, 1, category, accountLimit, product, conflicts);
+	}
+	return result;
+}
+function removeCategoryFromCart(cart, products) {
+	const keys = new Set((products || []).flatMap((product) => productOptions(product).map((option) => option.key)));
+	return cart.filter((entry) => !keys.has(entry.key));
+}
+var incrementOwned = (product, amount, group = product) => {
+	if (isOnce(product, group)) return {
+		...product,
+		owned: true
+	};
+	if (typeof product.owned === "number") return {
+		...product,
+		owned: product.owned + amount
+	};
+	return product;
+};
+function applyPurchaseToTabs(tabs, purchasedItems) {
+	const amounts = new Map(purchasedItems.map(({ key, amount }) => [key, amount]));
+	return tabs.map((tab) => ({
+		...tab,
+		products: tab.products.map((group) => {
+			if (!hasOptions(group)) {
+				const amount = amounts.get(group.key);
+				return amount ? incrementOwned(group, amount) : group;
+			}
+			const selection = group.options.find((option) => amounts.has(option.key));
+			if (!selection) return group;
+			if (typeof group.owned === "string" || typeof group.owned === "boolean" && group.options.every((option) => typeof option.owned === "boolean")) return {
+				...group,
+				owned: selection.name || selection.key,
+				options: group.options.map((option) => ({
+					...option,
+					owned: option.key === selection.key
+				}))
+			};
+			const options = group.options.map((option) => {
+				const amount = amounts.get(option.key);
+				return amount ? incrementOwned(option, amount, group) : option;
+			});
+			const owned = options.every((option) => typeof option.owned === "number") ? options.reduce((sum, option) => sum + option.owned, 0) : group.owned;
+			return {
+				...group,
+				owned,
+				options
+			};
+		})
+	}));
+}
 // src/shared/hooks/useShop.js
 var INITIAL$1 = {
 	tabs: null,
@@ -16896,10 +17091,11 @@ function useShop(enabled, skipReady = false) {
 	skipReadyRef.current = skipReady;
 	const load = (0, import_react.useCallback)(async () => {
 		const requestId = ++request.current;
-		setShop({
-			...INITIAL$1,
-			loading: true
-		});
+		setShop((current) => ({
+			...current,
+			loading: true,
+			error: ""
+		}));
 		if (!skipReadyRef.current) try {
 			const ready = await checkShopReady();
 			if (requestId !== request.current) return;
@@ -16922,7 +17118,7 @@ function useShop(enabled, skipReady = false) {
 		try {
 			const response = await getShop();
 			if (requestId === request.current) setShop({
-				tabs: Array.isArray(response.tabs) ? response.tabs : [],
+				tabs: response.tabs,
 				loading: false,
 				error: "",
 				ready: true,
@@ -16933,9 +17129,17 @@ function useShop(enabled, skipReady = false) {
 				...current,
 				loading: false,
 				error: error?.message || "Không tải được cửa hàng",
-				ready: true
+				ready: current.ready ?? true
 			}));
 		}
+	}, []);
+	const applyPurchase = (0, import_react.useCallback)((items) => {
+		request.current += 1;
+		setShop((current) => current.tabs ? {
+			...current,
+			loading: false,
+			tabs: applyPurchaseToTabs(current.tabs, items)
+		} : current);
 	}, []);
 	(0, import_react.useEffect)(() => {
 		if (!enabled) {
@@ -16950,7 +17154,8 @@ function useShop(enabled, skipReady = false) {
 	}, [enabled, load]);
 	return {
 		shop,
-		load
+		load,
+		applyPurchase
 	};
 }
 // src/shared/hooks/useCheckin.js
@@ -17170,13 +17375,13 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 };
 // src/application/App.jsx
 var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([0,1,2,3])));
-var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11,12,13])));
-var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([14,7,2,3,15,16,17,6,13,18])));
-var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([19,20,10])));
-var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([21,18,15,12,5,20,10])));
-var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([22,13,17,20,10,2,15,23,5])));
-var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([24,1,13,20,10,16,7,12,5,8,9,15,23,2])));
-var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([25,20,10,23])));
+var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11,12])));
+var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([13,7,2,3,14,15,16,6,12,17])));
+var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([18,19,10])));
+var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([20,17,14,11,5,19,10])));
+var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([21,12,16,19,10,2,14,22,5])));
+var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([23,1,12,19,10,15,7,11,5,9,14,22,2])));
+var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([24,19,10,22])));
 var AUTHENTICATION_PATHS = [
 	"/login",
 	"/register",
@@ -17209,7 +17414,7 @@ function AppContent() {
 	const pathSegment = location.pathname.split("/").filter(Boolean)[0];
 	const current = pathSegment || "shop";
 	const admin = isAdmin(user);
-	const { shop, load: loadShop } = useShop(status === "authed" && pathSegment === "shop", admin);
+	const { shop, load: loadShop, applyPurchase: updateShopAfterPurchase } = useShop(status === "authed" && pathSegment === "shop", admin);
 	const checkin = useCheckin(status === "authed");
 	const currentPath = `${location.pathname}${location.search}${location.hash}`;
 	(0, import_react.useEffect)(() => {
@@ -17328,7 +17533,8 @@ function AppContent() {
 									onUser: setUser,
 									shop,
 									onReload: loadShop,
-									onRefresh: refreshUser
+									onRefresh: refreshUser,
+									onPurchase: updateShopAfterPurchase
 								})
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Route, {
@@ -17421,4 +17627,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)({ md5: "b750a6e2b3d860ae46efcc050e03db3b" });
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
-export { Logo as $, adminUpdatePlayerAvatar as A, useParams as At, openidOtp as B, adminGiftCodes as C, IconCircleCheck as Ct, adminRecord as D, Outlet as Dt, adminPlayers as E, createReactComponent as Et, getTransactions as F, login as G, submitInvite as H, buy as I, signup as J, passwordOtp as K, changeOpenid as L, cancelTransaction as M, require_react as Mt, createTransaction as N, __toESM as Nt, adminSaveData as O, useLocation as Ot, getTransaction as P, Coin as Q, getBuffetLink as R, adminEncryptRecordValue as S, IconInfoCircle as St, adminPlayerFriends as T, IconAlertTriangle as Tt, updateAvatar as U, redeemGiftCode as V, updateUser as W, fileToAvatar as X, signupOtp as Y, isAdmin as Z, adminDeletePlayerFriend as _, Field as _t, formatNumber as a, ErrorState as at, adminEditPlayer as b, IconX as bt, adminAddCoin as c, Tabs as ct, adminAddPlayerStar as d, SortSelect as dt, JsonEditor as et, adminCreateGiftCode as f, Menu as ft, adminDeleteGiftCode as g, toastError as gt, adminDecryptRecordValue as h, toast as ht, formatDateTime as i, Skeleton as it, adminUsers as j, require_react_dom as jt, adminSaveRecord as k, useNavigate as kt, adminAddPlayerFriend as l, PageSizeSelect as lt, adminData as m, OtpButton as mt, compareByTime as n, PagerSkeleton as nt, formatShortDateTime as o, Spinner as ot, adminCreateUser as p, Dialog as pt, resetPassword as q, formatDate as r, RowSkeleton as rt, formatVietnameseDong as s, Pager as st, __vitePreload as t, Line as tt, adminAddPlayerLike as u, Select as ut, adminDeleteUser as v, Button as vt, adminPlayer as w, IconChevronRight as wt, adminEditUser as x, IconRefresh as xt, adminEditGiftCode as y, require_jsx_runtime as yt, getFriendLink as z };
+export { createTransaction as $, require_react as $t, adminAddPlayerLike as A, PageSizeSelect as At, adminEditPlayer as B, require_jsx_runtime as Bt, formatDate as C, PagerSkeleton as Ct, formatVietnameseDong as D, Spinner as Dt, formatShortDateTime as E, ErrorState as Et, adminDecryptRecordValue as F, OtpButton as Ft, adminPlayerFriends as G, IconChevronRight as Gt, adminEncryptRecordValue as H, IconRefresh as Ht, adminDeleteGiftCode as I, toast as It, adminSaveData as J, Outlet as Jt, adminPlayers as K, IconAlertTriangle as Kt, adminDeletePlayerFriend as L, toastError as Lt, adminCreateGiftCode as M, SortSelect as Mt, adminCreateUser as N, Menu as Nt, adminAddCoin as O, Pager as Ot, adminData as P, Dialog as Pt, cancelTransaction as Q, require_react_dom as Qt, adminDeleteUser as R, Field as Rt, compareByTime as S, Line as St, formatNumber as T, Skeleton as Tt, adminGiftCodes as U, IconInfoCircle as Ut, adminEditUser as V, IconX as Vt, adminPlayer as W, IconCircleCheck as Wt, adminUpdatePlayerAvatar as X, useNavigate as Xt, adminSaveRecord as Y, useLocation as Yt, adminUsers as Z, useParams as Zt, productOptions as _, fileToAvatar as _t, cartTotal as a, getBuffetLink as at, resolveCart as b, Logo as bt, eligibleCategoryProducts as c, redeemGiftCode as ct, getGroupRemaining as d, updateUser as dt, __toESM as en, getTransaction as et, getPurchaseLimit as f, login as ft, isOwnedOnce as g, signupOtp as gt, isOnce as h, signup as ht, cartPayload as i, changeOpenid as it, adminAddPlayerStar as j, Select as jt, adminAddPlayerFriend as k, Tabs as kt, getConditions as l, submitInvite as lt, hasValidPrice as m, resetPassword as mt, addCategoryToCart as n, ADMIN_MAX_QTY as nt, changeCartQuantity as o, getFriendLink as ot, hasOptions as p, passwordOtp as pt, adminRecord as q, createReactComponent as qt, cartCount as r, buy as rt, clampCartQuantity as s, openidOtp as st, __vitePreload as t, getTransactions as tt, getConflictingKeys as u, updateAvatar as ut, putInCart as v, isAdmin as vt, formatDateTime as w, RowSkeleton as wt, unmetConditions as x, JsonEditor as xt, removeCategoryFromCart as y, Coin as yt, adminEditGiftCode as z, Button as zt };

@@ -4,6 +4,7 @@ import { normShop } from '@/shared/library/api/normalize';
 import { compressJsonGZip } from '@/shared/library/compression/gzip';
 
 export const MAX_QTY = 100;
+export const ADMIN_MAX_QTY = 100000;
 
 export const getShop = async () => {
   const response = await call('GET', '/user/shop');

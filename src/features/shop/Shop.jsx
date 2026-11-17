@@ -7,7 +7,7 @@ import * as api from '@/shared/library/api';
 import TopUp from '@/shared/components/payment/TopUp';
 import { PAGE, TOPUP } from '@/features/shop/config';
 import { hasPrice, matches } from '@/features/shop/shopUtilities';
-import { addCategoryToCart, cartCount, cartPayload, cartTotal, changeCartQuantity, eligibleCategoryProducts, isOwnedOnce, isOnce, productOptions, putInCart, removeCategoryFromCart, resolveCart } from '@/features/shop/cartUtils';
+import { addCategoryToCart, cartCount, cartPayload, cartTotal, changeCartQuantity, eligibleCategoryProducts, getConflictingKeys, hasOptions, isOwnedOnce, productOptions, putInCart, removeCategoryFromCart, resolveCart } from '@/features/shop/cartUtils';
 import BuyDialog from '@/features/shop/BuyDialog';
 import CartDialog from '@/features/shop/CartDialog';
 import CategoryNav from '@/features/shop/CategoryNav';
@@ -20,15 +20,7 @@ import PurchaseDoneDialog from '@/features/shop/PurchaseDoneDialog';
 
 const START_VIDEO = `${import.meta.env.BASE_URL}videos/start.mp4`;
 
-function useOwned(resetKey) {
-  const [ownedIds, setOwnedIds] = useState(() => new Set());
-  useEffect(() => setOwnedIds(new Set()), [resetKey]);
-  const isOwned = (product) => isOwnedOnce(product) || ownedIds.has(product?.key);
-  const markOwned = (key) => setOwnedIds((keys) => new Set(keys).add(key));
-  return { isOwned, markOwned };
-};
-
-export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
+export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
   const navigate = useNavigate();
   const { section } = useParams();
   const tabs = shop.tabs || [];
@@ -41,8 +33,9 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
   const [buying, setBuying] = useState(false);
   const [guide, setGuide] = useState(false);
   const [done, setDone] = useState(false);
-  const { isOwned, markOwned } = useOwned(shop.tabs);
-  const maxQuantity = api.isAdmin(user) ? 1000 : api.MAX_QTY;
+  const maxQuantity = api.isAdmin(user) ? api.ADMIN_MAX_QTY : api.MAX_QTY;
+  const conflicts = useMemo(() => getConflictingKeys(shop.tabs), [shop.tabs]);
+  const isOwned = (product) => hasOptions(product) ? product.options.every((option) => isOwnedOnce(option, product)) : isOwnedOnce(product);
   const selectTab = (next) => navigate(`/shop/${next}`);
 
   useEffect(() => {
@@ -64,23 +57,23 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
     return [t.id, needle ? products.filter((p) => matches(p, needle)).length : products.length];
   })), [tabs, needle]);
 
-  const entries = useMemo(() => resolveCart(cart, shop.tabs, isOwned, maxQuantity), [cart, shop.tabs, isOwned, maxQuantity]);
+  const entries = useMemo(() => resolveCart(cart, shop.tabs, maxQuantity), [cart, shop.tabs, maxQuantity]);
   const total = cartTotal(entries);
   const cartQuantities = useMemo(() => new Map(cart.map(({ key, amount }) => [key, amount])), [cart]);
   const categoryProducts = Array.isArray(current?.products) ? current.products : [];
-  const eligible = eligibleCategoryProducts(categoryProducts, isOwned);
+  const eligible = eligibleCategoryProducts(categoryProducts, conflicts);
   const categoryAddedCount = eligible.filter((product) => cartQuantities.has(product.key)).length;
   const allCategoryAdded = eligible.length > 0 && categoryAddedCount === eligible.length;
   const cartReady = shop.ready === true && Array.isArray(shop.tabs) && !shop.loading;
   const canPurchase = cartReady && entries.every(({ invalid }) => !invalid) && total <= user.coins && Number.isSafeInteger(total);
 
   const open = (p) => {
-    if (isOwned(p) || buying) return;
+    if (buying) return;
     setItem(p);
   };
   const addToCart = (product, amount, category, group = product) => {
     const exists = cart.some((entry) => entry.key === product.key);
-    setCart((items) => putInCart(items, product, amount, category, maxQuantity, group));
+    setCart((items) => putInCart(items, product, amount, category, maxQuantity, group, conflicts));
     toast(exists ? 'Đã cập nhật số lượng trong giỏ' : 'Đã thêm vật phẩm vào giỏ');
   };
   const toggleCategoryCart = () => {
@@ -89,7 +82,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
       setCart((items) => removeCategoryFromCart(items, categoryProducts));
       toast(`Đã xóa vật phẩm thuộc ${current.name} khỏi giỏ`);
     } else {
-      setCart((items) => addCategoryToCart(items, categoryProducts, current.name, isOwned, maxQuantity));
+      setCart((items) => addCategoryToCart(items, categoryProducts, current.name, maxQuantity, conflicts));
       toast(`Đã thêm các vật phẩm còn lại của ${current.name} vào giỏ`);
     };
   };
@@ -107,7 +100,8 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
     try {
       const response = await api.buy(cartPayload(entries));
       if (response.user) onUser(response.user);
-      for (const { product, group } of entries) if (isOnce(product, group)) markOwned(product.key);
+      else if (Number.isSafeInteger(response.coin)) onUser({ ...user, coin: response.coin, coins: response.coin });
+      onPurchase?.(cartPayload(entries));
       setCart([]);
       setCartOpen(false);
       setDone(true);
@@ -165,8 +159,8 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
           <EmptyProducts searching={!!needle} tabs={tabs} hits={hits} onSelect={selectTab} />
         ) : (
           <ul key={tabId} className={`grid animate-fade gap-2 transition-opacity sm:grid-cols-2 xl:grid-cols-3 ${shop.loading ? 'pointer-events-none opacity-50' : ''}`}>
-            {products.slice(0, shown).map((p) => (
-              <ProductItem key={p.key} p={p} owned={isOwned(p)} poor={hasPrice(p) && p.price > user.coins} cartQuantity={productOptions(p).reduce((count, option) => count + (cartQuantities.get(option.key) || 0), 0)} onBuy={() => open(p)} />
+            {products.slice(0, shown).map((p, index) => (
+              <ProductItem key={`${p.key}-${index}`} p={p} conflictingKeys={conflicts} poor={hasPrice(p) && p.price > user.coins} cartQuantity={productOptions(p).reduce((count, option) => count + (cartQuantities.get(option.key) || 0), 0)} onBuy={() => open(p)} />
             ))}
           </ul>
         )}
@@ -218,7 +212,8 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
         item={item}
         category={current?.name}
         user={user}
-        cartQuantities={cartQuantities}
+        entries={entries}
+        conflictingKeys={conflicts}
         cartTotal={total}
         maxQuantity={maxQuantity}
         onAdd={addToCart}
@@ -235,7 +230,6 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
         coins={user.coins}
         ready={cartReady}
         buying={buying}
-        maxQuantity={maxQuantity}
         onClose={() => setCartOpen(false)}
         onQuantity={(key, amount) => setCart((items) => changeCartQuantity(items, key, amount, maxQuantity))}
         onRemove={removeFromCart}

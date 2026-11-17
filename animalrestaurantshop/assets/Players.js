@@ -1,4 +1,4 @@
-import { A as adminUpdatePlayerAvatar, At as useParams, D as adminRecord, E as adminPlayers, Et as createReactComponent, Mt as require_react, Nt as __toESM, S as adminEncryptRecordValue, St as IconInfoCircle, T as adminPlayerFriends, X as fileToAvatar, _ as adminDeletePlayerFriend, _t as Field, a as formatNumber, at as ErrorState, b as adminEditPlayer, ct as Tabs, d as adminAddPlayerStar, et as JsonEditor, ft as Menu, gt as toastError, h as adminDecryptRecordValue, ht as toast, it as Skeleton, k as adminSaveRecord, kt as useNavigate, l as adminAddPlayerFriend, lt as PageSizeSelect, nt as PagerSkeleton, ot as Spinner, pt as Dialog, tt as Line, u as adminAddPlayerLike, ut as Select, vt as Button, w as adminPlayer, xt as IconRefresh, yt as require_jsx_runtime } from "./index.js";
+import { $t as require_react, A as adminAddPlayerLike, At as PageSizeSelect, B as adminEditPlayer, Bt as require_jsx_runtime, Ct as PagerSkeleton, Dt as Spinner, Et as ErrorState, F as adminDecryptRecordValue, G as adminPlayerFriends, H as adminEncryptRecordValue, Ht as IconRefresh, It as toast, K as adminPlayers, L as adminDeletePlayerFriend, Lt as toastError, Nt as Menu, Pt as Dialog, Rt as Field, St as Line, T as formatNumber, Tt as Skeleton, Ut as IconInfoCircle, W as adminPlayer, X as adminUpdatePlayerAvatar, Xt as useNavigate, Y as adminSaveRecord, Zt as useParams, _t as fileToAvatar, en as __toESM, j as adminAddPlayerStar, jt as Select, k as adminAddPlayerFriend, kt as Tabs, q as adminRecord, qt as createReactComponent, xt as JsonEditor, zt as Button } from "./index.js";
 import { n as IconArrowLeft, t as IconArrowRight } from "./IconArrowRight.js";
 import { t as IconSearch } from "./IconSearch.js";
 import { c as IconUser, o as PLAYER_TABS } from "./config.js";
@@ -6,7 +6,7 @@ import { t as IconStarFilled } from "./IconStarFilled.js";
 import { n as IconLock, r as IconCopy, t as copyText } from "./clipboard.js";
 import { t as IconPlus } from "./IconPlus.js";
 import { t as IconTrash } from "./IconTrash.js";
-import { o as IconStar, t as Tile } from "./Tile.js";
+import { i as IconStar, t as Tile } from "./Tile.js";
 import { n as usePaginatedData, r as IconPencil, t as useRemoteResource } from "./useRemoteResource.js";
 import { t as Head } from "./Head.js";
 import { i as validate } from "./validate.js";

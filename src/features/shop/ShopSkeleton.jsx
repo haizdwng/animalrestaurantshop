@@ -7,7 +7,7 @@ export default function ShopSkeleton() {
         <div className='min-w-0 flex-1'>
           <Skeleton className='h-7 w-32 sm:h-8' />
           <p className='mt-0.5 flex h-[16.5px] items-center gap-1.5 text-[11px] text-mute'>
-            <Spinner size={12} className='text-lime' /> Đang tải dữ liệu cửa hàng…
+            <Spinner size={12} className='text-lime' /> Đang tải cửa hàng…
           </p>
         </div>
         <div className='flex w-full items-center gap-2 sm:w-auto'>
@@ -16,10 +16,10 @@ export default function ShopSkeleton() {
         </div>
       </div>
       <ul className='grid gap-2 sm:grid-cols-2 xl:grid-cols-3'>
-        {Array.from({ length: 9 }).map((_, i) => (
-          <li key={i} className={`flex h-19.5 items-center gap-3 rounded-xl border border-line bg-panel p-3 ${i >= 6 ? 'hidden sm:flex' : ''}`}>
+        {Array.from({ length: 9 }).map((_, index) => (
+          <li key={index} className={`flex min-h-20 items-center gap-3 rounded-xl border border-line bg-panel p-3 ${index >= 6 ? 'hidden sm:flex' : ''}`}>
             <Skeleton className='size-12 rounded-xl' />
-            <div className='flex-1 space-y-2'>
+            <div className='min-w-0 flex-1 space-y-2'>
               <Skeleton className='h-3 w-3/4' />
               <Skeleton className='h-2.5 w-1/3' />
             </div>

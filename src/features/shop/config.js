@@ -15,4 +15,3 @@ export const CATEGORY_ICONS = {
   specials: IconStar,
   items: IconBox
 };
-export const HUES = ['#d4ff3a', '#ffc83d', '#7cc4ff', '#ff8fb1', '#b69cff', '#5ee6c4', '#ff9d5c'];

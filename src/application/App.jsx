@@ -44,7 +44,7 @@ function AppContent() {
   const pathSegment = location.pathname.split('/').filter(Boolean)[0];
   const current = pathSegment || DEFAULT_TAB;
   const admin = isAdmin(user);
-  const { shop, load: loadShop } = useShop(status === 'authed' && pathSegment === 'shop', admin);
+  const { shop, load: loadShop, applyPurchase: updateShopAfterPurchase } = useShop(status === 'authed' && pathSegment === 'shop', admin);
   const checkin = useCheckin(status === 'authed');
   const currentPath = `${location.pathname}${location.search}${location.hash}`;
 
@@ -140,7 +140,7 @@ function AppContent() {
           <Suspense fallback={null}>
             <Routes>
               <Route path='/' element={<StartRoute />} />
-              <Route path='/shop/:section?' element={<Shop user={user} onUser={setUser} shop={shop} onReload={loadShop} onRefresh={refreshUser} />} />
+              <Route path='/shop/:section?' element={<Shop user={user} onUser={setUser} shop={shop} onReload={loadShop} onRefresh={refreshUser} onPurchase={updateShopAfterPurchase} />} />
               <Route path='/administrator' element={admin ? <AdminPanel /> : <Navigate to='/shop' replace />}>
                 <Route index element={<Navigate to='giftcodes' replace />} />
                 <Route path='giftcodes' element={<AdminGiftCodes />} />

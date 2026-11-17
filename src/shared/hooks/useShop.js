@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as api from '@/shared/library/api';
+import { applyPurchaseToTabs } from '@/features/shop/cartUtils';
 
 const INITIAL = { tabs: null, loading: false, error: '', ready: null, readyMessage: '' };
 
@@ -11,8 +12,7 @@ export default function useShop(enabled, skipReady = false) {
 
   const load = useCallback(async () => {
     const requestId = ++request.current;
-    setShop({ ...INITIAL, loading: true });
-
+    setShop((current) => ({ ...current, loading: true, error: '' }));
     if (!skipReadyRef.current) {
       try {
         const ready = await api.checkShopReady();
@@ -26,13 +26,17 @@ export default function useShop(enabled, skipReady = false) {
         return;
       };
     };
-
     try {
       const response = await api.getShop();
-      if (requestId === request.current) setShop({ tabs: Array.isArray(response.tabs) ? response.tabs : [], loading: false, error: '', ready: true, readyMessage: '' });
+      if (requestId === request.current) setShop({ tabs: response.tabs, loading: false, error: '', ready: true, readyMessage: '' });
     } catch (error) {
-      if (requestId === request.current) setShop((current) => ({ ...current, loading: false, error: error?.message || 'Không tải được cửa hàng', ready: true }));
+      if (requestId === request.current) setShop((current) => ({ ...current, loading: false, error: error?.message || 'Không tải được cửa hàng', ready: current.ready ?? true }));
     };
+  }, []);
+
+  const applyPurchase = useCallback((items) => {
+    request.current += 1;
+    setShop((current) => current.tabs ? { ...current, loading: false, tabs: applyPurchaseToTabs(current.tabs, items) } : current);
   }, []);
 
   useEffect(() => {
@@ -41,12 +45,9 @@ export default function useShop(enabled, skipReady = false) {
       setShop(INITIAL);
       return;
     };
-
     load();
-    return () => {
-      request.current += 1;
-    };
+    return () => { request.current += 1; };
   }, [enabled, load]);
 
-  return { shop, load };
+  return { shop, load, applyPurchase };
 };

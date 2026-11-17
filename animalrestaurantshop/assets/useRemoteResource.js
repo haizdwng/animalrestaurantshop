@@ -1,4 +1,4 @@
-import { Et as createReactComponent, Mt as require_react, Nt as __toESM, st as Pager, yt as require_jsx_runtime } from "./index.js";
+import { $t as require_react, Bt as require_jsx_runtime, Ot as Pager, en as __toESM, qt as createReactComponent } from "./index.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
 *
