@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/clipboard.js","assets/IconPhoto.js","assets/Tile.js","assets/IconUsers.js","assets/IconPlus.js","assets/Account.js","assets/useRemoteResource.js","assets/IconStarFilled.js","assets/IconUser.js","assets/IconUserPlus.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Head.js","assets/Users.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/usePaginatedData.js","assets/PaymentDialog.js","assets/clipboard.js","assets/IconPhoto.js","assets/Tile.js","assets/IconUsers.js","assets/IconPlus.js","assets/Account.js","assets/useRemoteResource.js","assets/IconStarFilled.js","assets/IconUser.js","assets/IconUserPlus.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Head.js","assets/Users.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
 // \0rolldown/runtime.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -15945,20 +15945,6 @@ function Ve({ defaultValue: e, defaultLanguage: r, defaultPath: n, value: t, lan
 	});
 }
 var Ft = (0, import_react.memo)(Ve);
-// src/shared/components/ui/Tooltip.jsx
-function Tooltip({ text, children, side = "bottom", align = "center", className = "" }) {
-	const id = (0, import_react.useId)();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-		className: `ui-tooltip-anchor relative inline-flex min-w-0 ${className}`,
-		"aria-describedby": id,
-		children: [(0, import_react.isValidElement)(children) ? (0, import_react.cloneElement)(children, { "aria-describedby": id }) : children, /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-			role: "tooltip",
-			id,
-			className: `ui-tooltip whitespace-normal ${side === "top" ? "bottom-[calc(100%+.5rem)]" : "top-[calc(100%+.5rem)]"} ${align === "end" ? "right-0" : align === "start" ? "left-0" : "left-1/2 -translate-x-1/2"}`,
-			children: text
-		})]
-	});
-}
 // src/shared/components/ui/Feedback.jsx
 function Spinner({ size = 18, className = "" }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLoader2, {
@@ -16293,61 +16279,45 @@ function JsonEditor({ load, save, deps = [], extraActions = null }) {
 						"aria-label": "Chọn tệp JSON để nhập",
 						onChange: importFile
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
-						text: "Tải lại dữ liệu từ máy chủ",
-						side: "top",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-							variant: "ghost",
-							size: "sm",
-							className: "size-9! shrink-0 p-0!",
-							"aria-label": "Tải lại",
-							title: "Tải lại",
-							onClick: () => dirty ? setConfirmReload(true) : reload(),
-							disabled: saving,
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 17 })
-						})
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+						variant: "ghost",
+						size: "sm",
+						className: "size-9! shrink-0 p-0!",
+						"aria-label": "Tải lại",
+						title: "Tải lại",
+						onClick: () => dirty ? setConfirmReload(true) : reload(),
+						disabled: saving,
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 17 })
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
-						text: "Định dạng JSON",
-						side: "top",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-							variant: "ghost",
-							size: "sm",
-							className: "size-9! shrink-0 p-0!",
-							"aria-label": "Định dạng JSON",
-							title: "Định dạng JSON",
-							onClick: format,
-							disabled: Boolean(parseError) || saving,
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconBraces, { size: 17 })
-						})
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+						variant: "ghost",
+						size: "sm",
+						className: "size-9! shrink-0 p-0!",
+						"aria-label": "Định dạng JSON",
+						title: "Định dạng JSON",
+						onClick: format,
+						disabled: Boolean(parseError) || saving,
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconBraces, { size: 17 })
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
-						text: "Nhập dữ liệu từ tệp .json",
-						side: "top",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-							variant: "ghost",
-							size: "sm",
-							className: "size-9! shrink-0 p-0!",
-							"aria-label": "Nhập tệp JSON",
-							title: "Nhập tệp JSON",
-							onClick: () => uploadInput.current?.click(),
-							disabled: saving,
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconFileUpload, { size: 17 })
-						})
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+						variant: "ghost",
+						size: "sm",
+						className: "size-9! shrink-0 p-0!",
+						"aria-label": "Nhập tệp JSON",
+						title: "Nhập tệp JSON",
+						onClick: () => uploadInput.current?.click(),
+						disabled: saving,
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconFileUpload, { size: 17 })
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
-						text: "Lưu dữ liệu lên máy chủ (Ctrl/⌘ + S)",
-						side: "top",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-							size: "sm",
-							className: "size-9! shrink-0 p-0!",
-							"aria-label": "Lưu JSON",
-							title: "Lưu JSON",
-							onClick: submit,
-							loading: saving,
-							disabled: !dirty || Boolean(parseError),
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDeviceFloppy, { size: 17 })
-						})
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+						size: "sm",
+						className: "size-9! shrink-0 p-0!",
+						"aria-label": "Lưu JSON",
+						title: "Lưu JSON",
+						onClick: submit,
+						loading: saving,
+						disabled: !dirty || Boolean(parseError),
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDeviceFloppy, { size: 17 })
 					})
 				]
 			}),
@@ -17088,21 +17058,17 @@ function AppHeader({ nav, current, onNavigate, coins, syncing, coinSyncing, onRe
 						]
 					}, key))
 				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
-					text: "Số xu hiện có · Bấm để cập nhật",
-					align: "end",
-					className: "ml-auto shrink-0",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						type: "button",
-						onClick: onRefresh,
-						"aria-label": `Hiện có ${formatNumber(coins)} xu. Bấm để cập nhật`,
-						"aria-busy": coinSyncing || void 0,
-						className: "flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-coin/30 bg-coin/10 px-3 text-sm font-bold text-coin tabular-nums transition-colors hover:bg-coin/15",
-						children: [coinSyncing ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 19 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 20 }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "min-w-5 text-right",
-							children: formatNumber(coins)
-						})]
-					})
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+					type: "button",
+					onClick: onRefresh,
+					"aria-label": `Hiện có ${formatNumber(coins)} xu. Bấm để cập nhật`,
+					title: "Số xu hiện có · Bấm để cập nhật",
+					"aria-busy": coinSyncing || void 0,
+					className: "ml-auto flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-coin/30 bg-coin/10 px-3 text-sm font-bold text-coin tabular-nums transition-colors hover:bg-coin/15",
+					children: [coinSyncing ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 19 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 20 }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "min-w-5 text-right",
+						children: formatNumber(coins)
+					})]
 				})
 			]
 		}), syncing && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -17722,13 +17688,13 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 };
 // src/application/App.jsx
 var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([0,1,2,3])));
-var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11])));
-var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([12,7,2,3,13,14,15,16,6,17])));
-var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([18,19,10,15])));
-var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([20,17,13,11,5,19,10,15,21])));
-var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([22,16,19,10,15,2,13,21,5])));
-var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([23,1,19,10,15,14,7,11,5,9,13,21,2])));
-var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([24,19,10,15,21])));
+var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11,12])));
+var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([13,8,2,3,14,15,16,17,7,6,18])));
+var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([19,20,11,16])));
+var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([21,18,14,12,5,20,11,16,22,6])));
+var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([23,17,20,11,16,2,6,14,22,5])));
+var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([24,1,20,11,16,15,8,12,5,10,22,6,14,2])));
+var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([25,20,11,16,22])));
 var AUTHENTICATION_PATHS = [
 	"/login",
 	"/register",
@@ -17974,4 +17940,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)({ md5: "b750a6e2b3d860ae46efcc050e03db3b" });
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
-export { createTransaction as $, useLocation as $t, adminAddPlayerLike as A, Pager as At, adminEditPlayer as B, Field as Bt, formatDate as C, Line as Ct, formatVietnameseDong as D, ErrorState as Dt, formatShortDateTime as E, Skeleton as Et, adminDecryptRecordValue as F, Menu as Ft, adminPlayerFriends as G, IconInfoCircle as Gt, adminEncryptRecordValue as H, IconX as Ht, adminDeleteGiftCode as I, Dialog as It, adminSaveData as J, IconAlertTriangle as Jt, adminPlayers as K, IconCircleCheck as Kt, adminDeletePlayerFriend as L, OtpButton as Lt, adminCreateGiftCode as M, PageSizeSelect as Mt, adminCreateUser as N, Select as Nt, adminAddCoin as O, Spinner as Ot, adminData as P, SortSelect as Pt, cancelTransaction as Q, Outlet as Qt, adminDeleteUser as R, toast as Rt, compareByTime as S, JsonEditor as St, formatNumber as T, RowSkeleton as Tt, adminGiftCodes as U, IconSearch as Ut, adminEditUser as V, Button as Vt, adminPlayer as W, IconRefresh as Wt, adminUpdatePlayerAvatar as X, Badge as Xt, adminSaveRecord as Y, createReactComponent as Yt, adminUsers as Z, require_jsx_runtime as Zt, productOptions as _, fileToAvatar as _t, cartTotal as a, getBuffetLink as at, resolveCart as b, Logo as bt, eligibleCategoryProducts as c, redeemGiftCode as ct, getGroupRemaining as d, updateUser as dt, useNavigate as en, getTransaction as et, getPurchaseLimit as f, login as ft, isOwnedOnce as g, signupOtp as gt, isOnce as h, signup as ht, cartPayload as i, __toESM as in, changeOpenid as it, adminAddPlayerStar as j, Tabs as jt, adminAddPlayerFriend as k, Tooltip as kt, getConditions as l, submitInvite as lt, hasValidPrice as m, resetPassword as mt, addCategoryToCart as n, require_react_dom as nn, ADMIN_MAX_QTY as nt, changeCartQuantity as o, getFriendLink as ot, hasOptions as p, passwordOtp as pt, adminRecord as q, IconChevronRight as qt, cartCount as r, require_react as rn, buy as rt, clampCartQuantity as s, openidOtp as st, __vitePreload as t, useParams as tn, getTransactions as tt, getConflictingKeys as u, updateAvatar as ut, putInCart as v, isAdmin as vt, formatDateTime as w, PagerSkeleton as wt, unmetConditions as x, SearchInput as xt, removeCategoryFromCart as y, Coin as yt, adminEditGiftCode as z, toastError as zt };
+export { cancelTransaction as $, useLocation as $t, adminAddPlayerFriend as A, Pager as At, adminEditGiftCode as B, Field as Bt, compareByTime as C, JsonEditor as Ct, formatShortDateTime as D, Skeleton as Dt, formatNumber as E, RowSkeleton as Et, adminData as F, Menu as Ft, adminPlayer as G, IconInfoCircle as Gt, adminEditUser as H, IconX as Ht, adminDecryptRecordValue as I, Dialog as It, adminRecord as J, IconAlertTriangle as Jt, adminPlayerFriends as K, IconCircleCheck as Kt, adminDeleteGiftCode as L, OtpButton as Lt, adminAddPlayerStar as M, PageSizeSelect as Mt, adminCreateGiftCode as N, Select as Nt, formatVietnameseDong as O, ErrorState as Ot, adminCreateUser as P, SortSelect as Pt, adminUsers as Q, Outlet as Qt, adminDeletePlayerFriend as R, toast as Rt, unmetConditions as S, SearchInput as St, formatDateTime as T, PagerSkeleton as Tt, adminEncryptRecordValue as U, IconSearch as Ut, adminEditPlayer as V, Button as Vt, adminGiftCodes as W, IconRefresh as Wt, adminSaveRecord as X, Badge as Xt, adminSaveData as Y, createReactComponent as Yt, adminUpdatePlayerAvatar as Z, require_jsx_runtime as Zt, isOwnedOnce as _, signupOtp as _t, cartTotal as a, changeOpenid as at, removeCategoryFromCart as b, Coin as bt, eligibleCategoryProducts as c, openidOtp as ct, getGroupRemaining as d, updateAvatar as dt, useNavigate as en, createTransaction as et, getPurchaseLimit as f, updateUser as ft, isOnce as g, signup as gt, isAvailable as h, resetPassword as ht, cartPayload as i, __toESM as in, buy as it, adminAddPlayerLike as j, Tabs as jt, adminAddCoin as k, Spinner as kt, getConditions as l, redeemGiftCode as lt, hasValidPrice as m, passwordOtp as mt, addCategoryToCart as n, require_react_dom as nn, getTransactions as nt, changeCartQuantity as o, getBuffetLink as ot, hasOptions as p, login as pt, adminPlayers as q, IconChevronRight as qt, cartCount as r, require_react as rn, ADMIN_MAX_QTY as rt, clampCartQuantity as s, getFriendLink as st, __vitePreload as t, useParams as tn, getTransaction as tt, getConflictingKeys as u, submitInvite as ut, productOptions as v, fileToAvatar as vt, formatDate as w, Line as wt, resolveCart as x, Logo as xt, putInCart as y, isAdmin as yt, adminDeleteUser as z, toastError as zt };

@@ -1,7 +1,51 @@
-import { Et as Skeleton, Ht as IconX, Ot as Spinner, Rt as toast, Vt as Button, Wt as IconRefresh, Yt as createReactComponent, Zt as require_jsx_runtime, in as __toESM, jt as Tabs, nn as require_react_dom, rn as require_react, ut as updateAvatar } from "./index.js";
+import { Dt as Skeleton, Ht as IconX, Rt as toast, Vt as Button, Wt as IconRefresh, Yt as createReactComponent, Zt as require_jsx_runtime, dt as updateAvatar, in as __toESM, jt as Tabs, kt as Spinner, nn as require_react_dom, rn as require_react } from "./index.js";
 import { n as IconCheck, t as IconPhoto } from "./IconPhoto.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { r as IconCopy } from "./clipboard.js";
+/**
+* @license @tabler/icons-react v3.52.0 - MIT
+*
+* This source code is licensed under the MIT license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var IconAdjustmentsHorizontal = /* @__PURE__ */ createReactComponent("outline", "adjustments-horizontal", "AdjustmentsHorizontal", [
+	["path", {
+		"d": "M12 6a2 2 0 1 0 4 0a2 2 0 1 0 -4 0",
+		"key": "svg-0"
+	}],
+	["path", {
+		"d": "M4 6l8 0",
+		"key": "svg-1"
+	}],
+	["path", {
+		"d": "M16 6l4 0",
+		"key": "svg-2"
+	}],
+	["path", {
+		"d": "M6 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0",
+		"key": "svg-3"
+	}],
+	["path", {
+		"d": "M4 12l2 0",
+		"key": "svg-4"
+	}],
+	["path", {
+		"d": "M10 12l10 0",
+		"key": "svg-5"
+	}],
+	["path", {
+		"d": "M15 18a2 2 0 1 0 4 0a2 2 0 1 0 -4 0",
+		"key": "svg-6"
+	}],
+	["path", {
+		"d": "M4 18l11 0",
+		"key": "svg-7"
+	}],
+	["path", {
+		"d": "M19 18l1 0",
+		"key": "svg-8"
+	}]
+]);
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
 *
@@ -1133,10 +1177,9 @@ var TOOLS = [
 ];
 function RangeControl({ label, value, min, max, suffix, onChange }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
-		className: "block min-w-0",
+		className: "block",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-			className: "mb-1 flex items-center justify-between gap-2 text-[11px] text-mute",
-			"aria-hidden": "true",
+			className: "mb-1 flex justify-between gap-2 text-[11px] text-mute",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: label }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 				className: "font-bold tabular-nums text-fg",
 				children: [value, suffix]
@@ -1149,7 +1192,7 @@ function RangeControl({ label, value, min, max, suffix, onChange }) {
 			max,
 			value,
 			onChange: (event) => onChange(Number(event.target.value)),
-			className: "block h-5 w-full cursor-pointer accent-lime"
+			className: "block h-6 w-full cursor-pointer accent-lime"
 		})]
 	});
 }
@@ -1158,88 +1201,126 @@ function DrawingTools({ tool, onTool, brush, onBrush, eraserSize, onEraserSize, 
 	const panel = (0, import_react.useRef)(null);
 	const panelId = (0, import_react.useId)();
 	const [openTool, setOpenTool] = (0, import_react.useState)(null);
-	const [pos, setPos] = (0, import_react.useState)(null);
+	const [position, setPosition] = (0, import_react.useState)(null);
 	(0, import_react.useLayoutEffect)(() => {
-		if (!openTool) return;
+		if (!openTool || !panel.current || !buttons.current[openTool]) return;
 		const anchor = buttons.current[openTool].getBoundingClientRect();
-		const { width, height } = panel.current.getBoundingClientRect();
-		const below = anchor.bottom + 4;
-		const top = below + height + 8 <= innerHeight ? below : anchor.top - height - 4;
-		setPos({
-			left: Math.max(8, Math.min(anchor.right - width, innerWidth - width - 8)),
-			top: Math.max(8, Math.min(top, innerHeight - height - 8))
+		const bounds = panel.current.getBoundingClientRect();
+		const below = anchor.bottom + 8;
+		const top = below + bounds.height + 8 <= window.innerHeight ? below : Math.max(8, anchor.top - bounds.height - 8);
+		const left = Math.max(8, Math.min(anchor.left, window.innerWidth - bounds.width - 8));
+		setPosition({
+			left,
+			top
 		});
-		panel.current.querySelector("input")?.focus({ preventScroll: true });
 	}, [openTool]);
 	(0, import_react.useEffect)(() => {
 		if (!openTool) return;
-		const off = () => setOpenTool(null);
-		const onScroll = (event) => {
-			if (!panel.current?.contains(event.target)) off();
+		const onOutside = (event) => {
+			if (panel.current?.contains(event.target) || buttons.current[openTool]?.contains(event.target)) return;
+			setOpenTool(null);
 		};
-		const onKey = (event) => {
+		const onKeyDown = (event) => {
 			if (event.key !== "Escape") return;
 			event.preventDefault();
 			event.stopPropagation();
-			off();
+			setOpenTool(null);
 			buttons.current[openTool]?.focus({ preventScroll: true });
 		};
-		const onFocus = (event) => {
-			if (!panel.current?.contains(event.target)) off();
+		const onScroll = (event) => {
+			if (!panel.current?.contains(event.target)) setOpenTool(null);
 		};
+		const onResize = () => setOpenTool(null);
+		document.addEventListener("pointerdown", onOutside, true);
+		document.addEventListener("keydown", onKeyDown, true);
 		window.addEventListener("scroll", onScroll, true);
-		window.addEventListener("resize", off);
-		document.addEventListener("keydown", onKey);
-		document.addEventListener("focusin", onFocus);
+		window.addEventListener("resize", onResize);
 		return () => {
+			document.removeEventListener("pointerdown", onOutside, true);
+			document.removeEventListener("keydown", onKeyDown, true);
 			window.removeEventListener("scroll", onScroll, true);
-			window.removeEventListener("resize", off);
-			document.removeEventListener("keydown", onKey);
-			document.removeEventListener("focusin", onFocus);
+			window.removeEventListener("resize", onResize);
 		};
 	}, [openTool]);
-	const close = () => {
-		setOpenTool(null);
-		buttons.current[openTool]?.focus({ preventScroll: true });
-	};
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [TOOLS.map(([key, label, Icon]) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-		ref: (node) => {
-			buttons.current[key] = node;
-		},
-		type: "button",
-		title: label,
-		"aria-label": label,
-		"aria-pressed": tool === key,
-		"aria-haspopup": key === "select" ? void 0 : "dialog",
-		"aria-expanded": key === "select" ? void 0 : openTool === key,
-		"aria-controls": openTool === key ? panelId : void 0,
-		onClick: () => {
+	const choose = (key) => {
+		setPosition(null);
+		if (key === "select") {
+			setOpenTool(null);
 			onTool(key);
-			setPos(null);
-			if (key === "select") {
-				setOpenTool(null);
-				return;
-			}
-			setOpenTool((current) => tool === key ? current === key ? null : key : null);
-		},
-		className: `grid h-9 w-full cursor-pointer place-items-center rounded-lg border transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime active:scale-95 ${tool === key ? "border-lime bg-lime/10 text-lime" : "border-line bg-raise text-fg hover:border-mute"}`,
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 17 })
-	}, key)), openTool && (0, import_react_dom.createPortal)(/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: "fixed inset-0 z-40",
-		onClick: close,
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			ref: panel,
-			id: panelId,
-			role: "dialog",
-			"aria-label": openTool === "brush" ? "Tùy chỉnh bút vẽ" : "Tùy chỉnh bút tẩy",
-			style: {
-				...pos,
-				width: "min(17rem, calc(100vw - 16px))",
-				maxHeight: "calc(100dvh - 16px)"
+		} else if (tool !== key) {
+			setOpenTool(null);
+			onTool(key);
+		} else setOpenTool((current) => current === key ? null : key);
+	};
+	const close = () => {
+		const current = openTool;
+		setOpenTool(null);
+		buttons.current[current]?.focus({ preventScroll: true });
+	};
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [TOOLS.map(([key, label, Icon]) => {
+		const active = tool === key;
+		const expanded = openTool === key;
+		const editable = key !== "select";
+		const hint = expanded ? "Nhấn lại để đóng tùy chỉnh" : active && editable ? "Nhấn thêm lần nữa để mở tùy chỉnh" : "Nhấn để chọn công cụ";
+		return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+			ref: (element) => {
+				buttons.current[key] = element;
 			},
-			className: "fixed overflow-y-auto animate-pop rounded-xl border border-line bg-raise p-3 shadow-2xl shadow-black/60",
-			onClick: (event) => event.stopPropagation(),
-			children: openTool === "brush" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			type: "button",
+			title: `${label} — ${hint}`,
+			"aria-label": label,
+			"aria-description": hint,
+			"aria-pressed": active,
+			"aria-haspopup": editable ? "dialog" : void 0,
+			"aria-expanded": editable ? expanded : void 0,
+			"aria-controls": expanded ? panelId : void 0,
+			onClick: () => choose(key),
+			className: `relative grid h-10 w-full cursor-pointer place-items-center rounded-lg border transition-[background-color,border-color,color,box-shadow,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime active:scale-[.96] ${expanded ? "border-lime bg-lime text-bg ring-2 ring-lime/30" : active ? "border-lime bg-lime/15 text-lime ring-1 ring-inset ring-lime/50" : "border-line bg-raise text-mute hover:border-mute hover:text-fg"}`,
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 19 }), active && editable && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				"aria-hidden": "true",
+				className: `absolute -right-1 -bottom-1 grid size-4 place-items-center rounded-full border border-panel ${expanded ? "bg-bg text-lime" : "bg-lime text-bg"}`,
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconAdjustmentsHorizontal, { size: 10 })
+			})]
+		}, key);
+	}), openTool && (0, import_react_dom.createPortal)(/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		ref: panel,
+		id: panelId,
+		role: "dialog",
+		"aria-modal": "false",
+		"aria-label": openTool === "brush" ? "Tùy chỉnh bút vẽ" : "Tùy chỉnh bút tẩy",
+		style: {
+			...position || {
+				left: 8,
+				top: 8
+			},
+			width: "min(18rem, calc(100vw - 16px))",
+			maxHeight: "calc(100dvh - 16px)",
+			visibility: position ? "visible" : "hidden"
+		},
+		className: "fixed z-60 overflow-y-auto rounded-xl border border-lime/35 bg-panel p-3 shadow-2xl shadow-black/60 animate-pop",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
+				className: "mb-3 flex items-center gap-2 border-b border-line pb-2",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconAdjustmentsHorizontal, {
+						size: 17,
+						className: "text-lime"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h3", {
+						className: "min-w-0 flex-1 text-xs font-bold",
+						children: ["Tùy chỉnh ", openTool === "brush" ? "bút vẽ" : "bút tẩy"]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						onClick: close,
+						title: "Đóng tùy chỉnh",
+						"aria-label": "Đóng tùy chỉnh",
+						className: "grid size-7 cursor-pointer place-items-center rounded-md text-mute hover:bg-raise hover:text-fg",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, { size: 16 })
+					})
+				]
+			}),
+			openTool === "brush" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "space-y-3",
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(RangeControl, {
@@ -1272,11 +1353,11 @@ function DrawingTools({ tool, onTool, brush, onBrush, eraserSize, onEraserSize, 
 						})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
 							type: "color",
 							value: brush.color,
+							"aria-label": "Chọn màu bút vẽ",
 							onChange: (event) => onBrush({
 								...brush,
 								color: event.target.value
 							}),
-							"aria-label": "Chọn màu bút vẽ",
 							className: "h-9 w-12 cursor-pointer rounded-md border border-line bg-bg p-1"
 						})]
 					})
@@ -1299,14 +1380,18 @@ function DrawingTools({ tool, onTool, brush, onBrush, eraserSize, onEraserSize, 
 					"aria-label": "Xóa tất cả nét vẽ",
 					disabled: !hasStrokes,
 					onClick: onClear,
-					className: "grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg border border-line text-bad transition hover:bg-bad/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent",
+					className: "grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg border border-line text-bad hover:bg-bad/10 disabled:opacity-40",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconTrash, { size: 17 })
 				})]
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "mt-2 text-[10px] text-mute",
+				className: "mt-2 text-[11px] text-mute",
 				children: "Bút tẩy chỉ xóa nét vẽ, không xóa nhân vật hoặc phụ kiện."
-			})] })
-		})
+			})] }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+				className: "mt-3 border-t border-line pt-2 text-[11px] text-mute",
+				children: "Nhấn lại nút công cụ để đóng bảng tùy chỉnh."
+			})
+		]
 	}), document.body)] });
 }
 // src/features/avatar/AvatarToolbar.jsx

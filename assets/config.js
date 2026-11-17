@@ -1,4 +1,4 @@
-import { S as compareByTime, Yt as createReactComponent } from "./index.js";
+import { C as compareByTime, Yt as createReactComponent } from "./index.js";
 import { t as IconUsers } from "./IconUsers.js";
 import { t as IconUser } from "./IconUser.js";
 /**

@@ -1,4 +1,4 @@
-import { Vt as Button, Zt as require_jsx_runtime, in as __toESM, kt as Tooltip, rn as require_react } from "./index.js";
+import { Vt as Button, Zt as require_jsx_runtime, in as __toESM, rn as require_react } from "./index.js";
 // src/features/administration/Head.jsx
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var import_jsx_runtime = require_jsx_runtime();
@@ -10,16 +10,11 @@ function renderIconActions(element) {
 		if (!icon) return element;
 		const label = element.props["aria-label"] || nodes.filter((node) => typeof node === "string").join(" ").trim();
 		if (!label) return element;
-		const button = (0, import_react.cloneElement)(element, {
+		return (0, import_react.cloneElement)(element, {
 			"aria-label": label,
 			title: label,
 			className: "size-9! shrink-0 p-0!",
 			children: icon
-		});
-		return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
-			text: label,
-			side: "top",
-			children: button
 		});
 	}
 	if (element.props.children === void 0) return element;

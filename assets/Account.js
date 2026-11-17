@@ -1,13 +1,14 @@
 const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Avatar.js","assets/index.js","assets/index.css","assets/IconPhoto.js","assets/IconTrash.js","assets/clipboard.js"])))=>i.map(i=>d[i]);
-import { Bt as Field, C as formatDate, D as formatVietnameseDong, E as formatShortDateTime, Ft as Menu, Ht as IconX, It as Dialog, Lt as OtpButton, Mt as PageSizeSelect, Nt as Select, Ot as Spinner, Pt as SortSelect, Q as cancelTransaction, Rt as toast, S as compareByTime, T as formatNumber, Tt as RowSkeleton, Vt as Button, Wt as IconRefresh, Xt as Badge, Yt as createReactComponent, Zt as require_jsx_runtime, at as getBuffetLink, ct as redeemGiftCode, dt as updateUser, in as __toESM, it as changeOpenid, kt as Tooltip, lt as submitInvite, ot as getFriendLink, rn as require_react, st as openidOtp, t as __vitePreload, tt as getTransactions, wt as PagerSkeleton, xt as SearchInput, yt as Coin, zt as toastError } from "./index.js";
+import { $ as cancelTransaction, Bt as Field, C as compareByTime, D as formatShortDateTime, E as formatNumber, Et as RowSkeleton, Ft as Menu, Ht as IconX, It as Dialog, Lt as OtpButton, Mt as PageSizeSelect, Nt as Select, O as formatVietnameseDong, Pt as SortSelect, Rt as toast, St as SearchInput, Tt as PagerSkeleton, Vt as Button, Wt as IconRefresh, Xt as Badge, Yt as createReactComponent, Zt as require_jsx_runtime, at as changeOpenid, bt as Coin, ct as openidOtp, ft as updateUser, in as __toESM, kt as Spinner, lt as redeemGiftCode, nt as getTransactions, ot as getBuffetLink, rn as require_react, st as getFriendLink, t as __vitePreload, ut as submitInvite, w as formatDate, zt as toastError } from "./index.js";
 import { n as IconLock, r as IconCopy, t as copyText } from "./clipboard.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
 import { t as StrengthBar } from "./StrengthBar.js";
-import { n as usePaginatedData, r as IconPencil, t as useRemoteResource } from "./useRemoteResource.js";
+import { n as IconPencil, t as useRemoteResource } from "./useRemoteResource.js";
 import { t as IconStarFilled } from "./IconStarFilled.js";
 import { t as IconUser } from "./IconUser.js";
 import { t as IconUserPlus } from "./IconUserPlus.js";
 import { i as IconQrcode, n as STATUS, r as StatusBadge, t as PaymentDialog } from "./PaymentDialog.js";
+import { t as usePaginatedData } from "./usePaginatedData.js";
 import { t as IconGift } from "./IconGift.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
@@ -429,19 +430,13 @@ function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGiftCode, onRedeemI
 							size: 30,
 							stroke: 1.5
 						})
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "absolute -right-2 -bottom-2 z-10",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
-							text: "Chỉnh sửa ảnh đại diện",
-							side: "top",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-								type: "button",
-								onClick: onEditAvatar,
-								"aria-label": "Chỉnh sửa ảnh đại diện",
-								className: "grid size-9 cursor-pointer place-items-center rounded-xl border-2 border-panel bg-lime text-bg hover:brightness-105",
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPencil, { size: 16 })
-							})
-						})
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						onClick: onEditAvatar,
+						"aria-label": "Chỉnh sửa ảnh đại diện",
+						title: "Chỉnh sửa ảnh đại diện",
+						className: "absolute -right-2 -bottom-2 z-10 grid size-9 cursor-pointer place-items-center rounded-xl border-2 border-panel bg-lime text-bg hover:brightness-105",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPencil, { size: 16 })
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 					variant: "quiet",
@@ -518,17 +513,15 @@ function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGiftCode, onRedeemI
 								className: "truncate",
 								children: invited ? `Đã nhập mã: ${user.friendInvite}` : "Nhập mã mời"
 							})
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
-							text: "Sao chép mã mời của bạn",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-								variant: "ghost",
-								size: "sm",
-								className: "size-8! px-0!",
-								disabled: !user.invite,
-								"aria-label": "Sao chép mã mời",
-								onClick: () => user.invite && copyText(user.invite, "Đã sao chép mã mời"),
-								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCopy, { size: 16 })
-							})
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+							variant: "ghost",
+							size: "sm",
+							className: "size-8! px-0!",
+							disabled: !user.invite,
+							"aria-label": "Sao chép mã mời",
+							title: "Sao chép mã mời của bạn",
+							onClick: () => user.invite && copyText(user.invite, "Đã sao chép mã mời"),
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCopy, { size: 16 })
 						})]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
