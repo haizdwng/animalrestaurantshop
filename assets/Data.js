@@ -1,4 +1,4 @@
-import { Ct as JsonEditor, J as adminSaveData, P as adminData, Zt as require_jsx_runtime, en as useNavigate, in as __toESM, jt as Tabs, rn as require_react, tn as useParams } from "./index.js";
+import { J as adminSaveData, P as adminData, St as JsonEditor, Zt as require_jsx_runtime, en as useNavigate, in as __toESM, jt as Tabs, rn as require_react, tn as useParams } from "./index.js";
 import { r as DATA_TABS } from "./config.js";
 import { t as Head } from "./Head.js";
 // src/features/administration/Data.jsx
@@ -17,20 +17,24 @@ function AdminData() {
 		navigate
 	]);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "space-y-4",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Head, {
-			title: "Dữ liệu",
-			sub: "Chỉnh sửa cấu hình · Ctrl/⌘ + S để lưu",
-			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tabs, {
+		className: "min-w-0 space-y-4",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Head, {
+				title: "Dữ liệu",
+				sub: "Chỉnh sửa cấu hình · Ctrl/⌘ + S để lưu"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tabs, {
 				tabs: DATA_TABS,
 				value: activeSection,
+				label: "Danh mục dữ liệu",
 				onChange: (next) => navigate(`/administrator/data/${next}`)
-			})
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(JsonEditor, {
-			deps: [activeSection],
-			load: async () => (await adminData(activeSection))[activeSection],
-			save: (value) => adminSaveData(activeSection, value)
-		}, activeSection)]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(JsonEditor, {
+				deps: [activeSection],
+				load: async () => (await adminData(activeSection))[activeSection],
+				save: (value) => adminSaveData(activeSection, value)
+			}, activeSection)
+		]
 	});
 }
 export { AdminData as default };

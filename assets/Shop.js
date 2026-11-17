@@ -1,4 +1,4 @@
-import { $ as createTransaction, Bt as Field, Dt as Skeleton, Ht as IconX, It as Dialog, Jt as IconAlertTriangle, Kt as IconCircleCheck, Nt as Select, Ot as ErrorState, Rt as toast, St as Tooltip, T as formatNumber, Vt as Button, Wt as IconRefresh, Xt as Badge, Yt as createReactComponent, Zt as require_jsx_runtime, _ as productOptions, a as cartTotal, b as resolveCart, c as eligibleCategoryProducts, d as getGroupRemaining, en as useNavigate, f as getPurchaseLimit, g as isOwnedOnce, h as isOnce, i as cartPayload, in as __toESM, kt as Spinner, l as getConditions, m as hasValidPrice, n as addCategoryToCart, nt as ADMIN_MAX_QTY, o as changeCartQuantity, p as hasOptions, qt as IconChevronRight, r as cartCount, rn as require_react, rt as buy, s as clampCartQuantity, tn as useParams, u as getConflictingKeys, v as putInCart, vt as isAdmin, x as unmetConditions, xt as SearchInput, y as removeCategoryFromCart, yt as Coin, zt as toastError } from "./index.js";
+import { $ as createTransaction, Bt as Field, Dt as ErrorState, Et as Skeleton, Ht as IconX, It as Dialog, Jt as IconAlertTriangle, Kt as IconCircleCheck, Nt as Select, Ot as Spinner, Rt as toast, T as formatNumber, Vt as Button, Wt as IconRefresh, Xt as Badge, Yt as createReactComponent, Zt as require_jsx_runtime, _ as productOptions, a as cartTotal, b as resolveCart, c as eligibleCategoryProducts, d as getGroupRemaining, en as useNavigate, f as getPurchaseLimit, g as isOwnedOnce, h as isOnce, i as cartPayload, in as __toESM, kt as Tooltip, l as getConditions, m as hasValidPrice, n as addCategoryToCart, nt as ADMIN_MAX_QTY, o as changeCartQuantity, p as hasOptions, qt as IconChevronRight, r as cartCount, rn as require_react, rt as buy, s as clampCartQuantity, tn as useParams, u as getConflictingKeys, v as putInCart, vt as isAdmin, x as unmetConditions, xt as SearchInput, y as removeCategoryFromCart, yt as Coin, zt as toastError } from "./index.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
 import { n as IconCheck, t as IconPhoto } from "./IconPhoto.js";
@@ -911,14 +911,14 @@ function CategoryButton({ id, name, Icon, count, active, featured, onSelect }) {
 				behavior: "auto"
 			});
 		},
-		className: `ui-nav-item relative w-full shrink-0 justify-start text-left md:w-full ${active && featured ? "border-coin/30! bg-coin/10! text-coin!" : ""}`,
+		className: `ui-nav-item relative w-auto max-w-full shrink-0 justify-start text-left md:w-full ${active && featured ? "border-coin/30! bg-coin/10! text-coin!" : ""}`,
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
 				size: 17,
 				className: `shrink-0 ${active && !featured ? "text-lime" : ""}`
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-				className: "min-w-0 flex-1 whitespace-nowrap",
+				className: "whitespace-nowrap md:min-w-0 md:flex-1",
 				children: name
 			}),
 			count !== void 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
@@ -938,7 +938,7 @@ function CategoryNav({ tabs, tabId, hits, onSelect }) {
 			children: "Danh mục"
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
 			"aria-label": "Danh mục cửa hàng",
-			className: "no-scrollbar flex gap-1 overflow-x-auto px-3 py-2 md:flex-col md:p-0",
+			className: "no-scrollbar flex w-full min-w-0 max-w-full gap-1 overflow-x-auto overscroll-x-contain px-3 py-2 md:flex-col md:overflow-visible md:p-0",
 			children: [
 				tabs ? categories.map(({ id, name }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CategoryButton, {
 					id,

@@ -1,5 +1,5 @@
 const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Avatar.js","assets/index.js","assets/index.css","assets/IconPhoto.js","assets/IconTrash.js","assets/clipboard.js"])))=>i.map(i=>d[i]);
-import { Bt as Field, C as formatDate, D as formatVietnameseDong, E as formatShortDateTime, Et as RowSkeleton, Ft as Menu, Ht as IconX, It as Dialog, Lt as OtpButton, Mt as PageSizeSelect, Nt as Select, Pt as SortSelect, Q as cancelTransaction, Rt as toast, S as compareByTime, St as Tooltip, T as formatNumber, Tt as PagerSkeleton, Vt as Button, Wt as IconRefresh, Xt as Badge, Yt as createReactComponent, Zt as require_jsx_runtime, at as getBuffetLink, ct as redeemGiftCode, dt as updateUser, in as __toESM, it as changeOpenid, kt as Spinner, lt as submitInvite, ot as getFriendLink, rn as require_react, st as openidOtp, t as __vitePreload, tt as getTransactions, xt as SearchInput, yt as Coin, zt as toastError } from "./index.js";
+import { Bt as Field, C as formatDate, D as formatVietnameseDong, E as formatShortDateTime, Ft as Menu, Ht as IconX, It as Dialog, Lt as OtpButton, Mt as PageSizeSelect, Nt as Select, Ot as Spinner, Pt as SortSelect, Q as cancelTransaction, Rt as toast, S as compareByTime, T as formatNumber, Tt as RowSkeleton, Vt as Button, Wt as IconRefresh, Xt as Badge, Yt as createReactComponent, Zt as require_jsx_runtime, at as getBuffetLink, ct as redeemGiftCode, dt as updateUser, in as __toESM, it as changeOpenid, kt as Tooltip, lt as submitInvite, ot as getFriendLink, rn as require_react, st as openidOtp, t as __vitePreload, tt as getTransactions, wt as PagerSkeleton, xt as SearchInput, yt as Coin, zt as toastError } from "./index.js";
 import { n as IconLock, r as IconCopy, t as copyText } from "./clipboard.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
 import { t as StrengthBar } from "./StrengthBar.js";
@@ -429,16 +429,18 @@ function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGiftCode, onRedeemI
 							size: 30,
 							stroke: 1.5
 						})
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
-						text: "Chỉnh sửa ảnh đại diện",
-						side: "top",
-						className: "absolute -right-2 -bottom-2",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-							type: "button",
-							onClick: onEditAvatar,
-							"aria-label": "Chỉnh sửa ảnh đại diện",
-							className: "grid size-9 cursor-pointer place-items-center rounded-xl border-2 border-panel bg-lime text-bg hover:brightness-105",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPencil, { size: 16 })
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "absolute -right-2 -bottom-2 z-10",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
+							text: "Chỉnh sửa ảnh đại diện",
+							side: "top",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+								type: "button",
+								onClick: onEditAvatar,
+								"aria-label": "Chỉnh sửa ảnh đại diện",
+								className: "grid size-9 cursor-pointer place-items-center rounded-xl border-2 border-panel bg-lime text-bg hover:brightness-105",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPencil, { size: 16 })
+							})
 						})
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {

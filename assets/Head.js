@@ -1,11 +1,35 @@
-import { Zt as require_jsx_runtime } from "./index.js";
+import { Vt as Button, Zt as require_jsx_runtime, in as __toESM, kt as Tooltip, rn as require_react } from "./index.js";
 // src/features/administration/Head.jsx
+var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var import_jsx_runtime = require_jsx_runtime();
+function renderIconActions(element) {
+	if (!(0, import_react.isValidElement)(element)) return element;
+	if (element.type === Button) {
+		const nodes = import_react.Children.toArray(element.props.children);
+		const icon = nodes.find(import_react.isValidElement);
+		if (!icon) return element;
+		const label = element.props["aria-label"] || nodes.filter((node) => typeof node === "string").join(" ").trim();
+		if (!label) return element;
+		const button = (0, import_react.cloneElement)(element, {
+			"aria-label": label,
+			title: label,
+			className: "size-9! shrink-0 p-0!",
+			children: icon
+		});
+		return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
+			text: label,
+			side: "top",
+			children: button
+		});
+	}
+	if (element.props.children === void 0) return element;
+	return (0, import_react.cloneElement)(element, void 0, import_react.Children.map(element.props.children, renderIconActions));
+}
 function Head({ title, sub, children }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-		className: "flex flex-wrap items-end justify-between gap-3",
+		className: "flex min-w-0 items-center justify-between gap-3",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "min-w-0 space-y-1",
+			className: "min-w-0 flex-1 space-y-1",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
 				className: "ui-heading",
 				children: title
@@ -13,7 +37,10 @@ function Head({ title, sub, children }) {
 				className: "ui-description",
 				children: sub
 			})]
-		}), children]
+		}), children && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "flex shrink-0 items-center gap-2",
+			children: renderIconActions(children)
+		})]
 	});
 }
 export { Head as t };
