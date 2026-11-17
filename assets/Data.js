@@ -1,4 +1,4 @@
-import { $t as require_react, Bt as require_jsx_runtime, J as adminSaveData, P as adminData, Xt as useNavigate, Zt as useParams, en as __toESM, kt as Tabs, xt as JsonEditor } from "./index.js";
+import { Ct as JsonEditor, J as adminSaveData, P as adminData, Zt as require_jsx_runtime, en as useNavigate, in as __toESM, jt as Tabs, rn as require_react, tn as useParams } from "./index.js";
 import { r as DATA_TABS } from "./config.js";
 import { t as Head } from "./Head.js";
 // src/features/administration/Data.jsx

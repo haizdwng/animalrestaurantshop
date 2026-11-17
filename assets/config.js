@@ -1,5 +1,6 @@
-import { S as compareByTime, qt as createReactComponent } from "./index.js";
+import { S as compareByTime, Yt as createReactComponent } from "./index.js";
 import { t as IconUsers } from "./IconUsers.js";
+import { t as IconUser } from "./IconUser.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
 *
@@ -106,43 +107,29 @@ var IconMusic = /* @__PURE__ */ createReactComponent("outline", "music", "Music"
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconTicket = /* @__PURE__ */ createReactComponent("outline", "ticket", "Ticket", [
-	["path", {
-		"d": "M15 5l0 2",
-		"key": "svg-0"
-	}],
-	["path", {
-		"d": "M15 11l0 2",
-		"key": "svg-1"
-	}],
-	["path", {
-		"d": "M15 17l0 2",
-		"key": "svg-2"
-	}],
-	["path", {
-		"d": "M5 5h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-3a2 2 0 0 0 0 -4v-3a2 2 0 0 1 2 -2",
-		"key": "svg-3"
-	}]
-]);
-/**
-* @license @tabler/icons-react v3.52.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var IconUser = /* @__PURE__ */ createReactComponent("outline", "user", "User", [["path", {
-	"d": "M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0",
-	"key": "svg-0"
-}], ["path", {
-	"d": "M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2",
-	"key": "svg-1"
-}]]);
 // src/features/administration/config.js
 var ADMIN_TABS = [
 	[
 		"giftcodes",
 		"Mã đổi thưởng",
-		IconTicket
+		/* @__PURE__ */ createReactComponent("outline", "ticket", "Ticket", [
+			["path", {
+				"d": "M15 5l0 2",
+				"key": "svg-0"
+			}],
+			["path", {
+				"d": "M15 11l0 2",
+				"key": "svg-1"
+			}],
+			["path", {
+				"d": "M15 17l0 2",
+				"key": "svg-2"
+			}],
+			["path", {
+				"d": "M5 5h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-3a2 2 0 0 0 0 -4v-3a2 2 0 0 1 2 -2",
+				"key": "svg-3"
+			}]
+		])
 	],
 	[
 		"users",
@@ -253,4 +240,4 @@ var DATA_TABS = [
 		IconDatabase
 	]
 ];
-export { EMPTY_USER_FORM as a, IconUser as c, EMPTY_GIFT_CODE as i, COIN_PRESETS as n, PLAYER_TABS as o, DATA_TABS as r, USER_SORTS as s, ADMIN_TABS as t };
+export { EMPTY_USER_FORM as a, EMPTY_GIFT_CODE as i, COIN_PRESETS as n, PLAYER_TABS as o, DATA_TABS as r, USER_SORTS as s, ADMIN_TABS as t };

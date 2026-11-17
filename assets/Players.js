@@ -1,8 +1,8 @@
-import { $t as require_react, A as adminAddPlayerLike, At as PageSizeSelect, B as adminEditPlayer, Bt as require_jsx_runtime, Ct as PagerSkeleton, Dt as Spinner, Et as ErrorState, F as adminDecryptRecordValue, G as adminPlayerFriends, H as adminEncryptRecordValue, Ht as IconRefresh, It as toast, K as adminPlayers, L as adminDeletePlayerFriend, Lt as toastError, Nt as Menu, Pt as Dialog, Rt as Field, St as Line, T as formatNumber, Tt as Skeleton, Ut as IconInfoCircle, W as adminPlayer, X as adminUpdatePlayerAvatar, Xt as useNavigate, Y as adminSaveRecord, Zt as useParams, _t as fileToAvatar, en as __toESM, j as adminAddPlayerStar, jt as Select, k as adminAddPlayerFriend, kt as Tabs, q as adminRecord, qt as createReactComponent, xt as JsonEditor, zt as Button } from "./index.js";
+import { A as adminAddPlayerLike, B as adminEditPlayer, Bt as Field, Ct as JsonEditor, Dt as Skeleton, F as adminDecryptRecordValue, Ft as Menu, G as adminPlayerFriends, Gt as IconInfoCircle, H as adminEncryptRecordValue, It as Dialog, K as adminPlayers, L as adminDeletePlayerFriend, Mt as PageSizeSelect, Nt as Select, Ot as ErrorState, Rt as toast, T as formatNumber, Tt as PagerSkeleton, Ut as IconSearch, Vt as Button, W as adminPlayer, Wt as IconRefresh, X as adminUpdatePlayerAvatar, Y as adminSaveRecord, Yt as createReactComponent, Zt as require_jsx_runtime, _t as fileToAvatar, en as useNavigate, in as __toESM, j as adminAddPlayerStar, jt as Tabs, k as adminAddPlayerFriend, kt as Spinner, q as adminRecord, rn as require_react, tn as useParams, wt as Line, zt as toastError } from "./index.js";
 import { n as IconArrowLeft, t as IconArrowRight } from "./IconArrowRight.js";
-import { t as IconSearch } from "./IconSearch.js";
-import { c as IconUser, o as PLAYER_TABS } from "./config.js";
+import { o as PLAYER_TABS } from "./config.js";
 import { t as IconStarFilled } from "./IconStarFilled.js";
+import { t as IconUser } from "./IconUser.js";
 import { n as IconLock, r as IconCopy, t as copyText } from "./clipboard.js";
 import { t as IconPlus } from "./IconPlus.js";
 import { t as IconTrash } from "./IconTrash.js";
@@ -63,93 +63,85 @@ var IconUpload = /* @__PURE__ */ createReactComponent("outline", "upload", "Uplo
 // src/features/administration/PlayerCard.jsx
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var import_jsx_runtime = require_jsx_runtime();
-function PlayerCard({ player: p }) {
+function PlayerCard({ player }) {
 	const [imageError, setImageError] = (0, import_react.useState)(false);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "relative overflow-hidden rounded-2xl border border-line bg-panel p-5 sm:p-6",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			"aria-hidden": true,
-			className: "absolute inset-x-0 top-0 h-24 bg-[radial-gradient(80%_100%_at_0%_0%,color-mix(in_oklab,var(--color-lime)_16%,transparent),transparent)]"
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "relative flex flex-wrap items-center gap-4",
-			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "size-20 overflow-hidden rounded-2xl bg-raise ring-2 ring-line",
-					children: p.avatarUrl && !imageError ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-						src: p.avatarUrl,
-						alt: "",
-						className: "size-full object-cover",
-						onError: () => setImageError(true)
-					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUser, {
-						size: 28,
-						className: "m-auto mt-6 text-mute"
-					})
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "min-w-0 flex-1",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-						className: "truncate text-xl font-extrabold",
-						children: p.nickName || "Chưa đặt tên"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						className: "mt-1 text-xs break-all text-mute",
-						children: p.openid
-					})]
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "rounded-xl bg-bg px-4 py-3",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						className: "text-[10px] text-mute",
-						children: "Tổng sao"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-						className: "mt-1 flex items-center gap-1.5 whitespace-nowrap text-lg font-extrabold tabular-nums",
-						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconStarFilled, {
-								size: 16,
-								className: "shrink-0 text-lime"
-							}),
-							" ",
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: Number(p.starSum || 0).toLocaleString("vi-VN") })
-						]
-					})]
+	(0, import_react.useEffect)(() => setImageError(false), [player.avatarUrl]);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+		className: "ui-card flex flex-wrap items-center gap-4 p-5 sm:p-6",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "grid size-20 shrink-0 place-items-center overflow-hidden rounded-2xl border border-line bg-raise text-mute",
+				children: player.avatarUrl && !imageError ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+					src: player.avatarUrl,
+					alt: "Ảnh người chơi",
+					className: "size-full object-cover",
+					onError: () => setImageError(true)
+				}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUser, {
+					size: 30,
+					stroke: 1.5
 				})
-			]
-		})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "min-w-0 flex-1",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+					className: "wrap-break-word text-lg font-extrabold tracking-tight",
+					children: player.nickName || "Chưa đặt tên"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "mt-1 break-all text-xs text-mute",
+					children: player.openid
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dl", {
+				className: "rounded-xl border border-line bg-bg px-4 py-3",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", {
+					className: "text-[11px] text-mute",
+					children: "Tổng sao"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dd", {
+					className: "mt-1 flex items-center gap-1.5 text-lg font-extrabold tabular-nums",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconStarFilled, {
+							size: 17,
+							className: "text-lime"
+						}),
+						" ",
+						Number(player.starSum || 0).toLocaleString("vi-VN")
+					]
+				})]
+			})
+		]
 	});
 }
 function PlayerCardSkeleton() {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		"aria-busy": "true",
-		className: "rounded-2xl border border-line bg-panel p-5 sm:p-6",
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "flex flex-wrap items-center gap-4",
-			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-20 rounded-2xl" }),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "min-w-0 flex-1",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Line, {
-						h: "h-7",
-						w: "w-40",
-						bar: "h-5"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Line, {
-						h: "h-4 mt-1",
-						w: "w-56 max-w-full",
-						bar: "h-2.5"
-					})]
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "rounded-xl bg-bg px-4 py-3",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Line, {
-						h: "h-[15px]",
-						w: "w-12",
-						bar: "h-2"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Line, {
-						h: "h-7 mt-1",
-						w: "w-20",
-						bar: "h-4"
-					})]
-				})
-			]
-		})
+		className: "ui-card flex flex-wrap items-center gap-4 p-5 sm:p-6",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-20 rounded-2xl" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "min-w-0 flex-1",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Line, {
+					h: "h-7",
+					w: "w-40",
+					bar: "h-5"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Line, {
+					h: "mt-1 h-4",
+					w: "w-56 max-w-full",
+					bar: "h-2.5"
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "rounded-xl border border-line bg-bg px-4 py-3",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Line, {
+					h: "h-4",
+					w: "w-12",
+					bar: "h-2"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Line, {
+					h: "mt-1 h-7",
+					w: "w-20",
+					bar: "h-4"
+				})]
+			})
+		]
 	});
 }
 // src/features/administration/RecordCrypto.jsx

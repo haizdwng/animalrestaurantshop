@@ -1,4 +1,4 @@
-import { Bt as require_jsx_runtime, Jt as Outlet, Xt as useNavigate, Yt as useLocation, kt as Tabs } from "./index.js";
+import { $t as useLocation, Qt as Outlet, Zt as require_jsx_runtime, en as useNavigate, jt as Tabs } from "./index.js";
 import { t as ADMIN_TABS } from "./config.js";
 // src/features/administration/AdminPanel.jsx
 var import_jsx_runtime = require_jsx_runtime();
@@ -6,14 +6,14 @@ function AdminPanel() {
 	const location = useLocation();
 	const navigate = useNavigate();
 	const requestedTab = location.pathname.replace(/^\/administrator\/?/, "").split("/")[0] || "giftcodes";
-	const tab = ADMIN_TABS.some(([key]) => key === requestedTab) ? requestedTab : "giftcodes";
-	const visit = (next) => navigate(`/administrator/${next}`);
+	const activeTab = ADMIN_TABS.some(([key]) => key === requestedTab) ? requestedTab : "giftcodes";
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "app-screen space-y-4",
+		className: "app-screen space-y-5",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tabs, {
 			tabs: ADMIN_TABS,
-			value: tab,
-			onChange: visit
+			value: activeTab,
+			label: "Quản trị viên",
+			onChange: (next) => navigate(`/administrator/${next}`)
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Outlet, {})]
 	});
 }

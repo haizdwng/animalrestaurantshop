@@ -1,4 +1,4 @@
-import { $t as require_react, Bt as require_jsx_runtime, Ft as OtpButton, It as toast, Kt as IconAlertTriangle, Rt as Field, Xt as useNavigate, Yt as useLocation, bt as Logo, en as __toESM, ft as login, gt as signupOtp, ht as signup, mt as resetPassword, pt as passwordOtp, qt as createReactComponent, zt as Button } from "./index.js";
+import { $t as useLocation, Bt as Field, Jt as IconAlertTriangle, Lt as OtpButton, Rt as toast, Vt as Button, Yt as createReactComponent, Zt as require_jsx_runtime, bt as Logo, en as useNavigate, ft as login, gt as signupOtp, ht as signup, in as __toESM, jt as Tabs, mt as resetPassword, pt as passwordOtp, rn as require_react } from "./index.js";
 import { n as IconArrowLeft, t as IconArrowRight } from "./IconArrowRight.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
 import { t as StrengthBar } from "./StrengthBar.js";
@@ -34,65 +34,63 @@ var SUBMIT_LABELS = {
 // src/features/authentication/AuthHeader.jsx
 var import_jsx_runtime = require_jsx_runtime();
 function AuthHeader({ mode, onMode }) {
-	if (mode === "forgot") return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "mb-6",
+	if (mode === "forgot") return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
+		className: "mb-6 space-y-3",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-				type: "button",
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+				variant: "quiet",
+				size: "sm",
+				className: "-ml-2",
 				onClick: () => onMode("login"),
-				className: "mb-3 flex cursor-pointer items-center gap-1 text-[11px] text-mute hover:text-fg",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconArrowLeft, { size: 14 }), " Quay lại đăng nhập"]
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconArrowLeft, { size: 15 }), " Quay lại đăng nhập"]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-				className: "text-xl font-extrabold tracking-tight",
+				className: "ui-heading",
 				children: "Quên mật khẩu"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "mt-1 text-xs text-mute",
+				className: "ui-description",
 				children: "Đặt mật khẩu mới bằng mã OTP gửi tới mã người chơi của bạn."
 			})
 		]
 	});
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		role: "tablist",
-		className: "mb-6 grid grid-cols-2 gap-1 rounded-lg bg-bg p-1",
-		children: MODE_TABS.map(([k, label]) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-			role: "tab",
-			type: "button",
-			"aria-selected": mode === k,
-			onClick: () => mode !== k && onMode(k),
-			className: `h-9 cursor-pointer rounded-md text-xs font-bold transition ${mode === k ? "bg-raise text-fg shadow" : "text-mute hover:text-fg"}`,
-			children: label
-		}, k))
+		className: "mb-6",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tabs, {
+			tabs: MODE_TABS,
+			value: mode,
+			onChange: onMode,
+			label: "Đăng nhập hoặc đăng ký"
+		})
 	});
 }
 // src/features/authentication/AuthLayout.jsx
 function AuthLayout({ children }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "relative grid min-h-dvh place-items-center overflow-hidden px-4 py-10",
-		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"aria-hidden": true,
-				className: "pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_0%,color-mix(in_oklab,var(--color-lime)_10%,transparent),transparent_70%)]"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"aria-hidden": true,
-				className: "pointer-events-none absolute inset-0 opacity-[0.07] bg-[linear-gradient(var(--color-fg)_1px,transparent_1px),linear-gradient(90deg,var(--color-fg)_1px,transparent_1px)] bg-size-[44px_44px] mask-[radial-gradient(70%_60%_at_50%_30%,black,transparent)]"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "relative w-full max-w-100 animate-rise",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "mb-8 flex flex-col items-center text-center",
+		className: "relative grid min-h-dvh place-items-center px-4 py-10",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			"aria-hidden": true,
+			className: "pointer-events-none absolute inset-x-0 top-0 h-60 bg-[radial-gradient(ellipse_at_top,color-mix(in_srgb,var(--color-lime)_9%,transparent),transparent_70%)]"
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "relative w-full max-w-md animate-rise",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "mb-7 flex flex-col items-center gap-3 text-center",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Logo, {}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						className: "mt-3 text-xs text-mute",
-						children: "nạp xu · mua vật phẩm · dùng ngay trong game"
+						className: "ui-description",
+						children: "Quản lý tài khoản · mua vật phẩm · nạp xu"
 					})]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "rounded-2xl border border-line bg-panel/90 p-5 shadow-2xl shadow-black/40 backdrop-blur sm:p-7",
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "ui-card p-5 shadow-(--ui-shadow) sm:p-7",
 					children
-				})]
-			})
-		]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "mt-5 text-center text-[11px] text-mute",
+					children: "Animal Restaurant Shop"
+				})
+			]
+		})]
 	});
 }
 // src/features/authentication/Auth.jsx

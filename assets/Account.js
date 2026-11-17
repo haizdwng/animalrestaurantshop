@@ -1,13 +1,13 @@
 const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Avatar.js","assets/index.js","assets/index.css","assets/IconPhoto.js","assets/IconTrash.js","assets/clipboard.js"])))=>i.map(i=>d[i]);
-import { $t as require_react, At as PageSizeSelect, Bt as require_jsx_runtime, C as formatDate, Ct as PagerSkeleton, D as formatVietnameseDong, Dt as Spinner, E as formatShortDateTime, Ft as OtpButton, Ht as IconRefresh, It as toast, Lt as toastError, Mt as SortSelect, Nt as Menu, Pt as Dialog, Q as cancelTransaction, Rt as Field, S as compareByTime, T as formatNumber, Vt as IconX, at as getBuffetLink, ct as redeemGiftCode, dt as updateUser, en as __toESM, it as changeOpenid, jt as Select, lt as submitInvite, ot as getFriendLink, qt as createReactComponent, st as openidOtp, t as __vitePreload, tt as getTransactions, wt as RowSkeleton, yt as Coin, zt as Button } from "./index.js";
+import { Bt as Field, C as formatDate, D as formatVietnameseDong, E as formatShortDateTime, Et as RowSkeleton, Ft as Menu, Ht as IconX, It as Dialog, Lt as OtpButton, Mt as PageSizeSelect, Nt as Select, Pt as SortSelect, Q as cancelTransaction, Rt as toast, S as compareByTime, St as Tooltip, T as formatNumber, Tt as PagerSkeleton, Vt as Button, Wt as IconRefresh, Xt as Badge, Yt as createReactComponent, Zt as require_jsx_runtime, at as getBuffetLink, ct as redeemGiftCode, dt as updateUser, in as __toESM, it as changeOpenid, kt as Spinner, lt as submitInvite, ot as getFriendLink, rn as require_react, st as openidOtp, t as __vitePreload, tt as getTransactions, xt as SearchInput, yt as Coin, zt as toastError } from "./index.js";
 import { n as IconLock, r as IconCopy, t as copyText } from "./clipboard.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
 import { t as StrengthBar } from "./StrengthBar.js";
 import { n as usePaginatedData, r as IconPencil, t as useRemoteResource } from "./useRemoteResource.js";
 import { t as IconStarFilled } from "./IconStarFilled.js";
+import { t as IconUser } from "./IconUser.js";
 import { t as IconUserPlus } from "./IconUserPlus.js";
 import { i as IconQrcode, n as STATUS, r as StatusBadge, t as PaymentDialog } from "./PaymentDialog.js";
-import { t as IconSearch } from "./IconSearch.js";
 import { t as IconGift } from "./IconGift.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
@@ -404,150 +404,157 @@ function FieldRow({ label, children, onEdit, Icon }) {
 }
 // src/features/account/ProfileCard.jsx
 function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGiftCode, onRedeemInvite, onFriendLink, onBuffetLink }) {
-	const hasFriendInvite = Boolean(user.friendInvite);
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "relative overflow-hidden rounded-2xl border border-line bg-panel p-5",
+	const [imageFailed, setImageFailed] = (0, import_react.useState)(false);
+	(0, import_react.useEffect)(() => setImageFailed(false), [user.avatar]);
+	const invited = Boolean(user.friendInvite);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+		className: "ui-card relative overflow-hidden p-5",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				"aria-hidden": true,
-				className: "absolute inset-x-0 top-0 h-20 bg-[radial-gradient(80%_100%_at_0%_0%,color-mix(in_oklab,var(--color-lime)_18%,transparent),transparent)]"
+				className: "pointer-events-none absolute inset-x-0 top-0 h-22 bg-[radial-gradient(ellipse_at_15%_0%,color-mix(in_srgb,var(--color-lime)_9%,transparent),transparent_70%)]"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "relative flex items-start justify-between",
+				className: "relative flex items-start justify-between gap-3",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "relative",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "size-20 overflow-hidden rounded-2xl bg-raise ring-2 ring-line",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+						className: "grid size-20 place-items-center overflow-hidden rounded-2xl border border-line bg-raise text-mute",
+						children: user.avatar && !imageFailed ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
 							src: user.avatar,
 							alt: "Ảnh đại diện",
-							className: "size-full object-cover"
+							className: "size-full object-cover",
+							onError: () => setImageFailed(true)
+						}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUser, {
+							size: 30,
+							stroke: 1.5
 						})
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-						onClick: onEditAvatar,
-						"aria-label": "Sửa ảnh đại diện",
-						className: "absolute -right-2 -bottom-2 grid size-8 cursor-pointer place-items-center rounded-full border-2 border-panel bg-lime text-bg transition hover:brightness-110",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPencil, { size: 14 })
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
+						text: "Chỉnh sửa ảnh đại diện",
+						side: "top",
+						className: "absolute -right-2 -bottom-2",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+							type: "button",
+							onClick: onEditAvatar,
+							"aria-label": "Chỉnh sửa ảnh đại diện",
+							className: "grid size-9 cursor-pointer place-items-center rounded-xl border-2 border-panel bg-lime text-bg hover:brightness-105",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPencil, { size: 16 })
+						})
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 					variant: "quiet",
 					size: "sm",
 					onClick: onLogout,
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLogout, { size: 14 }), " Đăng xuất"]
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLogout, { size: 16 }), " Đăng xuất"]
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-				className: "relative mt-4 text-xl leading-tight font-extrabold tracking-tight wrap-break-word",
+				className: "relative mt-4 wrap-break-word text-xl leading-tight font-extrabold tracking-tight",
 				children: user.playerName
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-				className: "mt-1 flex flex-wrap items-center gap-2 text-xs text-mute",
-				children: [
-					"@",
-					user.username,
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						className: "rounded-full bg-lime/15 px-2 py-0.5 text-[10px] font-bold text-lime",
-						children: user.role === "user" ? "Người dùng" : "Quản trị viên"
-					})
-				]
-			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "mt-5 grid grid-cols-2 gap-2",
+				className: "relative mt-1 flex flex-wrap items-center gap-2",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+					className: "min-w-0 break-all text-xs text-mute",
+					children: ["@", user.username]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+					tone: "neutral",
+					children: user.role === "administrator" ? "Quản trị viên" : "Người dùng"
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dl", {
+				className: "relative mt-5 grid grid-cols-2 gap-2",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "rounded-xl bg-bg p-3",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						className: "text-[10px] text-mute",
-						children: "Xu"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-						className: "mt-1 flex items-center gap-1.5 font-extrabold tabular-nums text-coin",
+					className: "rounded-xl border border-line bg-bg p-3",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", {
+						className: "text-[11px] text-mute",
+						children: "Số xu"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dd", {
+						className: "mt-1 flex min-w-0 items-center gap-1.5 text-sm font-extrabold tabular-nums text-coin",
 						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 16 }),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 17 }),
 							" ",
 							formatNumber(user.coins)
 						]
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "rounded-xl bg-bg p-3",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						className: "text-[10px] text-mute",
-						children: "Sao"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-						className: "mt-1 flex min-w-0 items-center gap-1.5 font-extrabold tabular-nums",
-						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconStarFilled, {
-								size: 14,
-								className: "shrink-0 text-lime"
-							}),
-							" ",
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								className: "min-w-0 truncate",
-								children: formatNumber(user.star)
-							})
-						]
+					className: "rounded-xl border border-line bg-bg p-3",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", {
+						className: "text-[11px] text-mute",
+						children: "Số sao"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dd", {
+						className: "mt-1 flex min-w-0 items-center gap-1.5 text-sm font-extrabold tabular-nums",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconStarFilled, {
+							size: 16,
+							className: "text-lime"
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "truncate",
+							children: formatNumber(user.star)
+						})]
 					})]
 				})]
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-				variant: "ghost",
-				size: "sm",
-				className: "relative mt-3 w-full",
-				onClick: onRedeemGiftCode,
-				children: "Nhập mã đổi thưởng"
-			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "relative mt-2 flex gap-2",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-					variant: "ghost",
-					size: "sm",
-					className: "min-w-0 flex-1",
-					disabled: hasFriendInvite,
-					onClick: hasFriendInvite ? void 0 : onRedeemInvite,
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						className: "truncate",
-						children: hasFriendInvite ? `Mã mời đã nhập: ${user.friendInvite}` : "Nhập mã mời"
+				className: "relative mt-3 space-y-2",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+						variant: "ghost",
+						size: "sm",
+						className: "w-full",
+						onClick: onRedeemGiftCode,
+						children: "Nhập mã đổi thưởng"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex gap-2",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+							variant: "ghost",
+							size: "sm",
+							className: "min-w-0 flex-1",
+							onClick: onRedeemInvite,
+							disabled: invited,
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "truncate",
+								children: invited ? `Đã nhập mã: ${user.friendInvite}` : "Nhập mã mời"
+							})
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
+							text: "Sao chép mã mời của bạn",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+								variant: "ghost",
+								size: "sm",
+								className: "size-8! px-0!",
+								disabled: !user.invite,
+								"aria-label": "Sao chép mã mời",
+								onClick: () => user.invite && copyText(user.invite, "Đã sao chép mã mời"),
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCopy, { size: 16 })
+							})
+						})]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "grid grid-cols-2 gap-2",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+							variant: "ghost",
+							size: "sm",
+							className: "min-w-0",
+							onClick: onFriendLink,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUserPlus, { size: 15 }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "truncate",
+								children: "Kết bạn"
+							})]
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+							variant: "ghost",
+							size: "sm",
+							className: "min-w-0",
+							onClick: onBuffetLink,
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconBriefcase2, { size: 15 }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "truncate",
+								children: "Làm thêm"
+							})]
+						})]
 					})
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-					variant: "ghost",
-					size: "sm",
-					className: "size-8! shrink-0 px-0!",
-					disabled: !user.invite,
-					onClick: () => user.invite && copyText(user.invite, "Đã sao chép mã mời"),
-					"aria-label": "Sao chép mã mời của mình",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCopy, { size: 15 })
-				})]
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "relative mt-2 grid grid-cols-2 gap-2",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-					variant: "ghost",
-					size: "sm",
-					className: "min-w-0",
-					onClick: onFriendLink,
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUserPlus, { size: 14 }),
-						" ",
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "truncate",
-							children: "Liên kết kết bạn"
-						})
-					]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-					variant: "ghost",
-					size: "sm",
-					className: "min-w-0",
-					onClick: onBuffetLink,
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconBriefcase2, { size: 14 }),
-						" ",
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "truncate",
-							children: "Liên kết làm thêm"
-						})
-					]
-				})]
+				]
 			}),
 			user.createdAt && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-				className: "mt-4 text-[10px] text-mute",
+				className: "relative mt-4 text-[11px] text-mute",
 				children: ["Tham gia ", formatDate(user.createdAt)]
 			})
 		]
@@ -589,30 +596,14 @@ var TX_SORTS = [
 // src/features/account/TransactionFilters.jsx
 function TransactionFilters({ list, statuses, q, onQ, status, onStatus, size, onSize, sort, onSort }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "grid grid-cols-2 gap-2 border-b border-line p-3 sm:grid-cols-[auto_1fr_auto] sm:px-5",
+		className: "grid grid-cols-2 gap-2 border-b border-line p-3 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:px-5",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
-				className: "col-span-2 flex h-10 items-center gap-2 rounded-lg border border-line bg-panel px-3 focus-within:border-lime sm:col-span-3",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconSearch, {
-						size: 15,
-						className: "shrink-0 text-mute"
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-						value: q,
-						onChange: (e) => onQ(e.target.value),
-						placeholder: "Tìm theo mã giao dịch…",
-						autoCapitalize: "none",
-						spellCheck: false,
-						className: "min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-mute/50 sm:text-sm"
-					}),
-					q && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-						onClick: () => onQ(""),
-						"aria-label": "Xoá tìm kiếm",
-						className: "grid size-6 cursor-pointer place-items-center rounded-md text-mute hover:bg-raise hover:text-fg",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, { size: 14 })
-					})
-				]
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
+				label: "Tìm giao dịch",
+				placeholder: "Tìm theo mã giao dịch…",
+				value: q,
+				onChange: onQ,
+				className: "col-span-2 sm:col-span-3"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Select, {
 				label: "Lọc trạng thái",
@@ -622,15 +613,15 @@ function TransactionFilters({ list, statuses, q, onQ, status, onStatus, size, on
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
 					value: "all",
 					children: "Tất cả trạng thái"
-				}), statuses.map((k) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
-					value: k,
+				}), statuses.map((key) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
+					value: key,
 					children: [
-						STATUS[k]?.label || k,
+						STATUS[key]?.label || key,
 						" (",
-						(list || []).filter((t) => t.status === k).length,
+						(list || []).filter((transaction) => transaction.status === key).length,
 						")"
 					]
-				}, k))]
+				}, key))]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageSizeSelect, {
 				value: size,
@@ -960,81 +951,73 @@ function LoginStreak({ checkin, onClaim, onUser }) {
 		try {
 			const result = await onClaim();
 			if (!result) return;
-			const gained = result.reward ?? result.checkin?.reward ?? claimReward;
 			if (result.user && onUser) onUser(result.user);
-			toast(`Đã nhận +${formatNumber(gained)} xu đăng nhập ngày ${result.checkin?.streak ?? (newCycle ? 1 : completed + 1)}!`, "ok");
-		} catch (e) {
-			toast(e?.message || "Không nhận được thưởng", "err");
+			const gained = result.reward ?? result.checkin?.reward ?? claimReward;
+			toast(`Đã nhận +${formatNumber(gained)} xu đăng nhập ngày ${result.checkin?.streak ?? (newCycle ? 1 : completed + 1)}!`);
+		} catch (requestError) {
+			toast(requestError?.message || "Không nhận được phần thưởng", "err");
 		}
 	};
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "relative overflow-hidden rounded-2xl border border-line bg-panel p-4",
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+		className: "ui-card space-y-4 p-4",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"aria-hidden": true,
-				className: "absolute inset-x-0 top-0 h-16 bg-[radial-gradient(70%_100%_at_100%_0%,color-mix(in_oklab,var(--color-coin)_16%,transparent),transparent)]"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "relative flex items-start justify-between gap-3",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "min-w-0",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "flex items-center gap-2",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "grid size-8 place-items-center rounded-xl bg-coin/15 text-coin",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCalendarCheck, { size: 16 })
-						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
-							className: "text-sm font-extrabold tracking-tight",
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
+				className: "flex items-center gap-3",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "grid size-10 shrink-0 place-items-center rounded-xl bg-coin/10 text-coin",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCalendarCheck, { size: 21 })
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "min-w-0 flex-1",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+							className: "text-sm font-extrabold",
 							children: "Đăng nhập 7 ngày"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-							className: "text-[11px] text-mute",
-							children: loaded ? claimedToday ? `Chuỗi ${completed}/7 ngày · Đã nhận hôm nay` : newCycle ? "Đã hoàn thành 7 ngày · Bắt đầu chu kỳ mới" : `Chuỗi ${completed}/7 ngày · Nhận quà hôm nay` : "Đang tải tiến trình…"
-						})] })]
+							className: "mt-0.5 text-[11px] text-mute",
+							children: loaded ? claimedToday ? `Chuỗi ${completed}/7 ngày · Đã nhận hôm nay` : newCycle ? "Đã hoàn thành · Bắt đầu chu kỳ mới" : `Chuỗi ${completed}/7 ngày` : "Đang tải tiến trình…"
+						})]
+					}),
+					canClaim && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+						tone: "accent",
+						children: "Có quà"
 					})
-				}), canClaim && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-					className: "shrink-0 rounded-full bg-lime px-2 py-0.5 text-[10px] font-extrabold text-bg",
-					children: "Mới"
-				})]
+				]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "relative mt-4 grid grid-cols-7 gap-1.5",
+				className: "grid grid-cols-7 gap-1.5",
 				children: days.map(({ day, reward, done, isToday }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"aria-label": `Ngày ${day}: ${done ? "đã hoàn thành" : isToday ? "có thể nhận hôm nay" : "chưa đến lượt"}`,
-					className: `relative flex flex-col items-center gap-1 rounded-xl px-0.5 py-2 text-center transition ${done ? "bg-ok/15 ring-1 ring-ok/30" : isToday ? "bg-coin/15 ring-1 ring-coin/40" : "bg-bg ring-1 ring-line"}`,
+					"aria-label": `Ngày ${day}: ${done ? "đã nhận" : isToday ? "có thể nhận" : "chưa nhận"}`,
+					className: `flex min-w-0 flex-col items-center gap-1.5 rounded-lg border px-0.5 py-2 text-center ${done ? "border-ok/25 bg-ok/10" : isToday ? "border-coin/30 bg-coin/10" : "border-line bg-bg"}`,
 					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: `text-[10px] font-semibold ${done ? "text-ok" : isToday ? "text-coin" : "text-mute"}`,
+							children: day
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: `grid size-7 place-items-center rounded-full text-[11px] font-bold ${done ? "bg-ok/20 text-ok" : isToday ? "bg-coin/20 text-coin" : "bg-raise text-mute"}`,
+							children: done ? "✓" : day === 7 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconGift, { size: 13 }) : reward
+						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-							className: `text-[10px] font-bold ${done ? "text-ok" : isToday ? "text-coin" : "text-mute"}`,
-							children: ["Ngày ", day]
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: `grid size-7 place-items-center rounded-full text-[10px] font-extrabold tabular-nums ${done ? "bg-ok/25 text-ok" : isToday ? "bg-coin/25 text-coin" : "bg-raise text-mute"}`,
-							children: done ? "✓" : day === 7 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconGift, { size: 12 }) : reward
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: `flex items-center gap-0.5 text-[9px] font-bold tabular-nums ${done ? "text-ok" : isToday ? "text-coin" : "text-mute"}`,
-							children: day === 7 && !done ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 10 }), reward] }) : done ? "xong" : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 10 }), reward] })
+							className: `flex items-center gap-0.5 text-[10px] font-bold tabular-nums ${done ? "text-ok" : isToday ? "text-coin" : "text-mute"}`,
+							children: [!done && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 10 }), done ? "Xong" : reward]
 						})
 					]
 				}, day))
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "relative mt-4",
-				children: [error && !loading && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "mb-2 text-[11px] text-bad",
-					children: error
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-					variant: canClaim ? "solid" : "ghost",
-					size: "sm",
-					className: "w-full",
-					loading: claiming || loading,
-					disabled: !canClaim || claiming || loading,
-					onClick: handleClaim,
-					children: claiming ? "Đang nhận…" : canClaim ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-						"Nhận +",
-						formatNumber(claimReward),
-						" xu hôm nay"
-					] }) : claimedToday ? "Đã nhận quà hôm nay" : loading ? "Đang tải…" : "Chưa thể nhận"
-				})]
+			error && !loading && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+				role: "alert",
+				className: "text-xs text-bad",
+				children: error
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+				className: "w-full",
+				variant: canClaim ? "solid" : "ghost",
+				size: "sm",
+				loading: claiming || loading,
+				disabled: !canClaim || claiming || loading,
+				onClick: handleClaim,
+				children: claiming ? "Đang nhận…" : canClaim ? `Nhận +${formatNumber(claimReward)} xu hôm nay` : claimedToday ? "Đã nhận quà hôm nay" : loading ? "Đang tải…" : "Chưa thể nhận"
 			})
 		]
 	});

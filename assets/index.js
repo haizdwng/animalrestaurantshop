@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/clipboard.js","assets/IconPhoto.js","assets/Tile.js","assets/IconUsers.js","assets/IconPlus.js","assets/IconSearch.js","assets/Account.js","assets/useRemoteResource.js","assets/IconStarFilled.js","assets/IconUserPlus.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/clipboard.js","assets/IconPhoto.js","assets/Tile.js","assets/IconUsers.js","assets/IconPlus.js","assets/Account.js","assets/useRemoteResource.js","assets/IconStarFilled.js","assets/IconUser.js","assets/IconUserPlus.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
 // \0rolldown/runtime.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -14172,6 +14172,64 @@ var require_disable_devtool_min = /* @__PURE__ */ __commonJSMin(((exports, modul
 		return A && R(A), R;
 	});
 }));
+// node_modules/react/cjs/react-jsx-runtime.production.js
+/**
+* @license React
+* react-jsx-runtime.production.js
+*
+* Copyright (c) Meta Platforms, Inc. and affiliates.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+var require_react_jsx_runtime_production = /* @__PURE__ */ __commonJSMin(((exports) => {
+	var REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element");
+	var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
+	function jsxProd(type, config, maybeKey) {
+		var key = null;
+		void 0 !== maybeKey && (key = "" + maybeKey);
+		void 0 !== config.key && (key = "" + config.key);
+		if ("key" in config) {
+			maybeKey = {};
+			for (var propName in config) "key" !== propName && (maybeKey[propName] = config[propName]);
+		} else maybeKey = config;
+		config = maybeKey.ref;
+		return {
+			$$typeof: REACT_ELEMENT_TYPE,
+			type,
+			key,
+			ref: void 0 !== config ? config : null,
+			props: maybeKey
+		};
+	}
+	exports.Fragment = REACT_FRAGMENT_TYPE;
+	exports.jsx = jsxProd;
+	exports.jsxs = jsxProd;
+}));
+// node_modules/react/jsx-runtime.js
+var require_jsx_runtime = /* @__PURE__ */ __commonJSMin(((exports, module) => {
+	module.exports = require_react_jsx_runtime_production();
+}));
+// src/shared/components/ui/Badge.jsx
+var import_client = require_client();
+var import_disable_devtool_min = /* @__PURE__ */ __toESM(require_disable_devtool_min(), 1);
+var import_jsx_runtime = require_jsx_runtime();
+var TONES = {
+	neutral: "border-line bg-raise text-fg",
+	accent: "border-lime/25 bg-lime/10 text-lime",
+	success: "border-ok/25 bg-ok/10 text-ok",
+	warning: "border-coin/25 bg-coin/10 text-coin",
+	danger: "border-bad/25 bg-bad/10 text-bad"
+};
+function Badge({ tone = "neutral", Icon, children, className = "" }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+		className: `inline-flex max-w-full items-center gap-1 rounded-md border px-2 py-0.5 text-[10px] font-bold whitespace-nowrap ${TONES[tone] || TONES.neutral} ${className}`,
+		children: [Icon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
+			size: 12,
+			className: "shrink-0"
+		}), children]
+	});
+}
 // node_modules/@tabler/icons-react/dist/esm/defaultAttributes.mjs
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
@@ -14521,6 +14579,19 @@ var IconRefresh = /* @__PURE__ */ createReactComponent("outline", "refresh", "Re
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
+var IconSearch = /* @__PURE__ */ createReactComponent("outline", "search", "Search", [["path", {
+	"d": "M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0",
+	"key": "svg-0"
+}], ["path", {
+	"d": "M21 21l-6 -6",
+	"key": "svg-1"
+}]]);
+/**
+* @license @tabler/icons-react v3.52.0 - MIT
+*
+* This source code is licensed under the MIT license.
+* See the LICENSE file in the root directory of this source tree.
+*/
 var IconSelector = /* @__PURE__ */ createReactComponent("outline", "selector", "Selector", [["path", {
 	"d": "M8 9l4 -4l4 4",
 	"key": "svg-0"
@@ -14587,196 +14658,172 @@ var IconX = /* @__PURE__ */ createReactComponent("outline", "x", "X", [["path", 
 	"d": "M6 6l12 12",
 	"key": "svg-1"
 }]]);
-// node_modules/react/cjs/react-jsx-runtime.production.js
-/**
-* @license React
-* react-jsx-runtime.production.js
-*
-* Copyright (c) Meta Platforms, Inc. and affiliates.
-*
-* This source code is licensed under the MIT license found in the
-* LICENSE file in the root directory of this source tree.
-*/
-var require_react_jsx_runtime_production = /* @__PURE__ */ __commonJSMin(((exports) => {
-	var REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element");
-	var REACT_FRAGMENT_TYPE = Symbol.for("react.fragment");
-	function jsxProd(type, config, maybeKey) {
-		var key = null;
-		void 0 !== maybeKey && (key = "" + maybeKey);
-		void 0 !== config.key && (key = "" + config.key);
-		if ("key" in config) {
-			maybeKey = {};
-			for (var propName in config) "key" !== propName && (maybeKey[propName] = config[propName]);
-		} else maybeKey = config;
-		config = maybeKey.ref;
-		return {
-			$$typeof: REACT_ELEMENT_TYPE,
-			type,
-			key,
-			ref: void 0 !== config ? config : null,
-			props: maybeKey
-		};
-	}
-	exports.Fragment = REACT_FRAGMENT_TYPE;
-	exports.jsx = jsxProd;
-	exports.jsxs = jsxProd;
-}));
-// node_modules/react/jsx-runtime.js
-var require_jsx_runtime = /* @__PURE__ */ __commonJSMin(((exports, module) => {
-	module.exports = require_react_jsx_runtime_production();
-}));
 // src/shared/components/ui/Button.jsx
-var import_client = require_client();
-var import_disable_devtool_min = /* @__PURE__ */ __toESM(require_disable_devtool_min(), 1);
-var import_jsx_runtime = require_jsx_runtime();
 var VARIANTS = {
-	solid: "bg-lime text-bg hover:brightness-110",
-	danger: "bg-bad text-bg hover:brightness-110",
-	ghost: "border border-line bg-raise text-fg hover:border-mute",
-	quiet: "text-mute hover:bg-raise hover:text-fg"
+	solid: "border border-transparent bg-lime text-bg hover:brightness-105",
+	danger: "border border-transparent bg-bad text-bg hover:brightness-105",
+	ghost: "border border-line bg-raise text-fg hover:border-mute hover:bg-panel",
+	quiet: "border border-transparent text-mute hover:bg-raise hover:text-fg"
 };
 var SIZES = {
-	sm: "h-8 px-3 text-[11px]",
-	md: "h-11 px-4 text-xs"
+	sm: "min-h-8 px-3 text-xs",
+	md: "min-h-11 px-4 text-sm"
 };
-function Button({ variant = "solid", size = "md", className = "", loading, children, ...p }) {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-		...p,
-		type: p.type || "button",
-		disabled: p.disabled || loading,
-		className: `inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg font-bold tracking-wide transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100 ${SIZES[size]} ${VARIANTS[variant]} ${className}`,
-		children: loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLoader2, {
+function Button({ variant = "solid", size = "md", className = "", loading = false, children, ...props }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+		...props,
+		type: props.type || "button",
+		disabled: props.disabled || loading,
+		"aria-busy": loading || void 0,
+		className: `inline-flex min-w-0 cursor-pointer items-center justify-center gap-2 rounded-lg font-bold leading-tight transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime disabled:cursor-not-allowed disabled:opacity-50 ${SIZES[size] || SIZES.md} ${VARIANTS[variant] || VARIANTS.solid} ${className}`,
+		children: [loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLoader2, {
 			size: 16,
-			className: "animate-spin"
-		}) : children
+			className: "shrink-0 animate-spin",
+			"aria-hidden": true
+		}) : children, loading && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+			className: "sr-only",
+			children: "Đang xử lý"
+		})]
 	});
 }
 // src/shared/components/ui/Field.jsx
-function Field({ label, right, error, hint, className = "", type = "text", ...p }) {
-	const [show, setShow] = (0, import_react.useState)(false);
+function Field({ label, right, error, hint, className = "", type = "text", ...props }) {
 	const generatedId = (0, import_react.useId)();
-	const id = p.id || `field-${generatedId}`;
-	const isPw = type === "password";
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
-		className: `block ${className}`,
+	const id = props.id || `input-${generatedId}`;
+	const [visible, setVisible] = (0, import_react.useState)(false);
+	const password = type === "password";
+	const description = [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(" ") || void 0;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: `min-w-0 ${className}`,
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-				htmlFor: id,
-				className: "mb-1.5 flex items-baseline justify-between gap-2 text-[11px] font-medium text-mute",
-				children: [label, hint && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-					className: "text-[10px] text-mute/70",
+			label && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "mb-1.5 flex items-center justify-between gap-2",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
+					htmlFor: id,
+					className: "text-xs font-semibold text-fg",
+					children: label
+				}), hint && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					id: `${id}-hint`,
+					className: "text-[11px] text-mute",
 					children: hint
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: `flex overflow-hidden rounded-lg border bg-bg transition focus-within:border-lime focus-within:ring-2 focus-within:ring-lime/20 ${error ? "border-bad" : "border-line"}`,
+				className: `ui-control flex min-w-0 items-center overflow-hidden ${error ? "border-bad! focus-within:shadow-none" : ""}`,
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-						...p,
+						...props,
 						id,
-						name: p.name || id,
-						type: isPw && show ? "text" : type,
-						"aria-invalid": !!error,
-						"aria-describedby": error ? `${id}-error` : hint ? `${id}-hint` : void 0,
-						className: "min-w-0 flex-1 bg-transparent px-3 py-3 text-base outline-none placeholder:text-mute/50 sm:text-sm"
+						name: props.name || id,
+						type: password && visible ? "text" : type,
+						autoComplete: props.autoComplete,
+						"aria-invalid": Boolean(error),
+						"aria-describedby": description,
+						className: "min-h-10 min-w-0 flex-1 bg-transparent px-3 py-2.5 text-sm leading-snug outline-none placeholder:text-mute/60"
 					}),
-					isPw && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+					password && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 						type: "button",
-						tabIndex: -1,
-						onClick: () => setShow(!show),
-						"aria-label": show ? "Ẩn mật khẩu" : "Hiện mật khẩu",
-						className: "grid w-11 shrink-0 cursor-pointer place-items-center text-mute hover:text-fg",
-						children: show ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconEyeOff, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconEye, { size: 16 })
+						onClick: () => setVisible((previous) => !previous),
+						"aria-label": visible ? "Ẩn mật khẩu" : "Hiện mật khẩu",
+						"aria-pressed": visible,
+						className: "grid size-10 shrink-0 cursor-pointer place-items-center text-mute hover:bg-raise hover:text-fg",
+						children: visible ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconEyeOff, { size: 17 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconEye, { size: 17 })
 					}),
 					right
 				]
 			}),
-			hint && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-				id: `${id}-hint`,
-				className: "sr-only",
-				children: hint
-			}),
-			error && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-				id: `${id}-error`,
+			error && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 				role: "alert",
-				className: "mt-1.5 block text-[11px] text-bad",
+				id: `${id}-error`,
+				className: "mt-1.5 text-xs text-bad",
 				children: error
 			})
 		]
 	});
 }
 // src/shared/components/ui/Toast.jsx
-var KINDS = {
+var TYPES = {
 	ok: {
 		Icon: IconCircleCheck,
-		ic: "text-ok",
+		icon: "text-ok",
 		bar: "bg-ok"
 	},
 	err: {
 		Icon: IconAlertTriangle,
-		ic: "text-bad",
+		icon: "text-bad",
 		bar: "bg-bad"
 	},
 	info: {
 		Icon: IconInfoCircle,
-		ic: "text-lime",
+		icon: "text-lime",
 		bar: "bg-lime"
 	}
 };
-var DURATION = 4500;
-var durationOf = (kind) => kind === "info" ? DURATION * 2 : DURATION;
-var push;
-function toast(msg, kind = "ok") {
-	push?.({
-		msg,
-		kind,
-		id: Math.random()
+var DURATIONS = {
+	ok: 4500,
+	err: 6e3,
+	info: 6500
+};
+var counter = 0;
+var dispatch = null;
+function toast(message, kind = "ok") {
+	if (!message) return;
+	dispatch?.({
+		id: ++counter,
+		message: String(message),
+		kind: TYPES[kind] ? kind : "info",
+		createdAt: Date.now()
 	});
 }
-function toastError(e) {
-	if (e.code !== "UNAUTHORIZED") toast(e.message, "err");
+function toastError(error) {
+	if (error?.code !== "UNAUTHORIZED") toast(error?.message || "Đã xảy ra lỗi", "err");
 }
 function Toaster() {
 	const [items, setItems] = (0, import_react.useState)([]);
-	const close = (id) => setItems((s) => s.filter((x) => x.id !== id));
 	(0, import_react.useEffect)(() => {
-		push = (t) => {
-			setItems((s) => [...s.slice(-3), t]);
-			setTimeout(() => close(t.id), durationOf(t.kind));
+		const publisher = (item) => setItems((existing) => [...existing.slice(-3), item]);
+		dispatch = publisher;
+		return () => {
+			if (dispatch === publisher) dispatch = null;
 		};
-		return () => push = void 0;
 	}, []);
+	(0, import_react.useEffect)(() => {
+		const timers = items.map((item) => setTimeout(() => setItems((existing) => existing.filter((entry) => entry.id !== item.id)), Math.max(0, DURATIONS[item.kind] - (Date.now() - item.createdAt))));
+		return () => timers.forEach(clearTimeout);
+	}, [items.map((item) => item.id).join(",")]);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 		"aria-live": "polite",
-		className: "pointer-events-none fixed inset-x-0 top-0 z-60 flex flex-col items-center gap-2 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 sm:items-end sm:px-5 sm:pt-[max(1.25rem,env(safe-area-inset-top))] sm:pb-5",
-		children: items.map((t) => {
-			const c = KINDS[t.kind] || KINDS.ok;
+		"aria-atomic": "false",
+		className: "pointer-events-none fixed inset-x-0 top-0 z-70 flex flex-col items-center gap-2 p-3 pt-[max(.75rem,env(safe-area-inset-top))] sm:items-end sm:p-5",
+		children: items.map((item) => {
+			const type = TYPES[item.kind];
+			const Icon = type.Icon;
 			return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				role: "status",
-				className: "pointer-events-auto relative w-full max-w-sm animate-toast-in overflow-hidden rounded-xl border border-line bg-raise shadow-xl shadow-black/50",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex items-start gap-3 p-3 pr-2",
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(c.Icon, {
-							size: 18,
-							className: `mt-0.5 shrink-0 ${c.ic}`
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-							className: "min-w-0 flex-1 wrap-break-word text-[13px] leading-snug",
-							children: t.msg
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-							onClick: () => close(t.id),
-							"aria-label": "Đóng thông báo",
-							className: "grid size-6 shrink-0 cursor-pointer place-items-center rounded-md text-mute hover:bg-line hover:text-fg",
-							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, { size: 14 })
-						})
-					]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-					className: `absolute bottom-0 left-0 h-0.5 w-full origin-left animate-toast-bar opacity-70 ${c.bar}`,
-					style: { animationDuration: `${durationOf(t.kind)}ms` }
-				})]
-			}, t.id);
+				role: item.kind === "err" ? "alert" : "status",
+				className: "pointer-events-auto relative flex w-full max-w-sm animate-toast-in items-start gap-3 overflow-hidden rounded-xl border border-line bg-panel px-3 py-3.5 shadow-[var(--ui-shadow)]",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
+						size: 19,
+						className: `mt-0.5 shrink-0 ${type.icon}`
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "min-w-0 flex-1 wrap-break-word text-xs leading-relaxed",
+						children: item.message
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+						type: "button",
+						"aria-label": "Đóng thông báo",
+						onClick: () => setItems((entries) => entries.filter((entry) => entry.id !== item.id)),
+						className: "grid size-7 shrink-0 cursor-pointer place-items-center rounded-lg text-mute hover:bg-raise hover:text-fg",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, { size: 15 })
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						"aria-hidden": true,
+						className: `absolute inset-x-0 bottom-0 h-0.5 origin-left animate-toast-bar ${type.bar}`,
+						style: { animationDuration: `${DURATIONS[item.kind]}ms` }
+					})
+				]
+			}, item.id);
 		})
 	});
 }
@@ -14826,29 +14873,43 @@ function OtpButton({ send, target, onSent, check }) {
 }
 // src/shared/components/ui/Dialog.jsx
 var import_react_dom = /* @__PURE__ */ __toESM(require_react_dom(), 1);
-var FOCUSABLE = "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex=\"-1\"])";
-function Dialog({ open, title, onClose, children }) {
+var FOCUSABLE = "a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex=\"-1\"])";
+var dialogStack = [];
+var overflowBeforeDialogs = null;
+function Dialog({ open, title, onClose, children, size = "md" }) {
 	const titleId = (0, import_react.useId)();
-	const panelRef = (0, import_react.useRef)(null);
-	const closeRef = (0, import_react.useRef)(onClose);
-	closeRef.current = onClose;
+	const dialogId = (0, import_react.useRef)(Symbol("dialog"));
+	const panel = (0, import_react.useRef)(null);
+	const lastOnClose = (0, import_react.useRef)(onClose);
+	lastOnClose.current = onClose;
+	const sizes = {
+		md: "sm:max-w-lg",
+		lg: "sm:max-w-2xl",
+		full: "sm:max-w-5xl"
+	};
 	(0, import_react.useEffect)(() => {
-		if (!open) return;
+		if (!open) return void 0;
+		const id = dialogId.current;
 		const previouslyFocused = document.activeElement;
-		const previousOverflow = document.body.style.overflow;
-		document.body.style.overflow = "hidden";
-		panelRef.current?.focus({ preventScroll: true });
+		const body = document.body;
+		if (dialogStack.length === 0) overflowBeforeDialogs = body.style.overflow;
+		dialogStack.push(id);
+		body.style.overflow = "hidden";
+		panel.current?.focus({ preventScroll: true });
 		const onKeyDown = (event) => {
-			if (event.key === "Escape" && panelRef.current?.contains(document.activeElement)) {
+			if (dialogStack.at(-1) !== id) return;
+			if (event.key === "Escape") {
 				event.preventDefault();
-				closeRef.current?.();
+				event.stopPropagation();
+				lastOnClose.current?.();
+				return;
 			}
-			if (event.key !== "Tab" || !panelRef.current?.contains(document.activeElement)) return;
-			const focusables = [...panelRef.current.querySelectorAll(FOCUSABLE)].filter((element) => element.getClientRects().length > 0);
-			if (!focusables.length) return event.preventDefault();
-			const first = focusables[0];
-			const last = focusables[focusables.length - 1];
-			if (event.shiftKey && document.activeElement === first) {
+			if (event.key !== "Tab") return;
+			const focusable = [...panel.current?.querySelectorAll(FOCUSABLE) || []].filter((element) => element.getClientRects().length > 0);
+			if (focusable.length === 0) return event.preventDefault();
+			const first = focusable[0];
+			const last = focusable[focusable.length - 1];
+			if (event.shiftKey && (document.activeElement === first || document.activeElement === panel.current)) {
 				event.preventDefault();
 				last.focus();
 			} else if (!event.shiftKey && document.activeElement === last) {
@@ -14856,44 +14917,53 @@ function Dialog({ open, title, onClose, children }) {
 				first.focus();
 			}
 		};
-		document.addEventListener("keydown", onKeyDown);
+		document.addEventListener("keydown", onKeyDown, true);
 		return () => {
-			document.removeEventListener("keydown", onKeyDown);
-			document.body.style.overflow = previousOverflow;
-			if (previouslyFocused instanceof HTMLElement && previouslyFocused.isConnected) previouslyFocused.focus({ preventScroll: true });
+			document.removeEventListener("keydown", onKeyDown, true);
+			const wasTopmost = dialogStack.at(-1) === id;
+			const position = dialogStack.lastIndexOf(id);
+			if (position >= 0) dialogStack.splice(position, 1);
+			if (dialogStack.length === 0) {
+				body.style.overflow = overflowBeforeDialogs ?? "";
+				overflowBeforeDialogs = null;
+			}
+			if (wasTopmost && previouslyFocused instanceof HTMLElement && previouslyFocused.isConnected) previouslyFocused.focus({ preventScroll: true });
 		};
 	}, [open]);
 	if (!open) return null;
 	return (0, import_react_dom.createPortal)(/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: "fixed inset-0 z-50 flex animate-fade items-end justify-center bg-black/70 backdrop-blur-sm sm:items-center sm:p-4",
-		onClick: (event) => {
-			if (event.target === event.currentTarget) closeRef.current?.();
+		className: "fixed inset-0 z-50 flex animate-fade items-end justify-center bg-black/75 backdrop-blur-sm sm:items-center sm:p-5",
+		onPointerDown: (event) => {
+			if (event.target === event.currentTarget && dialogStack.at(-1) === dialogId.current) lastOnClose.current?.();
 		},
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			ref: panelRef,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+			ref: panel,
 			tabIndex: -1,
 			role: "dialog",
 			"aria-modal": "true",
 			"aria-labelledby": titleId,
-			className: "flex max-h-[92dvh] w-full animate-pop flex-col rounded-t-2xl border border-line bg-panel shadow-2xl shadow-black/60 outline-none supports-backdrop-filter:bg-panel/90 supports-backdrop-filter:backdrop-blur-xl sm:max-w-md sm:rounded-2xl",
+			className: `ui-card relative flex max-h-[94dvh] w-full min-w-0 animate-pop flex-col rounded-b-none shadow-[var(--ui-shadow)] outline-none sm:max-h-[min(90dvh,52rem)] sm:rounded-2xl ${sizes[size] || sizes.md}`,
 			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-line sm:hidden" }),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex shrink-0 items-center justify-between gap-3 px-5 pt-4 pb-2",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					"aria-hidden": true,
+					className: "mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-line sm:hidden"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
+					className: "flex shrink-0 items-start justify-between gap-4 border-b border-line/70 px-5 py-4",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
 						id: titleId,
-						className: "min-w-0 text-sm font-bold",
+						className: "min-w-0 flex-1 text-base font-extrabold leading-tight tracking-tight",
 						children: title
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 						type: "button",
-						onClick: () => closeRef.current?.(),
-						className: "-mr-2 grid size-8 shrink-0 cursor-pointer place-items-center rounded-lg text-mute transition hover:bg-raise hover:text-fg focus-visible:outline-2 focus-visible:outline-lime",
 						"aria-label": "Đóng cửa sổ",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, { size: 18 })
+						onClick: () => lastOnClose.current?.(),
+						className: "-my-1 -mr-1 grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg text-mute hover:bg-raise hover:text-fg focus-visible:outline-2 focus-visible:outline-lime",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, { size: 19 })
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "space-y-4 overflow-y-auto overscroll-contain px-5 pt-2 pb-[max(1.25rem,env(safe-area-inset-bottom))]",
+					className: "min-h-0 space-y-4 overflow-y-auto overscroll-contain px-5 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]",
 					children
 				})
 			]
@@ -14901,72 +14971,97 @@ function Dialog({ open, title, onClose, children }) {
 	}), document.body);
 }
 // src/shared/components/ui/Menu.jsx
-var ITEM_H = 44;
-function Menu({ items, label = "Tuỳ chọn", disabled = false }) {
-	const btn = (0, import_react.useRef)(null);
-	const [pos, setPos] = (0, import_react.useState)(null);
-	const shown = items.filter((i) => !i.hidden);
+var ROW_HEIGHT = 40;
+function Menu({ items = [], label = "Tùy chọn", disabled = false }) {
+	const button = (0, import_react.useRef)(null);
+	const menu = (0, import_react.useRef)(null);
+	const menuId = (0, import_react.useId)();
+	const [position, setPosition] = (0, import_react.useState)(null);
+	const shown = items.filter((item) => !item.hidden);
+	const open = Boolean(position);
 	(0, import_react.useEffect)(() => {
-		if (!pos) return;
-		const off = () => setPos(null);
-		const onKey = (e) => e.key === "Escape" && off();
-		window.addEventListener("scroll", off, true);
-		window.addEventListener("resize", off);
-		document.addEventListener("keydown", onKey);
-		return () => {
-			window.removeEventListener("scroll", off, true);
-			window.removeEventListener("resize", off);
-			document.removeEventListener("keydown", onKey);
+		if (!open) return;
+		const close = () => setPosition(null);
+		const keyboard = (event) => {
+			if (event.key === "Escape") {
+				event.preventDefault();
+				close();
+				button.current?.focus();
+			} else if (event.key === "Tab") close();
+			else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+				const active = [...menu.current?.querySelectorAll("button:not([disabled])") || []];
+				if (!active.length) return;
+				event.preventDefault();
+				active[(active.indexOf(document.activeElement) + (event.key === "ArrowDown" ? 1 : active.length - 1)) % active.length].focus();
+			}
 		};
-	}, [pos]);
+		window.addEventListener("scroll", close, true);
+		window.addEventListener("resize", close);
+		document.addEventListener("keydown", keyboard);
+		return () => {
+			window.removeEventListener("scroll", close, true);
+			window.removeEventListener("resize", close);
+			document.removeEventListener("keydown", keyboard);
+		};
+	}, [open]);
 	(0, import_react.useEffect)(() => {
-		if (disabled) setPos(null);
+		if (disabled) setPosition(null);
 	}, [disabled]);
 	const toggle = () => {
-		if (disabled) return;
-		if (pos) return setPos(null);
-		const r = btn.current.getBoundingClientRect();
-		const up = r.bottom + ITEM_H * shown.length + 16 > innerHeight;
-		setPos({
-			right: innerWidth - r.right,
-			...up ? { bottom: innerHeight - r.top + 4 } : { top: r.bottom + 4 }
+		if (disabled || !shown.length) return;
+		if (open) return setPosition(null);
+		const rectangle = button.current.getBoundingClientRect();
+		const width = 216;
+		const maxHeight = Math.min(window.innerHeight - 24, shown.length * ROW_HEIGHT + 12);
+		const top = rectangle.bottom + maxHeight + 8 < window.innerHeight ? rectangle.bottom + 6 : Math.max(12, rectangle.top - maxHeight - 6);
+		setPosition({
+			top,
+			left: Math.max(12, Math.min(rectangle.right - width, window.innerWidth - width - 12))
 		});
+		requestAnimationFrame(() => menu.current?.querySelector("button:not([disabled])")?.focus({ preventScroll: true }));
 	};
 	if (!shown.length) return null;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
-		ref: btn,
+		ref: button,
 		type: "button",
 		onClick: toggle,
 		disabled,
 		"aria-label": label,
-		"aria-expanded": !!pos,
-		className: `grid size-8 shrink-0 place-items-center rounded-lg transition ${disabled ? "cursor-not-allowed opacity-40 text-mute" : `cursor-pointer hover:bg-raise hover:text-fg ${pos ? "bg-raise text-fg" : "text-mute"}`}`,
-		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDotsVertical, { size: 17 })
-	}), pos && (0, import_react_dom.createPortal)(/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: "fixed inset-0 z-40",
-		onClick: () => setPos(null),
+		"aria-haspopup": "menu",
+		"aria-expanded": open,
+		"aria-controls": open ? menuId : void 0,
+		className: `grid size-9 shrink-0 cursor-pointer place-items-center rounded-lg text-mute transition-colors hover:bg-raise hover:text-fg focus-visible:outline-2 focus-visible:outline-lime disabled:cursor-not-allowed disabled:opacity-50 ${open ? "bg-raise text-fg" : ""}`,
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDotsVertical, { size: 19 })
+	}), open && (0, import_react_dom.createPortal)(/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		className: "fixed inset-0 z-50",
+		onPointerDown: (event) => {
+			if (event.target === event.currentTarget) setPosition(null);
+		},
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			id: menuId,
+			ref: menu,
 			role: "menu",
-			style: pos,
-			className: "fixed min-w-44 animate-pop rounded-xl border border-line bg-raise p-1 shadow-2xl shadow-black/60",
-			onClick: (e) => e.stopPropagation(),
-			children: shown.map(({ label: l, Icon, onClick, danger }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+			"aria-label": label,
+			style: position,
+			className: "fixed z-10 max-h-[calc(100dvh-24px)] w-54 overflow-auto rounded-xl border border-line bg-panel p-1.5 shadow-[var(--ui-shadow)] animate-pop",
+			children: shown.map(({ label: itemLabel, Icon, onClick, danger, disabled: itemDisabled }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 				type: "button",
 				role: "menuitem",
+				disabled: itemDisabled,
+				className: `flex min-h-10 w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 text-left text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-45 ${danger ? "text-bad hover:bg-bad/10" : "text-fg hover:bg-raise"}`,
 				onClick: () => {
-					setPos(null);
-					onClick();
+					setPosition(null);
+					onClick?.();
 				},
-				className: `flex h-9 w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 text-left text-xs font-bold transition ${danger ? "text-bad hover:bg-bad/10" : "text-fg hover:bg-line"}`,
 				children: [
 					Icon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
-						size: 15,
-						className: danger ? "" : "text-mute"
+						size: 16,
+						className: "shrink-0"
 					}),
 					" ",
-					l
+					itemLabel
 				]
-			}, l))
+			}, itemLabel))
 		})
 	}), document.body)] });
 }
@@ -14979,25 +15074,31 @@ var PAGE_SIZES = [
 ];
 // src/shared/components/ui/Select.jsx
 function Select({ id, value, onChange, Icon, label, className = "", children, disabled = false }) {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
-		className: `relative flex h-10 items-center rounded-lg border border-line bg-panel text-xs font-bold transition-colors focus-within:border-lime focus-within:ring-2 focus-within:ring-lime/15 ${className}`,
+	const generatedId = (0, import_react.useId)();
+	const selectId = id || `select-${generatedId}`;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: `relative h-10 min-w-0 ${className}`,
 		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
+				htmlFor: selectId,
+				className: label ? "sr-only" : "sr-only",
+				children: label || "Lựa chọn"
+			}),
 			Icon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
-				size: 15,
-				className: "pointer-events-none absolute left-3 text-mute"
+				size: 16,
+				className: "pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2 text-mute"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", {
-				id,
-				"aria-label": label,
+				id: selectId,
 				value,
 				onChange: (event) => onChange(event.target.value),
 				disabled,
-				className: `h-full w-full min-w-0 cursor-pointer appearance-none bg-transparent pr-8 outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>option]:bg-panel ${Icon ? "pl-9" : "pl-3"}`,
+				className: `ui-control h-full w-full cursor-pointer appearance-none pr-9 text-xs font-semibold outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>option]:bg-panel ${Icon ? "pl-9" : "pl-3"}`,
 				children
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconSelector, {
-				size: 14,
-				className: "pointer-events-none absolute right-2.5 text-mute"
+				size: 15,
+				className: "pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-mute"
 			})
 		]
 	});
@@ -15020,7 +15121,7 @@ function PageSizeSelect({ value, onChange, className }) {
 		label: "Số dòng mỗi trang",
 		Icon: IconListNumbers,
 		value,
-		onChange: (next) => onChange(Number(next)),
+		onChange: (size) => onChange(Number(size)),
 		className,
 		children: PAGE_SIZES.map((size) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
 			value: size,
@@ -15029,36 +15130,43 @@ function PageSizeSelect({ value, onChange, className }) {
 	});
 }
 // src/shared/components/ui/Tabs.jsx
-function Tabs({ tabs, value, onChange }) {
+function Tabs({ tabs, value, onChange, label = "Điều hướng danh mục" }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: "flex gap-1 overflow-x-auto rounded-lg bg-panel p-1 scrollbar-none",
-		children: tabs.map(([k, l, Icon]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-			onClick: () => onChange(k),
-			"aria-current": value === k ? "page" : void 0,
-			className: `flex h-8 shrink-0 cursor-pointer items-center gap-2 rounded-md px-3 text-xs font-bold transition ${value === k ? "bg-raise text-fg shadow-sm" : "text-mute hover:text-fg"}`,
+		role: "tablist",
+		"aria-label": label,
+		className: "no-scrollbar flex min-w-0 gap-1 overflow-x-auto rounded-xl border border-line bg-panel p-1",
+		children: tabs.map(([key, title, Icon]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+			role: "tab",
+			type: "button",
+			"aria-selected": value === key,
+			onClick: () => onChange(key),
+			className: `ui-nav-item shrink-0 whitespace-nowrap ${value === key ? "bg-raise text-fg" : ""}`,
 			children: [
-				Icon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 15 }),
+				Icon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 16 }),
 				" ",
-				l
+				title
 			]
-		}, k))
+		}, key))
 	});
 }
 // src/shared/components/ui/Pager.jsx
 function Pager({ page, pages, size, total, onPage }) {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "flex flex-wrap items-center justify-between gap-2 text-[11px] text-mute",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+	const first = total === 0 ? 0 : (page - 1) * size + 1;
+	const last = Math.min(page * size, total);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
+		"aria-label": "Phân trang",
+		className: "flex flex-wrap items-center justify-between gap-2 text-xs text-mute",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 			className: "tabular-nums",
 			children: [
-				((page - 1) * size + 1).toLocaleString("vi-VN"),
+				first.toLocaleString("vi-VN"),
 				"–",
-				Math.min(page * size, total).toLocaleString("vi-VN"),
+				last.toLocaleString("vi-VN"),
 				" / ",
 				total.toLocaleString("vi-VN")
 			]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "flex items-center gap-1",
+			className: "flex items-center gap-2",
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 					variant: "ghost",
@@ -15067,14 +15175,15 @@ function Pager({ page, pages, size, total, onPage }) {
 					disabled: page <= 1,
 					onClick: () => onPage(page - 1),
 					"aria-label": "Trang trước",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconChevronLeft, { size: 14 })
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconChevronLeft, { size: 16 })
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 					className: "min-w-16 text-center font-bold text-fg tabular-nums",
+					"aria-live": "polite",
 					children: [
 						page,
 						" / ",
-						pages
+						Math.max(1, pages)
 					]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
@@ -15084,7 +15193,7 @@ function Pager({ page, pages, size, total, onPage }) {
 					disabled: page >= pages,
 					onClick: () => onPage(page + 1),
 					"aria-label": "Trang sau",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconChevronRight, { size: 14 })
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconChevronRight, { size: 16 })
 				})
 			]
 		})]
@@ -15802,26 +15911,29 @@ function Spinner({ size = 18, className = "" }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLoader2, {
 		size,
 		className: `animate-spin ${className}`,
+		role: "img",
 		"aria-label": "Đang tải"
 	});
 }
 function Splash({ label = "Đang tải dữ liệu" }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-		className: "grid min-h-dvh place-items-center",
+		className: "grid min-h-dvh place-items-center p-6",
+		role: "status",
+		"aria-busy": "true",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "flex flex-col items-center gap-5",
+			className: "flex w-48 flex-col items-center gap-5 text-center",
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconHexagonLetterA, {
-					size: 52,
-					className: "animate-bounce-slow text-lime",
-					stroke: 1.5
+					size: 50,
+					stroke: 1.6,
+					className: "text-lime"
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "h-0.5 w-36 overflow-hidden rounded-full bg-raise",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "block h-full w-1/3 animate-indeterminate bg-lime" })
+					className: "h-1 w-36 overflow-hidden rounded-full bg-raise",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "block h-full w-1/3 animate-indeterminate rounded-full bg-lime" })
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "text-[11px] text-mute",
+					className: "text-xs text-mute",
 					children: label
 				})
 			]
@@ -15830,35 +15942,39 @@ function Splash({ label = "Đang tải dữ liệu" }) {
 }
 function ErrorState({ message, onRetry, loading }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "flex flex-col items-center gap-4 rounded-2xl border border-dashed border-line p-10 text-center",
+		role: "alert",
+		className: "ui-card flex flex-col items-center gap-4 p-8 text-center",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCloudOff, {
-				size: 34,
-				className: "text-bad"
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				className: "grid size-12 place-items-center rounded-2xl bg-bad/10 text-bad",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCloudOff, { size: 28 })
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "text-sm font-bold",
-				children: "Không tải được dữ liệu"
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "mt-1 text-xs text-mute",
-				children: message
-			})] }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "space-y-1",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+					className: "text-sm font-extrabold",
+					children: "Không tải được dữ liệu"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+					className: "max-w-md text-xs leading-relaxed text-mute",
+					children: message
+				})]
+			}),
+			onRetry && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 				variant: "ghost",
 				size: "sm",
 				loading,
 				onClick: onRetry,
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 14 }), " Thử lại"]
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 15 }), " Thử lại"]
 			})
 		]
 	});
 }
 // src/shared/components/ui/Skeleton.jsx
-function Skeleton({ className = "", ...p }) {
+function Skeleton({ className = "", ...props }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-		...p,
+		...props,
 		"aria-hidden": "true",
-		className: `block animate-shimmer rounded-md bg-[linear-gradient(90deg,var(--color-raise)_25%,var(--color-line)_50%,var(--color-raise)_75%)] bg-size-[200%_100%] ${className}`
+		className: `block animate-shimmer rounded-lg bg-[linear-gradient(90deg,var(--color-raise)_25%,var(--color-line)_50%,var(--color-raise)_75%)] bg-size-[200%_100%] ${className}`
 	});
 }
 function Line({ h = "h-5", w = "w-1/2", bar = "h-3", className = "" }) {
@@ -15869,7 +15985,7 @@ function Line({ h = "h-5", w = "w-1/2", bar = "h-3", className = "" }) {
 }
 function RowSkeleton({ lead = true, trail, w = "w-2/5" }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-		className: "flex items-center gap-3 px-4 py-3 sm:px-5",
+		className: "flex items-center gap-3 border-b border-line/50 px-4 py-3 last:border-b-0 sm:px-5",
 		children: [
 			lead && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -15878,7 +15994,7 @@ function RowSkeleton({ lead = true, trail, w = "w-2/5" }) {
 					w,
 					bar: "h-3.5"
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Line, {
-					h: "h-[16.5px] mt-0.5",
+					h: "mt-0.5 h-4",
 					w: "w-3/5",
 					bar: "h-2.5"
 				})]
@@ -15912,8 +16028,9 @@ function PagerSkeleton() {
 	});
 }
 // src/shared/components/ui/JsonEditor.jsx
-var pretty = (v) => JSON.stringify(v, null, 2);
-var SKELETON_LINES = [
+var formatJson = (value) => JSON.stringify(value, null, 2);
+var EDITOR_HEIGHT = "h-[clamp(22rem,62dvh,48rem)] min-h-72";
+var LOADING_WIDTHS = [
 	40,
 	62,
 	55,
@@ -15925,8 +16042,7 @@ var SKELETON_LINES = [
 	44,
 	30
 ];
-var EDITOR_HEIGHT_CLASS = "h-[clamp(22rem,62dvh,48rem)] min-h-72";
-var MONACO_OPTIONS = {
+var EDITOR_OPTIONS = {
 	automaticLayout: true,
 	minimap: { enabled: false },
 	fontFamily: "'JetBrains Mono', ui-monospace, monospace",
@@ -15943,176 +16059,250 @@ var MONACO_OPTIONS = {
 	formatOnType: false,
 	quickSuggestions: false
 };
+function applyEditorTheme(monaco) {
+	const styles = getComputedStyle(document.documentElement);
+	const token = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
+	monaco.editor.defineTheme("animal-restaurant-shop", {
+		base: "vs-dark",
+		inherit: true,
+		rules: [],
+		colors: {
+			"editor.background": token("--color-bg", "#0e1012"),
+			"editor.foreground": token("--color-fg", "#f1f2f3"),
+			"editorLineNumber.foreground": token("--color-mute", "#a3a8b0"),
+			"editorCursor.foreground": token("--color-lime", "#d4ff3a"),
+			"editor.selectionBackground": "#3b4641",
+			"editor.inactiveSelectionBackground": "#2a3230",
+			"editorWidget.background": token("--color-panel", "#17191c"),
+			"editorWidget.border": token("--color-line", "#353940"),
+			"input.background": token("--color-panel", "#17191c"),
+			"input.foreground": token("--color-fg", "#f1f2f3")
+		}
+	});
+	monaco.editor.setTheme("animal-restaurant-shop");
+}
 function EditorSkeleton() {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+		role: "status",
 		"aria-busy": "true",
-		className: "overflow-hidden rounded-2xl border border-line bg-panel",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "flex flex-wrap items-center gap-2 border-b border-line px-3 py-2",
+		className: "ui-card overflow-hidden",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
+			className: "flex items-center gap-2 border-b border-line p-3",
 			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-					className: "flex min-w-0 flex-1 items-center gap-1.5 text-[11px] text-mute",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, {
-						size: 14,
-						className: "text-lime"
-					}), " Đang tải dữ liệu…"]
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 15 }),
+				" ",
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					className: "mr-auto text-xs text-mute",
+					children: "Đang tải dữ liệu…"
 				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-20 rounded-lg" }),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-20 rounded-lg" }),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-16 rounded-lg" })
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-20" }),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-20" })
 			]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			className: `${EDITOR_HEIGHT_CLASS} space-y-2.5 bg-bg p-4`,
-			children: SKELETON_LINES.map((w, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, {
+			className: `${EDITOR_HEIGHT} space-y-2.5 bg-bg p-4`,
+			children: LOADING_WIDTHS.map((width, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, {
 				className: "h-3",
 				style: {
-					width: `${w}%`,
-					marginLeft: `${i % 3 * 1.5}rem`
+					width: `${width}%`,
+					marginLeft: `${index % 3 * 1.5}rem`
 				}
-			}, i))
+			}, index))
 		})]
 	});
 }
 function JsonEditor({ load, save, deps = [], extraActions = null }) {
 	const [text, setText] = (0, import_react.useState)("");
-	const [orig, setOrig] = (0, import_react.useState)("");
+	const [original, setOriginal] = (0, import_react.useState)("");
 	const [state, setState] = (0, import_react.useState)({
 		loading: true,
 		error: ""
 	});
 	const [saving, setSaving] = (0, import_react.useState)(false);
-	const live = (0, import_react.useRef)({
-		parseErr: "",
+	const current = (0, import_react.useRef)({
+		parseError: "",
 		dirty: false,
-		onSave: null
+		save: null
 	});
-	const bindCtrlS = (editor, monaco) => {
-		editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
-			const current = live.current;
-			if (!current.parseErr && current.dirty) current.onSave?.();
-		});
-	};
-	const fetchIt = async () => {
+	const request = (0, import_react.useRef)(0);
+	const loadRef = (0, import_react.useRef)(load);
+	loadRef.current = load;
+	const reload = async () => {
+		const requestId = ++request.current;
 		setState({
 			loading: true,
 			error: ""
 		});
 		try {
-			const t = pretty(await load() ?? null);
-			setText(t);
-			setOrig(t);
+			const formatted = formatJson(await loadRef.current() ?? null);
+			if (requestId !== request.current) return;
+			setText(formatted);
+			setOriginal(formatted);
 			setState({
 				loading: false,
 				error: ""
 			});
-		} catch (e) {
-			setState({
+		} catch (error) {
+			if (requestId === request.current) setState({
 				loading: false,
-				error: e.message
+				error: error?.message || "Không tải được JSON"
 			});
 		}
 	};
 	(0, import_react.useEffect)(() => {
-		fetchIt();
+		reload();
+		return () => {
+			request.current += 1;
+		};
 	}, deps);
-	let parseErr = "";
+	let parseError = "";
 	try {
 		if (!state.loading && !state.error) JSON.parse(text);
-	} catch (e) {
-		parseErr = e.message;
+	} catch (error) {
+		parseError = error?.message || "JSON không hợp lệ";
 	}
-	const dirty = text !== orig;
-	const onSave = async () => {
+	const dirty = text !== original;
+	const submit = async () => {
+		if (!dirty || parseError || saving) return;
 		setSaving(true);
 		try {
-			const v = JSON.parse(text);
-			const r = await save(v);
-			const t = pretty(v);
-			setText(t);
-			setOrig(t);
-			toast(r?.message || "Đã lưu");
-		} catch (e) {
-			toastError(e);
+			const json = JSON.parse(text);
+			const result = await save(json);
+			const formatted = formatJson(json);
+			setOriginal(formatted);
+			setText(formatted);
+			toast(result?.message || "Đã lưu dữ liệu");
+		} catch (error) {
+			toastError(error);
 		} finally {
 			setSaving(false);
 		}
 	};
 	const format = () => {
-		try {
-			setText(pretty(JSON.parse(text)));
-		} catch {}
+		if (parseError) return;
+		setText(formatJson(JSON.parse(text)));
 	};
-	live.current = {
-		parseErr,
+	current.current = {
+		parseError,
 		dirty,
-		onSave
+		save: submit
+	};
+	const onMount = (editor, monaco) => {
+		applyEditorTheme(monaco);
+		editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+			const snapshot = current.current;
+			if (!snapshot.parseError && snapshot.dirty) snapshot.save?.();
+		});
 	};
 	if (state.loading) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(EditorSkeleton, {});
 	if (state.error) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ErrorState, {
 		message: state.error,
-		onRetry: fetchIt
+		onRetry: reload
 	});
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: `overflow-hidden rounded-2xl border border-line bg-panel ${parseErr ? "ring-1 ring-bad/40 ring-inset" : ""}`,
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+		className: `ui-card min-w-0 overflow-hidden ${parseError ? "ring-1 ring-bad/40 ring-inset" : ""}`,
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "flex flex-wrap items-center justify-end gap-2 border-b border-line px-3 py-2",
+				className: "flex flex-wrap items-center justify-end gap-2 border-b border-line p-3",
 				children: [
 					extraActions,
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 						variant: "quiet",
 						size: "sm",
-						onClick: fetchIt,
+						onClick: reload,
 						disabled: saving,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 13 }), " Tải lại"]
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 15 }), " Tải lại"]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-						variant: "quiet",
+						variant: "ghost",
 						size: "sm",
 						onClick: format,
-						disabled: !!parseErr,
+						disabled: Boolean(parseError),
 						children: "Định dạng"
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 						size: "sm",
-						onClick: onSave,
+						onClick: submit,
 						loading: saving,
-						disabled: !dirty || !!parseErr,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDeviceFloppy, { size: 14 }), " Lưu"]
+						disabled: !dirty || Boolean(parseError),
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDeviceFloppy, { size: 15 }), " Lưu"]
 					})
 				]
 			}),
-			parseErr && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			parseError && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				role: "alert",
-				className: "flex items-start gap-2 border-b border-bad/30 bg-bad/10 px-3 py-2.5 text-xs text-bad",
+				className: "flex items-start gap-2 border-b border-bad/30 bg-bad/10 px-4 py-3 text-xs text-bad",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconBraces, {
-					size: 15,
+					size: 17,
 					className: "mt-0.5 shrink-0"
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "min-w-0",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 						className: "font-bold",
 						children: "JSON không hợp lệ"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-						className: "mt-0.5 wrap-break-word text-[11px]",
-						children: [parseErr, ". Kiểm tra dấu ngoặc, dấu phẩy và chuỗi ký tự."]
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "mt-1 break-words",
+						children: parseError
 					})]
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: EDITOR_HEIGHT_CLASS,
+				className: EDITOR_HEIGHT,
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ft, {
 					value: text,
 					onChange: (value) => setText(value ?? ""),
 					language: "json",
-					theme: "vs-dark",
-					options: MONACO_OPTIONS,
-					onMount: bindCtrlS,
+					theme: "animal-restaurant-shop",
+					options: EDITOR_OPTIONS,
+					onMount,
 					loading: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 						className: "grid size-full place-items-center bg-bg text-xs text-mute",
-						children: "Đang khởi tạo editor…"
+						children: "Đang khởi tạo trình chỉnh sửa…"
 					})
 				})
+			})
+		]
+	});
+}
+// src/shared/components/ui/Tooltip.jsx
+function Tooltip({ text, children, side = "bottom", align = "center", className = "" }) {
+	const id = (0, import_react.useId)();
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+		className: `ui-tooltip-anchor relative inline-flex min-w-0 ${className}`,
+		"aria-describedby": id,
+		children: [(0, import_react.isValidElement)(children) ? (0, import_react.cloneElement)(children, { "aria-describedby": id }) : children, /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+			role: "tooltip",
+			id,
+			className: `ui-tooltip whitespace-normal ${side === "top" ? "bottom-[calc(100%+.5rem)]" : "top-[calc(100%+.5rem)]"} ${align === "end" ? "right-0" : align === "start" ? "left-0" : "left-1/2 -translate-x-1/2"}`,
+			children: text
+		})]
+	});
+}
+// src/shared/components/ui/SearchInput.jsx
+function SearchInput({ value, onChange, placeholder = "Tìm kiếm…", label = "Tìm kiếm", className = "", disabled = false }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: `ui-control flex h-10 min-w-0 items-center gap-2.5 px-3 ${className}`,
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconSearch, {
+				size: 17,
+				className: "shrink-0 text-mute"
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+				type: "search",
+				"aria-label": label,
+				value,
+				onChange: (event) => onChange(event.target.value),
+				placeholder,
+				disabled,
+				className: "min-w-0 flex-1 appearance-none bg-transparent text-sm outline-none placeholder:text-mute/70 [&::-webkit-search-cancel-button]:hidden"
+			}),
+			value && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+				type: "button",
+				"aria-label": "Xóa nội dung tìm kiếm",
+				title: "Xóa tìm kiếm",
+				disabled,
+				onClick: () => onChange(""),
+				className: "grid size-7 shrink-0 cursor-pointer place-items-center rounded-md text-mute hover:bg-raise hover:text-fg",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, { size: 16 })
 			})
 		]
 	});
@@ -16124,7 +16314,7 @@ function Coin({ size = 18, className = "" }) {
 		height: size,
 		viewBox: "0 0 24 24",
 		className: `shrink-0 ${className}`,
-		"aria-hidden": true,
+		"aria-hidden": "true",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("circle", {
 				cx: "12",
@@ -16137,28 +16327,31 @@ function Coin({ size = 18, className = "" }) {
 				cy: "12",
 				r: "7.5",
 				fill: "none",
-				stroke: "#0c0d0f",
-				strokeOpacity: ".35",
+				stroke: "var(--color-bg)",
+				strokeOpacity: ".5",
 				strokeWidth: "1.5",
 				strokeDasharray: "2 1.6"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", {
 				d: "M12 8l4 4-4 4-4-4z",
-				fill: "#0c0d0f",
-				fillOpacity: ".75"
+				fill: "var(--color-bg)",
+				fillOpacity: ".85"
 			})
 		]
 	});
 }
 function Logo() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "flex items-center gap-2",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconHexagonLetterA, {
-			size: 28,
-			className: "text-lime",
-			stroke: 1.8
+		className: "flex min-w-0 items-center gap-2.5",
+		"aria-label": "Animal Restaurant Shop",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+			className: "grid size-8 shrink-0 place-items-center rounded-xl bg-lime/10 text-lime",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconHexagonLetterA, {
+				size: 25,
+				stroke: 1.8
+			})
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-			className: "text-[15px] font-extrabold tracking-tight",
+			className: "min-w-0 truncate text-[13px] font-extrabold tracking-[-.04em] sm:text-sm",
 			children: ["animalrestaurant", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 				className: "text-lime",
 				children: "shop"
@@ -16449,7 +16642,7 @@ var OPTION_FIELDS = [
 	"conditions",
 	"limit"
 ];
-function selectProductFields(product, fields) {
+function selectFields(product, fields) {
 	const selected = {};
 	for (const field of fields) if (Object.hasOwn(product, field)) selected[field] = product[field];
 	if (Array.isArray(selected.conditions)) selected.conditions = selected.conditions.filter((condition) => condition && typeof condition.name === "string" && typeof condition.already === "boolean").map(({ name, already }) => ({
@@ -16461,29 +16654,29 @@ function selectProductFields(product, fields) {
 }
 function normalizeProduct(product) {
 	if (!product || typeof product.key !== "string" || !product.key.trim()) return null;
-	const normalized = selectProductFields(product, PRODUCT_FIELDS);
-	if (Array.isArray(product.options)) normalized.options = product.options.filter((option) => option && typeof option.key === "string" && option.key.trim()).map((option) => selectProductFields(option, OPTION_FIELDS));
+	const normalized = selectFields(product, PRODUCT_FIELDS);
+	if (Array.isArray(product.options)) normalized.options = product.options.filter((option) => option && typeof option.key === "string" && option.key.trim()).map((option) => selectFields(option, OPTION_FIELDS));
 	return normalized;
 }
 function normalizeCategory(products) {
-	const seen = /* @__PURE__ */ new Set();
+	const signatures = /* @__PURE__ */ new Set();
 	const result = [];
 	for (const source of products) {
 		const product = normalizeProduct(source);
 		if (!product) continue;
 		const signature = JSON.stringify(product);
-		if (seen.has(signature)) continue;
-		seen.add(signature);
+		if (signatures.has(signature)) continue;
+		signatures.add(signature);
 		result.push(product);
 	}
 	return result;
 }
 function normShop(shop) {
 	if (!shop || typeof shop !== "object") return [];
-	return Object.entries(SHOP_CATEGORIES).filter(([key]) => Array.isArray(shop[key])).map(([key, name]) => ({
-		id: key,
+	return Object.entries(SHOP_CATEGORIES).filter(([category]) => Array.isArray(shop[category])).map(([category, name]) => ({
+		id: category,
 		name,
-		products: normalizeCategory(shop[key])
+		products: normalizeCategory(shop[category])
 	}));
 }
 var normAdminUser = (user) => ({
@@ -16741,39 +16934,50 @@ var compareByTime = (k, dir) => (a, b) => dir * ((+new Date(a[k]) || 0) - (+new 
 function AppHeader({ nav, current, onNavigate, coins, syncing, coinSyncing, onRefresh, badgeKeys = [] }) {
 	const badges = new Set(badgeKeys);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-		className: "sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur-md supports-backdrop-filter:bg-bg/75",
+		className: "sticky top-0 z-30 border-b border-line bg-bg/95 backdrop-blur-xl",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "mx-auto flex h-(--app-header-h) max-w-6xl items-center gap-3 px-4 md:gap-4 md:px-6",
+			className: "mx-auto flex h-(--app-header-h) max-w-6xl items-center gap-3 px-4 md:gap-5 md:px-6",
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Logo, {}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", {
-					className: "ml-2 hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto rounded-lg bg-panel p-1 md:flex",
-					children: nav.map(([k, label, Icon]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-						onClick: () => onNavigate(k),
-						"aria-current": current === k ? "page" : void 0,
-						className: `relative flex h-8 cursor-pointer items-center gap-2 rounded-md px-3 text-xs font-bold transition ${current === k ? "bg-raise text-fg shadow-sm" : "text-mute hover:text-fg"}`,
+					"aria-label": "Điều hướng chính",
+					className: "no-scrollbar ml-2 hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto rounded-xl border border-line bg-panel p-1 md:flex",
+					children: nav.map(([key, title, Icon]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						type: "button",
+						onClick: () => onNavigate(key),
+						"aria-current": current === key ? "page" : void 0,
+						className: "ui-nav-item relative shrink-0",
 						children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 16 }),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 17 }),
 							" ",
-							label,
-							badges.has(k) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								className: "absolute top-1 right-1 size-1.5 rounded-full bg-lime",
-								"aria-label": "Có quà đăng nhập"
+							title,
+							badges.has(key) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								"aria-hidden": true,
+								className: "absolute top-1 right-1 size-1.5 rounded-full bg-lime"
 							})
 						]
-					}, k))
+					}, key))
 				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-					onClick: onRefresh,
-					title: "Số xu hiện có (bấm để cập nhật)",
-					className: "ml-auto flex h-9 shrink-0 cursor-pointer items-center gap-2 rounded-full border border-coin/30 bg-coin/10 pr-3.5 pl-1.5 text-sm font-bold tabular-nums text-coin transition hover:bg-coin/15",
-					children: [coinSyncing ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 20 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 22 }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						className: "animate-rise",
-						children: formatNumber(coins)
-					}, coins)]
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
+					text: "Số xu hiện có · Bấm để cập nhật",
+					align: "end",
+					className: "ml-auto shrink-0",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+						type: "button",
+						onClick: onRefresh,
+						"aria-label": `Hiện có ${formatNumber(coins)} xu. Bấm để cập nhật`,
+						"aria-busy": coinSyncing || void 0,
+						className: "flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-coin/30 bg-coin/10 px-3 text-sm font-bold text-coin tabular-nums transition-colors hover:bg-coin/15",
+						children: [coinSyncing ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 19 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 20 }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "min-w-5 text-right",
+							children: formatNumber(coins)
+						})]
+					})
 				})
 			]
-		}), syncing && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+		}), syncing && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			role: "progressbar",
+			"aria-label": "Đang đồng bộ dữ liệu",
 			className: "absolute inset-x-0 -bottom-px h-px overflow-hidden",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "block h-full w-1/3 animate-indeterminate bg-lime" })
 		})]
@@ -16783,42 +16987,52 @@ function AppHeader({ nav, current, onNavigate, coins, syncing, coinSyncing, onRe
 function BottomNav({ nav, current, onNavigate, badgeKeys = [] }) {
 	const badges = new Set(badgeKeys);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", {
-		className: "pb-safe fixed inset-x-0 bottom-0 z-30 grid h-(--app-bottom-nav-h) border-t border-line bg-bg/90 backdrop-blur-md supports-backdrop-filter:bg-bg/75 md:hidden",
-		style: { gridTemplateColumns: `repeat(${nav.length}, minmax(0, 1fr))` },
-		children: nav.map(([k, label, Icon]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-			onClick: () => onNavigate(k),
-			"aria-current": current === k ? "page" : void 0,
-			className: `relative flex cursor-pointer flex-col items-center justify-center gap-1 py-2 text-[10px] font-bold transition ${current === k ? "text-lime" : "text-mute"}`,
+		"aria-label": "Điều hướng trên điện thoại",
+		className: "pb-safe fixed inset-x-0 bottom-0 z-30 grid h-(--app-bottom-nav-h) border-t border-line bg-bg/95 backdrop-blur-xl md:hidden",
+		style: { gridTemplateColumns: `repeat(${nav.length}, minmax(0,1fr))` },
+		children: nav.map(([key, title, Icon]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+			type: "button",
+			onClick: () => onNavigate(key),
+			"aria-current": current === key ? "page" : void 0,
+			className: `relative flex min-w-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg py-2 text-[10px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-lime ${current === key ? "text-lime" : "text-mute hover:text-fg"}`,
 			children: [
-				current === k && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "absolute top-0 h-0.5 w-10 rounded-full bg-lime" }),
+				current === key && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					"aria-hidden": true,
+					className: "absolute inset-x-1/4 top-0 h-0.5 rounded-full bg-lime"
+				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 					className: "relative",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
 						size: 22,
-						stroke: current === k ? 2.2 : 1.6
-					}), badges.has(k) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						className: "absolute -top-0.5 -right-1 size-2 rounded-full bg-lime ring-2 ring-bg",
-						"aria-label": "Có quà đăng nhập"
+						stroke: current === key ? 2.1 : 1.7
+					}), badges.has(key) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						"aria-label": "Có thông báo mới",
+						className: "absolute -top-0.5 -right-1 size-2 rounded-full bg-lime ring-2 ring-bg"
 					})]
 				}),
-				label
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					className: "max-w-full truncate px-1",
+					children: title
+				})
 			]
-		}, k))
+		}, key))
 	});
 }
 // src/shared/components/layout/BootScreen.jsx
 function BootScreen({ error, onRetry, onSwitchAccount }) {
-	if (!error) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Splash, { label: "Đang kiểm tra đăng nhập…" });
+	if (!error) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Splash, { label: "Đang kiểm tra phiên đăng nhập…" });
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 		className: "grid min-h-dvh place-items-center p-4",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "w-full max-w-sm space-y-3",
+			className: "w-full max-w-md space-y-3",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ErrorState, {
 				message: error,
 				onRetry
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+				variant: "quiet",
+				size: "sm",
+				className: "mx-auto w-full",
 				onClick: onSwitchAccount,
-				className: "mx-auto block cursor-pointer text-[11px] text-mute hover:text-fg",
 				children: "Đăng nhập tài khoản khác"
 			})]
 		})
@@ -16919,16 +17133,19 @@ var isOwnedOnce = (product, group = product) => {
 var hasValidPrice = (product) => Number.isSafeInteger(product?.price) && product.price >= 0;
 var getConditions = (product, group = product) => [...Array.isArray(group?.conditions) ? group.conditions : [], ...product === group ? [] : Array.isArray(product?.conditions) ? product.conditions : []];
 var unmetConditions = (product, group = product) => getConditions(product, group).some((condition) => condition?.already !== true);
-var positiveLimit = (value) => Number.isSafeInteger(value) && value > 0 ? value : Infinity;
-var getPurchaseLimit = (product, group = product, accountLimit = 100) => Math.min(isOnce(product, group) ? 1 : Infinity, positiveLimit(product?.limit), positiveLimit(group?.limit), positiveLimit(accountLimit));
+var limitValue = (limit) => limit === void 0 || limit === Infinity ? Infinity : Number.isSafeInteger(limit) && limit > 0 ? limit : 0;
+var getPurchaseLimit = (product, group = product, accountLimit = 100) => Math.min(isOnce(product, group) ? 1 : Infinity, limitValue(product?.limit), limitValue(group?.limit), limitValue(accountLimit));
 var clampCartQuantity = (value, limit = 100) => {
-	const number = Number(value);
-	return Math.max(1, Math.min(limit, Number.isFinite(number) ? Math.trunc(number) : 1));
+	if (limit < 1) return 0;
+	const parsed = Number(value);
+	return Math.max(1, Math.min(limit, Number.isFinite(parsed) ? Math.trunc(parsed) : 1));
 };
 var getGroupRemaining = (cart, group, selectedKey) => {
-	if (!hasOptions(group) || !Number.isSafeInteger(group.limit) || group.limit < 1) return Infinity;
-	const usedByOthers = cart.reduce((sum, entry) => sum + (entry.groupKey === group.key && entry.key !== selectedKey ? entry.amount : 0), 0);
-	return Math.max(0, group.limit - usedByOthers);
+	if (!hasOptions(group)) return Infinity;
+	const limit = limitValue(group.limit);
+	if (limit === Infinity) return Infinity;
+	const otherAmount = cart.reduce((sum, entry) => sum + (entry.groupKey === group.key && entry.key !== selectedKey ? entry.amount : 0), 0);
+	return Math.max(0, limit - otherAmount);
 };
 function indexShop(tabs) {
 	const index = /* @__PURE__ */ new Map();
@@ -16945,21 +17162,21 @@ function indexShop(tabs) {
 	return index;
 }
 function getConflictingKeys(tabs) {
-	const keys = /* @__PURE__ */ new Set();
+	const conflicts = /* @__PURE__ */ new Set();
 	for (const [key, entries] of indexShop(tabs)) {
 		const first = entries[0];
-		if (entries.some(({ product, group }) => product.price !== first.product.price || isOnce(product, group) !== isOnce(first.product, first.group) || isOwnedOnce(product, group) !== isOwnedOnce(first.product, first.group) || unmetConditions(product, group) !== unmetConditions(first.product, first.group))) keys.add(key);
+		const firstLimit = getPurchaseLimit(first.product, first.group, Infinity);
+		if (entries.some(({ product, group }) => product.price !== first.product.price || isOnce(product, group) !== isOnce(first.product, first.group) || isOwnedOnce(product, group) !== isOwnedOnce(first.product, first.group) || unmetConditions(product, group) !== unmetConditions(first.product, first.group) || getPurchaseLimit(product, group, Infinity) !== firstLimit)) conflicts.add(key);
 	}
-	return keys;
+	return conflicts;
 }
 function isAvailable(product, group = product, conflicts = /* @__PURE__ */ new Set()) {
-	return !!product?.key && hasValidPrice(product) && !isOwnedOnce(product, group) && !unmetConditions(product, group) && !conflicts.has(product.key);
+	return !!product?.key && hasValidPrice(product) && !isOwnedOnce(product, group) && !unmetConditions(product, group) && !conflicts.has(product.key) && getPurchaseLimit(product, group) >= 1;
 }
 function putInCart(cart, product, amount, category = "", accountLimit = 100, group = product, conflicts = /* @__PURE__ */ new Set()) {
 	if (!isAvailable(product, group, conflicts)) return cart;
-	const result = hasOptions(group) && group.limit === 1 ? cart.filter((entry) => entry.groupKey !== group.key || entry.key === product.key) : cart;
-	const remaining = getGroupRemaining(result, group, product.key);
-	const limit = Math.min(getPurchaseLimit(product, group, accountLimit), remaining);
+	const remainingCart = hasOptions(group) && group.limit === 1 ? cart.filter((entry) => entry.groupKey !== group.key || entry.key === product.key) : cart;
+	const limit = Math.min(getPurchaseLimit(product, group, accountLimit), getGroupRemaining(remainingCart, group, product.key));
 	if (limit < 1) return cart;
 	const entry = {
 		key: product.key,
@@ -16969,9 +17186,9 @@ function putInCart(cart, product, amount, category = "", accountLimit = 100, gro
 		group,
 		category
 	};
-	const existing = result.findIndex((item) => item.key === product.key);
-	if (existing < 0) return [...result, entry];
-	return result.map((item, index) => index === existing ? entry : item);
+	const found = remainingCart.findIndex((other) => other.key === entry.key);
+	if (found < 0) return [...remainingCart, entry];
+	return remainingCart.map((other, index) => index === found ? entry : other);
 }
 function changeCartQuantity(cart, key, amount, accountLimit = 100) {
 	return cart.map((entry) => {
@@ -16992,13 +17209,13 @@ function resolveCart(cart, tabs, accountLimit = 100) {
 		const product = latest?.product || entry.product;
 		const group = latest?.group || entry.group;
 		const limit = getPurchaseLimit(product, group, accountLimit);
-		const groupAmount = cart.reduce((sum, item) => sum + (item.groupKey === entry.groupKey ? item.amount : 0), 0);
+		const groupAmount = cart.reduce((total, item) => total + (item.groupKey === entry.groupKey ? item.amount : 0), 0);
 		let invalid = "";
 		if (!latest) invalid = "Vật phẩm không còn trong cửa hàng";
 		else if (conflicts.has(entry.key)) invalid = "Mã vật phẩm trùng với cấu hình khác nhau";
 		else if (isOwnedOnce(product, group)) invalid = "Vật phẩm đã sở hữu";
 		else if (unmetConditions(product, group)) invalid = "Chưa đáp ứng điều kiện mua";
-		else if (!Number.isSafeInteger(entry.amount) || entry.amount < 1 || entry.amount > limit || groupAmount > (hasOptions(group) ? positiveLimit(group.limit) : Infinity)) invalid = "Số lượng vượt giới hạn mỗi lần mua";
+		else if (!Number.isSafeInteger(entry.amount) || entry.amount < 1 || entry.amount > limit || hasOptions(group) && groupAmount > limitValue(group.limit)) invalid = "Số lượng vượt giới hạn mỗi lần mua";
 		const price = hasValidPrice(product) ? product.price : 0;
 		const total = price * entry.amount;
 		if (!hasValidPrice(product) || !Number.isSafeInteger(total)) invalid = "Giá vật phẩm không hợp lệ";
@@ -17022,12 +17239,12 @@ var cartPayload = (entries) => entries.map(({ key, amount }) => ({
 }));
 var eligibleCategoryProducts = (products, conflicts = /* @__PURE__ */ new Set()) => (products || []).filter((product) => !hasOptions(product) && isAvailable(product, product, conflicts));
 function addCategoryToCart(cart, products, category = "", accountLimit = 100, conflicts = /* @__PURE__ */ new Set()) {
-	let result = cart;
+	let updated = cart;
 	for (const product of eligibleCategoryProducts(products, conflicts)) {
-		if (result.some((entry) => entry.key === product.key)) continue;
-		result = putInCart(result, product, 1, category, accountLimit, product, conflicts);
+		if (updated.some((entry) => entry.key === product.key)) continue;
+		updated = putInCart(updated, product, 1, category, accountLimit, product, conflicts);
 	}
-	return result;
+	return updated;
 }
 function removeCategoryFromCart(cart, products) {
 	const keys = new Set((products || []).flatMap((product) => productOptions(product).map((option) => option.key)));
@@ -17055,7 +17272,7 @@ function applyPurchaseToTabs(tabs, purchasedItems) {
 			}
 			const selection = group.options.find((option) => amounts.has(option.key));
 			if (!selection) return group;
-			if (typeof group.owned === "string" || typeof group.owned === "boolean" && group.options.every((option) => typeof option.owned === "boolean")) return {
+			if (typeof group.owned === "string" || group.limit === 1 && typeof group.owned === "boolean" && group.options.every((option) => typeof option.owned === "boolean")) return {
 				...group,
 				owned: selection.name || selection.key,
 				options: group.options.map((option) => ({
@@ -17067,10 +17284,10 @@ function applyPurchaseToTabs(tabs, purchasedItems) {
 				const amount = amounts.get(option.key);
 				return amount ? incrementOwned(option, amount, group) : option;
 			});
-			const owned = options.every((option) => typeof option.owned === "number") ? options.reduce((sum, option) => sum + option.owned, 0) : group.owned;
+			const numeric = options.every((option) => typeof option.owned === "number");
 			return {
 				...group,
-				owned,
+				owned: numeric ? options.reduce((total, option) => total + option.owned, 0) : group.owned,
 				options
 			};
 		})
@@ -17375,13 +17592,13 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 };
 // src/application/App.jsx
 var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([0,1,2,3])));
-var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11,12])));
-var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([13,7,2,3,14,15,16,6,12,17])));
-var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([18,19,10])));
-var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([20,17,14,11,5,19,10])));
-var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([21,12,16,19,10,2,14,22,5])));
-var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([23,1,12,19,10,15,7,11,5,9,14,22,2])));
-var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([24,19,10,22])));
+var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11])));
+var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([12,7,2,3,13,14,15,16,6,17])));
+var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([18,19,10,15])));
+var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([20,17,13,11,5,19,10,15])));
+var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([21,16,19,10,15,2,13,22,5])));
+var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([23,1,19,10,15,14,7,11,5,9,13,22,2])));
+var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([24,19,10,15,22])));
 var AUTHENTICATION_PATHS = [
 	"/login",
 	"/register",
@@ -17627,4 +17844,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)({ md5: "b750a6e2b3d860ae46efcc050e03db3b" });
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
-export { createTransaction as $, require_react as $t, adminAddPlayerLike as A, PageSizeSelect as At, adminEditPlayer as B, require_jsx_runtime as Bt, formatDate as C, PagerSkeleton as Ct, formatVietnameseDong as D, Spinner as Dt, formatShortDateTime as E, ErrorState as Et, adminDecryptRecordValue as F, OtpButton as Ft, adminPlayerFriends as G, IconChevronRight as Gt, adminEncryptRecordValue as H, IconRefresh as Ht, adminDeleteGiftCode as I, toast as It, adminSaveData as J, Outlet as Jt, adminPlayers as K, IconAlertTriangle as Kt, adminDeletePlayerFriend as L, toastError as Lt, adminCreateGiftCode as M, SortSelect as Mt, adminCreateUser as N, Menu as Nt, adminAddCoin as O, Pager as Ot, adminData as P, Dialog as Pt, cancelTransaction as Q, require_react_dom as Qt, adminDeleteUser as R, Field as Rt, compareByTime as S, Line as St, formatNumber as T, Skeleton as Tt, adminGiftCodes as U, IconInfoCircle as Ut, adminEditUser as V, IconX as Vt, adminPlayer as W, IconCircleCheck as Wt, adminUpdatePlayerAvatar as X, useNavigate as Xt, adminSaveRecord as Y, useLocation as Yt, adminUsers as Z, useParams as Zt, productOptions as _, fileToAvatar as _t, cartTotal as a, getBuffetLink as at, resolveCart as b, Logo as bt, eligibleCategoryProducts as c, redeemGiftCode as ct, getGroupRemaining as d, updateUser as dt, __toESM as en, getTransaction as et, getPurchaseLimit as f, login as ft, isOwnedOnce as g, signupOtp as gt, isOnce as h, signup as ht, cartPayload as i, changeOpenid as it, adminAddPlayerStar as j, Select as jt, adminAddPlayerFriend as k, Tabs as kt, getConditions as l, submitInvite as lt, hasValidPrice as m, resetPassword as mt, addCategoryToCart as n, ADMIN_MAX_QTY as nt, changeCartQuantity as o, getFriendLink as ot, hasOptions as p, passwordOtp as pt, adminRecord as q, createReactComponent as qt, cartCount as r, buy as rt, clampCartQuantity as s, openidOtp as st, __vitePreload as t, getTransactions as tt, getConflictingKeys as u, updateAvatar as ut, putInCart as v, isAdmin as vt, formatDateTime as w, RowSkeleton as wt, unmetConditions as x, JsonEditor as xt, removeCategoryFromCart as y, Coin as yt, adminEditGiftCode as z, Button as zt };
+export { createTransaction as $, useLocation as $t, adminAddPlayerLike as A, Pager as At, adminEditPlayer as B, Field as Bt, formatDate as C, JsonEditor as Ct, formatVietnameseDong as D, Skeleton as Dt, formatShortDateTime as E, RowSkeleton as Et, adminDecryptRecordValue as F, Menu as Ft, adminPlayerFriends as G, IconInfoCircle as Gt, adminEncryptRecordValue as H, IconX as Ht, adminDeleteGiftCode as I, Dialog as It, adminSaveData as J, IconAlertTriangle as Jt, adminPlayers as K, IconCircleCheck as Kt, adminDeletePlayerFriend as L, OtpButton as Lt, adminCreateGiftCode as M, PageSizeSelect as Mt, adminCreateUser as N, Select as Nt, adminAddCoin as O, ErrorState as Ot, adminData as P, SortSelect as Pt, cancelTransaction as Q, Outlet as Qt, adminDeleteUser as R, toast as Rt, compareByTime as S, Tooltip as St, formatNumber as T, PagerSkeleton as Tt, adminGiftCodes as U, IconSearch as Ut, adminEditUser as V, Button as Vt, adminPlayer as W, IconRefresh as Wt, adminUpdatePlayerAvatar as X, Badge as Xt, adminSaveRecord as Y, createReactComponent as Yt, adminUsers as Z, require_jsx_runtime as Zt, productOptions as _, fileToAvatar as _t, cartTotal as a, getBuffetLink as at, resolveCart as b, Logo as bt, eligibleCategoryProducts as c, redeemGiftCode as ct, getGroupRemaining as d, updateUser as dt, useNavigate as en, getTransaction as et, getPurchaseLimit as f, login as ft, isOwnedOnce as g, signupOtp as gt, isOnce as h, signup as ht, cartPayload as i, __toESM as in, changeOpenid as it, adminAddPlayerStar as j, Tabs as jt, adminAddPlayerFriend as k, Spinner as kt, getConditions as l, submitInvite as lt, hasValidPrice as m, resetPassword as mt, addCategoryToCart as n, require_react_dom as nn, ADMIN_MAX_QTY as nt, changeCartQuantity as o, getFriendLink as ot, hasOptions as p, passwordOtp as pt, adminRecord as q, IconChevronRight as qt, cartCount as r, require_react as rn, buy as rt, clampCartQuantity as s, openidOtp as st, __vitePreload as t, useParams as tn, getTransactions as tt, getConflictingKeys as u, updateAvatar as ut, putInCart as v, isAdmin as vt, formatDateTime as w, Line as wt, unmetConditions as x, SearchInput as xt, removeCategoryFromCart as y, Coin as yt, adminEditGiftCode as z, toastError as zt };
