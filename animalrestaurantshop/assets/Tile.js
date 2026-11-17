@@ -1,4 +1,4 @@
-import { Yt as createReactComponent, Zt as require_jsx_runtime, in as __toESM, m as hasValidPrice, rn as require_react } from "./index.js";
+import { $t as createReactComponent, S as productOptions, _ as hasValidPrice, cn as __toESM, sn as require_react, tn as require_jsx_runtime } from "./index.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
 *
@@ -13,7 +13,7 @@ var IconStar = /* @__PURE__ */ createReactComponent("outline", "star", "Star", [
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var hasPrice = hasValidPrice;
 var initials = (name) => String(name || "").split(/\s+/).filter(Boolean).slice(0, 2).map((word) => word[0]).join("").toUpperCase();
-var matches = (product, needle) => !needle || String(product.name || "").toLowerCase().includes(needle) || String(product.key || "").toLowerCase().includes(needle) || (product.options || []).some((option) => String(option.key || "").toLowerCase().includes(needle) || String(option.name || "").toLowerCase().includes(needle));
+var matches = (product, needle) => !needle || String(product.name || "").toLowerCase().includes(needle) || String(product.key || "").toLowerCase().includes(needle) || productOptions(product).some((option) => String(option.key || "").toLowerCase().includes(needle) || String(option.name || "").toLowerCase().includes(needle));
 // src/features/shop/Tile.jsx
 var import_jsx_runtime = require_jsx_runtime();
 var usableImage = (value) => typeof value === "string" && /^(https?:\/\/|\/|data:image\/)/i.test(value);

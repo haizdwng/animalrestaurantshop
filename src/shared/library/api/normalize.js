@@ -29,48 +29,43 @@ export const SHOP_CATEGORIES = Object.freeze({
   flowers: 'Hoa',
   vegetables: 'Rau',
   frames: 'Khung ảnh',
-  specials: 'Đặc biệt',
-  items: 'Vật phẩm'
+  films: 'Phim',
+  items: 'Vật phẩm',
+  specials: 'Đặc biệt'
 });
 
-const PRODUCT_FIELDS = ['key', 'name', 'image', 'price', 'once', 'owned', 'conditions', 'limit'];
-const OPTION_FIELDS = ['key', 'name', 'image', 'price', 'once', 'owned', 'conditions', 'limit'];
-
-function selectFields(product, fields) {
-  const selected = {};
-  for (const field of fields) if (Object.hasOwn(product, field)) selected[field] = product[field];
-  if (Array.isArray(selected.conditions)) {
-    selected.conditions = selected.conditions
-      .filter((condition) => condition && typeof condition.name === 'string' && typeof condition.already === 'boolean')
-      .map(({ name, already }) => ({ name, already }));
-  } else delete selected.conditions;
-  return selected;
+const FIELDS = ['key', 'name', 'image', 'price', 'once', 'owned', 'conditions', 'limit', 'startTime', 'endTime'];
+function selectFields(source) {
+  const value = {};
+  for (const field of FIELDS) if (Object.hasOwn(source, field)) value[field] = source[field];
+  if (Array.isArray(value.conditions)) value.conditions = value.conditions.filter((condition) => condition && typeof condition.name === 'string' && typeof condition.already === 'boolean').map(({ name, already }) => ({ name, already }));
+  else delete value.conditions;
+  return value;
 };
-
 function normalizeProduct(product) {
   if (!product || typeof product.key !== 'string' || !product.key.trim()) return null;
-  const normalized = selectFields(product, PRODUCT_FIELDS);
-  if (Array.isArray(product.options)) normalized.options = product.options.filter((option) => option && typeof option.key === 'string' && option.key.trim()).map((option) => selectFields(option, OPTION_FIELDS));
+  const normalized = selectFields(product);
+  for (const field of ['multipleOptions', 'singleOptions']) {
+    if (!Array.isArray(product[field])) continue;
+    normalized[field] = product[field].filter((option) => option && typeof option.key === 'string' && option.key.trim()).map(selectFields);
+  };
   return normalized;
 };
-
-function normalizeCategory(products) {
+function normalizeCategory(source) {
   const signatures = new Set();
-  const result = [];
-  for (const source of products) {
-    const product = normalizeProduct(source);
+  const products = [];
+  for (const item of source) {
+    const product = normalizeProduct(item);
     if (!product) continue;
     const signature = JSON.stringify(product);
     if (signatures.has(signature)) continue;
     signatures.add(signature);
-    result.push(product);
+    products.push(product);
   };
-  return result;
+  return products;
 };
-
 export function normShop(shop) {
   if (!shop || typeof shop !== 'object') return [];
   return Object.entries(SHOP_CATEGORIES).filter(([category]) => Array.isArray(shop[category])).map(([category, name]) => ({ id: category, name, products: normalizeCategory(shop[category]) }));
 };
-
 export const normAdminUser = (user) => ({ ...user, id: user._id });

@@ -30,6 +30,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
   const [q, setQ] = useState('');
   const [pageSize, setPageSize] = useState(20);
   const [filter, setFilter] = useState('all');
+  const [now, setNow] = useState(() => Date.now());
   const [item, setItem] = useState(null);
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
@@ -39,6 +40,18 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
   const maxQuantity = api.isAdmin(user) ? api.ADMIN_MAX_QTY : api.MAX_QTY;
   const conflicts = useMemo(() => getConflictingKeys(shop.tabs), [shop.tabs]);
   const selectTab = (next) => navigate(`/shop/${next}`);
+
+  useEffect(() => {
+    const refreshClock = () => setNow(Date.now());
+    const interval = window.setInterval(refreshClock, 30000);
+    window.addEventListener('focus', refreshClock);
+    document.addEventListener('visibilitychange', refreshClock);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refreshClock);
+      document.removeEventListener('visibilitychange', refreshClock);
+    };
+  }, []);
 
   useEffect(() => {
     if (!tabs.length) return;
@@ -53,17 +66,17 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
   const current = tabs.find((tab) => tab.id === tabId);
   const needle = q.trim().toLowerCase();
   const cartKeys = useMemo(() => new Set(cart.map((entry) => entry.key)), [cart]);
-  const productMatches = (product) => matches(product, needle) && matchesShopFilter(product, filter, { cartKeys, conflicts });
-  const products = useMemo(() => (current?.products || []).filter(productMatches), [current, needle, filter, cartKeys, conflicts]);
-  const hits = useMemo(() => Object.fromEntries(tabs.map((tab) => [tab.id, tab.products.filter(productMatches).length])), [tabs, needle, filter, cartKeys, conflicts]);
+  const productMatches = (product) => matches(product, needle) && matchesShopFilter(product, filter, { cartKeys, conflicts, now });
+  const products = useMemo(() => (current?.products || []).filter(productMatches), [current, needle, filter, cartKeys, conflicts, now]);
+  const hits = useMemo(() => Object.fromEntries(tabs.map((tab) => [tab.id, tab.products.filter(productMatches).length])), [tabs, needle, filter, cartKeys, conflicts, now]);
   const { rows: productRows, pager: productPager } = usePaginatedData(products, pageSize, `${tabId}|${needle}|${filter}`);
   const ownedCount = (current?.products || []).filter((product) => ownershipStatus(product) === true).length;
 
-  const entries = useMemo(() => resolveCart(cart, shop.tabs, maxQuantity), [cart, shop.tabs, maxQuantity]);
+  const entries = useMemo(() => resolveCart(cart, shop.tabs, maxQuantity, now), [cart, shop.tabs, maxQuantity, now]);
   const total = cartTotal(entries);
   const cartQuantities = useMemo(() => new Map(cart.map(({ key, amount }) => [key, amount])), [cart]);
   const categoryProducts = Array.isArray(current?.products) ? current.products : [];
-  const eligible = eligibleCategoryProducts(categoryProducts, conflicts);
+  const eligible = eligibleCategoryProducts(categoryProducts, conflicts, now);
   const categoryAddedCount = eligible.filter((product) => cartQuantities.has(product.key)).length;
   const allCategoryAdded = eligible.length > 0 && categoryAddedCount === eligible.length;
   const cartReady = shop.ready === true && Array.isArray(shop.tabs) && !shop.loading;
@@ -75,7 +88,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
   };
   const addToCart = (product, amount, category, group = product) => {
     const exists = cart.some((entry) => entry.key === product.key);
-    setCart((items) => putInCart(items, product, amount, category, maxQuantity, group, conflicts));
+    setCart((items) => putInCart(items, product, amount, category, maxQuantity, group, conflicts, now));
     toast(exists ? 'Đã cập nhật số lượng trong giỏ' : 'Đã thêm vật phẩm vào giỏ');
   };
   const toggleCategoryCart = () => {
@@ -84,7 +97,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
       setCart((items) => removeCategoryFromCart(items, categoryProducts));
       toast(`Đã xóa vật phẩm thuộc ${current.name} khỏi giỏ`);
     } else {
-      setCart((items) => addCategoryToCart(items, categoryProducts, current.name, maxQuantity, conflicts));
+      setCart((items) => addCategoryToCart(items, categoryProducts, current.name, maxQuantity, conflicts, now));
       toast(`Đã thêm các vật phẩm còn lại của ${current.name} vào giỏ`);
     };
   };
@@ -98,12 +111,18 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
   };
   const purchase = async () => {
     if (buying || cart.length === 0 || !canPurchase) return;
+    const freshEntries = resolveCart(cart, shop.tabs, maxQuantity, Date.now());
+    if (freshEntries.some((entry) => entry.invalid)) {
+      setNow(Date.now());
+      toast('Đơn hàng đã thay đổi hoặc vật phẩm đã hết thời gian bán', 'err');
+      return;
+    };
     setBuying(true);
     try {
-      const response = await api.buy(cartPayload(entries));
+      const response = await api.buy(cartPayload(freshEntries));
       if (response.user) onUser(response.user);
       else if (Number.isSafeInteger(response.coin)) onUser({ ...user, coin: response.coin, coins: response.coin });
-      onPurchase?.(cartPayload(entries));
+      onPurchase?.(cartPayload(freshEntries));
       setCart([]);
       setCartOpen(false);
       setDone(true);
@@ -162,7 +181,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
         ) : (
           <ul key={tabId} className={`grid animate-fade gap-2 transition-opacity sm:grid-cols-2 xl:grid-cols-3 ${shop.loading ? 'pointer-events-none opacity-50' : ''}`}>
             {productRows.map((p, index) => (
-              <ProductItem key={`${p.key}-${index}`} p={p} conflictingKeys={conflicts} poor={hasPrice(p) && p.price > user.coins} cartQuantity={productOptions(p).reduce((count, option) => count + (cartQuantities.get(option.key) || 0), 0)} onBuy={() => open(p)} />
+              <ProductItem key={`${p.key}-${index}`} p={p} conflictingKeys={conflicts} poor={hasPrice(p) && p.price > user.coins} cartQuantity={productOptions(p).reduce((count, option) => count + (cartQuantities.get(option.key) || 0), 0)} onBuy={() => open(p)} now={now} />
             ))}
           </ul>
         )}
@@ -214,6 +233,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
         conflictingKeys={conflicts}
         cartTotal={total}
         maxQuantity={maxQuantity}
+        now={now}
         onAdd={addToCart}
         onRemove={removeFromCart}
         onClose={() => setItem(null)}

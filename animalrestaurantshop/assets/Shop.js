@@ -1,7 +1,7 @@
-import { Bt as Field, Dt as Skeleton, E as formatNumber, Ht as IconX, It as Dialog, Jt as IconAlertTriangle, Kt as IconCircleCheck, Mt as PageSizeSelect, Nt as Select, Ot as ErrorState, Rt as toast, S as unmetConditions, St as SearchInput, Vt as Button, Wt as IconRefresh, Xt as Badge, Yt as createReactComponent, Zt as require_jsx_runtime, _ as isOwnedOnce, a as cartTotal, b as removeCategoryFromCart, bt as Coin, c as eligibleCategoryProducts, d as getGroupRemaining, en as useNavigate, et as createTransaction, f as getPurchaseLimit, g as isOnce, h as isAvailable, i as cartPayload, in as __toESM, it as buy, kt as Spinner, l as getConditions, m as hasValidPrice, n as addCategoryToCart, o as changeCartQuantity, p as hasOptions, qt as IconChevronRight, r as cartCount, rn as require_react, rt as ADMIN_MAX_QTY, s as clampCartQuantity, tn as useParams, u as getConflictingKeys, v as productOptions, x as resolveCart, y as putInCart, yt as isAdmin, zt as toastError } from "./index.js";
+import { $t as createReactComponent, A as formatNumber, Bt as Dialog, C as putInCart, Ct as isAdmin, E as unmetConditions, Et as SearchInput, Gt as Button, Ht as toast, It as PageSizeSelect, Jt as IconRefresh, Kt as IconX, Lt as Select, Mt as ErrorState, Nt as Spinner, Qt as IconAlertTriangle, S as productOptions, T as resolveCart, Ut as toastError, Wt as Field, Xt as IconCircleCheck, Zt as IconChevronRight, _ as hasValidPrice, a as cartTotal, an as useParams, b as isOwnedOnce, c as eligibleCategoryProducts, cn as __toESM, ct as buy, d as getConflictingKeys, en as Badge, f as getGroupRemaining, g as hasOptions, h as getTimeStatus, i as cartPayload, in as useNavigate, it as createTransaction, jt as Skeleton, l as formatShopDate, m as getTimeMessage, n as addCategoryToCart, o as changeCartQuantity, p as getPurchaseLimit, r as cartCount, s as clampCartQuantity, sn as require_react, st as ADMIN_MAX_QTY, tn as require_jsx_runtime, u as getConditions, v as isAvailable, w as removeCategoryFromCart, wt as Coin, x as optionMode, y as isOnce } from "./index.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { t as usePaginatedData } from "./usePaginatedData.js";
-import { i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
+import { a as IconClock, i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
 import { n as IconCheck, t as IconPhoto } from "./IconPhoto.js";
 import { i as IconStar, n as hasPrice, r as matches, t as Tile } from "./Tile.js";
 import { t as IconUsers } from "./IconUsers.js";
@@ -104,6 +104,46 @@ var IconMinus = /* @__PURE__ */ createReactComponent("outline", "minus", "Minus"
 	"d": "M5 12l14 0",
 	"key": "svg-0"
 }]]);
+/**
+* @license @tabler/icons-react v3.52.0 - MIT
+*
+* This source code is licensed under the MIT license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var IconMovie = /* @__PURE__ */ createReactComponent("outline", "movie", "Movie", [
+	["path", {
+		"d": "M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -12",
+		"key": "svg-0"
+	}],
+	["path", {
+		"d": "M8 4l0 16",
+		"key": "svg-1"
+	}],
+	["path", {
+		"d": "M16 4l0 16",
+		"key": "svg-2"
+	}],
+	["path", {
+		"d": "M4 8l4 0",
+		"key": "svg-3"
+	}],
+	["path", {
+		"d": "M4 16l4 0",
+		"key": "svg-4"
+	}],
+	["path", {
+		"d": "M4 12l16 0",
+		"key": "svg-5"
+	}],
+	["path", {
+		"d": "M16 8l4 0",
+		"key": "svg-6"
+	}],
+	["path", {
+		"d": "M16 16l4 0",
+		"key": "svg-7"
+	}]
+]);
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
 *
@@ -243,7 +283,7 @@ var SHOP_FILTER_OPTIONS = Object.freeze([
 	},
 	{
 		value: "locked",
-		label: "Chưa đủ điều kiện"
+		label: "Chưa thể mua"
 	},
 	{
 		value: "cart",
@@ -257,20 +297,20 @@ function ownedValue(value) {
 	return null;
 }
 function ownershipStatus(group) {
-	const groupStatus = ownedValue(group?.owned);
-	const optionStatuses = (hasOptions(group) ? group.options : []).map((option) => ownedValue(option?.owned));
-	if (groupStatus === true || optionStatuses.includes(true)) return true;
-	if (groupStatus === false || optionStatuses.includes(false)) return false;
+	const parent = ownedValue(group?.owned);
+	const child = hasOptions(group) ? productOptions(group).map((item) => ownedValue(item.owned)) : [];
+	if (parent === true || child.includes(true)) return true;
+	if (parent === false || child.includes(false)) return false;
 	return null;
 }
-function matchesShopFilter(group, filter, { cartKeys = /* @__PURE__ */ new Set(), conflicts = /* @__PURE__ */ new Set() } = {}) {
+function matchesShopFilter(group, filter, { cartKeys = /* @__PURE__ */ new Set(), conflicts = /* @__PURE__ */ new Set(), now = Date.now() } = {}) {
 	const choices = productOptions(group);
 	switch (filter) {
 		case "owned": return ownershipStatus(group) === true;
 		case "unowned": return ownershipStatus(group) === false;
-		case "available": return choices.some((product) => isAvailable(product, group, conflicts));
-		case "locked": return choices.some((product) => unmetConditions(product, group));
-		case "cart": return choices.some((product) => cartKeys.has(product.key));
+		case "available": return choices.some((item) => isAvailable(item, group, conflicts, now));
+		case "locked": return choices.some((item) => unmetConditions(item, group) || !getTimeStatus(item, group, now).available);
+		case "cart": return choices.some((item) => cartKeys.has(item.key));
 		default: return true;
 	}
 }
@@ -459,6 +499,7 @@ var CATEGORY_ICONS = {
 	flowers: IconFlower,
 	vegetables: IconWheat,
 	frames: IconPhoto,
+	films: IconMovie,
 	specials: IconStar,
 	items: IconBox
 };
@@ -529,10 +570,10 @@ function QuantityPicker({ value, max, disabled = false, onChange, onEnter, compa
 	] });
 }
 // src/features/shop/BuyDialog.jsx
-function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuantity = 100, conflictingKeys = /* @__PURE__ */ new Set(), onAdd, onRemove, onClose, onTopUp }) {
+function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuantity = 100, now = Date.now(), conflictingKeys = /* @__PURE__ */ new Set(), onAdd, onRemove, onClose, onTopUp }) {
 	const variantSelectId = (0, import_react.useId)();
 	const options = item ? productOptions(item) : [];
-	const [selectedKey, setSelectedKey] = (0, import_react.useState)(() => options.find((option) => !isOwnedOnce(option, item))?.key || options[0]?.key || "");
+	const [selectedKey, setSelectedKey] = (0, import_react.useState)(() => (optionMode(item) === "singleOptions" ? options.find((option) => option.owned === true) : options.find((option) => !isOwnedOnce(option, item)))?.key || options[0]?.key || "");
 	const [amount, setAmount] = (0, import_react.useState)(1);
 	const selected = options.find((option) => option.key === selectedKey) || options[0];
 	const selectedInCart = entries.find((entry) => entry.key === selected?.key);
@@ -541,13 +582,17 @@ function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuant
 	const ownedOnce = isOwnedOnce(selected, item);
 	const conflict = conflictingKeys.has(selected?.key);
 	const blockedByConditions = unmetConditions(selected, item);
-	const available = !ownedOnce && !conflict && !blockedByConditions && hasValidPrice(selected);
+	const time = getTimeStatus(selected, item, now);
+	const timeMessage = getTimeMessage(selected, item, now);
+	const available = !ownedOnce && !conflict && !blockedByConditions && time.available && hasValidPrice(selected);
 	const conditions = selected ? getConditions(selected, item) : [];
-	const groupRoom = item?.limit === 1 && hasOptions(item) ? 1 : getGroupRemaining(entries, item, selected?.key);
-	const limit = selected ? Math.min(getPurchaseLimit(selected, item, maxQuantity), groupRoom) : 1;
+	const mode = optionMode(item);
+	const exclusive = mode === "singleOptions" || mode === "multipleOptions" && item.limit === 1;
+	const groupRoom = exclusive ? Number.isSafeInteger(item.limit) ? item.limit : Infinity : getGroupRemaining(entries, item, selected?.key);
+	const limit = selected ? Math.min(getPurchaseLimit(selected, item, maxQuantity), groupRoom) : 0;
 	const quantity = once ? 1 : clampCartQuantity(amount, Math.max(1, limit));
 	const total = hasValidPrice(selected) ? selected.price * quantity : 0;
-	const replacedTotal = (item?.limit === 1 && hasOptions(item) ? entries.filter((entry) => entry.groupKey === item.key && entry.key !== selected?.key) : []).reduce((sum, entry) => sum + entry.total, 0);
+	const replacedTotal = (exclusive ? entries.filter((entry) => entry.groupKey === item.key && entry.key !== selected?.key) : []).reduce((sum, entry) => sum + entry.total, 0);
 	const nextCartTotal = cartTotal - (selectedInCart?.total || 0) - replacedTotal + total;
 	const shortage = Math.max(0, nextCartTotal - (user?.coins || 0));
 	(0, import_react.useEffect)(() => {
@@ -606,21 +651,28 @@ function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuant
 			}),
 			hasOptions(item) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "space-y-1.5",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
-					htmlFor: variantSelectId,
-					className: "block text-[11px] font-medium text-mute",
-					children: "Lựa chọn vật phẩm"
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Select, {
-					id: variantSelectId,
-					label: "Lựa chọn vật phẩm",
-					value: selected.key,
-					onChange: setSelectedKey,
-					className: "h-11! w-full! bg-bg!",
-					children: options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
-						value: option.key,
-						children: [option.name || option.key, typeof option.owned === "number" ? ` · có ${formatNumber(option.owned)}` : option.owned === true && isOnce(option, item) ? " · đã sở hữu" : option.owned === true ? " · đang dùng" : ""]
-					}, option.key))
-				})]
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
+						htmlFor: variantSelectId,
+						className: "block text-[11px] font-medium text-mute",
+						children: mode === "singleOptions" ? "Chọn một lựa chọn duy nhất" : "Chọn một loại để thêm vào giỏ"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Select, {
+						id: variantSelectId,
+						label: "Lựa chọn vật phẩm",
+						value: selected.key,
+						onChange: setSelectedKey,
+						className: "h-11! w-full! bg-bg!",
+						children: options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
+							value: option.key,
+							children: [option.name || option.key, typeof option.owned === "number" ? ` · có ${formatNumber(option.owned)}` : option.owned === true && isOnce(option, item) ? " · đã sở hữu" : option.owned === true ? " · đang dùng" : ""]
+						}, option.key))
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "text-[11px] text-mute",
+						children: mode === "singleOptions" ? "Chỉ một lựa chọn trong nhóm được giữ trong mỗi đơn. Chọn loại khác sẽ thay thế loại trước đó." : "Có thể thêm nhiều loại khác nhau vào cùng đơn hàng, trong giới hạn số lượng của nhóm."
+					})
+				]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "flex items-center justify-between rounded-xl border border-line bg-bg p-3 text-xs",
@@ -642,6 +694,21 @@ function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuant
 						hasValidPrice(selected) ? formatNumber(selected.price) : "—"
 					]
 				})]
+			}),
+			(item.startTime !== void 0 || item.endTime !== void 0 || selected.startTime !== void 0 || selected.endTime !== void 0) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: `space-y-1 rounded-xl border p-3 text-[11px] ${time.available ? "border-line bg-bg text-mute" : "border-coin/40 bg-coin/10 text-coin"}`,
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "font-bold text-fg",
+						children: "Thời gian mở bán"
+					}),
+					(selected.startTime !== void 0 || item.startTime !== void 0) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { children: ["Bắt đầu: ", Number.isSafeInteger(Math.max(selected.startTime ?? 0, item.startTime ?? 0)) ? formatShopDate(Math.max(selected.startTime ?? 0, item.startTime ?? 0)) : "Không hợp lệ"] }),
+					(selected.endTime !== void 0 || item.endTime !== void 0) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { children: ["Kết thúc: ", Number.isSafeInteger(Math.min(selected.endTime ?? Infinity, item.endTime ?? Infinity)) ? formatShopDate(Math.min(selected.endTime ?? Infinity, item.endTime ?? Infinity)) : "Không hợp lệ"] }),
+					timeMessage && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "font-semibold",
+						children: timeMessage
+					})
+				]
 			}),
 			typeof selected.owned === "number" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 				className: "text-[11px] text-mute",
@@ -740,7 +807,7 @@ function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuant
 					className: "w-full",
 					disabled: !available || limit < 1,
 					onClick: add,
-					children: [available ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 16 }), ownedOnce ? "Đã mua" : conflict ? "Mã không hợp lệ" : blockedByConditions ? "Chưa đủ điều kiện" : !hasValidPrice(selected) ? "Không có giá" : limit < 1 ? "Đã đủ số lượng" : cartAmount ? "Cập nhật giỏ" : "Thêm vào giỏ"]
+					children: [available ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 16 }), ownedOnce ? "Đã mua" : conflict ? "Mã không hợp lệ" : blockedByConditions ? "Chưa đủ điều kiện" : !time.available ? "Ngoài thời gian bán" : !hasValidPrice(selected) ? "Không có giá" : limit < 1 ? "Đã đủ số lượng" : cartAmount ? "Cập nhật giỏ" : "Thêm vào giỏ"]
 				})]
 			})
 		] })
@@ -1050,12 +1117,15 @@ function EmptyProducts({ searching, tabs = [], hits = {}, onSelect }) {
 	});
 }
 // src/features/shop/ProductItem.jsx
-function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__ */ new Set(), onBuy }) {
+function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__ */ new Set(), onBuy, now = Date.now() }) {
 	const grouped = hasOptions(p);
-	const options = productOptions(p);
-	const owned = grouped ? options.every((option) => isOwnedOnce(option, p)) : isOwnedOnce(p);
-	const conflicting = options.some((option) => conflictingKeys.has(option.key));
-	const inventory = typeof p.owned === "number" ? `Đang có ${formatNumber(p.owned)}` : "";
+	const choices = productOptions(p);
+	const ownedOnce = choices.length > 0 && choices.every((choice) => isOwnedOnce(choice, p));
+	const conflicting = choices.some((choice) => conflictingKeys.has(choice.key));
+	const timeLimited = p.startTime !== void 0 || p.endTime !== void 0 || choices.some((option) => option.startTime !== void 0 || option.endTime !== void 0);
+	const availableNow = choices.some((option) => getTimeStatus(option, p, now).available);
+	const timeMessage = timeLimited ? getTimeMessage(choices[0] || p, p, now) : "";
+	const count = typeof p.owned === "number" ? `Đang có ${formatNumber(p.owned)}` : "";
 	const selected = typeof p.owned === "string" && p.owned ? `Đang chọn: ${p.owned}` : "";
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 		type: "button",
@@ -1076,17 +1146,29 @@ function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__
 					}),
 					grouped && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 						className: "mt-1 block text-[11px] text-mute",
-						children: [formatNumber(p.options.length), " lựa chọn"]
+						children: [
+							formatNumber(choices.length),
+							" lựa chọn · ",
+							optionMode(p) === "singleOptions" ? "Chọn một" : "Có thể chọn nhiều"
+						]
 					}),
-					inventory && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					count && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 						className: "mt-1 block truncate text-[11px] text-mute",
-						children: inventory
+						children: count
 					}),
 					selected && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 						className: "mt-1 block truncate text-[11px] text-coin",
 						children: selected
 					}),
-					!owned && p.owned === true && !isOnce(p) && !grouped && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					timeMessage && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+						className: `mt-1 flex items-center gap-1 text-[11px] ${availableNow ? "text-mute" : "text-coin"}`,
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconClock, { size: 12 }),
+							" ",
+							timeMessage
+						]
+					}),
+					!ownedOnce && p.owned === true && !isOnce(p) && !grouped && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 						className: "mt-1 block text-[11px] text-ok",
 						children: "Đã sở hữu · có thể mua tiếp"
 					})
@@ -1094,7 +1176,7 @@ function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 				className: "flex shrink-0 flex-col items-end gap-1.5",
-				children: [owned ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+				children: [ownedOnce ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
 					Icon: IconCheck,
 					tone: "success",
 					children: "Đã mua"
@@ -1102,6 +1184,10 @@ function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__
 					Icon: IconLock,
 					tone: "danger",
 					children: "Mã trùng"
+				}) : timeLimited && !availableNow ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+					Icon: IconClock,
+					tone: "neutral",
+					children: "Chưa mở / hết hạn"
 				}) : cartQuantity > 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Badge, {
 					Icon: IconShoppingCart,
 					tone: "accent",
@@ -1116,7 +1202,7 @@ function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__
 						" ",
 						formatNumber(p.price)
 					]
-				}) : null, !owned && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				}) : null, !ownedOnce && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 					"aria-hidden": true,
 					className: "grid size-7 place-items-center rounded-lg bg-raise text-mute transition-colors group-hover:bg-line group-hover:text-fg",
 					children: grouped ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconChevronRight, { size: 16 }) : cartQuantity ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCheck, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlus, { size: 16 })
@@ -1301,6 +1387,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 	const [q, setQ] = (0, import_react.useState)("");
 	const [pageSize, setPageSize] = (0, import_react.useState)(20);
 	const [filter, setFilter] = (0, import_react.useState)("all");
+	const [now, setNow] = (0, import_react.useState)(() => Date.now());
 	const [item, setItem] = (0, import_react.useState)(null);
 	const [cart, setCart] = (0, import_react.useState)([]);
 	const [cartOpen, setCartOpen] = (0, import_react.useState)(false);
@@ -1310,6 +1397,17 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 	const maxQuantity = isAdmin(user) ? ADMIN_MAX_QTY : 100;
 	const conflicts = (0, import_react.useMemo)(() => getConflictingKeys(shop.tabs), [shop.tabs]);
 	const selectTab = (next) => navigate(`/shop/${next}`);
+	(0, import_react.useEffect)(() => {
+		const refreshClock = () => setNow(Date.now());
+		const interval = window.setInterval(refreshClock, 3e4);
+		window.addEventListener("focus", refreshClock);
+		document.addEventListener("visibilitychange", refreshClock);
+		return () => {
+			window.clearInterval(interval);
+			window.removeEventListener("focus", refreshClock);
+			document.removeEventListener("visibilitychange", refreshClock);
+		};
+	}, []);
 	(0, import_react.useEffect)(() => {
 		if (!tabs.length) return;
 		if (!section) {
@@ -1328,33 +1426,37 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 	const cartKeys = (0, import_react.useMemo)(() => new Set(cart.map((entry) => entry.key)), [cart]);
 	const productMatches = (product) => matches(product, needle) && matchesShopFilter(product, filter, {
 		cartKeys,
-		conflicts
+		conflicts,
+		now
 	});
 	const products = (0, import_react.useMemo)(() => (current?.products || []).filter(productMatches), [
 		current,
 		needle,
 		filter,
 		cartKeys,
-		conflicts
+		conflicts,
+		now
 	]);
 	const hits = (0, import_react.useMemo)(() => Object.fromEntries(tabs.map((tab) => [tab.id, tab.products.filter(productMatches).length])), [
 		tabs,
 		needle,
 		filter,
 		cartKeys,
-		conflicts
+		conflicts,
+		now
 	]);
 	const { rows: productRows, pager: productPager } = usePaginatedData(products, pageSize, `${tabId}|${needle}|${filter}`);
 	const ownedCount = (current?.products || []).filter((product) => ownershipStatus(product) === true).length;
-	const entries = (0, import_react.useMemo)(() => resolveCart(cart, shop.tabs, maxQuantity), [
+	const entries = (0, import_react.useMemo)(() => resolveCart(cart, shop.tabs, maxQuantity, now), [
 		cart,
 		shop.tabs,
-		maxQuantity
+		maxQuantity,
+		now
 	]);
 	const total = cartTotal(entries);
 	const cartQuantities = (0, import_react.useMemo)(() => new Map(cart.map(({ key, amount }) => [key, amount])), [cart]);
 	const categoryProducts = Array.isArray(current?.products) ? current.products : [];
-	const eligible = eligibleCategoryProducts(categoryProducts, conflicts);
+	const eligible = eligibleCategoryProducts(categoryProducts, conflicts, now);
 	const categoryAddedCount = eligible.filter((product) => cartQuantities.has(product.key)).length;
 	const allCategoryAdded = eligible.length > 0 && categoryAddedCount === eligible.length;
 	const cartReady = shop.ready === true && Array.isArray(shop.tabs) && !shop.loading;
@@ -1365,7 +1467,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 	};
 	const addToCart = (product, amount, category, group = product) => {
 		const exists = cart.some((entry) => entry.key === product.key);
-		setCart((items) => putInCart(items, product, amount, category, maxQuantity, group, conflicts));
+		setCart((items) => putInCart(items, product, amount, category, maxQuantity, group, conflicts, now));
 		toast(exists ? "Đã cập nhật số lượng trong giỏ" : "Đã thêm vật phẩm vào giỏ");
 	};
 	const toggleCategoryCart = () => {
@@ -1374,7 +1476,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 			setCart((items) => removeCategoryFromCart(items, categoryProducts));
 			toast(`Đã xóa vật phẩm thuộc ${current.name} khỏi giỏ`);
 		} else {
-			setCart((items) => addCategoryToCart(items, categoryProducts, current.name, maxQuantity, conflicts));
+			setCart((items) => addCategoryToCart(items, categoryProducts, current.name, maxQuantity, conflicts, now));
 			toast(`Đã thêm các vật phẩm còn lại của ${current.name} vào giỏ`);
 		}
 	};
@@ -1388,16 +1490,22 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 	};
 	const purchase = async () => {
 		if (buying || cart.length === 0 || !canPurchase) return;
+		const freshEntries = resolveCart(cart, shop.tabs, maxQuantity, Date.now());
+		if (freshEntries.some((entry) => entry.invalid)) {
+			setNow(Date.now());
+			toast("Đơn hàng đã thay đổi hoặc vật phẩm đã hết thời gian bán", "err");
+			return;
+		}
 		setBuying(true);
 		try {
-			const response = await buy(cartPayload(entries));
+			const response = await buy(cartPayload(freshEntries));
 			if (response.user) onUser(response.user);
 			else if (Number.isSafeInteger(response.coin)) onUser({
 				...user,
 				coin: response.coin,
 				coins: response.coin
 			});
-			onPurchase?.(cartPayload(entries));
+			onPurchase?.(cartPayload(freshEntries));
 			setCart([]);
 			setCartOpen(false);
 			setDone(true);
@@ -1497,7 +1605,8 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 					conflictingKeys: conflicts,
 					poor: hasPrice(p) && p.price > user.coins,
 					cartQuantity: productOptions(p).reduce((count, option) => count + (cartQuantities.get(option.key) || 0), 0),
-					onBuy: () => open(p)
+					onBuy: () => open(p),
+					now
 				}, `${p.key}-${index}`))
 			}, tabId),
 			products.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -1578,6 +1687,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 				conflictingKeys: conflicts,
 				cartTotal: total,
 				maxQuantity,
+				now,
 				onAdd: addToCart,
 				onRemove: removeFromCart,
 				onClose: () => setItem(null),

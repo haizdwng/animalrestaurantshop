@@ -1,13 +1,11 @@
-export const hasOptions = (product) => Array.isArray(product?.options) && product.options.length > 0;
-export const productOptions = (product) => hasOptions(product) ? product.options : [product];
+export const optionMode = (group) => Array.isArray(group?.singleOptions) ? 'singleOptions' : Array.isArray(group?.multipleOptions) ? 'multipleOptions' : null;
+export const hasOptions = (group) => optionMode(group) !== null;
+export const productOptions = (group) => hasOptions(group) ? group[optionMode(group)] : group ? [group] : [];
 export const isOnce = (product, group = product) => (product?.once ?? group?.once) === true;
 
-export const isOwnedOnce = (product, group = product) => {
-  if (!isOnce(product, group)) return false;
-  const owned = product?.owned;
-  return owned === true || (typeof owned === 'number' && owned > 0) || (typeof owned === 'string' && owned.length > 0);
-};
+const isOwned = (value) => value === true || (typeof value === 'number' && value > 0) || (typeof value === 'string' && value.trim().length > 0);
 
+export const isOwnedOnce = (product, group = product) => isOnce(product, group) && (isOwned(product?.owned) || (product !== group && group?.once === true && isOwned(group.owned)));
 export const hasValidPrice = (product) => Number.isSafeInteger(product?.price) && product.price >= 0;
 export const getConditions = (product, group = product) => [
   ...(Array.isArray(group?.conditions) ? group.conditions : []),
@@ -15,27 +13,47 @@ export const getConditions = (product, group = product) => [
 ];
 export const unmetConditions = (product, group = product) => getConditions(product, group).some((condition) => condition?.already !== true);
 
-const limitValue = (limit) => limit === undefined || limit === Infinity ? Infinity : Number.isSafeInteger(limit) && limit > 0 ? limit : 0;
-export const getPurchaseLimit = (product, group = product, accountLimit = 100) => Math.min(
-  isOnce(product, group) ? 1 : Infinity,
-  limitValue(product?.limit),
-  limitValue(group?.limit),
-  limitValue(accountLimit)
-);
-
-export const clampCartQuantity = (value, limit = 100) => {
-  if (limit < 1) return 0;
-  const parsed = Number(value);
-  const quantity = Number.isFinite(parsed) ? Math.trunc(parsed) : 1;
-  return Math.max(1, Math.min(limit, quantity));
+export function getTimeStatus(product, group = product, now = Date.now()) {
+  const layers = product === group ? [group] : [group, product];
+  for (const layer of layers) {
+    const { startTime, endTime } = layer || {};
+    if (startTime !== undefined && (!Number.isSafeInteger(startTime) || startTime < 0)) return { available: false, state: 'invalid', boundary: null };
+    if (endTime !== undefined && (!Number.isSafeInteger(endTime) || endTime < 0)) return { available: false, state: 'invalid', boundary: null };
+    if (startTime !== undefined && endTime !== undefined && startTime >= endTime) return { available: false, state: 'invalid', boundary: null };
+  };
+  const start = Math.max(...layers.map((layer) => layer?.startTime ?? 0));
+  const end = Math.min(...layers.map((layer) => layer?.endTime ?? Infinity));
+  if (start >= end) return { available: false, state: 'invalid', boundary: null };
+  if (now < start) return { available: false, state: 'upcoming', boundary: start };
+  if (now >= end) return { available: false, state: 'expired', boundary: end };
+  return { available: true, state: 'active', boundary: Number.isFinite(end) ? end : null };
 };
 
-export const getGroupRemaining = (cart, group, selectedKey) => {
+export const formatShopDate = (timestamp) => new Intl.DateTimeFormat('vi-VN', {
+  hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric'
+}).format(new Date(timestamp));
+export function getTimeMessage(product, group = product, now = Date.now()) {
+  const status = getTimeStatus(product, group, now);
+  if (status.state === 'upcoming') return `Mở bán từ ${formatShopDate(status.boundary)}`;
+  if (status.state === 'expired') return `Đã kết thúc bán lúc ${formatShopDate(status.boundary)}`;
+  if (status.state === 'invalid') return 'Thời gian bán không hợp lệ';
+  if (status.boundary !== null) return `Kết thúc bán lúc ${formatShopDate(status.boundary)}`;
+  return '';
+};
+
+const normalizeLimit = (limit) => limit === undefined || limit === Infinity ? Infinity : Number.isSafeInteger(limit) && limit > 0 ? limit : 0;
+export const getPurchaseLimit = (product, group = product, accountLimit = 100) => Math.min(isOnce(product, group) ? 1 : Infinity, normalizeLimit(product?.limit), normalizeLimit(group?.limit), normalizeLimit(accountLimit));
+export function clampCartQuantity(value, limit = 100) {
+  if (limit < 1) return 0;
+  const number = Number(value);
+  return Math.max(1, Math.min(limit, Number.isFinite(number) ? Math.trunc(number) : 1));
+};
+export function getGroupRemaining(cart, group, selectedKey) {
   if (!hasOptions(group)) return Infinity;
-  const limit = limitValue(group.limit);
+  const limit = normalizeLimit(group.limit);
   if (limit === Infinity) return Infinity;
-  const otherAmount = cart.reduce((sum, entry) => sum + (entry.groupKey === group.key && entry.key !== selectedKey ? entry.amount : 0), 0);
-  return Math.max(0, limit - otherAmount);
+  const used = cart.reduce((sum, entry) => sum + (entry.groupKey === group.key && entry.key !== selectedKey ? entry.amount : 0), 0);
+  return Math.max(0, limit - used);
 };
 
 export function indexShop(tabs) {
@@ -44,38 +62,45 @@ export function indexShop(tabs) {
     for (const group of tab.products || []) {
       for (const product of productOptions(group)) {
         if (!product?.key || !hasValidPrice(product)) continue;
-        const entries = index.get(product.key) || [];
-        entries.push({ product, group, category: tab.name });
-        index.set(product.key, entries);
+        if (!index.has(product.key)) index.set(product.key, []);
+        index.get(product.key).push({ product, group, category: tab.name });
       };
     };
   };
   return index;
 };
 
+export function getPurchaseSignature(product, group = product) {
+  return JSON.stringify({
+    price: product?.price,
+    once: isOnce(product, group),
+    owned: product?.owned,
+    parentOnceOwned: product !== group && group.once === true ? group.owned : null,
+    productLimit: product?.limit ?? null,
+    groupLimit: group?.limit ?? null,
+    optionMode: optionMode(group),
+    groupKey: hasOptions(group) ? group.key : null,
+    conditions: getConditions(product, group).map(({ name, already }) => ({ name, already })),
+    startTime: [group?.startTime ?? null, product === group ? null : product?.startTime ?? null],
+    endTime: [group?.endTime ?? null, product === group ? null : product?.endTime ?? null]
+  });
+};
 export function getConflictingKeys(tabs) {
   const conflicts = new Set();
-  for (const [key, entries] of indexShop(tabs)) {
-    const first = entries[0];
-    const firstLimit = getPurchaseLimit(first.product, first.group, Infinity);
-    if (entries.some(({ product, group }) =>
-      product.price !== first.product.price ||
-      isOnce(product, group) !== isOnce(first.product, first.group) ||
-      isOwnedOnce(product, group) !== isOwnedOnce(first.product, first.group) ||
-      unmetConditions(product, group) !== unmetConditions(first.product, first.group) ||
-      getPurchaseLimit(product, group, Infinity) !== firstLimit
-    )) conflicts.add(key);
+  for (const [key, candidates] of indexShop(tabs)) {
+    const signature = getPurchaseSignature(candidates[0].product, candidates[0].group);
+    if (candidates.some(({ product, group }) => getPurchaseSignature(product, group) !== signature)) conflicts.add(key);
   };
   return conflicts;
-}
-
-export function isAvailable(product, group = product, conflicts = new Set()) {
-  return !!product?.key && hasValidPrice(product) && !isOwnedOnce(product, group) && !unmetConditions(product, group) && !conflicts.has(product.key) && getPurchaseLimit(product, group) >= 1;
+};
+export function isAvailable(product, group = product, conflicts = new Set(), now = Date.now()) {
+  return !!product?.key && hasValidPrice(product) && !isOwnedOnce(product, group) && !unmetConditions(product, group) && !conflicts.has(product.key) && getPurchaseLimit(product, group) >= 1 && getTimeStatus(product, group, now).available;
 };
 
-export function putInCart(cart, product, amount, category = '', accountLimit = 100, group = product, conflicts = new Set()) {
-  if (!isAvailable(product, group, conflicts)) return cart;
-  const exclusive = hasOptions(group) && group.limit === 1;
+export function putInCart(cart, product, amount, category = '', accountLimit = 100,
+  group = product, conflicts = new Set(), now = Date.now()) {
+  if (!isAvailable(product, group, conflicts, now)) return cart;
+  const exclusive = optionMode(group) === 'singleOptions' || (optionMode(group) === 'multipleOptions' && group.limit === 1);
   const remainingCart = exclusive ? cart.filter((entry) => entry.groupKey !== group.key || entry.key === product.key) : cart;
   const limit = Math.min(getPurchaseLimit(product, group, accountLimit), getGroupRemaining(remainingCart, group, product.key));
   if (limit < 1) return cart;
@@ -84,7 +109,6 @@ export function putInCart(cart, product, amount, category = '', accountLimit = 1
   if (found < 0) return [...remainingCart, entry];
   return remainingCart.map((other, index) => index === found ? entry : other);
 };
-
 export function changeCartQuantity(cart, key, amount, accountLimit = 100) {
   return cart.map((entry) => {
     if (entry.key !== key) return entry;
@@ -92,8 +116,7 @@ export function changeCartQuantity(cart, key, amount, accountLimit = 100) {
     return limit < 1 ? entry : { ...entry, amount: clampCartQuantity(amount, limit) };
   });
 };
-
-export function resolveCart(cart, tabs, accountLimit = 100) {
+export function resolveCart(cart, tabs, accountLimit = 100, now = Date.now()) {
   const index = indexShop(tabs);
   const conflicts = getConflictingKeys(tabs);
   return cart.map((entry) => {
@@ -102,46 +125,44 @@ export function resolveCart(cart, tabs, accountLimit = 100) {
     const product = latest?.product || entry.product;
     const group = latest?.group || entry.group;
     const limit = getPurchaseLimit(product, group, accountLimit);
-    const groupAmount = cart.reduce((total, item) => total + (item.groupKey === entry.groupKey ? item.amount : 0), 0);
+    const groupItems = cart.filter((item) => item.groupKey === group?.key);
+    const groupAmount = groupItems.reduce((sum, item) => sum + item.amount, 0);
     let invalid = '';
     if (!latest) invalid = 'Vật phẩm không còn trong cửa hàng';
     else if (conflicts.has(entry.key)) invalid = 'Mã vật phẩm trùng với cấu hình khác nhau';
     else if (isOwnedOnce(product, group)) invalid = 'Vật phẩm đã sở hữu';
     else if (unmetConditions(product, group)) invalid = 'Chưa đáp ứng điều kiện mua';
-    else if (!Number.isSafeInteger(entry.amount) || entry.amount < 1 || entry.amount > limit || (hasOptions(group) && groupAmount > limitValue(group.limit))) invalid = 'Số lượng vượt giới hạn mỗi lần mua';
+    else if (!getTimeStatus(product, group, now).available) invalid = getTimeMessage(product, group, now);
+    else if (optionMode(group) === 'singleOptions' && new Set(groupItems.map((item) => item.key)).size > 1) invalid = 'Chỉ chọn một loại trong nhóm';
+    else if (!Number.isSafeInteger(entry.amount) || entry.amount < 1 || entry.amount > limit || (hasOptions(group) && groupAmount > normalizeLimit(group.limit))) invalid = 'Số lượng vượt giới hạn mỗi lần mua';
     const price = hasValidPrice(product) ? product.price : 0;
     const total = price * entry.amount;
     if (!hasValidPrice(product) || !Number.isSafeInteger(total)) invalid = 'Giá vật phẩm không hợp lệ';
     return { ...entry, product, group, category: latest?.category || entry.category, price, total, invalid, limit };
   });
 };
-
 export const cartTotal = (entries) => entries.reduce((sum, entry) => sum + entry.total, 0);
 export const cartCount = (entries) => entries.reduce((sum, entry) => sum + entry.amount, 0);
 export const cartPayload = (entries) => entries.map(({ key, amount }) => ({ key, amount }));
-
-export const eligibleCategoryProducts = (products, conflicts = new Set()) => (products || []).filter((product) => !hasOptions(product) && isAvailable(product, product, conflicts));
-
-export function addCategoryToCart(cart, products, category = '', accountLimit = 100, conflicts = new Set()) {
+export const eligibleCategoryProducts = (products, conflicts = new Set(), now = Date.now()) => (products || []).filter((product) => !hasOptions(product) && isAvailable(product, product, conflicts, now));
+export function addCategoryToCart(cart, products, category = '', accountLimit = 100, conflicts = new Set(), now = Date.now()) {
   let updated = cart;
-  for (const product of eligibleCategoryProducts(products, conflicts)) {
+  for (const product of eligibleCategoryProducts(products, conflicts, now)) {
     if (updated.some((entry) => entry.key === product.key)) continue;
-    updated = putInCart(updated, product, 1, category, accountLimit, product, conflicts);
+    updated = putInCart(updated, product, 1, category, accountLimit, product, conflicts, now);
   };
   return updated;
 };
-
 export function removeCategoryFromCart(cart, products) {
-  const keys = new Set((products || []).flatMap((product) => productOptions(product).map((option) => option.key)));
+  const keys = new Set((products || []).flatMap((product) => productOptions(product).map((choice) => choice.key)));
   return cart.filter((entry) => !keys.has(entry.key));
 };
 
-const incrementOwned = (product, amount, group = product) => {
+function incrementOwned(product, amount, group = product) {
   if (isOnce(product, group)) return { ...product, owned: true };
   if (typeof product.owned === 'number') return { ...product, owned: product.owned + amount };
   return product;
 };
-
 export function applyPurchaseToTabs(tabs, purchasedItems) {
   const amounts = new Map(purchasedItems.map(({ key, amount }) => [key, amount]));
   return tabs.map((tab) => ({
@@ -151,26 +172,29 @@ export function applyPurchaseToTabs(tabs, purchasedItems) {
         const amount = amounts.get(group.key);
         return amount ? incrementOwned(group, amount) : group;
       };
-
-      const selection = group.options.find((option) => amounts.has(option.key));
-      if (!selection) return group;
-
-      const exclusive = typeof group.owned === 'string' || (group.limit === 1 && typeof group.owned === 'boolean' && group.options.every((option) => typeof option.owned === 'boolean'));
-      if (exclusive) return {
-        ...group,
-        owned: selection.name || selection.key,
-        options: group.options.map((option) => ({ ...option, owned: option.key === selection.key }))
+      const mode = optionMode(group);
+      const options = productOptions(group);
+      const purchased = options.filter((option) => amounts.has(option.key));
+      if (!purchased.length) return group;
+      if (mode === 'singleOptions') {
+        const selected = purchased[0];
+        return {
+          ...group,
+          owned: typeof group.owned === 'string' ? (selected.name || selected.key) : typeof group.owned === 'boolean' ? true : group.owned,
+          singleOptions: options.map((option) => ({
+            ...option,
+            owned: typeof option.owned === 'boolean' ? option.key === selected.key : (amounts.has(option.key) ? incrementOwned(option, amounts.get(option.key), group).owned : option.owned)
+          }))
+        };
       };
-
-      const options = group.options.map((option) => {
+      const updatedOptions = options.map((option) => {
         const amount = amounts.get(option.key);
         return amount ? incrementOwned(option, amount, group) : option;
       });
-      const numeric = options.every((option) => typeof option.owned === 'number');
       return {
         ...group,
-        owned: numeric ? options.reduce((total, option) => total + option.owned, 0) : group.owned,
-        options
+        owned: typeof group.owned === 'number' && updatedOptions.every((option) => typeof option.owned === 'number') ? updatedOptions.reduce((sum, option) => sum + option.owned, 0) : group.owned,
+        multipleOptions: updatedOptions
       };
     })
   }));
