@@ -1,11 +1,11 @@
-import { Ot as createReactComponent } from "./index.js";
+import { Et as createReactComponent } from "./index.js";
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconSearch = createReactComponent("outline", "search", "Search", [["path", {
+var IconSearch = /* @__PURE__ */ createReactComponent("outline", "search", "Search", [["path", {
 	"d": "M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0",
 	"key": "svg-0"
 }], ["path", {

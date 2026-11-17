@@ -1,11 +1,11 @@
-import { Ot as createReactComponent } from "./index.js";
+import { Et as createReactComponent } from "./index.js";
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconUserPlus = createReactComponent("outline", "user-plus", "UserPlus", [
+var IconUserPlus = /* @__PURE__ */ createReactComponent("outline", "user-plus", "UserPlus", [
 	["path", {
 		"d": "M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0",
 		"key": "svg-0"

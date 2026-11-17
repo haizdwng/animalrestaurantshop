@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/clipboard.js","assets/Tile.js","assets/IconUsers.js","assets/IconPhoto.js","assets/IconCheck.js","assets/IconPlus.js","assets/IconSearch.js","assets/Account.js","assets/IconPencil.js","assets/IconStarFilled.js","assets/IconUserPlus.js","assets/useRemoteResource.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/clipboard.js","assets/Tile.js","assets/IconPhoto.js","assets/IconUsers.js","assets/IconCheck.js","assets/IconPlus.js","assets/IconSearch.js","assets/Account.js","assets/useRemoteResource.js","assets/IconStarFilled.js","assets/IconUserPlus.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
 // \0rolldown/runtime.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -14174,7 +14174,7 @@ var require_disable_devtool_min = /* @__PURE__ */ __commonJSMin(((exports, modul
 }));
 // node_modules/@tabler/icons-react/dist/esm/defaultAttributes.mjs
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14202,7 +14202,7 @@ var defaultAttributes = {
 };
 // node_modules/@tabler/icons-react/dist/esm/createReactComponent.mjs
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14232,12 +14232,12 @@ var createReactComponent = (type, iconName, iconNamePascal, iconNode) => {
 	return Component;
 };
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconAlertTriangle = createReactComponent("outline", "alert-triangle", "AlertTriangle", [
+var IconAlertTriangle = /* @__PURE__ */ createReactComponent("outline", "alert-triangle", "AlertTriangle", [
 	["path", {
 		"d": "M12 9v4",
 		"key": "svg-0"
@@ -14252,12 +14252,12 @@ var IconAlertTriangle = createReactComponent("outline", "alert-triangle", "Alert
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconArrowsSort = createReactComponent("outline", "arrows-sort", "ArrowsSort", [["path", {
+var IconArrowsSort = /* @__PURE__ */ createReactComponent("outline", "arrows-sort", "ArrowsSort", [["path", {
 	"d": "M3 9l4 -4l4 4m-4 -4v14",
 	"key": "svg-0"
 }], ["path", {
@@ -14265,12 +14265,12 @@ var IconArrowsSort = createReactComponent("outline", "arrows-sort", "ArrowsSort"
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconBraces = createReactComponent("outline", "braces", "Braces", [["path", {
+var IconBraces = /* @__PURE__ */ createReactComponent("outline", "braces", "Braces", [["path", {
 	"d": "M7 4a2 2 0 0 0 -2 2v3a2 3 0 0 1 -2 3a2 3 0 0 1 2 3v3a2 2 0 0 0 2 2",
 	"key": "svg-0"
 }], ["path", {
@@ -14278,12 +14278,12 @@ var IconBraces = createReactComponent("outline", "braces", "Braces", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconBuildingStore = createReactComponent("outline", "building-store", "BuildingStore", [
+var IconBuildingStore = /* @__PURE__ */ createReactComponent("outline", "building-store", "BuildingStore", [
 	["path", {
 		"d": "M3 21l18 0",
 		"key": "svg-0"
@@ -14306,32 +14306,32 @@ var IconBuildingStore = createReactComponent("outline", "building-store", "Build
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconChevronLeft = createReactComponent("outline", "chevron-left", "ChevronLeft", [["path", {
+var IconChevronLeft = /* @__PURE__ */ createReactComponent("outline", "chevron-left", "ChevronLeft", [["path", {
 	"d": "M15 6l-6 6l6 6",
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconChevronRight = createReactComponent("outline", "chevron-right", "ChevronRight", [["path", {
+var IconChevronRight = /* @__PURE__ */ createReactComponent("outline", "chevron-right", "ChevronRight", [["path", {
 	"d": "M9 6l6 6l-6 6",
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconCircleCheck = createReactComponent("outline", "circle-check", "CircleCheck", [["path", {
+var IconCircleCheck = /* @__PURE__ */ createReactComponent("outline", "circle-check", "CircleCheck", [["path", {
 	"d": "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0",
 	"key": "svg-0"
 }], ["path", {
@@ -14339,12 +14339,12 @@ var IconCircleCheck = createReactComponent("outline", "circle-check", "CircleChe
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconCloudOff = createReactComponent("outline", "cloud-off", "CloudOff", [["path", {
+var IconCloudOff = /* @__PURE__ */ createReactComponent("outline", "cloud-off", "CloudOff", [["path", {
 	"d": "M9.58 5.548c.24 -.11 .492 -.207 .752 -.286c1.88 -.572 3.956 -.193 5.444 1c1.488 1.19 2.162 3.007 1.77 4.769h.99c1.913 0 3.464 1.56 3.464 3.486c0 .957 -.383 1.824 -1.003 2.454m-2.997 1.033h-11.343c-2.572 -.004 -4.657 -2.011 -4.657 -4.487c0 -2.475 2.085 -4.482 4.657 -4.482c.13 -.582 .37 -1.128 .7 -1.62",
 	"key": "svg-0"
 }], ["path", {
@@ -14352,12 +14352,12 @@ var IconCloudOff = createReactComponent("outline", "cloud-off", "CloudOff", [["p
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconDeviceFloppy = createReactComponent("outline", "device-floppy", "DeviceFloppy", [
+var IconDeviceFloppy = /* @__PURE__ */ createReactComponent("outline", "device-floppy", "DeviceFloppy", [
 	["path", {
 		"d": "M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2",
 		"key": "svg-0"
@@ -14372,12 +14372,12 @@ var IconDeviceFloppy = createReactComponent("outline", "device-floppy", "DeviceF
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconDotsVertical = createReactComponent("outline", "dots-vertical", "DotsVertical", [
+var IconDotsVertical = /* @__PURE__ */ createReactComponent("outline", "dots-vertical", "DotsVertical", [
 	["path", {
 		"d": "M11 12a1 1 0 1 0 2 0a1 1 0 1 0 -2 0",
 		"key": "svg-0"
@@ -14392,12 +14392,12 @@ var IconDotsVertical = createReactComponent("outline", "dots-vertical", "DotsVer
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconEyeOff = createReactComponent("outline", "eye-off", "EyeOff", [
+var IconEyeOff = /* @__PURE__ */ createReactComponent("outline", "eye-off", "EyeOff", [
 	["path", {
 		"d": "M10.585 10.587a2 2 0 0 0 2.829 2.828",
 		"key": "svg-0"
@@ -14412,12 +14412,12 @@ var IconEyeOff = createReactComponent("outline", "eye-off", "EyeOff", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconEye = createReactComponent("outline", "eye", "Eye", [["path", {
+var IconEye = /* @__PURE__ */ createReactComponent("outline", "eye", "Eye", [["path", {
 	"d": "M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0",
 	"key": "svg-0"
 }], ["path", {
@@ -14425,12 +14425,12 @@ var IconEye = createReactComponent("outline", "eye", "Eye", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconHexagonLetterA = createReactComponent("outline", "hexagon-letter-a", "HexagonLetterA", [
+var IconHexagonLetterA = /* @__PURE__ */ createReactComponent("outline", "hexagon-letter-a", "HexagonLetterA", [
 	["path", {
 		"d": "M19.875 6.27a2.225 2.225 0 0 1 1.125 1.948v7.284c0 .809 -.443 1.555 -1.158 1.948l-6.75 4.27a2.269 2.269 0 0 1 -2.184 0l-6.75 -4.27a2.225 2.225 0 0 1 -1.158 -1.948v-7.285c0 -.809 .443 -1.554 1.158 -1.947l6.75 -3.98a2.33 2.33 0 0 1 2.25 0l6.75 3.98h-.033",
 		"key": "svg-0"
@@ -14445,12 +14445,12 @@ var IconHexagonLetterA = createReactComponent("outline", "hexagon-letter-a", "He
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconInfoCircle = createReactComponent("outline", "info-circle", "InfoCircle", [
+var IconInfoCircle = /* @__PURE__ */ createReactComponent("outline", "info-circle", "InfoCircle", [
 	["path", {
 		"d": "M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0",
 		"key": "svg-0"
@@ -14465,12 +14465,12 @@ var IconInfoCircle = createReactComponent("outline", "info-circle", "InfoCircle"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconListNumbers = createReactComponent("outline", "list-numbers", "ListNumbers", [
+var IconListNumbers = /* @__PURE__ */ createReactComponent("outline", "list-numbers", "ListNumbers", [
 	["path", {
 		"d": "M11 6h9",
 		"key": "svg-0"
@@ -14493,22 +14493,22 @@ var IconListNumbers = createReactComponent("outline", "list-numbers", "ListNumbe
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconLoader2 = createReactComponent("outline", "loader-2", "Loader2", [["path", {
+var IconLoader2 = /* @__PURE__ */ createReactComponent("outline", "loader-2", "Loader2", [["path", {
 	"d": "M12 3a9 9 0 1 0 9 9",
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconRefresh = createReactComponent("outline", "refresh", "Refresh", [["path", {
+var IconRefresh = /* @__PURE__ */ createReactComponent("outline", "refresh", "Refresh", [["path", {
 	"d": "M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4",
 	"key": "svg-0"
 }], ["path", {
@@ -14516,12 +14516,12 @@ var IconRefresh = createReactComponent("outline", "refresh", "Refresh", [["path"
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconSelector = createReactComponent("outline", "selector", "Selector", [["path", {
+var IconSelector = /* @__PURE__ */ createReactComponent("outline", "selector", "Selector", [["path", {
 	"d": "M8 9l4 -4l4 4",
 	"key": "svg-0"
 }], ["path", {
@@ -14529,12 +14529,12 @@ var IconSelector = createReactComponent("outline", "selector", "Selector", [["pa
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconSend = createReactComponent("outline", "send", "Send", [["path", {
+var IconSend = /* @__PURE__ */ createReactComponent("outline", "send", "Send", [["path", {
 	"d": "M10 14l11 -11",
 	"key": "svg-0"
 }], ["path", {
@@ -14542,12 +14542,12 @@ var IconSend = createReactComponent("outline", "send", "Send", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconSettings = createReactComponent("outline", "settings", "Settings", [["path", {
+var IconSettings = /* @__PURE__ */ createReactComponent("outline", "settings", "Settings", [["path", {
 	"d": "M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065",
 	"key": "svg-0"
 }], ["path", {
@@ -14555,12 +14555,12 @@ var IconSettings = createReactComponent("outline", "settings", "Settings", [["pa
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconUserCircle = createReactComponent("outline", "user-circle", "UserCircle", [
+var IconUserCircle = /* @__PURE__ */ createReactComponent("outline", "user-circle", "UserCircle", [
 	["path", {
 		"d": "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0",
 		"key": "svg-0"
@@ -14575,12 +14575,12 @@ var IconUserCircle = createReactComponent("outline", "user-circle", "UserCircle"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconX = createReactComponent("outline", "x", "X", [["path", {
+var IconX = /* @__PURE__ */ createReactComponent("outline", "x", "X", [["path", {
 	"d": "M18 6l-12 12",
 	"key": "svg-0"
 }], ["path", {
@@ -16366,74 +16366,104 @@ async function callStream(method, path, body, onProgress, { auth = true, timeout
 }
 var enc = encodeURIComponent;
 // src/shared/library/api/normalize.js
-var num = (...v) => Number(v.find((x) => x !== void 0 && x !== null && x !== "") ?? 0);
-function normUser(u) {
-	if (!u || typeof u !== "object") return null;
+var num = (...values) => Number(values.find((value) => value !== void 0 && value !== null && value !== "") ?? 0);
+function normUser(user) {
+	if (!user || typeof user !== "object") return null;
 	return {
-		...u,
-		id: u.id ?? u._id,
-		username: u.username ?? "",
-		playerName: u.name ?? u.playerName ?? u.username ?? "",
-		openid: u.openid ?? u.openId ?? "",
-		avatar: u.avatar ?? u.avatarUrl ?? "",
-		frame: u.frame ?? "",
-		coins: num(u.coins, u.coin, u.money, u.gold, u.balance),
-		star: num(u.star, u.stars),
-		role: u.role ?? "",
-		invite: u.invite ?? "",
-		friendInvite: u.friendInvite ?? u.friend_invite ?? "",
-		createdAt: u.createdAt ?? u.created_at
+		...user,
+		id: user.id ?? user._id,
+		username: user.username ?? "",
+		playerName: user.name ?? user.playerName ?? user.username ?? "",
+		openid: user.openid ?? user.openId ?? "",
+		avatar: user.avatar ?? user.avatarUrl ?? "",
+		frame: user.frame ?? "",
+		coins: num(user.coins, user.coin, user.money, user.gold, user.balance),
+		star: num(user.star, user.stars),
+		role: user.role ?? "",
+		invite: user.invite ?? "",
+		friendInvite: user.friendInvite ?? user.friend_invite ?? "",
+		createdAt: user.createdAt ?? user.created_at
 	};
 }
-var pickUser = (r) => normUser(r.user ?? (r.username ? r : null));
-var isAdmin = (u) => String(u?.role || "").toLowerCase() === "administrator";
-var TAB_LABELS = {
+var pickUser = (response) => normUser(response.user ?? (response.username ? response : null));
+var isAdmin = (user) => String(user?.role || "").toLowerCase() === "administrator";
+var SHOP_CATEGORIES = Object.freeze({
 	letters: "Thư",
-	customers: "Khách hàng",
-	boothOwners: "Chủ quầy",
+	customers: "Khách",
 	memorials: "Vật kỷ niệm",
-	cookbooks: "Món ăn làm ngay",
-	musicians: "Khách mời",
-	items: "Vật phẩm",
-	terrace: "Ban công",
-	pond: "Ao cá",
-	vegetable: "Vườn rau",
-	flower: "Vườn hoa",
-	pet: "Thú cưng",
-	ship: "Đồ ăn ship",
-	special: "Đặc biệt"
-};
-var toList = (v) => Array.isArray(v) ? v : v && typeof v === "object" ? Object.entries(v).map(([id, x]) => x && typeof x === "object" ? {
-	id,
-	...x
-} : typeof x === "number" ? {
-	id,
-	price: x
-} : {
-	id,
-	name: x
-}) : [];
-function normProduct(p, i) {
-	return {
-		...p,
-		id: p.id ?? p._id ?? `${p.name || "product"}-${i}`,
-		name: p.name ?? p.title ?? `Sản phẩm ${i + 1}`,
-		price: num(p.price, p.coin, p.cost),
-		once: p.once === true
-	};
+	foods: "Món ăn",
+	plants: "Tưới cây",
+	fishes: "Cá",
+	flowers: "Hoa",
+	vegetables: "Rau",
+	frames: "Khung ảnh",
+	specials: "Đặc biệt",
+	items: "Vật phẩm"
+});
+var PRODUCT_KEYS = [
+	"key",
+	"name",
+	"image",
+	"price",
+	"once",
+	"owned",
+	"conditions"
+];
+var OPTION_KEYS = [
+	"key",
+	"name",
+	"image",
+	"price",
+	"once",
+	"owned",
+	"conditions"
+];
+function copyFields(source, keys) {
+	const result = {};
+	for (const key of keys) if (Object.hasOwn(source, key)) result[key] = source[key];
+	return result;
+}
+function normProduct(product) {
+	if (!product || typeof product !== "object" || typeof product.key !== "string" || !product.key.trim()) return null;
+	const result = copyFields(product, PRODUCT_KEYS);
+	if (Array.isArray(result.conditions)) result.conditions = result.conditions.filter((condition) => condition && typeof condition === "object");
+	else delete result.conditions;
+	if (Array.isArray(product.options)) result.options = product.options.filter((option) => option && typeof option.key === "string" && option.key.trim()).map((option) => {
+		const choice = copyFields(option, OPTION_KEYS);
+		if (Array.isArray(choice.conditions)) choice.conditions = choice.conditions.filter((condition) => condition && typeof condition === "object");
+		else delete choice.conditions;
+		return choice;
+	});
+	return result;
 }
 function normShop(shop) {
-	if (!shop) return [];
-	return [...Object.keys(TAB_LABELS).filter((k) => k in shop), ...Object.keys(shop).filter((k) => !(k in TAB_LABELS))].map((k) => ({
-		id: k,
-		name: TAB_LABELS[k] || k,
-		products: toList(shop[k]).map(normProduct)
+	if (!shop || typeof shop !== "object") return [];
+	const seenKeys = /* @__PURE__ */ new Set();
+	return Object.entries(SHOP_CATEGORIES).filter(([category]) => Array.isArray(shop[category])).map(([category, name]) => ({
+		id: category,
+		name,
+		products: shop[category].map(normProduct).filter(Boolean).flatMap((product) => {
+			if (!Array.isArray(product.options) || product.options.length === 0) {
+				if (seenKeys.has(product.key)) return [];
+				seenKeys.add(product.key);
+				return [product];
+			}
+			const options = product.options.filter((option) => {
+				if (seenKeys.has(option.key)) return false;
+				seenKeys.add(option.key);
+				return true;
+			});
+			return options.length > 0 ? [{
+				...product,
+				options
+			}] : [];
+		})
 	}));
 }
-var normAdminUser = (u) => ({
-	...u,
-	id: u._id ?? u.id,
-	coin: num(u.coin, u.coins)
+var normAdminUser = (user) => ({
+	...user,
+	id: user._id ?? user.id,
+	coin: num(user.coin, user.coins)
 });
 // src/shared/library/image.js
 function fileToAvatar(file) {
@@ -16443,40 +16473,37 @@ function fileToAvatar(file) {
 }
 // src/shared/library/api/auth.js
 var getMe = async () => {
-	const r = await call("GET", "/user", void 0, { auth: false });
-	if (!r.user && !r.username) throw new ApiError(r.message || "Không lấy được thông tin tài khoản");
+	const response = await call("GET", "/user", void 0, { auth: false });
+	if (!response.user && !response.username) throw new ApiError(response.message || "Không lấy được thông tin tài khoản");
 	return {
-		...r,
-		user: pickUser(r)
+		...response,
+		user: pickUser(response)
 	};
 };
-async function withUser(r) {
-	const user = pickUser(r);
-	if (user) return {
-		...r,
-		user
-	};
+async function withUser(response) {
 	try {
+		const { user } = await getMe();
 		return {
-			...r,
-			user: (await getMe()).user
+			...response,
+			user
 		};
 	} catch {
-		return r;
+		const { user: _partialUser, ...result } = response;
+		return result;
 	}
 }
 async function login(username, password) {
-	const r = await call("POST", "/login", {
+	const response = await call("POST", "/login", {
 		username,
 		password
 	}, { auth: false });
-	if (!r.token) throw new ApiError(r.message || "Máy chủ không trả về token đăng nhập");
-	setToken(r.token);
-	const me = await getMe();
-	if (!me.user) throw new ApiError("Không lấy được thông tin tài khoản");
+	if (!response.token) throw new ApiError(response.message || "Máy chủ không trả về token đăng nhập");
+	setToken(response.token);
+	const { user } = await getMe();
+	if (!user) throw new ApiError("Không lấy được thông tin tài khoản");
 	return {
-		...r,
-		user: me.user
+		...response,
+		user
 	};
 }
 var signupOtp = (data) => call("POST", "/signup/otp", data, { auth: false });
@@ -16492,7 +16519,7 @@ var changeOpenid = async (openid, otp) => withUser(await call("PATCH", "/user/op
 	otp
 }));
 var redeemGiftCode = async (code) => withUser(await call("POST", "/user/giftcode", { code }));
-var submitInvite = (invite) => call("POST", "/user/invite", { invite });
+var submitInvite = async (invite) => withUser(await call("POST", "/user/invite", { invite }));
 var getFriendLink = () => call("GET", "/user/links/friend");
 var getBuffetLink = () => call("GET", "/user/links/buffet");
 var checkShopReady = () => call("GET", "/user/shop/ready");
@@ -16512,10 +16539,10 @@ async function compressJsonGZip(value) {
 	return new Uint8Array(await new Response(output).arrayBuffer());
 }
 var getShop = async () => {
-	const r = await call("GET", "/user/shop");
+	const response = await call("GET", "/user/shop");
 	return {
-		...r,
-		tabs: normShop(r.shop)
+		...response,
+		tabs: normShop(response.shop)
 	};
 };
 var buy = async (items) => {
@@ -17144,12 +17171,12 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 // src/application/App.jsx
 var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([0,1,2,3])));
 var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11,12,13])));
-var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([14,7,2,3,15,16,17,6,18,13,19])));
-var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([20,21,9])));
-var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([22,19,15,12,5,21,9,18])));
-var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([23,13,17,21,9,2,18,24,15,5])));
-var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([25,1,13,21,9,16,7,12,5,8,10,18,24,15,2])));
-var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([26,21,9,24,15,12,5,8,10])));
+var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([14,7,2,3,15,16,17,6,13,18])));
+var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([19,20,10])));
+var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([21,18,15,12,5,20,10])));
+var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([22,13,17,20,10,2,15,23,5])));
+var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([24,1,13,20,10,16,7,12,5,8,9,15,23,2])));
+var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([25,20,10,23])));
 var AUTHENTICATION_PATHS = [
 	"/login",
 	"/register",
@@ -17341,7 +17368,7 @@ function AppContent() {
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
 										path: "data",
 										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
-											to: "/administrator/data/shop",
+											to: "/administrator/data/musicians",
 											replace: true
 										})
 									}),
@@ -17394,4 +17421,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)({ md5: "b750a6e2b3d860ae46efcc050e03db3b" });
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
-export { Coin as $, adminUpdatePlayerAvatar as A, useLocation as At, openidOtp as B, adminGiftCodes as C, IconInfoCircle as Ct, adminRecord as D, IconAlertTriangle as Dt, adminPlayers as E, IconBuildingStore as Et, getTransactions as F, __toESM as Ft, login as G, submitInvite as H, buy as I, signup as J, passwordOtp as K, changeOpenid as L, cancelTransaction as M, useParams as Mt, createTransaction as N, require_react_dom as Nt, adminSaveData as O, createReactComponent as Ot, getTransaction as P, require_react as Pt, normShop as Q, getBuffetLink as R, adminEncryptRecordValue as S, IconRefresh as St, adminPlayerFriends as T, IconCircleCheck as Tt, updateAvatar as U, redeemGiftCode as V, updateUser as W, fileToAvatar as X, signupOtp as Y, isAdmin as Z, adminDeletePlayerFriend as _, toastError as _t, formatNumber as a, Skeleton as at, adminEditPlayer as b, require_jsx_runtime as bt, adminAddCoin as c, Pager as ct, adminAddPlayerStar as d, Select as dt, Logo as et, adminCreateGiftCode as f, SortSelect as ft, adminDeleteGiftCode as g, toast as gt, adminDecryptRecordValue as h, OtpButton as ht, formatDateTime as i, RowSkeleton as it, adminUsers as j, useNavigate as jt, adminSaveRecord as k, Outlet as kt, adminAddPlayerFriend as l, Tabs as lt, adminData as m, Dialog as mt, compareByTime as n, Line as nt, formatShortDateTime as o, ErrorState as ot, adminCreateUser as p, Menu as pt, resetPassword as q, formatDate as r, PagerSkeleton as rt, formatVietnameseDong as s, Spinner as st, __vitePreload as t, JsonEditor as tt, adminAddPlayerLike as u, PageSizeSelect as ut, adminDeleteUser as v, Field as vt, adminPlayer as w, IconDeviceFloppy as wt, adminEditUser as x, IconX as xt, adminEditGiftCode as y, Button as yt, getFriendLink as z };
+export { Logo as $, adminUpdatePlayerAvatar as A, useParams as At, openidOtp as B, adminGiftCodes as C, IconCircleCheck as Ct, adminRecord as D, Outlet as Dt, adminPlayers as E, createReactComponent as Et, getTransactions as F, login as G, submitInvite as H, buy as I, signup as J, passwordOtp as K, changeOpenid as L, cancelTransaction as M, require_react as Mt, createTransaction as N, __toESM as Nt, adminSaveData as O, useLocation as Ot, getTransaction as P, Coin as Q, getBuffetLink as R, adminEncryptRecordValue as S, IconInfoCircle as St, adminPlayerFriends as T, IconAlertTriangle as Tt, updateAvatar as U, redeemGiftCode as V, updateUser as W, fileToAvatar as X, signupOtp as Y, isAdmin as Z, adminDeletePlayerFriend as _, Field as _t, formatNumber as a, ErrorState as at, adminEditPlayer as b, IconX as bt, adminAddCoin as c, Tabs as ct, adminAddPlayerStar as d, SortSelect as dt, JsonEditor as et, adminCreateGiftCode as f, Menu as ft, adminDeleteGiftCode as g, toastError as gt, adminDecryptRecordValue as h, toast as ht, formatDateTime as i, Skeleton as it, adminUsers as j, require_react_dom as jt, adminSaveRecord as k, useNavigate as kt, adminAddPlayerFriend as l, PageSizeSelect as lt, adminData as m, OtpButton as mt, compareByTime as n, PagerSkeleton as nt, formatShortDateTime as o, Spinner as ot, adminCreateUser as p, Dialog as pt, resetPassword as q, formatDate as r, RowSkeleton as rt, formatVietnameseDong as s, Pager as st, __vitePreload as t, Line as tt, adminAddPlayerLike as u, Select as ut, adminDeleteUser as v, Button as vt, adminPlayer as w, IconChevronRight as wt, adminEditUser as x, IconRefresh as xt, adminEditGiftCode as y, require_jsx_runtime as yt, getFriendLink as z };
