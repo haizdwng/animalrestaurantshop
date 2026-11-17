@@ -60,7 +60,7 @@ export default function Menu({ items = [], label = 'Tùy chọn', disabled = fal
     {open && createPortal(
       <div className='fixed inset-0 z-50' onPointerDown={(event) => { if (event.target === event.currentTarget) setPosition(null); }}>
         <div id={menuId} ref={menu} role='menu' aria-label={label} style={position}
-          className='fixed z-10 max-h-[calc(100dvh-24px)] w-54 overflow-auto rounded-xl border border-line bg-panel p-1.5 shadow-[var(--ui-shadow)] animate-pop'>
+          className='fixed z-10 max-h-[calc(100dvh-24px)] w-54 overflow-auto rounded-xl border border-line bg-panel p-1.5 shadow-(--ui-shadow) animate-pop'>
           {shown.map(({ label: itemLabel, Icon, onClick, danger, disabled: itemDisabled }) => (
             <button key={itemLabel} type='button' role='menuitem' disabled={itemDisabled}
               className={`flex min-h-10 w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 text-left text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-45 ${danger ? 'text-bad hover:bg-bad/10' : 'text-fg hover:bg-raise'}`}

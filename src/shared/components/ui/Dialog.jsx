@@ -64,7 +64,7 @@ export default function Dialog({ open, title, onClose, children, size = 'md' }) 
     <div className='fixed inset-0 z-50 flex animate-fade items-end justify-center bg-black/75 backdrop-blur-sm sm:items-center sm:p-5'
       onPointerDown={(event) => { if (event.target === event.currentTarget && dialogStack.at(-1) === dialogId.current) lastOnClose.current?.(); }}>
       <section ref={panel} tabIndex={-1} role='dialog' aria-modal='true' aria-labelledby={titleId}
-        className={`ui-card relative flex max-h-[94dvh] w-full min-w-0 animate-pop flex-col rounded-b-none shadow-[var(--ui-shadow)] outline-none sm:max-h-[min(90dvh,52rem)] sm:rounded-2xl ${sizes[size] || sizes.md}`}>
+        className={`ui-card relative flex max-h-[94dvh] w-full min-w-0 animate-pop flex-col rounded-b-none shadow-(--ui-shadow) outline-none sm:max-h-[min(90dvh,52rem)] sm:rounded-2xl ${sizes[size] || sizes.md}`}>
         <span aria-hidden className='mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-line sm:hidden' />
         <header className='flex shrink-0 items-start justify-between gap-4 border-b border-line/70 px-5 py-4'>
           <h2 id={titleId} className='min-w-0 flex-1 text-base font-extrabold leading-tight tracking-tight'>{title}</h2>

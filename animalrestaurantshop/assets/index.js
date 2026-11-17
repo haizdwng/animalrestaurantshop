@@ -14800,7 +14800,7 @@ function Toaster() {
 			const Icon = type.Icon;
 			return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				role: item.kind === "err" ? "alert" : "status",
-				className: "pointer-events-auto relative flex w-full max-w-sm animate-toast-in items-start gap-3 overflow-hidden rounded-xl border border-line bg-panel px-3 py-3.5 shadow-[var(--ui-shadow)]",
+				className: "pointer-events-auto relative flex w-full max-w-sm animate-toast-in items-start gap-3 overflow-hidden rounded-xl border border-line bg-panel px-3 py-3.5 shadow-(--ui-shadow)",
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
 						size: 19,
@@ -14942,7 +14942,7 @@ function Dialog({ open, title, onClose, children, size = "md" }) {
 			role: "dialog",
 			"aria-modal": "true",
 			"aria-labelledby": titleId,
-			className: `ui-card relative flex max-h-[94dvh] w-full min-w-0 animate-pop flex-col rounded-b-none shadow-[var(--ui-shadow)] outline-none sm:max-h-[min(90dvh,52rem)] sm:rounded-2xl ${sizes[size] || sizes.md}`,
+			className: `ui-card relative flex max-h-[94dvh] w-full min-w-0 animate-pop flex-col rounded-b-none shadow-(--ui-shadow) outline-none sm:max-h-[min(90dvh,52rem)] sm:rounded-2xl ${sizes[size] || sizes.md}`,
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 					"aria-hidden": true,
@@ -15043,7 +15043,7 @@ function Menu({ items = [], label = "Tùy chọn", disabled = false }) {
 			role: "menu",
 			"aria-label": label,
 			style: position,
-			className: "fixed z-10 max-h-[calc(100dvh-24px)] w-54 overflow-auto rounded-xl border border-line bg-panel p-1.5 shadow-[var(--ui-shadow)] animate-pop",
+			className: "fixed z-10 max-h-[calc(100dvh-24px)] w-54 overflow-auto rounded-xl border border-line bg-panel p-1.5 shadow-(--ui-shadow) animate-pop",
 			children: shown.map(({ label: itemLabel, Icon, onClick, danger, disabled: itemDisabled }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 				type: "button",
 				role: "menuitem",
@@ -16240,7 +16240,7 @@ function JsonEditor({ load, save, deps = [], extraActions = null }) {
 						className: "font-bold",
 						children: "JSON không hợp lệ"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						className: "mt-1 break-words",
+						className: "mt-1 wrap-break-word",
 						children: parseError
 					})]
 				})]

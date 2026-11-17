@@ -37,7 +37,7 @@ export default function Toaster() {
         const Icon = type.Icon;
         return (
           <div key={item.id} role={item.kind === 'err' ? 'alert' : 'status'}
-            className='pointer-events-auto relative flex w-full max-w-sm animate-toast-in items-start gap-3 overflow-hidden rounded-xl border border-line bg-panel px-3 py-3.5 shadow-[var(--ui-shadow)]'>
+            className='pointer-events-auto relative flex w-full max-w-sm animate-toast-in items-start gap-3 overflow-hidden rounded-xl border border-line bg-panel px-3 py-3.5 shadow-(--ui-shadow)'>
             <Icon size={19} className={`mt-0.5 shrink-0 ${type.icon}`} />
             <p className='min-w-0 flex-1 wrap-break-word text-xs leading-relaxed'>{item.message}</p>
             <button type='button' aria-label='Đóng thông báo' onClick={() => setItems((entries) => entries.filter((entry) => entry.id !== item.id))}
