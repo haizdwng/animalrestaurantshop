@@ -1,4 +1,4 @@
-import { At as Pager, Yt as createReactComponent, Zt as require_jsx_runtime, in as __toESM, rn as require_react } from "./index.js";
+import { Yt as createReactComponent, in as __toESM, rn as require_react } from "./index.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
 *
@@ -12,28 +12,8 @@ var IconPencil = /* @__PURE__ */ createReactComponent("outline", "pencil", "Penc
 	"d": "M13.5 6.5l4 4",
 	"key": "svg-1"
 }]]);
-// src/shared/hooks/usePaginatedData.jsx
-var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
-var import_jsx_runtime = require_jsx_runtime();
-function usePaginatedData(list, size, resetKey) {
-	const [page, setPage] = (0, import_react.useState)(1);
-	(0, import_react.useEffect)(() => setPage(1), [resetKey, size]);
-	const pageSize = Math.max(1, Number(size) || 1);
-	const total = list?.length || 0;
-	const pages = Math.max(1, Math.ceil(total / pageSize));
-	const pg = Math.min(page, pages);
-	return {
-		rows: list?.slice((pg - 1) * pageSize, pg * pageSize),
-		pager: total > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Pager, {
-			page: pg,
-			pages,
-			size: pageSize,
-			total,
-			onPage: setPage
-		})
-	};
-}
 // src/shared/hooks/useRemoteResource.js
+var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 function useRemoteResource(fetcher, enabled = true) {
 	const [data, setData] = (0, import_react.useState)(null);
 	const [loading, setLoading] = (0, import_react.useState)(false);
@@ -79,4 +59,4 @@ function useRemoteResource(fetcher, enabled = true) {
 		reload
 	};
 }
-export { usePaginatedData as n, IconPencil as r, useRemoteResource as t };
+export { IconPencil as n, useRemoteResource as t };

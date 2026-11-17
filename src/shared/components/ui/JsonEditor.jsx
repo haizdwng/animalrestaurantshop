@@ -3,7 +3,6 @@ import Editor from '@monaco-editor/react';
 import { IconBraces, IconDeviceFloppy, IconFileUpload, IconRefresh } from '@tabler/icons-react';
 import Button from '@/shared/components/ui/Button';
 import Dialog from '@/shared/components/ui/Dialog';
-import Tooltip from '@/shared/components/ui/Tooltip';
 import { ErrorState, Spinner } from '@/shared/components/ui/Feedback';
 import { Skeleton } from '@/shared/components/ui/Skeleton';
 import { toast, toastError } from '@/shared/components/ui/Toast';
@@ -163,24 +162,11 @@ export default function JsonEditor({ load, save, deps = [], extraActions = null 
     <section className={`ui-card min-w-0 overflow-hidden ${parseError ? 'ring-1 ring-bad/40 ring-inset' : ''}`}>
       <div role='toolbar' aria-label='Công cụ dữ liệu JSON' className='flex min-w-0 items-center justify-end gap-2 border-b border-line px-3 py-2.5'>
         {extraActions}
-        <input ref={uploadInput} type='file' accept='.json,application/json' className='sr-only' tabIndex={-1}
-          aria-label='Chọn tệp JSON để nhập' onChange={importFile} />
-        <Tooltip text='Tải lại dữ liệu từ máy chủ' side='top'>
-          <Button variant='ghost' size='sm' className='size-9! shrink-0 p-0!' aria-label='Tải lại' title='Tải lại'
-            onClick={() => dirty ? setConfirmReload(true) : reload()} disabled={saving}><IconRefresh size={17} /></Button>
-        </Tooltip>
-        <Tooltip text='Định dạng JSON' side='top'>
-          <Button variant='ghost' size='sm' className='size-9! shrink-0 p-0!' aria-label='Định dạng JSON' title='Định dạng JSON'
-            onClick={format} disabled={Boolean(parseError) || saving}><IconBraces size={17} /></Button>
-        </Tooltip>
-        <Tooltip text='Nhập dữ liệu từ tệp .json' side='top'>
-          <Button variant='ghost' size='sm' className='size-9! shrink-0 p-0!' aria-label='Nhập tệp JSON' title='Nhập tệp JSON'
-            onClick={() => uploadInput.current?.click()} disabled={saving}><IconFileUpload size={17} /></Button>
-        </Tooltip>
-        <Tooltip text='Lưu dữ liệu lên máy chủ (Ctrl/⌘ + S)' side='top'>
-          <Button size='sm' className='size-9! shrink-0 p-0!' aria-label='Lưu JSON' title='Lưu JSON'
-            onClick={submit} loading={saving} disabled={!dirty || Boolean(parseError)}><IconDeviceFloppy size={17} /></Button>
-        </Tooltip>
+        <input ref={uploadInput} type='file' accept='.json,application/json' className='sr-only' tabIndex={-1} aria-label='Chọn tệp JSON để nhập' onChange={importFile} />
+        <Button variant='ghost' size='sm' className='size-9! shrink-0 p-0!' aria-label='Tải lại' title='Tải lại' onClick={() => dirty ? setConfirmReload(true) : reload()} disabled={saving}><IconRefresh size={17} /></Button>
+        <Button variant='ghost' size='sm' className='size-9! shrink-0 p-0!' aria-label='Định dạng JSON' title='Định dạng JSON' onClick={format} disabled={Boolean(parseError) || saving}><IconBraces size={17} /></Button>
+        <Button variant='ghost' size='sm' className='size-9! shrink-0 p-0!' aria-label='Nhập tệp JSON' title='Nhập tệp JSON' onClick={() => uploadInput.current?.click()} disabled={saving}><IconFileUpload size={17} /></Button>
+        <Button size='sm' className='size-9! shrink-0 p-0!' aria-label='Lưu JSON' title='Lưu JSON' onClick={submit} loading={saving} disabled={!dirty || Boolean(parseError)}><IconDeviceFloppy size={17} /></Button>
       </div>
       {parseError && (
         <div role='alert' className='flex items-start gap-2 border-b border-bad/30 bg-bad/10 px-4 py-3 text-xs text-bad'>

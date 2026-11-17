@@ -1,4 +1,4 @@
-import { Coin, Logo, Spinner, Tooltip } from '@/shared/components/ui';
+import { Coin, Logo, Spinner } from '@/shared/components/ui';
 import { formatNumber } from '@/shared/library/format';
 
 export default function AppHeader({ nav, current, onNavigate, coins, syncing, coinSyncing, onRefresh, badgeKeys = [] }) {
@@ -16,13 +16,10 @@ export default function AppHeader({ nav, current, onNavigate, coins, syncing, co
             </button>
           ))}
         </nav>
-        <Tooltip text='Số xu hiện có · Bấm để cập nhật' align='end' className='ml-auto shrink-0'>
-          <button type='button' onClick={onRefresh} aria-label={`Hiện có ${formatNumber(coins)} xu. Bấm để cập nhật`} aria-busy={coinSyncing || undefined}
-            className='flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-coin/30 bg-coin/10 px-3 text-sm font-bold text-coin tabular-nums transition-colors hover:bg-coin/15'>
-            {coinSyncing ? <Spinner size={19} /> : <Coin size={20} />}
-            <span className='min-w-5 text-right'>{formatNumber(coins)}</span>
-          </button>
-        </Tooltip>
+        <button type='button' onClick={onRefresh} aria-label={`Hiện có ${formatNumber(coins)} xu. Bấm để cập nhật`} title='Số xu hiện có · Bấm để cập nhật' aria-busy={coinSyncing || undefined} className='ml-auto flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-coin/30 bg-coin/10 px-3 text-sm font-bold text-coin tabular-nums transition-colors hover:bg-coin/15'>
+          {coinSyncing ? <Spinner size={19} /> : <Coin size={20} />}
+          <span className='min-w-5 text-right'>{formatNumber(coins)}</span>
+        </button>
       </div>
       {syncing && <div role='progressbar' aria-label='Đang đồng bộ dữ liệu' className='absolute inset-x-0 -bottom-px h-px overflow-hidden'><span className='block h-full w-1/3 animate-indeterminate bg-lime' /></div>}
     </header>

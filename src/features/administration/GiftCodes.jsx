@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { IconGift, IconPencil, IconPlus, IconRefresh, IconTrash } from '@tabler/icons-react';
-import { Button, Coin, Dialog, ErrorState, Field, Menu, PagerSkeleton, RowSkeleton, SearchInput, Skeleton, Spinner, toast, toastError } from '@/shared/components/ui';
+import { Button, Coin, Dialog, ErrorState, Field, Menu, PageSizeSelect, PagerSkeleton, RowSkeleton, SearchInput, Skeleton, Spinner, toast, toastError } from '@/shared/components/ui';
 import { formatDateTime, formatNumber } from '@/shared/library/format';
 import { EMPTY_GIFT_CODE, GIFT_CODE_PAGE_SIZE } from '@/features/administration/config';
 import Head from '@/features/administration/Head';
@@ -37,50 +37,57 @@ const identicalIds = (left, right) => left.length === right.length && left.every
 
 function UserAssignment({ title, description, users, usersLoading, selected, onChange }) {
   const [query, setQuery] = useState('');
-  const selectedSet = new Set(selected);
-  const filtered = (users || []).filter((user) => {
-    const searchable = `${user.username || ''} ${user.playerName || user.name || ''} ${user.openid || ''} ${userId(user)}`.toLowerCase();
-    return !selectedSet.has(userId(user)) && searchable.includes(query.trim().toLowerCase());
-  });
-  const selectedUsers = selected.map((id) => (users || []).find((user) => userId(user) === id) || { _id: id });
+  const [pageSize, setPageSize] = useState(GIFT_CODE_PAGE_SIZE);
+  const selectedSet = useMemo(() => new Set(selected), [selected]);
+  const available = useMemo(() => (users || []).filter((user) => {
+    const text = `${user.username || ''} ${user.playerName || user.name || ''} ${user.openid || ''} ${userId(user)}`.toLowerCase();
+    return !selectedSet.has(userId(user)) && text.includes(query.trim().toLowerCase());
+  }), [users, selectedSet, query]);
+  const userLookup = useMemo(() => new Map((users || []).map((user) => [userId(user), user])), [users]);
+  const selectedUsers = useMemo(() => selected.map((id) => userLookup.get(id) || { _id: id }), [selected, userLookup]);
+  const { rows: selectedRows, pager: selectedPager } = usePaginatedData(selectedUsers, pageSize, `selected|${selected.join('|')}`);
+  const { rows: availableRows, pager: availablePager } = usePaginatedData(available, pageSize, `available|${query}|${selected.join('|')}`);
 
   return (
-    <section className='space-y-2 rounded-xl border border-line bg-bg p-3'>
-      <div>
-        <p className='text-xs font-bold'>{title}</p>
-        <p className='mt-1 text-[11px] text-mute'>{description}</p>
-      </div>
-      {selectedUsers.length > 0 && (
-        <div className='flex flex-wrap gap-1.5'>
-          {selectedUsers.map((user) => (
-            <button key={userId(user)} type='button' title='Bấm để bỏ người dùng'
-              onClick={() => onChange(selected.filter((id) => id !== userId(user)))}
-              className='max-w-full cursor-pointer truncate rounded-full border border-lime/20 bg-lime/10 px-2.5 py-1 text-[11px] font-bold text-lime hover:bg-lime/20'>
-              {user.username || user.openid || userId(user)} ×
-            </button>
-          ))}
+    <section className='min-w-0 space-y-3 rounded-xl border border-line bg-bg p-3'>
+      <div className='flex flex-wrap items-start justify-between gap-2'>
+        <div className='min-w-0 flex-1'>
+          <h3 className='text-xs font-bold'>{title}</h3>
+          <p className='mt-1 text-[11px] text-mute'>{description}</p>
         </div>
-      )}
-      <SearchInput value={query} onChange={setQuery} label='Tìm người dùng để thêm' placeholder='Tìm người dùng để thêm…' />
-      <div className='max-h-40 overflow-y-auto rounded-lg border border-line bg-panel'>
-        {usersLoading ? (
-          <p className='p-3 text-[11px] text-mute'>Đang tải danh sách người dùng…</p>
-        ) : filtered.length ? (
-          filtered.slice(0, 50).map((user) => (
-            <button key={userId(user)} type='button'
-              onClick={() => onChange([...selected, userId(user)])}
-              className='flex w-full min-w-0 cursor-pointer items-center gap-2 border-b border-line px-3 py-2 text-left last:border-0 hover:bg-raise'>
-              <span className='grid size-7 shrink-0 place-items-center rounded-md bg-raise text-[11px] font-bold text-lime'>
-                {(user.username || '?')[0].toUpperCase()}
-              </span>
-              <span className='min-w-0 flex-1'>
-                <span className='block truncate text-xs font-bold'>{user.username || 'Không có tên'}</span>
-                <span className='block truncate text-[11px] text-mute'>{user.playerName || user.name || user.openid || userId(user)}</span>
-              </span>
-              <span className='shrink-0 text-[11px] text-lime'>Thêm</span>
-            </button>
-          ))
-        ) : <p className='p-3 text-[11px] text-mute'>{query ? 'Không tìm thấy người dùng' : 'Không còn người dùng để thêm'}</p>}
+        <div className='w-32 shrink-0'><PageSizeSelect value={pageSize} onChange={setPageSize} /></div>
+      </div>
+      <div className='space-y-2'>
+        <p className='text-[11px] font-semibold text-mute'>Đã chọn: {selectedUsers.length.toLocaleString('vi-VN')}</p>
+        {selectedRows.length ? (
+          <ul className='divide-y divide-line overflow-hidden rounded-lg border border-line bg-panel'>
+            {selectedRows.map((user) => (
+              <li key={userId(user)} className='flex min-w-0 items-center justify-between gap-2 px-2.5 py-2'>
+                <span className='min-w-0 truncate text-xs'>{user.username || user.openid || userId(user)}</span>
+                <Button type='button' variant='quiet' size='sm' className='shrink-0 text-bad!' aria-label={`Bỏ ${user.username || userId(user)}`} onClick={() => onChange(selected.filter((id) => id !== userId(user)))}>Bỏ</Button>
+              </li>
+            ))}
+          </ul>
+        ) : <p className='rounded-lg border border-dashed border-line p-3 text-[11px] text-mute'>Chưa chọn người dùng nào</p>}
+        {selectedPager}
+      </div>
+      <div className='space-y-2 border-t border-line pt-3'>
+        <p className='text-[11px] font-semibold text-mute'>Có thể thêm: {available.length.toLocaleString('vi-VN')}</p>
+        <SearchInput value={query} onChange={setQuery} label={`Tìm ${title.toLowerCase()}`} placeholder='Tìm tên đăng nhập, người chơi, OpenID…' />
+        {usersLoading ? <p className='p-3 text-[11px] text-mute'>Đang tải danh sách người dùng…</p> : availableRows.length ? (
+          <ul className='divide-y divide-line overflow-hidden rounded-lg border border-line bg-panel'>
+            {availableRows.map((user) => (
+              <li key={userId(user)} className='flex min-w-0 items-center justify-between gap-2 px-2.5 py-2'>
+                <span className='min-w-0 flex-1'>
+                  <span className='block truncate text-xs font-semibold'>{user.username || user.openid || userId(user)}</span>
+                  <span className='block truncate text-[11px] text-mute'>{user.playerName || user.name || user.openid || userId(user)}</span>
+                </span>
+                <Button type='button' variant='ghost' size='sm' className='shrink-0' onClick={() => onChange([...selected, userId(user)])}>Thêm</Button>
+              </li>
+            ))}
+          </ul>
+        ) : <p className='rounded-lg border border-dashed border-line p-3 text-[11px] text-mute'>Không còn người dùng phù hợp</p>}
+        {availablePager}
       </div>
     </section>
   );
@@ -90,25 +97,15 @@ function GiftCodeDialog({ dialog, form, setForm, busy, onClose, onCreate, onEdit
   const editing = dialog?.kind === 'edit';
   const setField = (key) => (event) => setForm((state) => ({ ...state, [key]: event.target.value }));
   return (
-    <Dialog open={dialog?.kind === 'create' || editing}
-      title={editing ? `Sửa mã đổi thưởng ${dialog?.giftcode?.code}` : 'Thêm mã đổi thưởng'} onClose={onClose}>
+    <Dialog open={dialog?.kind === 'create' || editing} title={editing ? `Sửa mã đổi thưởng ${dialog?.giftcode?.code}` : 'Thêm mã đổi thưởng'} onClose={onClose}>
       <form noValidate className='space-y-4' onSubmit={editing ? onEdit : onCreate}>
-        <Field label='Mã đổi thưởng' placeholder='GIFTCODE' autoFocus autoCapitalize='characters'
-          value={form.code} onChange={setField('code')} />
-        <Field label='Số xu' type='number' inputMode='numeric' placeholder='100'
-          value={form.coin} onChange={setField('coin')} />
-        <Field label='Ngày hết hạn' type='datetime-local' hint='để trống nếu không giới hạn'
-          value={form.date} onChange={setField('date')} />
-        {editing && (
-          <>
-            <UserAssignment title='Người dùng được phép dùng'
-              description='Chỉ các tài khoản được chọn mới dùng được mã đổi thưởng này.'
-              users={users} usersLoading={usersLoading} selected={selectedUsers} onChange={setSelectedUsers} />
-            <UserAssignment title='Đã sử dụng'
-              description='Danh sách người đã đổi thưởng. Có thể thêm hoặc bỏ để chỉnh trạng thái đã dùng.'
-              users={users} usersLoading={usersLoading} selected={selectedUsed} onChange={setSelectedUsed} />
-          </>
-        )}
+        <Field label='Mã đổi thưởng' placeholder='GIFTCODE' autoFocus autoCapitalize='characters' value={form.code} onChange={setField('code')} />
+        <Field label='Số xu' type='number' inputMode='numeric' placeholder='100' value={form.coin} onChange={setField('coin')} />
+        <Field label='Ngày hết hạn' type='datetime-local' hint='để trống nếu không giới hạn' value={form.date} onChange={setField('date')} />
+        <>
+          <UserAssignment title='Người dùng được phép dùng' description='Chỉ các tài khoản được chọn mới dùng được mã đổi thưởng này.' users={users} usersLoading={usersLoading} selected={selectedUsers} onChange={setSelectedUsers} />
+          <UserAssignment title='Đã sử dụng' description='Danh sách người đã đổi thưởng. Có thể thêm hoặc bỏ để chỉnh trạng thái đã dùng.' users={users} usersLoading={usersLoading} selected={selectedUsed} onChange={setSelectedUsed} />
+        </>
         <Button type='submit' className='w-full' loading={busy}>
           {editing ? 'Lưu thay đổi' : 'Thêm mã đổi thưởng'}
         </Button>
@@ -132,10 +129,10 @@ function DeleteDialog({ giftcode, busy, onClose, onConfirm }) {
 };
 
 export default function GiftCodes() {
-  const { data: list, loading, error, reload: load } = useRemoteResource(async () => (await api.adminGiftCodes()).giftcodes);
-  const { data: users, loading: usersLoading } = useRemoteResource(async () => (await api.adminUsers()).users);
+  const { data: users, loading: usersLoading, error: usersError, reload: reloadUsers } = useRemoteResource(async () => (await api.adminUsers()).users);
+  const { data: list, loading, error, reload: load } = useRemoteResource(async () => (await api.adminGiftCodes()).giftcodes, Array.isArray(users));
   const [query, setQuery] = useState('');
-  const pageSize = GIFT_CODE_PAGE_SIZE;
+  const [pageSize, setPageSize] = useState(GIFT_CODE_PAGE_SIZE);
   const [dialog, setDialog] = useState(null);
   const [form, setForm] = useState(EMPTY_GIFT_CODE);
   const [busy, setBusy] = useState(false);
@@ -173,6 +170,7 @@ export default function GiftCodes() {
       load();
     } catch (error) {
       toastError(error);
+      load();
     } finally {
       setBusy(false);
     };
@@ -187,7 +185,12 @@ export default function GiftCodes() {
   const create = (event) => {
     event.preventDefault();
     const value = values();
-    if (value) run(() => api.adminCreateGiftCode(value), 'Đã thêm mã đổi thưởng');
+    if (!value) return;
+    run(async () => {
+      const created = await api.adminCreateGiftCode(value);
+      if (selectedUsers.length || selectedUsed.length) await api.adminEditGiftCode(value.code, { users: selectedUsers, used: selectedUsed });
+      return created;
+    }, 'Đã thêm mã đổi thưởng');
   };
   const edit = (event) => {
     event.preventDefault();
@@ -214,11 +217,14 @@ export default function GiftCodes() {
             <Button variant='ghost' size='sm' onClick={load} disabled={loading} aria-label='Tải lại danh sách mã đổi thưởng'>
               {loading ? <Spinner size={16} /> : <IconRefresh size={16} />}
             </Button>
-            <Button size='sm' onClick={openCreate}><IconPlus size={17} /> Thêm mã đổi thưởng</Button>
+            <Button size='sm' onClick={openCreate} disabled={!Array.isArray(users)}><IconPlus size={17} /> Thêm mã đổi thưởng</Button>
           </div>
         </Head>
-        <SearchInput value={query} onChange={setQuery} label='Tìm mã đổi thưởng' placeholder='Tìm mã đổi thưởng…' />
-        {!list && loading ? (
+        <div className='grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2'>
+          <SearchInput value={query} onChange={setQuery} label='Tìm mã đổi thưởng' placeholder='Tìm mã đổi thưởng…' />
+          <div className='w-32'><PageSizeSelect value={pageSize} onChange={setPageSize} /></div>
+        </div>
+        {!users && usersError ? <ErrorState message={usersError} onRetry={reloadUsers} loading={usersLoading} /> : !list && (loading || usersLoading) ? (
           <>
             <ul aria-busy='true' className='divide-y divide-line rounded-2xl border border-line bg-panel'>
               {Array.from({ length: Math.min(pageSize, 10) }).map((_, index) => (
@@ -240,12 +246,8 @@ export default function GiftCodes() {
           {query ? 'Không tìm thấy mã đổi thưởng phù hợp' : 'Chưa có mã đổi thưởng nào'}
         </p>}
       </div>
-      <GiftCodeDialog dialog={dialog} form={form} setForm={setForm} busy={busy} onClose={close}
-        onCreate={create} onEdit={edit} users={users} usersLoading={usersLoading}
-        selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers}
-        selectedUsed={selectedUsed} setSelectedUsed={setSelectedUsed} />
-      <DeleteDialog giftcode={dialog?.kind === 'delete' ? dialog.giftcode : null}
-        busy={busy} onClose={close} onConfirm={remove} />
+      <GiftCodeDialog dialog={dialog} form={form} setForm={setForm} busy={busy} onClose={close} onCreate={create} onEdit={edit} users={users} usersLoading={usersLoading} selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers} selectedUsed={selectedUsed} setSelectedUsed={setSelectedUsed} />
+      <DeleteDialog giftcode={dialog?.kind === 'delete' ? dialog.giftcode : null} busy={busy} onClose={close} onConfirm={remove} />
     </>
   );
 };

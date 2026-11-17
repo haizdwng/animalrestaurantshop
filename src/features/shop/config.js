@@ -1,7 +1,6 @@
 import { IconBox, IconChefHat, IconFish, IconFlower, IconMail, IconPhoto, IconStar, IconUsers, IconWheat, IconPlant2 } from '@tabler/icons-react';
 
 export const TOPUP = 'topup';
-export const PAGE = 60;
 export const CATEGORY_ICONS = {
   letters: IconMail,
   customers: IconUsers,

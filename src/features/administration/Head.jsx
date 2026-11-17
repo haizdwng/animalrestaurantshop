@@ -1,5 +1,5 @@
 import { Children, cloneElement, isValidElement } from 'react';
-import { Button, Tooltip } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui';
 
 function renderIconActions(element) {
   if (!isValidElement(element)) return element;
@@ -18,7 +18,7 @@ function renderIconActions(element) {
       className: 'size-9! shrink-0 p-0!',
       children: icon
     });
-    return <Tooltip text={label} side='top'>{button}</Tooltip>;
+    return button;
   };
 
   if (element.props.children === undefined) return element;

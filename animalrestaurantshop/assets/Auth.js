@@ -1,4 +1,4 @@
-import { $t as useLocation, Bt as Field, Jt as IconAlertTriangle, Lt as OtpButton, Rt as toast, Vt as Button, Yt as createReactComponent, Zt as require_jsx_runtime, bt as Logo, en as useNavigate, ft as login, gt as signupOtp, ht as signup, in as __toESM, jt as Tabs, mt as resetPassword, pt as passwordOtp, rn as require_react } from "./index.js";
+import { $t as useLocation, Bt as Field, Jt as IconAlertTriangle, Lt as OtpButton, Rt as toast, Vt as Button, Yt as createReactComponent, Zt as require_jsx_runtime, _t as signupOtp, en as useNavigate, gt as signup, ht as resetPassword, in as __toESM, jt as Tabs, mt as passwordOtp, pt as login, rn as require_react, xt as Logo } from "./index.js";
 import { n as IconArrowLeft, t as IconArrowRight } from "./IconArrowRight.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
 import { t as StrengthBar } from "./StrengthBar.js";

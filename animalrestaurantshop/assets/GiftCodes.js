@@ -1,10 +1,11 @@
-import { Bt as Field, Dt as ErrorState, Et as Skeleton, Ft as Menu, I as adminDeleteGiftCode, It as Dialog, M as adminCreateGiftCode, Ot as Spinner, Rt as toast, T as formatNumber, Tt as RowSkeleton, U as adminGiftCodes, Vt as Button, Wt as IconRefresh, Z as adminUsers, Zt as require_jsx_runtime, in as __toESM, rn as require_react, w as formatDateTime, wt as PagerSkeleton, xt as SearchInput, yt as Coin, z as adminEditGiftCode, zt as toastError } from "./index.js";
+import { B as adminEditGiftCode, Bt as Field, Dt as Skeleton, E as formatNumber, Et as RowSkeleton, Ft as Menu, It as Dialog, L as adminDeleteGiftCode, Mt as PageSizeSelect, N as adminCreateGiftCode, Ot as ErrorState, Q as adminUsers, Rt as toast, St as SearchInput, T as formatDateTime, Tt as PagerSkeleton, Vt as Button, W as adminGiftCodes, Wt as IconRefresh, Zt as require_jsx_runtime, bt as Coin, in as __toESM, kt as Spinner, rn as require_react, zt as toastError } from "./index.js";
 import { t as IconGift } from "./IconGift.js";
-import { n as usePaginatedData, r as IconPencil, t as useRemoteResource } from "./useRemoteResource.js";
+import { n as IconPencil, t as useRemoteResource } from "./useRemoteResource.js";
 import { t as IconPlus } from "./IconPlus.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { i as EMPTY_GIFT_CODE } from "./config.js";
 import { t as Head } from "./Head.js";
+import { t as usePaginatedData } from "./usePaginatedData.js";
 // src/features/administration/GiftCodes.jsx
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var import_jsx_runtime = require_jsx_runtime();
@@ -59,71 +60,117 @@ var selectedIds = (list) => (list || []).map((user) => String(typeof user === "o
 var identicalIds = (left, right) => left.length === right.length && left.every((id) => right.includes(id));
 function UserAssignment({ title, description, users, usersLoading, selected, onChange }) {
 	const [query, setQuery] = (0, import_react.useState)("");
-	const selectedSet = new Set(selected);
-	const filtered = (users || []).filter((user) => {
-		const searchable = `${user.username || ""} ${user.playerName || user.name || ""} ${user.openid || ""} ${userId(user)}`.toLowerCase();
-		return !selectedSet.has(userId(user)) && searchable.includes(query.trim().toLowerCase());
-	});
-	const selectedUsers = selected.map((id) => (users || []).find((user) => userId(user) === id) || { _id: id });
+	const [pageSize, setPageSize] = (0, import_react.useState)(10);
+	const selectedSet = (0, import_react.useMemo)(() => new Set(selected), [selected]);
+	const available = (0, import_react.useMemo)(() => (users || []).filter((user) => {
+		const text = `${user.username || ""} ${user.playerName || user.name || ""} ${user.openid || ""} ${userId(user)}`.toLowerCase();
+		return !selectedSet.has(userId(user)) && text.includes(query.trim().toLowerCase());
+	}), [
+		users,
+		selectedSet,
+		query
+	]);
+	const userLookup = (0, import_react.useMemo)(() => new Map((users || []).map((user) => [userId(user), user])), [users]);
+	const selectedUsers = (0, import_react.useMemo)(() => selected.map((id) => userLookup.get(id) || { _id: id }), [selected, userLookup]);
+	const { rows: selectedRows, pager: selectedPager } = usePaginatedData(selectedUsers, pageSize, `selected|${selected.join("|")}`);
+	const { rows: availableRows, pager: availablePager } = usePaginatedData(available, pageSize, `available|${query}|${selected.join("|")}`);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
-		className: "space-y-2 rounded-xl border border-line bg-bg p-3",
+		className: "min-w-0 space-y-3 rounded-xl border border-line bg-bg p-3",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "text-xs font-bold",
-				children: title
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-				className: "mt-1 text-[11px] text-mute",
-				children: description
-			})] }),
-			selectedUsers.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "flex flex-wrap gap-1.5",
-				children: selectedUsers.map((user) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-					type: "button",
-					title: "Bấm để bỏ người dùng",
-					onClick: () => onChange(selected.filter((id) => id !== userId(user))),
-					className: "max-w-full cursor-pointer truncate rounded-full border border-lime/20 bg-lime/10 px-2.5 py-1 text-[11px] font-bold text-lime hover:bg-lime/20",
-					children: [user.username || user.openid || userId(user), " ×"]
-				}, userId(user)))
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex flex-wrap items-start justify-between gap-2",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "min-w-0 flex-1",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+						className: "text-xs font-bold",
+						children: title
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "mt-1 text-[11px] text-mute",
+						children: description
+					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "w-32 shrink-0",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageSizeSelect, {
+						value: pageSize,
+						onChange: setPageSize
+					})
+				})]
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
-				value: query,
-				onChange: setQuery,
-				label: "Tìm người dùng để thêm",
-				placeholder: "Tìm người dùng để thêm…"
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				className: "max-h-40 overflow-y-auto rounded-lg border border-line bg-panel",
-				children: usersLoading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "p-3 text-[11px] text-mute",
-					children: "Đang tải danh sách người dùng…"
-				}) : filtered.length ? filtered.slice(0, 50).map((user) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-					type: "button",
-					onClick: () => onChange([...selected, userId(user)]),
-					className: "flex w-full min-w-0 cursor-pointer items-center gap-2 border-b border-line px-3 py-2 text-left last:border-0 hover:bg-raise",
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "grid size-7 shrink-0 place-items-center rounded-md bg-raise text-[11px] font-bold text-lime",
-							children: (user.username || "?")[0].toUpperCase()
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-							className: "min-w-0 flex-1",
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "space-y-2",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+						className: "text-[11px] font-semibold text-mute",
+						children: ["Đã chọn: ", selectedUsers.length.toLocaleString("vi-VN")]
+					}),
+					selectedRows.length ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+						className: "divide-y divide-line overflow-hidden rounded-lg border border-line bg-panel",
+						children: selectedRows.map((user) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+							className: "flex min-w-0 items-center justify-between gap-2 px-2.5 py-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								className: "block truncate text-xs font-bold",
-								children: user.username || "Không có tên"
-							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								className: "block truncate text-[11px] text-mute",
-								children: user.playerName || user.name || user.openid || userId(user)
+								className: "min-w-0 truncate text-xs",
+								children: user.username || user.openid || userId(user)
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+								type: "button",
+								variant: "quiet",
+								size: "sm",
+								className: "shrink-0 text-bad!",
+								"aria-label": `Bỏ ${user.username || userId(user)}`,
+								onClick: () => onChange(selected.filter((id) => id !== userId(user))),
+								children: "Bỏ"
 							})]
-						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							className: "shrink-0 text-[11px] text-lime",
-							children: "Thêm"
-						})
-					]
-				}, userId(user))) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "p-3 text-[11px] text-mute",
-					children: query ? "Không tìm thấy người dùng" : "Không còn người dùng để thêm"
-				})
+						}, userId(user)))
+					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "rounded-lg border border-dashed border-line p-3 text-[11px] text-mute",
+						children: "Chưa chọn người dùng nào"
+					}),
+					selectedPager
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "space-y-2 border-t border-line pt-3",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+						className: "text-[11px] font-semibold text-mute",
+						children: ["Có thể thêm: ", available.length.toLocaleString("vi-VN")]
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
+						value: query,
+						onChange: setQuery,
+						label: `Tìm ${title.toLowerCase()}`,
+						placeholder: "Tìm tên đăng nhập, người chơi, OpenID…"
+					}),
+					usersLoading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "p-3 text-[11px] text-mute",
+						children: "Đang tải danh sách người dùng…"
+					}) : availableRows.length ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+						className: "divide-y divide-line overflow-hidden rounded-lg border border-line bg-panel",
+						children: availableRows.map((user) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+							className: "flex min-w-0 items-center justify-between gap-2 px-2.5 py-2",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+								className: "min-w-0 flex-1",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "block truncate text-xs font-semibold",
+									children: user.username || user.openid || userId(user)
+								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+									className: "block truncate text-[11px] text-mute",
+									children: user.playerName || user.name || user.openid || userId(user)
+								})]
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+								type: "button",
+								variant: "ghost",
+								size: "sm",
+								className: "shrink-0",
+								onClick: () => onChange([...selected, userId(user)]),
+								children: "Thêm"
+							})]
+						}, userId(user)))
+					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "rounded-lg border border-dashed border-line p-3 text-[11px] text-mute",
+						children: "Không còn người dùng phù hợp"
+					}),
+					availablePager
+				]
 			})
 		]
 	});
@@ -166,7 +213,7 @@ function GiftCodeDialog({ dialog, form, setForm, busy, onClose, onCreate, onEdit
 					value: form.date,
 					onChange: setField("date")
 				}),
-				editing && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(UserAssignment, {
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(UserAssignment, {
 					title: "Người dùng được phép dùng",
 					description: "Chỉ các tài khoản được chọn mới dùng được mã đổi thưởng này.",
 					users,
@@ -222,10 +269,10 @@ function DeleteDialog({ giftcode, busy, onClose, onConfirm }) {
 	});
 }
 function GiftCodes() {
-	const { data: list, loading, error, reload: load } = useRemoteResource(async () => (await adminGiftCodes()).giftcodes);
-	const { data: users, loading: usersLoading } = useRemoteResource(async () => (await adminUsers()).users);
+	const { data: users, loading: usersLoading, error: usersError, reload: reloadUsers } = useRemoteResource(async () => (await adminUsers()).users);
+	const { data: list, loading, error, reload: load } = useRemoteResource(async () => (await adminGiftCodes()).giftcodes, Array.isArray(users));
 	const [query, setQuery] = (0, import_react.useState)("");
-	const pageSize = 10;
+	const [pageSize, setPageSize] = (0, import_react.useState)(10);
 	const [dialog, setDialog] = (0, import_react.useState)(null);
 	const [form, setForm] = (0, import_react.useState)(EMPTY_GIFT_CODE);
 	const [busy, setBusy] = (0, import_react.useState)(false);
@@ -265,6 +312,7 @@ function GiftCodes() {
 			load();
 		} catch (error) {
 			toastError(error);
+			load();
 		} finally {
 			setBusy(false);
 		}
@@ -283,7 +331,15 @@ function GiftCodes() {
 	const create = (event) => {
 		event.preventDefault();
 		const value = values();
-		if (value) run(() => adminCreateGiftCode(value), "Đã thêm mã đổi thưởng");
+		if (!value) return;
+		run(async () => {
+			const created = await adminCreateGiftCode(value);
+			if (selectedUsers.length || selectedUsed.length) await adminEditGiftCode(value.code, {
+				users: selectedUsers,
+				used: selectedUsed
+			});
+			return created;
+		}, "Đã thêm mã đổi thưởng");
 	};
 	const edit = (event) => {
 		event.preventDefault();
@@ -320,17 +376,31 @@ function GiftCodes() {
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 							size: "sm",
 							onClick: openCreate,
+							disabled: !Array.isArray(users),
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlus, { size: 17 }), " Thêm mã đổi thưởng"]
 						})]
 					})
 				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
-					value: query,
-					onChange: setQuery,
-					label: "Tìm mã đổi thưởng",
-					placeholder: "Tìm mã đổi thưởng…"
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
+						value: query,
+						onChange: setQuery,
+						label: "Tìm mã đổi thưởng",
+						placeholder: "Tìm mã đổi thưởng…"
+					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+						className: "w-32",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageSizeSelect, {
+							value: pageSize,
+							onChange: setPageSize
+						})
+					})]
 				}),
-				!list && loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+				!users && usersError ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ErrorState, {
+					message: usersError,
+					onRetry: reloadUsers,
+					loading: usersLoading
+				}) : !list && (loading || usersLoading) ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 					"aria-busy": "true",
 					className: "divide-y divide-line rounded-2xl border border-line bg-panel",
 					children: Array.from({ length: Math.min(pageSize, 10) }).map((_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, {

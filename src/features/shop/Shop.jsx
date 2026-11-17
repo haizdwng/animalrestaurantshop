@@ -2,12 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconPlayerPlay, IconRefresh, IconShoppingCart, IconTrash } from '@tabler/icons-react';
 import { formatNumber } from '@/shared/library/format';
-import { Button, Coin, ErrorState, toast, toastError } from '@/shared/components/ui';
+import { Button, Coin, ErrorState, PageSizeSelect, toast, toastError } from '@/shared/components/ui';
+import usePaginatedData from '@/shared/hooks/usePaginatedData';
+import { matchesShopFilter, ownershipStatus } from '@/features/shop/shopFilters';
 import * as api from '@/shared/library/api';
 import TopUp from '@/shared/components/payment/TopUp';
-import { PAGE, TOPUP } from '@/features/shop/config';
+import { TOPUP } from '@/features/shop/config';
 import { hasPrice, matches } from '@/features/shop/shopUtilities';
-import { addCategoryToCart, cartCount, cartPayload, cartTotal, changeCartQuantity, eligibleCategoryProducts, getConflictingKeys, hasOptions, isOwnedOnce, productOptions, putInCart, removeCategoryFromCart, resolveCart } from '@/features/shop/cartUtils';
+import { addCategoryToCart, cartCount, cartPayload, cartTotal, changeCartQuantity, eligibleCategoryProducts, getConflictingKeys, productOptions, putInCart, removeCategoryFromCart, resolveCart } from '@/features/shop/cartUtils';
 import BuyDialog from '@/features/shop/BuyDialog';
 import CartDialog from '@/features/shop/CartDialog';
 import CategoryNav from '@/features/shop/CategoryNav';
@@ -26,7 +28,8 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
   const tabs = shop.tabs || [];
   const tabId = section || tabs[0]?.id || null;
   const [q, setQ] = useState('');
-  const [shown, setShown] = useState(PAGE);
+  const [pageSize, setPageSize] = useState(20);
+  const [filter, setFilter] = useState('all');
   const [item, setItem] = useState(null);
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
@@ -35,7 +38,6 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
   const [done, setDone] = useState(false);
   const maxQuantity = api.isAdmin(user) ? api.ADMIN_MAX_QTY : api.MAX_QTY;
   const conflicts = useMemo(() => getConflictingKeys(shop.tabs), [shop.tabs]);
-  const isOwned = (product) => hasOptions(product) ? product.options.every((option) => isOwnedOnce(option, product)) : isOwnedOnce(product);
   const selectTab = (next) => navigate(`/shop/${next}`);
 
   useEffect(() => {
@@ -46,16 +48,16 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
     };
     if (section !== TOPUP && !tabs.some((tab) => tab.id === section)) navigate(`/shop/${tabs[0].id}`, { replace: true });
   }, [tabs, section, navigate]);
-  useEffect(() => setShown(PAGE), [tabId, q]);
 
   const topup = tabId === TOPUP;
   const current = tabs.find((tab) => tab.id === tabId);
   const needle = q.trim().toLowerCase();
-  const products = useMemo(() => (Array.isArray(current?.products) ? current.products : []).filter((p) => matches(p, needle)), [current, needle]);
-  const hits = useMemo(() => Object.fromEntries(tabs.map((t) => {
-    const products = Array.isArray(t.products) ? t.products : [];
-    return [t.id, needle ? products.filter((p) => matches(p, needle)).length : products.length];
-  })), [tabs, needle]);
+  const cartKeys = useMemo(() => new Set(cart.map((entry) => entry.key)), [cart]);
+  const productMatches = (product) => matches(product, needle) && matchesShopFilter(product, filter, { cartKeys, conflicts });
+  const products = useMemo(() => (current?.products || []).filter(productMatches), [current, needle, filter, cartKeys, conflicts]);
+  const hits = useMemo(() => Object.fromEntries(tabs.map((tab) => [tab.id, tab.products.filter(productMatches).length])), [tabs, needle, filter, cartKeys, conflicts]);
+  const { rows: productRows, pager: productPager } = usePaginatedData(products, pageSize, `${tabId}|${needle}|${filter}`);
+  const ownedCount = (current?.products || []).filter((product) => ownershipStatus(product) === true).length;
 
   const entries = useMemo(() => resolveCart(cart, shop.tabs, maxQuantity), [cart, shop.tabs, maxQuantity]);
   const total = cartTotal(entries);
@@ -133,7 +135,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
     if (!shop.tabs) return shop.error ? <ErrorState message={shop.error} onRetry={onReload} loading={shop.loading} /> : <ShopSkeleton />;
     return (
       <>
-        <ShopToolbar title={current?.name} count={products.length} ownedCount={products.filter((p) => isOwned(p)).length} query={q} onQuery={setQ} loading={shop.loading} onReload={onReload} />
+        <ShopToolbar title={current?.name} count={products.length} ownedCount={ownedCount} query={q} onQuery={setQ} filter={filter} onFilter={setFilter} loading={shop.loading} onReload={onReload} />
 
         {!topup && (
           <div className='mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-panel px-3 py-2.5'>
@@ -156,23 +158,19 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
         )}
 
         {products.length === 0 ? (
-          <EmptyProducts searching={!!needle} tabs={tabs} hits={hits} onSelect={selectTab} />
+          <EmptyProducts searching={!!needle || filter !== 'all'} tabs={tabs} hits={hits} onSelect={selectTab} />
         ) : (
           <ul key={tabId} className={`grid animate-fade gap-2 transition-opacity sm:grid-cols-2 xl:grid-cols-3 ${shop.loading ? 'pointer-events-none opacity-50' : ''}`}>
-            {products.slice(0, shown).map((p, index) => (
+            {productRows.map((p, index) => (
               <ProductItem key={`${p.key}-${index}`} p={p} conflictingKeys={conflicts} poor={hasPrice(p) && p.price > user.coins} cartQuantity={productOptions(p).reduce((count, option) => count + (cartQuantities.get(option.key) || 0), 0)} onBuy={() => open(p)} />
             ))}
           </ul>
         )}
 
-        {products.length > shown && (
-          <div className='mt-6 flex flex-col items-center gap-2'>
-            <p className='text-[11px] text-mute tabular-nums'>
-              Đang hiện {formatNumber(shown)} / {formatNumber(products.length)}
-            </p>
-            <Button variant='ghost' size='sm' onClick={() => setShown((n) => n + PAGE * 2)}>
-              Xem thêm
-            </Button>
+        {products.length > 0 && (
+          <div className='mt-5 space-y-3'>
+            <div className='ml-auto max-w-40'><PageSizeSelect value={pageSize} onChange={setPageSize} /></div>
+            {productPager}
           </div>
         )}
       </>

@@ -1,5 +1,6 @@
-import { $ as createTransaction, Bt as Field, Dt as ErrorState, Et as Skeleton, Ht as IconX, It as Dialog, Jt as IconAlertTriangle, Kt as IconCircleCheck, Nt as Select, Ot as Spinner, Rt as toast, T as formatNumber, Vt as Button, Wt as IconRefresh, Xt as Badge, Yt as createReactComponent, Zt as require_jsx_runtime, _ as productOptions, a as cartTotal, b as resolveCart, c as eligibleCategoryProducts, d as getGroupRemaining, en as useNavigate, f as getPurchaseLimit, g as isOwnedOnce, h as isOnce, i as cartPayload, in as __toESM, kt as Tooltip, l as getConditions, m as hasValidPrice, n as addCategoryToCart, nt as ADMIN_MAX_QTY, o as changeCartQuantity, p as hasOptions, qt as IconChevronRight, r as cartCount, rn as require_react, rt as buy, s as clampCartQuantity, tn as useParams, u as getConflictingKeys, v as putInCart, vt as isAdmin, x as unmetConditions, xt as SearchInput, y as removeCategoryFromCart, yt as Coin, zt as toastError } from "./index.js";
+import { Bt as Field, Dt as Skeleton, E as formatNumber, Ht as IconX, It as Dialog, Jt as IconAlertTriangle, Kt as IconCircleCheck, Mt as PageSizeSelect, Nt as Select, Ot as ErrorState, Rt as toast, S as unmetConditions, St as SearchInput, Vt as Button, Wt as IconRefresh, Xt as Badge, Yt as createReactComponent, Zt as require_jsx_runtime, _ as isOwnedOnce, a as cartTotal, b as removeCategoryFromCart, bt as Coin, c as eligibleCategoryProducts, d as getGroupRemaining, en as useNavigate, et as createTransaction, f as getPurchaseLimit, g as isOnce, h as isAvailable, i as cartPayload, in as __toESM, it as buy, kt as Spinner, l as getConditions, m as hasValidPrice, n as addCategoryToCart, o as changeCartQuantity, p as hasOptions, qt as IconChevronRight, r as cartCount, rn as require_react, rt as ADMIN_MAX_QTY, s as clampCartQuantity, tn as useParams, u as getConflictingKeys, v as productOptions, x as resolveCart, y as putInCart, yt as isAdmin, zt as toastError } from "./index.js";
 import { t as IconTrash } from "./IconTrash.js";
+import { t as usePaginatedData } from "./usePaginatedData.js";
 import { i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
 import { n as IconCheck, t as IconPhoto } from "./IconPhoto.js";
 import { i as IconStar, n as hasPrice, r as matches, t as Tile } from "./Tile.js";
@@ -221,8 +222,59 @@ var IconWheat = /* @__PURE__ */ createReactComponent("outline", "wheat", "Wheat"
 		"key": "svg-3"
 	}]
 ]);
-// src/shared/components/payment/TopUp.jsx
+// src/features/shop/shopFilters.js
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
+var SHOP_FILTER_OPTIONS = Object.freeze([
+	{
+		value: "all",
+		label: "Tất cả vật phẩm"
+	},
+	{
+		value: "owned",
+		label: "Đã sở hữu"
+	},
+	{
+		value: "unowned",
+		label: "Chưa sở hữu"
+	},
+	{
+		value: "available",
+		label: "Có thể mua"
+	},
+	{
+		value: "locked",
+		label: "Chưa đủ điều kiện"
+	},
+	{
+		value: "cart",
+		label: "Trong giỏ hàng"
+	}
+]);
+function ownedValue(value) {
+	if (typeof value === "boolean") return value;
+	if (typeof value === "number") return Number.isFinite(value) ? value > 0 : null;
+	if (typeof value === "string") return value.trim().length > 0;
+	return null;
+}
+function ownershipStatus(group) {
+	const groupStatus = ownedValue(group?.owned);
+	const optionStatuses = (hasOptions(group) ? group.options : []).map((option) => ownedValue(option?.owned));
+	if (groupStatus === true || optionStatuses.includes(true)) return true;
+	if (groupStatus === false || optionStatuses.includes(false)) return false;
+	return null;
+}
+function matchesShopFilter(group, filter, { cartKeys = /* @__PURE__ */ new Set(), conflicts = /* @__PURE__ */ new Set() } = {}) {
+	const choices = productOptions(group);
+	switch (filter) {
+		case "owned": return ownershipStatus(group) === true;
+		case "unowned": return ownershipStatus(group) === false;
+		case "available": return choices.some((product) => isAvailable(product, group, conflicts));
+		case "locked": return choices.some((product) => unmetConditions(product, group));
+		case "cart": return choices.some((product) => cartKeys.has(product.key));
+		default: return true;
+	}
+}
+// src/shared/components/payment/TopUp.jsx
 var import_jsx_runtime = require_jsx_runtime();
 var PRESETS = [
 	20,
@@ -1110,38 +1162,58 @@ function ShopSkeleton() {
 	});
 }
 // src/features/shop/ShopToolbar.jsx
-function ShopToolbar({ title, count, ownedCount, query, onQuery, loading, onReload }) {
+function ShopToolbar({ title, count, ownedCount, query, onQuery, filter, onFilter, loading, onReload }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-		className: "mb-4 flex flex-wrap items-end gap-3",
+		className: "mb-4 space-y-3",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "min-w-0 flex-1",
+			className: "min-w-0",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
 				className: "ui-heading",
 				children: title || "Cửa hàng"
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-				className: "ui-description mt-1 truncate tabular-nums",
-				children: [query.trim() ? `${formatNumber(count)} kết quả cho “${query.trim()}”` : `${formatNumber(count)} vật phẩm`, ownedCount > 0 && ` · ${formatNumber(ownedCount)} đã sở hữu`]
+				className: "ui-description mt-1 tabular-nums",
+				children: [
+					query.trim() ? `${formatNumber(count)} kết quả cho “${query.trim()}”` : `${formatNumber(count)} vật phẩm`,
+					" · ",
+					formatNumber(ownedCount),
+					" đã sở hữu"
+				]
 			})]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "flex w-full items-center gap-2 sm:w-auto",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
-				label: "Tìm vật phẩm",
-				placeholder: "Tìm theo tên hoặc mã…",
-				value: query,
-				onChange: onQuery,
-				disabled: loading,
-				className: "min-w-0 flex-1 sm:w-72"
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
-				text: "Tải lại dữ liệu cửa hàng",
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+			className: "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2 sm:grid-cols-[minmax(12rem,1fr)_minmax(10rem,12rem)_auto]",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
+					label: "Tìm vật phẩm",
+					placeholder: "Tìm theo tên hoặc mã…",
+					value: query,
+					onChange: onQuery,
+					disabled: loading,
+					className: "min-w-0"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "col-span-2 row-start-2 sm:col-span-1 sm:row-start-auto",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Select, {
+						label: "Lọc vật phẩm",
+						value: filter,
+						onChange: onFilter,
+						disabled: loading,
+						className: "w-full",
+						children: SHOP_FILTER_OPTIONS.map(({ value, label }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+							value,
+							children: label
+						}, value))
+					})
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 					variant: "ghost",
-					className: "size-10! px-0!",
+					className: "col-start-2 row-start-1 size-10! px-0! sm:col-start-3 sm:row-start-auto",
 					onClick: onReload,
 					disabled: loading,
 					"aria-label": "Tải lại cửa hàng",
+					title: "Tải lại dữ liệu cửa hàng",
 					children: loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 17 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 17 })
 				})
-			})]
+			]
 		})]
 	});
 }
@@ -1227,7 +1299,8 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 	const tabs = shop.tabs || [];
 	const tabId = section || tabs[0]?.id || null;
 	const [q, setQ] = (0, import_react.useState)("");
-	const [shown, setShown] = (0, import_react.useState)(60);
+	const [pageSize, setPageSize] = (0, import_react.useState)(20);
+	const [filter, setFilter] = (0, import_react.useState)("all");
 	const [item, setItem] = (0, import_react.useState)(null);
 	const [cart, setCart] = (0, import_react.useState)([]);
 	const [cartOpen, setCartOpen] = (0, import_react.useState)(false);
@@ -1236,7 +1309,6 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 	const [done, setDone] = (0, import_react.useState)(false);
 	const maxQuantity = isAdmin(user) ? ADMIN_MAX_QTY : 100;
 	const conflicts = (0, import_react.useMemo)(() => getConflictingKeys(shop.tabs), [shop.tabs]);
-	const isOwned = (product) => hasOptions(product) ? product.options.every((option) => isOwnedOnce(option, product)) : isOwnedOnce(product);
 	const selectTab = (next) => navigate(`/shop/${next}`);
 	(0, import_react.useEffect)(() => {
 		if (!tabs.length) return;
@@ -1250,15 +1322,30 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 		section,
 		navigate
 	]);
-	(0, import_react.useEffect)(() => setShown(60), [tabId, q]);
 	const topup = tabId === TOPUP;
 	const current = tabs.find((tab) => tab.id === tabId);
 	const needle = q.trim().toLowerCase();
-	const products = (0, import_react.useMemo)(() => (Array.isArray(current?.products) ? current.products : []).filter((p) => matches(p, needle)), [current, needle]);
-	const hits = (0, import_react.useMemo)(() => Object.fromEntries(tabs.map((t) => {
-		const products = Array.isArray(t.products) ? t.products : [];
-		return [t.id, needle ? products.filter((p) => matches(p, needle)).length : products.length];
-	})), [tabs, needle]);
+	const cartKeys = (0, import_react.useMemo)(() => new Set(cart.map((entry) => entry.key)), [cart]);
+	const productMatches = (product) => matches(product, needle) && matchesShopFilter(product, filter, {
+		cartKeys,
+		conflicts
+	});
+	const products = (0, import_react.useMemo)(() => (current?.products || []).filter(productMatches), [
+		current,
+		needle,
+		filter,
+		cartKeys,
+		conflicts
+	]);
+	const hits = (0, import_react.useMemo)(() => Object.fromEntries(tabs.map((tab) => [tab.id, tab.products.filter(productMatches).length])), [
+		tabs,
+		needle,
+		filter,
+		cartKeys,
+		conflicts
+	]);
+	const { rows: productRows, pager: productPager } = usePaginatedData(products, pageSize, `${tabId}|${needle}|${filter}`);
+	const ownedCount = (current?.products || []).filter((product) => ownershipStatus(product) === true).length;
 	const entries = (0, import_react.useMemo)(() => resolveCart(cart, shop.tabs, maxQuantity), [
 		cart,
 		shop.tabs,
@@ -1360,9 +1447,11 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShopToolbar, {
 				title: current?.name,
 				count: products.length,
-				ownedCount: products.filter((p) => isOwned(p)).length,
+				ownedCount,
 				query: q,
 				onQuery: setQ,
+				filter,
+				onFilter: setFilter,
 				loading: shop.loading,
 				onReload
 			}),
@@ -1397,13 +1486,13 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 				})]
 			}),
 			products.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(EmptyProducts, {
-				searching: !!needle,
+				searching: !!needle || filter !== "all",
 				tabs,
 				hits,
 				onSelect: selectTab
 			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 				className: `grid animate-fade gap-2 transition-opacity sm:grid-cols-2 xl:grid-cols-3 ${shop.loading ? "pointer-events-none opacity-50" : ""}`,
-				children: products.slice(0, shown).map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProductItem, {
+				children: productRows.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProductItem, {
 					p,
 					conflictingKeys: conflicts,
 					poor: hasPrice(p) && p.price > user.coins,
@@ -1411,22 +1500,15 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 					onBuy: () => open(p)
 				}, `${p.key}-${index}`))
 			}, tabId),
-			products.length > shown && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "mt-6 flex flex-col items-center gap-2",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-					className: "text-[11px] text-mute tabular-nums",
-					children: [
-						"Đang hiện ",
-						formatNumber(shown),
-						" / ",
-						formatNumber(products.length)
-					]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-					variant: "ghost",
-					size: "sm",
-					onClick: () => setShown((n) => n + 120),
-					children: "Xem thêm"
-				})]
+			products.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "mt-5 space-y-3",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "ml-auto max-w-40",
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageSizeSelect, {
+						value: pageSize,
+						onChange: setPageSize
+					})
+				}), productPager]
 			})
 		] });
 	};

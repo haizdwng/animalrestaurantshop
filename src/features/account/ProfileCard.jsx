@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { IconBriefcase2, IconCopy, IconLogout, IconPencil, IconStarFilled, IconUser, IconUserPlus } from '@tabler/icons-react';
 import { formatNumber, formatDate } from '@/shared/library/format';
 import { copyText } from '@/shared/library/clipboard';
-import { Badge, Button, Coin, Tooltip } from '@/shared/components/ui';
+import { Badge, Button, Coin } from '@/shared/components/ui';
 
 export default function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGiftCode, onRedeemInvite, onFriendLink, onBuffetLink }) {
   const [imageFailed, setImageFailed] = useState(false);
@@ -16,14 +16,10 @@ export default function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGift
           <div className='grid size-20 place-items-center overflow-hidden rounded-2xl border border-line bg-raise text-mute'>
             {user.avatar && !imageFailed ? <img src={user.avatar} alt='Ảnh đại diện' className='size-full object-cover' onError={() => setImageFailed(true)} /> : <IconUser size={30} stroke={1.5} />}
           </div>
-          <div className='absolute -right-2 -bottom-2 z-10'>
-            <Tooltip text='Chỉnh sửa ảnh đại diện' side='top'>
-              <button type='button' onClick={onEditAvatar} aria-label='Chỉnh sửa ảnh đại diện'
-              className='grid size-9 cursor-pointer place-items-center rounded-xl border-2 border-panel bg-lime text-bg hover:brightness-105'>
-                <IconPencil size={16} />
-              </button>
-            </Tooltip>
-          </div>
+          <button type='button' onClick={onEditAvatar} aria-label='Chỉnh sửa ảnh đại diện' title='Chỉnh sửa ảnh đại diện'
+            className='absolute -right-2 -bottom-2 z-10 grid size-9 cursor-pointer place-items-center rounded-xl border-2 border-panel bg-lime text-bg hover:brightness-105'>
+            <IconPencil size={16} />
+          </button>
         </div>
         <Button variant='quiet' size='sm' onClick={onLogout}><IconLogout size={16} /> Đăng xuất</Button>
       </div>
@@ -48,10 +44,7 @@ export default function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGift
           <Button variant='ghost' size='sm' className='min-w-0 flex-1' onClick={onRedeemInvite} disabled={invited}>
             <span className='truncate'>{invited ? `Đã nhập mã: ${user.friendInvite}` : 'Nhập mã mời'}</span>
           </Button>
-          <Tooltip text='Sao chép mã mời của bạn'>
-            <Button variant='ghost' size='sm' className='size-8! px-0!' disabled={!user.invite} aria-label='Sao chép mã mời'
-              onClick={() => user.invite && copyText(user.invite, 'Đã sao chép mã mời')}><IconCopy size={16} /></Button>
-          </Tooltip>
+          <Button variant='ghost' size='sm' className='size-8! px-0!' disabled={!user.invite} aria-label='Sao chép mã mời' title='Sao chép mã mời của bạn' onClick={() => user.invite && copyText(user.invite, 'Đã sao chép mã mời')}><IconCopy size={16} /></Button>
         </div>
         <div className='grid grid-cols-2 gap-2'>
           <Button variant='ghost' size='sm' className='min-w-0' onClick={onFriendLink}><IconUserPlus size={15} /><span className='truncate'>Kết bạn</span></Button>
