@@ -1,19 +1,18 @@
-import { $ as Coin, Ft as __toESM, Ot as createReactComponent, Pt as require_react, St as IconRefresh, Z as isAdmin, _t as toastError, at as Skeleton, bt as require_jsx_runtime, c as adminAddCoin, ft as SortSelect, gt as toast, i as formatDateTime, it as RowSkeleton, j as adminUsers, mt as Dialog, ot as ErrorState, p as adminCreateUser, pt as Menu, rt as PagerSkeleton, st as Spinner, ut as PageSizeSelect, v as adminDeleteUser, vt as Field, x as adminEditUser, yt as Button } from "./index.js";
+import { Et as createReactComponent, Mt as require_react, Nt as __toESM, Q as Coin, Z as isAdmin, _t as Field, at as ErrorState, c as adminAddCoin, dt as SortSelect, ft as Menu, gt as toastError, ht as toast, i as formatDateTime, it as Skeleton, j as adminUsers, lt as PageSizeSelect, nt as PagerSkeleton, ot as Spinner, p as adminCreateUser, pt as Dialog, rt as RowSkeleton, v as adminDeleteUser, vt as Button, x as adminEditUser, xt as IconRefresh, yt as require_jsx_runtime } from "./index.js";
 import { t as IconSearch } from "./IconSearch.js";
 import { t as IconUserPlus } from "./IconUserPlus.js";
 import { a as EMPTY_USER_FORM, n as COIN_PRESETS, s as USER_SORTS } from "./config.js";
 import { i as validate } from "./validate.js";
-import { n as usePaginatedData, t as useRemoteResource } from "./useRemoteResource.js";
+import { n as usePaginatedData, r as IconPencil, t as useRemoteResource } from "./useRemoteResource.js";
 import { t as Head } from "./Head.js";
-import { t as IconPencil } from "./IconPencil.js";
 import { t as IconTrash } from "./IconTrash.js";
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconCoins = createReactComponent("outline", "coins", "Coins", [
+var IconCoins = /* @__PURE__ */ createReactComponent("outline", "coins", "Coins", [
 	["path", {
 		"d": "M9 14c0 1.657 2.686 3 6 3s6 -1.343 6 -3s-2.686 -3 -6 -3s-6 1.343 -6 3",
 		"key": "svg-0"

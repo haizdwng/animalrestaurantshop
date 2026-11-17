@@ -6,8 +6,8 @@ import { compressJsonGZip } from '@/shared/library/compression/gzip';
 export const MAX_QTY = 100;
 
 export const getShop = async () => {
-  const r = await call('GET', '/user/shop');
-  return { ...r, tabs: normShop(r.shop) };
+  const response = await call('GET', '/user/shop');
+  return { ...response, tabs: normShop(response.shop) };
 };
 
 export const buy = async (items) => {

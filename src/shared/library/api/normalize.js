@@ -1,59 +1,89 @@
-export const num = (...v) => Number(v.find((x) => x !== undefined && x !== null && x !== '') ?? 0);
+export const num = (...values) => Number(values.find((value) => value !== undefined && value !== null && value !== '') ?? 0);
 
-export function normUser(u) {
-  if (!u || typeof u !== 'object') return null;
+export function normUser(user) {
+  if (!user || typeof user !== 'object') return null;
   return {
-    ...u,
-    id: u.id ?? u._id,
-    username: u.username ?? '',
-    playerName: u.name ?? u.playerName ?? u.username ?? '',
-    openid: u.openid ?? u.openId ?? '',
-    avatar: u.avatar ?? u.avatarUrl ?? '',
-    frame: u.frame ?? '',
-    coins: num(u.coins, u.coin, u.money, u.gold, u.balance),
-    star: num(u.star, u.stars),
-    role: u.role ?? '',
-    invite: u.invite ?? '',
-    friendInvite: u.friendInvite ?? u.friend_invite ?? '',
-    createdAt: u.createdAt ?? u.created_at
+    ...user,
+    id: user.id ?? user._id,
+    username: user.username ?? '',
+    playerName: user.name ?? user.playerName ?? user.username ?? '',
+    openid: user.openid ?? user.openId ?? '',
+    avatar: user.avatar ?? user.avatarUrl ?? '',
+    frame: user.frame ?? '',
+    coins: num(user.coins, user.coin, user.money, user.gold, user.balance),
+    star: num(user.star, user.stars),
+    role: user.role ?? '',
+    invite: user.invite ?? '',
+    friendInvite: user.friendInvite ?? user.friend_invite ?? '',
+    createdAt: user.createdAt ?? user.created_at
   };
 };
-export const pickUser = (r) => normUser(r.user ?? (r.username ? r : null));
 
-export const isAdmin = (u) => String(u?.role || '').toLowerCase() === 'administrator';
+export const pickUser = (response) => normUser(response.user ?? (response.username ? response : null));
+export const isAdmin = (user) => String(user?.role || '').toLowerCase() === 'administrator';
 
-const TAB_LABELS = {
+export const SHOP_CATEGORIES = Object.freeze({
   letters: 'Thư',
-  customers: 'Khách hàng',
-  boothOwners: 'Chủ quầy',
+  customers: 'Khách',
   memorials: 'Vật kỷ niệm',
-  cookbooks: 'Món ăn làm ngay',
-  musicians: 'Khách mời',
-  items: 'Vật phẩm',
-  terrace: 'Ban công',
-  pond: 'Ao cá',
-  vegetable: 'Vườn rau',
-  flower: 'Vườn hoa',
-  pet: 'Thú cưng',
-  ship: 'Đồ ăn ship',
-  special: 'Đặc biệt'
-};
-const toList = (v) => (Array.isArray(v) ? v : v && typeof v === 'object' ? Object.entries(v).map(([id, x]) => (x && typeof x === 'object' ? { id, ...x } : typeof x === 'number' ? { id, price: x } : { id, name: x })) : []);
+  foods: 'Món ăn',
+  plants: 'Tưới cây',
+  fishes: 'Cá',
+  flowers: 'Hoa',
+  vegetables: 'Rau',
+  frames: 'Khung ảnh',
+  specials: 'Đặc biệt',
+  items: 'Vật phẩm'
+});
 
-function normProduct(p, i) {
-  return {
-    ...p,
-    id: p.id ?? p._id ?? `${p.name || 'product'}-${i}`,
-    name: p.name ?? p.title ?? `Sản phẩm ${i + 1}`,
-    price: num(p.price, p.coin, p.cost),
-    once: p.once === true
+const PRODUCT_KEYS = ['key', 'name', 'image', 'price', 'once', 'owned', 'conditions'];
+const OPTION_KEYS = ['key', 'name', 'image', 'price', 'once', 'owned', 'conditions'];
+
+function copyFields(source, keys) {
+  const result = {};
+  for (const key of keys) {
+    if (Object.hasOwn(source, key)) result[key] = source[key];
   };
+  return result;
+};
+
+function normProduct(product) {
+  if (!product || typeof product !== 'object' || typeof product.key !== 'string' || !product.key.trim()) return null;
+  const result = copyFields(product, PRODUCT_KEYS);
+  if (Array.isArray(result.conditions)) {
+    result.conditions = result.conditions.filter((condition) => condition && typeof condition === 'object');
+  } else delete result.conditions;
+  if (Array.isArray(product.options)) {
+    result.options = product.options.filter((option) => option && typeof option.key === 'string' && option.key.trim()).map((option) => {
+      const choice = copyFields(option, OPTION_KEYS);
+      if (Array.isArray(choice.conditions)) choice.conditions = choice.conditions.filter((condition) => condition && typeof condition === 'object');
+      else delete choice.conditions;
+      return choice;
+    });
+  };
+  return result;
 };
 
 export function normShop(shop) {
-  if (!shop) return [];
-  const keys = [...Object.keys(TAB_LABELS).filter((k) => k in shop), ...Object.keys(shop).filter((k) => !(k in TAB_LABELS))];
-  return keys.map((k) => ({ id: k, name: TAB_LABELS[k] || k, products: toList(shop[k]).map(normProduct) }));
+  if (!shop || typeof shop !== 'object') return [];
+  const seenKeys = new Set();
+  return Object.entries(SHOP_CATEGORIES).filter(([category]) => Array.isArray(shop[category])).map(([category, name]) => ({
+    id: category,
+    name,
+    products: shop[category].map(normProduct).filter(Boolean).flatMap((product) => {
+      if (!Array.isArray(product.options) || product.options.length === 0) {
+        if (seenKeys.has(product.key)) return [];
+        seenKeys.add(product.key);
+        return [product];
+      };
+      const options = product.options.filter((option) => {
+        if (seenKeys.has(option.key)) return false;
+        seenKeys.add(option.key);
+        return true;
+      });
+      return options.length > 0 ? [{ ...product, options }] : [];
+    })
+  }));
 };
 
-export const normAdminUser = (u) => ({ ...u, id: u._id ?? u.id, coin: num(u.coin, u.coins) });
+export const normAdminUser = (user) => ({ ...user, id: user._id ?? user.id, coin: num(user.coin, user.coins) });

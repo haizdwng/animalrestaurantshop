@@ -1,15 +1,6 @@
 import { HUES } from '@/features/shop/config';
 
-export const hasPrice = (p) => p?.price !== null && p?.price !== undefined;
-
-export const hue = (s) => HUES[[...String(s)].reduce((a, c) => a + c.charCodeAt(0), 0) % HUES.length];
-
-export const initials = (name) => name
-  .split(/\s+/)
-  .filter(Boolean)
-  .slice(0, 2)
-  .map((w) => w[0])
-  .join('')
-  .toUpperCase()
-
-export const matches = (p, needle) => !needle || p.name.toLowerCase().includes(needle) || String(p.id).toLowerCase().includes(needle);
+export const hasPrice = (product) => typeof product?.price === 'number' && Number.isSafeInteger(product.price) && product.price >= 0;
+export const hue = (value) => HUES[[...String(value)].reduce((sum, character) => sum + character.charCodeAt(0), 0) % HUES.length];
+export const initials = (name) => String(name || '').split(/\s+/).filter(Boolean).slice(0, 2).map((word) => word[0]).join('').toUpperCase();
+export const matches = (product, needle) => !needle || String(product.name || '').toLowerCase().includes(needle) || String(product.key || '').toLowerCase().includes(needle) || (product.options || []).some((option) => String(option.key || '').toLowerCase().includes(needle) || String(option.name || '').toLowerCase().includes(needle));

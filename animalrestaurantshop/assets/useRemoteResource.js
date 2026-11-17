@@ -1,4 +1,17 @@
-import { Ft as __toESM, Pt as require_react, bt as require_jsx_runtime, ct as Pager } from "./index.js";
+import { Et as createReactComponent, Mt as require_react, Nt as __toESM, st as Pager, yt as require_jsx_runtime } from "./index.js";
+/**
+* @license @tabler/icons-react v3.52.0 - MIT
+*
+* This source code is licensed under the MIT license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var IconPencil = /* @__PURE__ */ createReactComponent("outline", "pencil", "Pencil", [["path", {
+	"d": "M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4",
+	"key": "svg-0"
+}], ["path", {
+	"d": "M13.5 6.5l4 4",
+	"key": "svg-1"
+}]]);
 // src/shared/hooks/usePaginatedData.jsx
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var import_jsx_runtime = require_jsx_runtime();
@@ -66,4 +79,4 @@ function useRemoteResource(fetcher, enabled = true) {
 		reload
 	};
 }
-export { usePaginatedData as n, useRemoteResource as t };
+export { usePaginatedData as n, IconPencil as r, useRemoteResource as t };

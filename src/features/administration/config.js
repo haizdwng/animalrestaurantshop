@@ -1,5 +1,4 @@
-import { IconDatabase, IconDeviceGamepad2, IconTicket, IconUsers } from '@tabler/icons-react';
-import { IconBuildingStore, IconFileText, IconMusic, IconUser } from '@tabler/icons-react';
+import { IconDatabase, IconDeviceGamepad2, IconTicket, IconUsers, IconFileText, IconMusic, IconUser } from '@tabler/icons-react';
 import { compareByTime } from '@/shared/library/format';
 
 export const ADMIN_TABS = [
@@ -17,10 +16,10 @@ export const USER_SORTS = [
   ['created-asc', 'Ngày tạo · cũ nhất', compareByTime('createdAt', 1)],
   ['updated-desc', 'Ngày sửa · mới nhất', compareByTime('updatedAt', -1)],
   ['updated-asc', 'Ngày sửa · cũ nhất', compareByTime('updatedAt', 1)],
-  ['username-asc', 'Tên đăng nhập · A → Z', (a, b) => String(a.username).localeCompare(String(b.username))],
-  ['username-desc', 'Tên đăng nhập · Z → A', (a, b) => String(b.username).localeCompare(String(a.username))],
-  ['coin-desc', 'Xu · nhiều nhất', (a, b) => b.coin - a.coin],
-  ['coin-asc', 'Xu · ít nhất', (a, b) => a.coin - b.coin]
+  ['username-asc', 'Tên đăng nhập · A → Z', (first, second) => String(first.username).localeCompare(String(second.username))],
+  ['username-desc', 'Tên đăng nhập · Z → A', (first, second) => String(second.username).localeCompare(String(first.username))],
+  ['coin-desc', 'Xu · nhiều nhất', (first, second) => second.coin - first.coin],
+  ['coin-asc', 'Xu · ít nhất', (first, second) => first.coin - second.coin]
 ];
 export const USER_PAGE_SIZE = 10;
 export const COIN_PRESETS = [100, 500, 1000, 5000];
@@ -34,7 +33,6 @@ export const PLAYER_TABS = [
 export const PLAYER_PAGE_SIZE = 10;
 
 export const DATA_TABS = [
-  ['shop', 'Cửa hàng', IconBuildingStore],
   ['musicians', 'Khách mời', IconMusic],
   ['texts', 'Văn bản', IconFileText],
   ['data', 'Dữ liệu', IconDatabase]

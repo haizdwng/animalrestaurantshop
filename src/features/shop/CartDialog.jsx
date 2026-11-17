@@ -2,7 +2,7 @@ import { IconAlertTriangle, IconMinus, IconPlus, IconShoppingCart, IconTrash, Ic
 import { formatNumber } from '@/shared/library/format';
 import { Button, Coin, Dialog } from '@/shared/components/ui';
 import Tile from '@/features/shop/Tile';
-import { cartCount, cartTotal, clampCartQuantity } from '@/features/shop/cartUtils';
+import { cartCount, cartTotal, clampCartQuantity, isOnce } from '@/features/shop/cartUtils';
 
 function CompactQuantity({ value, max, disabled, onChange }) {
   return (
@@ -38,7 +38,7 @@ export default function CartDialog({ open, entries, coins, ready, buying, onClos
     <Dialog open={open} title='Giỏ hàng' onClose={() => !buying && onClose()}>
       <div className='flex items-center justify-between gap-3'>
         <p className='text-[11px] text-mute'>
-          {formatNumber(cartCount(entries))} vật phẩm
+          {formatNumber(entries.length)} loại vật phẩm · {formatNumber(cartCount(entries))} sản phẩm
         </p>
         {entries.length > 0 && (
           <button type='button' disabled={buying} onClick={onClear} className='flex shrink-0 cursor-pointer items-center gap-1 text-[11px] font-bold text-mute transition hover:text-bad disabled:opacity-40'>
@@ -54,31 +54,31 @@ export default function CartDialog({ open, entries, coins, ready, buying, onClos
       ) : (
         <ul className='space-y-2'>
           {entries.map((entry) => (
-            <li key={String(entry.id)} className={`rounded-xl border bg-bg p-3 ${entry.invalid ? 'border-bad/40' : 'border-line'}`}>
+            <li key={String(entry.key)} className={`rounded-xl border bg-bg p-3 ${entry.invalid ? 'border-bad/40' : 'border-line'}`}>
               <div className='flex items-start gap-3'>
                 <Tile p={entry.product} />
                 <div className='min-w-0 flex-1'>
                   <p className='truncate text-[10px] text-mute'>{entry.category}</p>
-                  <p className='line-clamp-2 text-xs font-bold'>{entry.product.name}</p>
-                  {typeof entry.product.description === 'string' && entry.product.description.trim() && (
-                    <p className='mt-1 line-clamp-2 whitespace-pre-line wrap-break-word text-[11px] leading-relaxed text-mute' title={entry.product.description.trim()}>{entry.product.description.trim()}</p>
-                  )}
+                  <p className='line-clamp-2 text-xs font-bold'>{entry.product.name || entry.product.key}</p>
+                  <p className='mt-0.5 truncate text-[10px] text-mute'>{entry.key}</p>
                   <p className='mt-1 flex items-center gap-1 text-[11px] text-coin'>
-                    <Coin size={13} /> {formatNumber(entry.price)}{!entry.product.once && ' / cái'}
+                    <Coin size={13} /> {formatNumber(entry.price)} / cái
                   </p>
                 </div>
-                <button type='button' aria-label={`Xóa ${entry.product.name} khỏi giỏ`} title='Xóa vật phẩm' disabled={buying} onClick={() => onRemove(entry.id)} className='grid size-7 shrink-0 cursor-pointer place-items-center rounded-lg text-mute hover:bg-bad/10 hover:text-bad disabled:opacity-40'>
+                <button type='button' aria-label={`Xóa ${entry.product.name || entry.product.key} khỏi giỏ`} title='Xóa vật phẩm' disabled={buying} onClick={() => onRemove(entry.key)} className='grid size-7 shrink-0 cursor-pointer place-items-center rounded-lg text-mute hover:bg-bad/10 hover:text-bad disabled:opacity-40'>
                   <IconX size={16} />
                 </button>
               </div>
-              {!entry.product.once && (
-                <div className='mt-2.5 flex items-center justify-between gap-2 border-t border-line pt-2.5'>
-                  <CompactQuantity value={entry.quantity} max={maxQuantity} disabled={buying || !ready} onChange={(value) => onQuantity(entry.id, value)} />
-                  <span className='flex items-center gap-1 text-xs font-bold text-coin tabular-nums'>
-                    <Coin size={14} /> {formatNumber(entry.total)}
-                  </span>
-                </div>
-              )}
+              <div className='mt-2.5 flex items-center justify-between gap-2 border-t border-line pt-2.5'>
+                {isOnce(entry.product, entry.group) ? (
+                  <span className='rounded-lg border border-line bg-raise px-2.5 py-1.5 text-[11px] font-medium text-mute'>Chỉ mua một lần</span>
+                ) : (
+                  <CompactQuantity value={entry.amount} max={maxQuantity} disabled={buying || !ready} onChange={(value) => onQuantity(entry.key, value)} />
+                )}
+                <span className='flex items-center gap-1 text-xs font-bold text-coin tabular-nums'>
+                  <Coin size={14} /> {formatNumber(entry.total)}
+                </span>
+              </div>
               {entry.invalid && <p className='mt-2 flex items-center gap-1.5 text-[11px] text-bad'><IconAlertTriangle size={14} /> {entry.invalid}</p>}
             </li>
           ))}
@@ -88,26 +88,26 @@ export default function CartDialog({ open, entries, coins, ready, buying, onClos
       {entries.length > 0 && (
         <>
           <dl className='space-y-2 rounded-xl border border-line bg-bg p-3.5 text-xs'>
-            <div className='flex items-center justify-between text-mute'><dt>Số xu hiện tại</dt><dd className='tabular-nums'>{formatNumber(coins)}</dd></div>
-            <div className='flex items-center justify-between text-mute'><dt>Số xu sau khi mua</dt><dd className={`tabular-nums ${short ? 'text-bad' : ''}`}>{short ? `Thiếu ${formatNumber(short)}` : formatNumber(coins - total)}</dd></div>
+            <div className='flex items-center justify-between text-mute'><dt>Số dư hiện tại</dt><dd className='tabular-nums'>{formatNumber(coins)}</dd></div>
+            <div className='flex items-center justify-between text-mute'><dt>Số dư sau khi mua</dt><dd className={`tabular-nums ${short ? 'text-bad' : ''}`}>{short ? `Thiếu ${formatNumber(short)}` : formatNumber(coins - total)}</dd></div>
             <div className='flex items-center justify-between border-t border-line pt-2.5'>
-              <dt className='font-extrabold'>Tổng số xu</dt>
+              <dt className='font-extrabold'>Tổng thanh toán</dt>
               <dd className='flex items-center gap-1.5 text-lg font-extrabold text-coin tabular-nums'><Coin size={18} /> {formatNumber(total)}</dd>
             </div>
           </dl>
-          {!ready && <p className='rounded-lg bg-raise p-2.5 text-[11px] text-mute'>Đang tải dữ liệu cửa hàng. Vui lòng tải lại trước khi mua.</p>}
+          {!ready && <p className='rounded-lg bg-raise p-2.5 text-[11px] text-mute'>Đang tải hoặc kiểm tra dữ liệu cửa hàng. Vui lòng tải lại trước khi mua.</p>}
           {invalid.length > 0 && (
             <p className='flex items-start gap-2 rounded-lg bg-bad/10 p-3 text-[11px] text-bad'>
-              <IconAlertTriangle size={16} className='shrink-0' /> Giỏ hàng có {invalid.length} vật phẩm chưa hợp lệ. Hãy xóa hoặc điều chỉnh trước khi mua.
+              <IconAlertTriangle size={16} className='shrink-0' /> Giỏ có {invalid.length} vật phẩm chưa hợp lệ. Hãy xóa hoặc điều chỉnh trước khi mua.
             </p>
           )}
           {short > 0 && (
             <Button variant='ghost' className='w-full text-coin!' disabled={buying} onClick={onTopUp}>
-              <Coin size={16} /> Thiếu {formatNumber(short)} xu
+              <Coin size={16} /> Thiếu {formatNumber(short)} xu — Mua thêm
             </Button>
           )}
           <Button className='w-full' disabled={!canBuy} loading={buying} onClick={onBuy}>
-            <IconShoppingCart size={17} /> Mua tất cả
+            <IconShoppingCart size={17} /> Mua tất cả · {formatNumber(entries.length)} loại vật phẩm
           </Button>
         </>
       )}

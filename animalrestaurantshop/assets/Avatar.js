@@ -1,15 +1,15 @@
-import { Ft as __toESM, Nt as require_react_dom, Ot as createReactComponent, Pt as require_react, St as IconRefresh, U as updateAvatar, at as Skeleton, bt as require_jsx_runtime, gt as toast, lt as Tabs, st as Spinner, xt as IconX, yt as Button } from "./index.js";
-import { n as IconCat, t as IconPhoto } from "./IconPhoto.js";
+import { Et as createReactComponent, Mt as require_react, Nt as __toESM, U as updateAvatar, bt as IconX, ct as Tabs, ht as toast, it as Skeleton, jt as require_react_dom, ot as Spinner, vt as Button, xt as IconRefresh, yt as require_jsx_runtime } from "./index.js";
+import { t as IconPhoto } from "./IconPhoto.js";
 import { t as IconCheck } from "./IconCheck.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { r as IconCopy } from "./clipboard.js";
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconArrowBackUp = createReactComponent("outline", "arrow-back-up", "ArrowBackUp", [["path", {
+var IconArrowBackUp = /* @__PURE__ */ createReactComponent("outline", "arrow-back-up", "ArrowBackUp", [["path", {
 	"d": "M9 14l-4 -4l4 -4",
 	"key": "svg-0"
 }], ["path", {
@@ -17,12 +17,12 @@ var IconArrowBackUp = createReactComponent("outline", "arrow-back-up", "ArrowBac
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconArrowForwardUp = createReactComponent("outline", "arrow-forward-up", "ArrowForwardUp", [["path", {
+var IconArrowForwardUp = /* @__PURE__ */ createReactComponent("outline", "arrow-forward-up", "ArrowForwardUp", [["path", {
 	"d": "M15 14l4 -4l-4 -4",
 	"key": "svg-0"
 }], ["path", {
@@ -30,12 +30,12 @@ var IconArrowForwardUp = createReactComponent("outline", "arrow-forward-up", "Ar
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconBrush = createReactComponent("outline", "brush", "Brush", [
+var IconBrush = /* @__PURE__ */ createReactComponent("outline", "brush", "Brush", [
 	["path", {
 		"d": "M3 21v-4a4 4 0 1 1 4 4h-4",
 		"key": "svg-0"
@@ -54,12 +54,44 @@ var IconBrush = createReactComponent("outline", "brush", "Brush", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconClipboard = createReactComponent("outline", "clipboard", "Clipboard", [["path", {
+var IconCat = /* @__PURE__ */ createReactComponent("outline", "cat", "Cat", [
+	["path", {
+		"d": "M20 3v10a8 8 0 1 1 -16 0v-10l3.432 3.432a7.963 7.963 0 0 1 4.568 -1.432c1.769 0 3.403 .574 4.728 1.546l3.272 -3.546",
+		"key": "svg-0"
+	}],
+	["path", {
+		"d": "M2 16h5l-4 4",
+		"key": "svg-1"
+	}],
+	["path", {
+		"d": "M22 16h-5l4 4",
+		"key": "svg-2"
+	}],
+	["path", {
+		"d": "M11 16a1 1 0 1 0 2 0a1 1 0 1 0 -2 0",
+		"key": "svg-3"
+	}],
+	["path", {
+		"d": "M9 11v.01",
+		"key": "svg-4"
+	}],
+	["path", {
+		"d": "M15 11v.01",
+		"key": "svg-5"
+	}]
+]);
+/**
+* @license @tabler/icons-react v3.52.0 - MIT
+*
+* This source code is licensed under the MIT license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var IconClipboard = /* @__PURE__ */ createReactComponent("outline", "clipboard", "Clipboard", [["path", {
 	"d": "M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2",
 	"key": "svg-0"
 }], ["path", {
@@ -67,22 +99,22 @@ var IconClipboard = createReactComponent("outline", "clipboard", "Clipboard", [[
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconCrown = createReactComponent("outline", "crown", "Crown", [["path", {
+var IconCrown = /* @__PURE__ */ createReactComponent("outline", "crown", "Crown", [["path", {
 	"d": "M12 6l4 6l5 -4l-2 10h-14l-2 -10l5 4l4 -6",
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconDice5 = createReactComponent("outline", "dice-5", "Dice5", [
+var IconDice5 = /* @__PURE__ */ createReactComponent("outline", "dice-5", "Dice5", [
 	["path", {
 		"d": "M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14",
 		"key": "svg-0"
@@ -114,12 +146,12 @@ var IconDice5 = createReactComponent("outline", "dice-5", "Dice5", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconDownload = createReactComponent("outline", "download", "Download", [
+var IconDownload = /* @__PURE__ */ createReactComponent("outline", "download", "Download", [
 	["path", {
 		"d": "M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2",
 		"key": "svg-0"
@@ -134,12 +166,12 @@ var IconDownload = createReactComponent("outline", "download", "Download", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconEraser = createReactComponent("outline", "eraser", "Eraser", [["path", {
+var IconEraser = /* @__PURE__ */ createReactComponent("outline", "eraser", "Eraser", [["path", {
 	"d": "M19 20h-10.5l-4.21 -4.3a1 1 0 0 1 0 -1.41l10 -10a1 1 0 0 1 1.41 0l5 5a1 1 0 0 1 0 1.41l-9.2 9.3",
 	"key": "svg-0"
 }], ["path", {
@@ -147,12 +179,12 @@ var IconEraser = createReactComponent("outline", "eraser", "Eraser", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconMoodSmile = createReactComponent("outline", "mood-smile", "MoodSmile", [
+var IconMoodSmile = /* @__PURE__ */ createReactComponent("outline", "mood-smile", "MoodSmile", [
 	["path", {
 		"d": "M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0",
 		"key": "svg-0"
@@ -171,12 +203,12 @@ var IconMoodSmile = createReactComponent("outline", "mood-smile", "MoodSmile", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconPhotoOff = createReactComponent("outline", "photo-off", "PhotoOff", [
+var IconPhotoOff = /* @__PURE__ */ createReactComponent("outline", "photo-off", "PhotoOff", [
 	["path", {
 		"d": "M15 8h.01",
 		"key": "svg-0"
@@ -199,12 +231,12 @@ var IconPhotoOff = createReactComponent("outline", "photo-off", "PhotoOff", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconPhotoPlus = createReactComponent("outline", "photo-plus", "PhotoPlus", [
+var IconPhotoPlus = /* @__PURE__ */ createReactComponent("outline", "photo-plus", "PhotoPlus", [
 	["path", {
 		"d": "M15 8h.01",
 		"key": "svg-0"
@@ -231,22 +263,22 @@ var IconPhotoPlus = createReactComponent("outline", "photo-plus", "PhotoPlus", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconPointer = createReactComponent("outline", "pointer", "Pointer", [["path", {
+var IconPointer = /* @__PURE__ */ createReactComponent("outline", "pointer", "Pointer", [["path", {
 	"d": "M7.904 17.563a1.2 1.2 0 0 0 2.228 .308l2.09 -3.093l4.907 4.907a1.067 1.067 0 0 0 1.509 0l1.047 -1.047a1.067 1.067 0 0 0 0 -1.509l-4.907 -4.907l3.113 -2.09a1.2 1.2 0 0 0 -.309 -2.228l-13.582 -3.904l3.904 13.563",
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconRotateClockwise2 = createReactComponent("outline", "rotate-clockwise-2", "RotateClockwise2", [
+var IconRotateClockwise2 = /* @__PURE__ */ createReactComponent("outline", "rotate-clockwise-2", "RotateClockwise2", [
 	["path", {
 		"d": "M9 4.55a8 8 0 0 1 6 14.9m0 -4.45v5h5",
 		"key": "svg-0"
@@ -273,22 +305,22 @@ var IconRotateClockwise2 = createReactComponent("outline", "rotate-clockwise-2",
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconSparkles = createReactComponent("outline", "sparkles", "Sparkles", [["path", {
+var IconSparkles = /* @__PURE__ */ createReactComponent("outline", "sparkles", "Sparkles", [["path", {
 	"d": "M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2m0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2m-7 12a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6",
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconUserCheck = createReactComponent("outline", "user-check", "UserCheck", [
+var IconUserCheck = /* @__PURE__ */ createReactComponent("outline", "user-check", "UserCheck", [
 	["path", {
 		"d": "M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0",
 		"key": "svg-0"
@@ -303,12 +335,12 @@ var IconUserCheck = createReactComponent("outline", "user-check", "UserCheck", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconZoomIn = createReactComponent("outline", "zoom-in", "ZoomIn", [
+var IconZoomIn = /* @__PURE__ */ createReactComponent("outline", "zoom-in", "ZoomIn", [
 	["path", {
 		"d": "M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0",
 		"key": "svg-0"
@@ -327,12 +359,12 @@ var IconZoomIn = createReactComponent("outline", "zoom-in", "ZoomIn", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconZoomOut = createReactComponent("outline", "zoom-out", "ZoomOut", [
+var IconZoomOut = /* @__PURE__ */ createReactComponent("outline", "zoom-out", "ZoomOut", [
 	["path", {
 		"d": "M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0",
 		"key": "svg-0"

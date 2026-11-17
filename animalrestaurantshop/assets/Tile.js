@@ -1,33 +1,13 @@
-import { Et as IconBuildingStore, Ft as __toESM, Ot as createReactComponent, Pt as require_react, bt as require_jsx_runtime } from "./index.js";
-import { n as IconMusic, t as IconUsers } from "./IconUsers.js";
-import { n as IconCat, t as IconPhoto } from "./IconPhoto.js";
+import { Et as createReactComponent, Mt as require_react, Nt as __toESM, yt as require_jsx_runtime } from "./index.js";
+import { t as IconPhoto } from "./IconPhoto.js";
+import { t as IconUsers } from "./IconUsers.js";
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconBottle = createReactComponent("outline", "bottle", "Bottle", [
-	["path", {
-		"d": "M10 5h4v-2a1 1 0 0 0 -1 -1h-2a1 1 0 0 0 -1 1v2",
-		"key": "svg-0"
-	}],
-	["path", {
-		"d": "M14 3.5c0 1.626 .507 3.212 1.45 4.537l.05 .07a8.093 8.093 0 0 1 1.5 4.694v6.199a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2v-6.2c0 -1.682 .524 -3.322 1.5 -4.693l.05 -.07a7.823 7.823 0 0 0 1.45 -4.537",
-		"key": "svg-1"
-	}],
-	["path", {
-		"d": "M7 14.803a2.4 2.4 0 0 0 1 -.803a2.4 2.4 0 0 1 2 -1a2.4 2.4 0 0 1 2 1a2.4 2.4 0 0 0 2 1a2.4 2.4 0 0 0 2 -1a2.4 2.4 0 0 1 1 -.805",
-		"key": "svg-2"
-	}]
-]);
-/**
-* @license @tabler/icons-react v3.51.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var IconBox = createReactComponent("outline", "box", "Box", [
+var IconBox = /* @__PURE__ */ createReactComponent("outline", "box", "Box", [
 	["path", {
 		"d": "M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5",
 		"key": "svg-0"
@@ -46,12 +26,12 @@ var IconBox = createReactComponent("outline", "box", "Box", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconChefHat = createReactComponent("outline", "chef-hat", "ChefHat", [["path", {
+var IconChefHat = /* @__PURE__ */ createReactComponent("outline", "chef-hat", "ChefHat", [["path", {
 	"d": "M12 3c1.918 0 3.52 1.35 3.91 3.151a4 4 0 0 1 2.09 7.723l0 7.126h-12v-7.126a4 4 0 1 1 2.092 -7.723a4 4 0 0 1 3.908 -3.151",
 	"key": "svg-0"
 }], ["path", {
@@ -59,12 +39,12 @@ var IconChefHat = createReactComponent("outline", "chef-hat", "ChefHat", [["path
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconFish = createReactComponent("outline", "fish", "Fish", [
+var IconFish = /* @__PURE__ */ createReactComponent("outline", "fish", "Fish", [
 	["path", {
 		"d": "M16.69 7.44a6.973 6.973 0 0 0 -1.69 4.56c0 1.747 .64 3.345 1.699 4.571",
 		"key": "svg-0"
@@ -83,12 +63,12 @@ var IconFish = createReactComponent("outline", "fish", "Fish", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconFlower = createReactComponent("outline", "flower", "Flower", [["path", {
+var IconFlower = /* @__PURE__ */ createReactComponent("outline", "flower", "Flower", [["path", {
 	"d": "M9 12a3 3 0 1 0 6 0a3 3 0 1 0 -6 0",
 	"key": "svg-0"
 }], ["path", {
@@ -96,12 +76,12 @@ var IconFlower = createReactComponent("outline", "flower", "Flower", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconMail = createReactComponent("outline", "mail", "Mail", [["path", {
+var IconMail = /* @__PURE__ */ createReactComponent("outline", "mail", "Mail", [["path", {
 	"d": "M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10",
 	"key": "svg-0"
 }], ["path", {
@@ -109,46 +89,50 @@ var IconMail = createReactComponent("outline", "mail", "Mail", [["path", {
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconMotorbike = createReactComponent("outline", "motorbike", "Motorbike", [
+var IconPlant2 = /* @__PURE__ */ createReactComponent("outline", "plant-2", "Plant2", [
 	["path", {
-		"d": "M2 16a3 3 0 1 0 6 0a3 3 0 1 0 -6 0",
+		"d": "M2 9a10 10 0 1 0 20 0",
 		"key": "svg-0"
 	}],
 	["path", {
-		"d": "M16 16a3 3 0 1 0 6 0a3 3 0 1 0 -6 0",
+		"d": "M12 19a10 10 0 0 1 10 -10",
 		"key": "svg-1"
 	}],
 	["path", {
-		"d": "M7.5 14h5l4 -4h-10.5m1.5 4l4 -4",
+		"d": "M2 9a10 10 0 0 1 10 10",
 		"key": "svg-2"
 	}],
 	["path", {
-		"d": "M13 6h2l1.5 3l2 4",
+		"d": "M12 4a9.7 9.7 0 0 1 2.99 7.5",
 		"key": "svg-3"
+	}],
+	["path", {
+		"d": "M9.01 11.5a9.7 9.7 0 0 1 2.99 -7.5",
+		"key": "svg-4"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconStar = createReactComponent("outline", "star", "Star", [["path", {
+var IconStar = /* @__PURE__ */ createReactComponent("outline", "star", "Star", [["path", {
 	"d": "M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873l-6.158 -3.245",
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconWheat = createReactComponent("outline", "wheat", "Wheat", [
+var IconWheat = /* @__PURE__ */ createReactComponent("outline", "wheat", "Wheat", [
 	["path", {
 		"d": "M12.014 21.514v-3.75",
 		"key": "svg-0"
@@ -172,18 +156,15 @@ var TOPUP = "topup";
 var CATEGORY_ICONS = {
 	letters: IconMail,
 	customers: IconUsers,
-	boothOwners: IconBuildingStore,
 	memorials: IconPhoto,
-	cookbooks: IconChefHat,
-	musicians: IconMusic,
-	items: IconBox,
-	terrace: IconBottle,
-	pond: IconFish,
-	vegetable: IconWheat,
-	flower: IconFlower,
-	pet: IconCat,
-	special: IconStar,
-	ship: IconMotorbike
+	foods: IconChefHat,
+	plants: IconPlant2,
+	fishes: IconFish,
+	flowers: IconFlower,
+	vegetables: IconWheat,
+	frames: IconPhoto,
+	specials: IconStar,
+	items: IconBox
 };
 var HUES = [
 	"#d4ff3a",
@@ -195,32 +176,33 @@ var HUES = [
 	"#ff9d5c"
 ];
 // src/features/shop/shopUtilities.js
-var hasPrice = (p) => p?.price !== null && p?.price !== void 0;
-var hue = (s) => HUES[[...String(s)].reduce((a, c) => a + c.charCodeAt(0), 0) % HUES.length];
-var initials = (name) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
-var matches = (p, needle) => !needle || p.name.toLowerCase().includes(needle) || String(p.id).toLowerCase().includes(needle);
+var hasPrice = (product) => typeof product?.price === "number" && Number.isSafeInteger(product.price) && product.price >= 0;
+var hue = (value) => HUES[[...String(value)].reduce((sum, character) => sum + character.charCodeAt(0), 0) % HUES.length];
+var initials = (name) => String(name || "").split(/\s+/).filter(Boolean).slice(0, 2).map((word) => word[0]).join("").toUpperCase();
+var matches = (product, needle) => !needle || String(product.name || "").toLowerCase().includes(needle) || String(product.key || "").toLowerCase().includes(needle) || (product.options || []).some((option) => String(option.key || "").toLowerCase().includes(needle) || String(option.name || "").toLowerCase().includes(needle));
 // src/features/shop/Tile.jsx
 var import_jsx_runtime = require_jsx_runtime();
+var isUsableImageUrl = (value) => typeof value === "string" && /^(https?:\/\/|\/|data:image\/)/i.test(value);
 function Tile({ p, size = "md" }) {
-	const color = hue(p.id || p.name);
+	const color = hue(p.key || p.name);
 	const large = size === "lg";
 	const [failedImage, setFailedImage] = (0, import_react.useState)("");
-	const imageFailed = !!p.image && failedImage === p.image;
+	const imageUrl = isUsableImageUrl(p.image) ? p.image : null;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		className: `relative grid shrink-0 place-items-center overflow-hidden rounded-xl ${large ? "size-16" : "size-12"}`,
 		style: {
 			background: `color-mix(in oklab, ${color} 14%, transparent)`,
 			color
 		},
-		children: [p.image && !imageFailed ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-			src: p.image,
+		children: [imageUrl && failedImage !== imageUrl ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+			src: imageUrl,
 			alt: "",
 			loading: "lazy",
 			className: "size-full object-cover",
-			onError: () => setFailedImage(p.image)
+			onError: () => setFailedImage(imageUrl)
 		}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 			className: `font-extrabold tracking-tight ${large ? "text-xl" : "text-sm"}`,
-			children: initials(String(p.name || "")) || "?"
+			children: initials(p.name) || "?"
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "absolute inset-0 rounded-xl ring-1 ring-current/20 ring-inset" })]
 	});
 }

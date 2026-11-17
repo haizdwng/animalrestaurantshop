@@ -1,11 +1,11 @@
-import { Ot as createReactComponent } from "./index.js";
+import { Et as createReactComponent } from "./index.js";
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconArrowLeft = createReactComponent("outline", "arrow-left", "ArrowLeft", [
+var IconArrowLeft = /* @__PURE__ */ createReactComponent("outline", "arrow-left", "ArrowLeft", [
 	["path", {
 		"d": "M5 12l14 0",
 		"key": "svg-0"
@@ -20,12 +20,12 @@ var IconArrowLeft = createReactComponent("outline", "arrow-left", "ArrowLeft", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconArrowRight = createReactComponent("outline", "arrow-right", "ArrowRight", [
+var IconArrowRight = /* @__PURE__ */ createReactComponent("outline", "arrow-right", "ArrowRight", [
 	["path", {
 		"d": "M5 12l14 0",
 		"key": "svg-0"

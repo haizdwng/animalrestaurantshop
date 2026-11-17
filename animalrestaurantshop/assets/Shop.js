@@ -1,4 +1,4 @@
-import { $ as Coin, Dt as IconAlertTriangle, Ft as __toESM, I as buy, Mt as useParams, N as createTransaction, Ot as createReactComponent, Pt as require_react, St as IconRefresh, Tt as IconCircleCheck, Z as isAdmin, _t as toastError, a as formatNumber, at as Skeleton, bt as require_jsx_runtime, gt as toast, jt as useNavigate, mt as Dialog, ot as ErrorState, st as Spinner, vt as Field, xt as IconX, yt as Button } from "./index.js";
+import { At as useParams, Ct as IconCircleCheck, Et as createReactComponent, I as buy, Mt as require_react, N as createTransaction, Nt as __toESM, Q as Coin, Tt as IconAlertTriangle, Z as isAdmin, _t as Field, a as formatNumber, at as ErrorState, bt as IconX, gt as toastError, ht as toast, it as Skeleton, kt as useNavigate, ot as Spinner, pt as Dialog, vt as Button, wt as IconChevronRight, xt as IconRefresh, yt as require_jsx_runtime } from "./index.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
 import { a as TOPUP, i as CATEGORY_ICONS, n as hasPrice, r as matches, s as IconBox, t as Tile } from "./Tile.js";
@@ -7,22 +7,22 @@ import { n as IconLock } from "./clipboard.js";
 import { t as IconPlus } from "./IconPlus.js";
 import { t as IconSearch } from "./IconSearch.js";
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconMinus = createReactComponent("outline", "minus", "Minus", [["path", {
+var IconMinus = /* @__PURE__ */ createReactComponent("outline", "minus", "Minus", [["path", {
 	"d": "M5 12l14 0",
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconPackageOff = createReactComponent("outline", "package-off", "PackageOff", [
+var IconPackageOff = /* @__PURE__ */ createReactComponent("outline", "package-off", "PackageOff", [
 	["path", {
 		"d": "M8.812 4.793l3.188 -1.793l8 4.5v8.5m-2.282 1.784l-5.718 3.216l-8 -4.5v-9l2.223 -1.25",
 		"key": "svg-0"
@@ -49,22 +49,22 @@ var IconPackageOff = createReactComponent("outline", "package-off", "PackageOff"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconPlayerPlay = createReactComponent("outline", "player-play", "PlayerPlay", [["path", {
+var IconPlayerPlay = /* @__PURE__ */ createReactComponent("outline", "player-play", "PlayerPlay", [["path", {
 	"d": "M7 4v16l13 -8l-13 -8",
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.51.0 - MIT
+* @license @tabler/icons-react v3.52.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconShoppingCart = createReactComponent("outline", "shopping-cart", "ShoppingCart", [
+var IconShoppingCart = /* @__PURE__ */ createReactComponent("outline", "shopping-cart", "ShoppingCart", [
 	["path", {
 		"d": "M4 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0",
 		"key": "svg-0"
@@ -254,79 +254,92 @@ function TopUp({ user, onPaid }) {
 	});
 }
 // src/features/shop/cartUtils.js
+var hasOptions = (product) => Array.isArray(product?.options) && product.options.length > 0;
+var productOptions = (product) => hasOptions(product) ? product.options : [product];
+var isOnce = (product, group = product) => (product?.once ?? group?.once) === true;
+var isOwnedOnce = (product, group = product) => isOnce(product, group) && product?.owned === true;
+var unmetConditions = (product, group = product) => [...Array.isArray(group?.conditions) ? group.conditions : [], ...group === product ? [] : Array.isArray(product?.conditions) ? product.conditions : []].some((condition) => condition?.already !== true);
 var clampCartQuantity = (value, once = false, limit = 100) => {
 	const number = Number(value);
 	return Math.max(1, Math.min(once ? 1 : limit, Number.isFinite(number) ? Math.trunc(number) : 1));
 };
-function putInCart(cart, product, quantity, category = "", limit = 100) {
+function putInCart(cart, product, amount, category = "", limit = 100, group = product) {
+	if (!product?.key || typeof product.price !== "number" || !Number.isSafeInteger(product.price) || product.price < 0) return cart;
+	if (isOwnedOnce(product, group) || unmetConditions(product, group)) return cart;
 	const entry = {
-		id: product.id,
-		quantity: clampCartQuantity(quantity, product.once, limit),
+		key: product.key,
+		amount: clampCartQuantity(amount, isOnce(product, group), limit),
 		product,
+		groupKey: group.key,
+		group,
 		category
 	};
-	const index = cart.findIndex(({ id }) => String(id) === String(product.id));
-	if (index === -1) return [...cart, entry];
-	return cart.map((existing, i) => i === index ? entry : existing);
+	const index = cart.findIndex((existing) => existing.key === entry.key);
+	if (index < 0) return [...cart, entry];
+	return cart.map((existing, position) => position === index ? entry : existing);
 }
-function changeCartQuantity(cart, id, quantity, limit = 100) {
-	return cart.map((entry) => String(entry.id) === String(id) ? {
+function changeCartQuantity(cart, key, amount, limit = 100) {
+	return cart.map((entry) => entry.key === key ? {
 		...entry,
-		quantity: clampCartQuantity(quantity, entry.product.once, limit)
+		amount: clampCartQuantity(amount, isOnce(entry.product, entry.group), limit)
 	} : entry);
 }
 function resolveCart(cart, tabs, isOwned = () => false, limit = 100) {
-	const loaded = Array.isArray(tabs);
-	const productIndex = /* @__PURE__ */ new Map();
-	for (const tab of tabs || []) for (const product of tab.products || []) productIndex.set(String(product.id), {
+	const index = /* @__PURE__ */ new Map();
+	for (const tab of tabs || []) for (const group of tab.products || []) for (const product of productOptions(group)) if (product?.key) index.set(product.key, {
 		product,
+		group,
 		category: tab.name
 	});
 	return cart.map((entry) => {
-		const latest = productIndex.get(String(entry.id));
-		const product = latest?.product || entry.product;
-		const price = Math.max(0, Number(product?.price) || 0);
+		const current = index.get(entry.key);
+		const product = current?.product || entry.product;
+		const group = current?.group || entry.group || product;
+		const price = product?.price;
 		let invalid = "";
-		if (loaded && !latest) invalid = "Vật phẩm không còn trong cửa hàng";
-		else if (loaded && (product.owned || isOwned(product))) invalid = "Vật phẩm đã được mua";
-		else if (loaded && product.conditions?.some((condition) => condition?.already === false)) invalid = "Chưa đáp ứng điều kiện mua";
-		else if (!Number.isInteger(entry.quantity) || entry.quantity < 1 || entry.quantity > (product.once ? 1 : limit)) invalid = "Số lượng vượt giới hạn";
+		if (Array.isArray(tabs) && !current) invalid = "Vật phẩm không còn trong cửa hàng";
+		else if (typeof price !== "number" || !Number.isSafeInteger(price) || price < 0) invalid = "Giá vật phẩm không hợp lệ";
+		else if (isOwnedOnce(product, group) || isOwned(product)) invalid = "Vật phẩm đã được mua";
+		else if (unmetConditions(product, group)) invalid = "Chưa đáp ứng điều kiện mua";
+		else if (!Number.isInteger(entry.amount) || entry.amount < 1 || entry.amount > (isOnce(product, group) ? 1 : limit)) invalid = "Số lượng vượt giới hạn";
 		return {
 			...entry,
 			product,
-			category: latest?.category || entry.category,
-			price,
-			total: price * entry.quantity,
+			group,
+			category: current?.category || entry.category,
+			price: typeof price === "number" && Number.isSafeInteger(price) && price >= 0 ? price : 0,
+			total: typeof price === "number" && Number.isSafeInteger(price) && price >= 0 ? price * entry.amount : 0,
 			invalid
 		};
 	});
 }
 var cartTotal = (entries) => entries.reduce((sum, entry) => sum + entry.total, 0);
-var cartCount = (entries) => entries.reduce((sum, entry) => sum + entry.quantity, 0);
-var cartPayload = (entries) => entries.map(({ id, quantity }) => ({
-	id,
-	quantity
+var cartCount = (entries) => entries.reduce((sum, entry) => sum + entry.amount, 0);
+var cartPayload = (entries) => entries.map(({ key, amount }) => ({
+	key,
+	amount
 }));
-var eligibleCategoryProducts = (products, isOwned = () => false) => (products || []).filter((p) => p && !(p.once && (p.owned || isOwned(p))) && !p.conditions?.some((condition) => condition?.already !== true));
+var eligibleCategoryProducts = (products, isOwned = () => false) => (products || []).filter((product) => product && !hasOptions(product) && typeof product.price === "number" && Number.isSafeInteger(product.price) && product.price >= 0).filter((product) => !isOwnedOnce(product) && !isOwned(product) && !unmetConditions(product));
 function addCategoryToCart(cart, products, category = "", isOwned = () => false, limit = 100) {
-	const existing = new Set(cart.map(({ id }) => String(id)));
+	const existing = new Set(cart.map(({ key }) => key));
 	const result = [...cart];
 	for (const product of eligibleCategoryProducts(products, isOwned)) {
-		const id = String(product.id);
-		if (existing.has(id)) continue;
-		existing.add(id);
+		if (existing.has(product.key)) continue;
+		existing.add(product.key);
 		result.push({
-			id: product.id,
-			quantity: 1,
+			key: product.key,
+			amount: 1,
 			product,
+			groupKey: product.key,
+			group: product,
 			category
 		});
 	}
 	return result;
 }
 function removeCategoryFromCart(cart, products) {
-	const ids = new Set((products || []).map(({ id }) => String(id)));
-	return cart.filter(({ id }) => !ids.has(String(id)));
+	const keys = new Set((products || []).flatMap((product) => productOptions(product).map((option) => option.key)));
+	return cart.filter((entry) => !keys.has(entry.key));
 }
 // src/features/shop/QuantityPicker.jsx
 function QuantityPicker({ value, max, disabled, onChange, onEnter }) {
@@ -393,33 +406,44 @@ function QuantityPicker({ value, max, disabled, onChange, onEnter }) {
 	] });
 }
 // src/features/shop/BuyDialog.jsx
-function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQuantity = 100, onAdd, onRemove, onClose, onTopUp }) {
-	const [qty, setQty] = (0, import_react.useState)(() => clampCartQuantity(cartQuantity || 1, item?.once, maxQuantity));
-	const description = typeof item?.description === "string" ? item.description.trim() : "";
-	const once = !!item?.once;
-	const priced = hasPrice(item);
-	const conditions = Array.isArray(item?.conditions) ? item.conditions : [];
-	const blocked = conditions.some((condition) => condition?.already === false);
-	const hasCurrent = item?.current !== void 0 && item?.current !== null;
-	const maxQty = once ? 1 : maxQuantity;
-	const total = priced ? item.price * qty : 0;
-	const newCartTotal = cartTotal - (priced ? item.price * cartQuantity : 0) + total;
-	const short = Math.max(0, newCartTotal - user.coins);
-	const remove = () => {
-		if (!item || !cartQuantity) return;
-		onRemove(item.id);
+function BuyDialog({ item, category, user, cartQuantities = /* @__PURE__ */ new Map(), cartTotal = 0, maxQuantity = 100, onAdd, onRemove, onClose, onTopUp }) {
+	const options = item ? productOptions(item) : [];
+	const [selectedKey, setSelectedKey] = (0, import_react.useState)(() => options.find((option) => !isOwnedOnce(option, item))?.key || options[0]?.key || "");
+	const [quantity, setQuantity] = (0, import_react.useState)(1);
+	const selected = options.find((option) => option.key === selectedKey) || options[0];
+	const amountInCart = selected ? cartQuantities.get(selected.key) || 0 : 0;
+	const once = isOnce(selected, item);
+	const owned = isOwnedOnce(selected, item);
+	const conditions = [...Array.isArray(item?.conditions) ? item.conditions : [], ...selected !== item && Array.isArray(selected?.conditions) ? selected.conditions : []];
+	const blocked = owned || unmetConditions(selected, item);
+	const priced = hasPrice(selected);
+	const amount = once ? 1 : quantity;
+	const subtotal = priced ? selected.price * amount : 0;
+	const newCartTotal = cartTotal - (priced ? selected.price * amountInCart : 0) + subtotal;
+	const shortage = Math.max(0, newCartTotal - Number(user?.coins || 0));
+	(0, import_react.useEffect)(() => {
+		setQuantity(clampCartQuantity(amountInCart || 1, once, maxQuantity));
+	}, [
+		selectedKey,
+		amountInCart,
+		once,
+		maxQuantity
+	]);
+	const add = () => {
+		if (!item || !selected || !priced || blocked) return;
+		onAdd(selected, amount, category, item);
 		onClose();
 	};
-	const add = () => {
-		if (!item || blocked) return;
-		onAdd(item, once ? 1 : qty, category);
+	const remove = () => {
+		if (!amountInCart || !selected) return;
+		onRemove(selected.key);
 		onClose();
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dialog, {
 		open: !!item,
-		title: cartQuantity ? once ? "Vật phẩm đã thêm" : "Chỉnh sửa vật phẩm" : "Thêm vào giỏ hàng",
+		title: amountInCart ? once ? "Vật phẩm đã thêm" : "Chỉnh sửa vật phẩm" : "Thêm vào giỏ hàng",
 		onClose,
-		children: item && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+		children: item && selected && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "flex items-center gap-3",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tile, {
@@ -434,43 +458,52 @@ function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQ
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 							className: "text-base leading-tight font-extrabold",
-							children: item.name
+							children: item.name || item.key
 						}),
-						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-							className: "mt-1 flex items-center gap-1.5 text-[11px] text-mute",
-							children: [item.id, priced && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-								"· ",
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 12 }),
-								" ",
-								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									className: "text-coin",
-									children: formatNumber(item.price)
-								}),
-								!once && " / cái"
-							] })]
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							className: "mt-1 text-[11px] text-mute",
+							children: item.key
+						}),
+						item.owned !== void 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							className: "mt-1 text-[11px] text-mute",
+							children: typeof item.owned === "number" ? `Đang có: ${formatNumber(item.owned)}` : typeof item.owned === "string" && item.owned ? `Hiện tại: ${item.owned}` : item.once && item.owned === true ? "Đã sở hữu" : ""
 						})
 					]
 				})]
 			}),
-			description && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "rounded-xl border border-line bg-bg p-3",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "mb-1.5 text-[11px] font-bold",
-					children: "Mô tả vật phẩm"
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-					className: "whitespace-pre-wrap wrap-break-word text-xs leading-relaxed text-mute",
-					children: description
-				})]
+			hasOptions(item) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "space-y-2",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
+						htmlFor: "shop-variant",
+						className: "text-[11px] font-bold",
+						children: "Chọn loại vật phẩm"
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", {
+						id: "shop-variant",
+						value: selected.key,
+						onChange: (event) => setSelectedKey(event.target.value),
+						className: "h-11 w-full min-w-0 rounded-lg border border-line bg-bg px-3 text-xs text-fg outline-none focus:border-lime",
+						children: options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
+							value: option.key,
+							children: [option.name || option.key, option.owned === true && isOnce(option, item) ? " · Đã mua" : typeof option.owned === "number" ? ` · Có ${formatNumber(option.owned)}` : option.owned === true ? " · Đang chọn" : ""]
+						}, option.key))
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						className: "flex flex-wrap items-center justify-between gap-2 rounded-lg bg-bg px-3 py-2 text-[11px]",
+						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "min-w-0 text-mute",
+							children: selected.key
+						}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "font-bold text-coin",
+							children: priced ? formatNumber(selected.price) + " xu" : "Không có giá"
+						})]
+					})
+				]
 			}),
-			hasCurrent && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "flex items-center justify-between rounded-lg border border-line bg-bg px-3 py-2.5 text-xs",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-					className: "text-mute",
-					children: "Đã có"
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("strong", {
-					className: "tabular-nums",
-					children: formatNumber(Number(item.current) || 0)
-				})]
+			typeof selected.owned === "number" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+				className: "text-[11px] text-mute",
+				children: ["Số lượng đang có: ", formatNumber(selected.owned)]
 			}),
 			conditions.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "space-y-2 rounded-xl border border-line bg-bg p-3",
@@ -499,37 +532,44 @@ function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQ
 					})
 				})]
 			}),
-			!once && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuantityPicker, {
-				value: qty,
-				max: maxQty,
+			owned && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+				className: "rounded-lg bg-ok/10 p-3 text-xs text-ok",
+				children: "Vật phẩm này đã được sở hữu."
+			}),
+			once ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+				className: "flex items-center gap-2 rounded-lg border border-dashed border-line p-3 text-[11px] text-mute",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 15 }), " Vật phẩm chỉ mua được một lần"]
+			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuantityPicker, {
+				value: quantity,
+				max: maxQuantity,
 				disabled: blocked,
-				onChange: setQty,
+				onChange: setQuantity,
 				onEnter: add
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dl", {
-				className: "space-y-2 rounded-xl bg-bg p-4 text-xs",
+				className: "rounded-xl bg-bg p-4 text-xs",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "flex items-center justify-between",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", {
 						className: "font-bold",
-						children: "Tổng số xu"
+						children: "Thành tiền"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dd", {
 						className: "flex items-center gap-1.5 text-lg font-extrabold tabular-nums text-coin",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 18 }),
 							" ",
-							formatNumber(total)
+							formatNumber(subtotal)
 						]
 					})]
 				})
 			}),
-			short > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			shortage > 0 && !blocked && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "flex items-center justify-between gap-2 rounded-lg border border-coin/30 bg-coin/10 px-3 py-2 text-[11px]",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 					className: "text-coin",
 					children: [
 						"Giỏ hàng sẽ thiếu ",
-						formatNumber(short),
+						formatNumber(shortage),
 						" xu"
 					]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
@@ -540,17 +580,17 @@ function BuyDialog({ item, category, user, cartQuantity = 0, cartTotal = 0, maxQ
 				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: `grid gap-2 ${cartQuantity && !once ? "grid-cols-2" : ""}`,
-				children: [cartQuantity > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+				className: `grid gap-2 ${amountInCart > 0 && !once ? "grid-cols-2" : ""}`,
+				children: [amountInCart > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 					variant: "ghost",
 					className: "w-full px-2! text-[11px]! text-bad!",
 					onClick: remove,
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconTrash, { size: 16 }), " Xóa khỏi giỏ hàng"]
-				}), (!once || !cartQuantity) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconTrash, { size: 16 }), " Xóa khỏi giỏ"]
+				}), (!once || !amountInCart) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 					className: "w-full px-2! text-[11px]!",
-					disabled: blocked,
+					disabled: blocked || !priced,
 					onClick: add,
-					children: [blocked ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 16 }), blocked ? "Chưa đủ điều kiện" : cartQuantity ? "Cập nhật giỏ hàng" : "Thêm vào giỏ hàng"]
+					children: [blocked ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 16 }), owned ? "Đã sở hữu" : blocked ? "Chưa đủ điều kiện" : !priced ? "Không thể mua" : amountInCart ? "Cập nhật giỏ hàng" : "Thêm vào giỏ hàng"]
 				})]
 			})
 		] })
@@ -605,7 +645,12 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 				className: "flex items-center justify-between gap-3",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 					className: "text-[11px] text-mute",
-					children: [formatNumber(cartCount(entries)), " vật phẩm"]
+					children: [
+						formatNumber(entries.length),
+						" loại vật phẩm · ",
+						formatNumber(cartCount(entries)),
+						" sản phẩm"
+					]
 				}), entries.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 					type: "button",
 					disabled: buying,
@@ -638,12 +683,11 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 											className: "line-clamp-2 text-xs font-bold",
-											children: entry.product.name
+											children: entry.product.name || entry.product.key
 										}),
-										typeof entry.product.description === "string" && entry.product.description.trim() && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-											className: "mt-1 line-clamp-2 whitespace-pre-line wrap-break-word text-[11px] leading-relaxed text-mute",
-											title: entry.product.description.trim(),
-											children: entry.product.description.trim()
+										/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+											className: "mt-0.5 truncate text-[10px] text-mute",
+											children: entry.key
 										}),
 										/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 											className: "mt-1 flex items-center gap-1 text-[11px] text-coin",
@@ -651,29 +695,32 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 												/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 13 }),
 												" ",
 												formatNumber(entry.price),
-												!entry.product.once && " / cái"
+												" / cái"
 											]
 										})
 									]
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 									type: "button",
-									"aria-label": `Xóa ${entry.product.name} khỏi giỏ`,
+									"aria-label": `Xóa ${entry.product.name || entry.product.key} khỏi giỏ`,
 									title: "Xóa vật phẩm",
 									disabled: buying,
-									onClick: () => onRemove(entry.id),
+									onClick: () => onRemove(entry.key),
 									className: "grid size-7 shrink-0 cursor-pointer place-items-center rounded-lg text-mute hover:bg-bad/10 hover:text-bad disabled:opacity-40",
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, { size: 16 })
 								})
 							]
 						}),
-						!entry.product.once && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "mt-2.5 flex items-center justify-between gap-2 border-t border-line pt-2.5",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CompactQuantity, {
-								value: entry.quantity,
+							children: [isOnce(entry.product, entry.group) ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+								className: "rounded-lg border border-line bg-raise px-2.5 py-1.5 text-[11px] font-medium text-mute",
+								children: "Chỉ mua một lần"
+							}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CompactQuantity, {
+								value: entry.amount,
 								max: maxQuantity,
 								disabled: buying || !ready,
-								onChange: (value) => onQuantity(entry.id, value)
+								onChange: (value) => onQuantity(entry.key, value)
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 								className: "flex items-center gap-1 text-xs font-bold text-coin tabular-nums",
 								children: [
@@ -692,7 +739,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 							]
 						})
 					]
-				}, String(entry.id)))
+				}, String(entry.key)))
 			}),
 			entries.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dl", {
@@ -700,14 +747,14 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "flex items-center justify-between text-mute",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số xu hiện tại" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số dư hiện tại" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
 								className: "tabular-nums",
 								children: formatNumber(coins)
 							})]
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "flex items-center justify-between text-mute",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số xu sau khi mua" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", { children: "Số dư sau khi mua" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("dd", {
 								className: `tabular-nums ${short ? "text-bad" : ""}`,
 								children: short ? `Thiếu ${formatNumber(short)}` : formatNumber(coins - total)
 							})]
@@ -716,7 +763,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 							className: "flex items-center justify-between border-t border-line pt-2.5",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("dt", {
 								className: "font-extrabold",
-								children: "Tổng số xu"
+								children: "Tổng thanh toán"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("dd", {
 								className: "flex items-center gap-1.5 text-lg font-extrabold text-coin tabular-nums",
 								children: [
@@ -730,7 +777,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 				}),
 				!ready && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 					className: "rounded-lg bg-raise p-2.5 text-[11px] text-mute",
-					children: "Đang tải dữ liệu cửa hàng. Vui lòng tải lại trước khi mua."
+					children: "Đang tải hoặc kiểm tra dữ liệu cửa hàng. Vui lòng tải lại trước khi mua."
 				}),
 				invalid.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 					className: "flex items-start gap-2 rounded-lg bg-bad/10 p-3 text-[11px] text-bad",
@@ -739,7 +786,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 							size: 16,
 							className: "shrink-0"
 						}),
-						" Giỏ hàng có ",
+						" Giỏ có ",
 						invalid.length,
 						" vật phẩm chưa hợp lệ. Hãy xóa hoặc điều chỉnh trước khi mua."
 					]
@@ -753,7 +800,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 16 }),
 						" Thiếu ",
 						formatNumber(short),
-						" xu"
+						" xu — Mua thêm"
 					]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
@@ -761,7 +808,12 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 					disabled: !canBuy,
 					loading: buying,
 					onClick: onBuy,
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 17 }), " Mua tất cả"]
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 17 }),
+						" Mua tất cả · ",
+						formatNumber(entries.length),
+						" loại vật phẩm"
+					]
 				})
 			] })
 		]
@@ -859,22 +911,36 @@ function EmptyProducts({ searching, tabs, hits, onSelect }) {
 }
 // src/features/shop/ProductItem.jsx
 function ProductItem({ p, poor, owned, cartQuantity = 0, onBuy }) {
+	const grouped = hasOptions(p);
+	const inventory = p.owned;
+	const inventoryLabel = typeof inventory === "number" ? `Đã có ${formatNumber(inventory)}` : typeof inventory === "string" && inventory ? `Đang dùng: ${inventory}` : "";
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 		type: "button",
 		onClick: onBuy,
 		disabled: owned,
-		className: "group disabled:cursor-default disabled:opacity-55 disabled:hover:border-line disabled:hover:bg-panel flex min-h-19.5 w-full cursor-pointer items-center gap-3 rounded-xl border border-line bg-panel p-3 text-left transition hover:border-mute/60 hover:bg-raise focus-visible:outline-2 focus-visible:outline-lime",
+		className: "group flex min-h-19.5 w-full cursor-pointer items-center gap-3 rounded-xl border border-line bg-panel p-3 text-left transition hover:border-mute/60 hover:bg-raise focus-visible:outline-2 focus-visible:outline-lime disabled:cursor-default disabled:opacity-55 disabled:hover:border-line disabled:hover:bg-panel",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tile, { p }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 				className: "min-w-0 flex-1",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-					className: "line-clamp-2 text-[13px] leading-snug font-bold",
-					children: p.name
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-					className: "mt-0.5 block truncate text-[10px] text-mute",
-					children: p.id
-				})]
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "line-clamp-2 text-[13px] leading-snug font-bold",
+						children: p.name || p.key
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "mt-0.5 block truncate text-[10px] text-mute",
+						children: p.key
+					}),
+					grouped && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+						className: "mt-1 block text-[10px] text-mute",
+						children: [formatNumber(p.options.length), " tùy chọn"]
+					}),
+					!owned && inventoryLabel && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+						className: "mt-1 block max-w-full truncate text-[10px] text-mute",
+						children: inventoryLabel
+					})
+				]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 				className: "flex shrink-0 flex-col items-end gap-1.5",
@@ -891,16 +957,19 @@ function ProductItem({ p, poor, owned, cartQuantity = 0, onBuy }) {
 						" ",
 						p.once ? "Đã thêm" : `Đã thêm ${formatNumber(cartQuantity)}`
 					]
-				}) : hasPrice(p) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+				}) : grouped ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					className: "text-[10px] font-bold text-mute",
+					children: "Chọn loại"
+				}) : hasPrice(p) ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 					className: `flex items-center gap-1 text-xs font-bold tabular-nums ${poor ? "text-mute" : "text-coin"}`,
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 14 }),
 						" ",
 						formatNumber(p.price)
 					]
-				}), !owned && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				}) : null, !owned && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 					className: "grid size-7 place-items-center rounded-lg bg-raise text-mute transition group-hover:bg-lime group-hover:text-bg",
-					children: cartQuantity ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCheck, {
+					children: grouped ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconChevronRight, { size: 15 }) : cartQuantity ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCheck, {
 						size: 15,
 						stroke: 2.4
 					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlus, {
@@ -1077,8 +1146,8 @@ var START_VIDEO = `/animalrestaurantshop/videos/start.mp4`;
 function useOwned(resetKey) {
 	const [ownedIds, setOwnedIds] = (0, import_react.useState)(() => /* @__PURE__ */ new Set());
 	(0, import_react.useEffect)(() => setOwnedIds(/* @__PURE__ */ new Set()), [resetKey]);
-	const isOwned = (p) => !!p?.once && (p.owned || ownedIds.has(p.id));
-	const markOwned = (id) => setOwnedIds((s) => new Set(s).add(id));
+	const isOwned = (product) => isOwnedOnce(product) || ownedIds.has(product?.key);
+	const markOwned = (key) => setOwnedIds((keys) => new Set(keys).add(key));
 	return {
 		isOwned,
 		markOwned
@@ -1128,21 +1197,20 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 		maxQuantity
 	]);
 	const total = cartTotal(entries);
-	const selectedQuantity = (item ? cart.find(({ id }) => String(id) === String(item.id)) : null)?.quantity || 0;
-	const cartQuantities = (0, import_react.useMemo)(() => new Map(cart.map(({ id, quantity }) => [String(id), quantity])), [cart]);
+	const cartQuantities = (0, import_react.useMemo)(() => new Map(cart.map(({ key, amount }) => [key, amount])), [cart]);
 	const categoryProducts = Array.isArray(current?.products) ? current.products : [];
 	const eligible = eligibleCategoryProducts(categoryProducts, isOwned);
-	const categoryAddedCount = eligible.filter((p) => cartQuantities.has(String(p.id))).length;
+	const categoryAddedCount = eligible.filter((product) => cartQuantities.has(product.key)).length;
 	const allCategoryAdded = eligible.length > 0 && categoryAddedCount === eligible.length;
 	const cartReady = shop.ready === true && Array.isArray(shop.tabs) && !shop.loading;
-	const canPurchase = cartReady && entries.every(({ invalid }) => !invalid) && total <= user.coins;
+	const canPurchase = cartReady && entries.every(({ invalid }) => !invalid) && total <= user.coins && Number.isSafeInteger(total);
 	const open = (p) => {
 		if (isOwned(p) || buying) return;
 		setItem(p);
 	};
-	const addToCart = (product, quantity, category) => {
-		const exists = cart.some(({ id }) => String(id) === String(product.id));
-		setCart((items) => putInCart(items, product, quantity, category, maxQuantity));
+	const addToCart = (product, amount, category, group = product) => {
+		const exists = cart.some((entry) => entry.key === product.key);
+		setCart((items) => putInCart(items, product, amount, category, maxQuantity, group));
 		toast(exists ? "Đã cập nhật số lượng trong giỏ" : "Đã thêm vật phẩm vào giỏ");
 	};
 	const toggleCategoryCart = () => {
@@ -1155,8 +1223,8 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 			toast(`Đã thêm các vật phẩm còn lại của ${current.name} vào giỏ`);
 		}
 	};
-	const removeFromCart = (id) => {
-		setCart((items) => items.filter((entry) => String(entry.id) !== String(id)));
+	const removeFromCart = (key) => {
+		setCart((items) => items.filter((entry) => entry.key !== key));
 		if (cart.length === 1) setCartOpen(false);
 	};
 	const clearCart = () => {
@@ -1169,7 +1237,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 		try {
 			const response = await buy(cartPayload(entries));
 			if (response.user) onUser(response.user);
-			for (const { product } of entries) if (product.once) markOwned(product.id);
+			for (const { product, group } of entries) if (isOnce(product, group)) markOwned(product.key);
 			setCart([]);
 			setCartOpen(false);
 			setDone(true);
@@ -1230,7 +1298,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 					className: "text-[11px] text-mute",
 					children: [
-						"Đã thêm ",
+						"Trong danh mục: ",
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("strong", {
 							className: "text-fg tabular-nums",
 							children: [
@@ -1239,7 +1307,11 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 								formatNumber(eligible.length)
 							]
 						}),
-						" loại trong danh mục vào giỏ hàng"
+						" loại đã thêm",
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							className: "hidden sm:inline",
+							children: " · Các nhóm có tùy chọn cần chọn riêng"
+						})
 					]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 					size: "sm",
@@ -1248,7 +1320,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 					disabled: !cartReady || buying || eligible.length === 0,
 					onClick: toggleCategoryCart,
 					title: allCategoryAdded ? "Xóa các vật phẩm thuộc danh mục hiện tại khỏi giỏ" : "Thêm các vật phẩm đủ điều kiện thuộc toàn bộ danh mục",
-					children: [allCategoryAdded ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconTrash, { size: 15 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 15 }), allCategoryAdded ? "Xóa tất cả" : "Thêm tất cả vào giỏ hàng"]
+					children: [allCategoryAdded ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconTrash, { size: 15 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 15 }), allCategoryAdded ? "Xóa tất cả" : "Thêm tất cả vào giỏ"]
 				})]
 			}),
 			products.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(EmptyProducts, {
@@ -1262,9 +1334,9 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 					p,
 					owned: isOwned(p),
 					poor: hasPrice(p) && p.price > user.coins,
-					cartQuantity: cartQuantities.get(String(p.id)) || 0,
+					cartQuantity: productOptions(p).reduce((count, option) => count + (cartQuantities.get(option.key) || 0), 0),
 					onBuy: () => open(p)
-				}, p.id))
+				}, p.key))
 			}, tabId),
 			products.length > shown && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "mt-6 flex flex-col items-center gap-2",
@@ -1320,9 +1392,13 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 							className: "min-w-0 flex-1",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 								className: "block text-xs font-extrabold",
-								children: "Giỏ hàng"
+								children: [
+									"Giỏ hàng · ",
+									formatNumber(cartCount(entries)),
+									" vật phẩm"
+								]
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 								className: "mt-0.5 flex items-center gap-1 text-xs font-bold text-coin",
 								children: [
@@ -1334,7 +1410,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 							className: "shrink-0 rounded-lg bg-lime px-3 py-2 text-[11px] font-extrabold text-bg",
-							children: "Xem giỏ hàng và mua"
+							children: "Xem giỏ & mua"
 						})
 					]
 				})
@@ -1343,7 +1419,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 				item,
 				category: current?.name,
 				user,
-				cartQuantity: selectedQuantity,
+				cartQuantities,
 				cartTotal: total,
 				maxQuantity,
 				onAdd: addToCart,
@@ -1353,7 +1429,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 					setItem(null);
 					selectTab(TOPUP);
 				}
-			}, item?.id ?? ""),
+			}, item?.key ?? ""),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CartDialog, {
 				open: cartOpen,
 				entries,
@@ -1362,7 +1438,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh }) {
 				buying,
 				maxQuantity,
 				onClose: () => setCartOpen(false),
-				onQuantity: (id, quantity) => setCart((items) => changeCartQuantity(items, id, quantity, maxQuantity)),
+				onQuantity: (key, amount) => setCart((items) => changeCartQuantity(items, key, amount, maxQuantity)),
 				onRemove: removeFromCart,
 				onClear: clearCart,
 				onBuy: purchase,

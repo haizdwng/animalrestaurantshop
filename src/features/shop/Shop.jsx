@@ -7,7 +7,7 @@ import * as api from '@/shared/library/api';
 import TopUp from '@/shared/components/payment/TopUp';
 import { PAGE, TOPUP } from '@/features/shop/config';
 import { hasPrice, matches } from '@/features/shop/shopUtilities';
-import { addCategoryToCart, cartCount, cartPayload, cartTotal, changeCartQuantity, eligibleCategoryProducts, putInCart, removeCategoryFromCart, resolveCart } from '@/features/shop/cartUtils';
+import { addCategoryToCart, cartCount, cartPayload, cartTotal, changeCartQuantity, eligibleCategoryProducts, isOwnedOnce, isOnce, productOptions, putInCart, removeCategoryFromCart, resolveCart } from '@/features/shop/cartUtils';
 import BuyDialog from '@/features/shop/BuyDialog';
 import CartDialog from '@/features/shop/CartDialog';
 import CategoryNav from '@/features/shop/CategoryNav';
@@ -23,8 +23,8 @@ const START_VIDEO = `${import.meta.env.BASE_URL}videos/start.mp4`;
 function useOwned(resetKey) {
   const [ownedIds, setOwnedIds] = useState(() => new Set());
   useEffect(() => setOwnedIds(new Set()), [resetKey]);
-  const isOwned = (p) => !!p?.once && (p.owned || ownedIds.has(p.id));
-  const markOwned = (id) => setOwnedIds((s) => new Set(s).add(id));
+  const isOwned = (product) => isOwnedOnce(product) || ownedIds.has(product?.key);
+  const markOwned = (key) => setOwnedIds((keys) => new Set(keys).add(key));
   return { isOwned, markOwned };
 };
 
@@ -66,23 +66,21 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
 
   const entries = useMemo(() => resolveCart(cart, shop.tabs, isOwned, maxQuantity), [cart, shop.tabs, isOwned, maxQuantity]);
   const total = cartTotal(entries);
-  const selected = item ? cart.find(({ id }) => String(id) === String(item.id)) : null;
-  const selectedQuantity = selected?.quantity || 0;
-  const cartQuantities = useMemo(() => new Map(cart.map(({ id, quantity }) => [String(id), quantity])), [cart]);
+  const cartQuantities = useMemo(() => new Map(cart.map(({ key, amount }) => [key, amount])), [cart]);
   const categoryProducts = Array.isArray(current?.products) ? current.products : [];
   const eligible = eligibleCategoryProducts(categoryProducts, isOwned);
-  const categoryAddedCount = eligible.filter((p) => cartQuantities.has(String(p.id))).length;
+  const categoryAddedCount = eligible.filter((product) => cartQuantities.has(product.key)).length;
   const allCategoryAdded = eligible.length > 0 && categoryAddedCount === eligible.length;
   const cartReady = shop.ready === true && Array.isArray(shop.tabs) && !shop.loading;
-  const canPurchase = cartReady && entries.every(({ invalid }) => !invalid) && total <= user.coins;
+  const canPurchase = cartReady && entries.every(({ invalid }) => !invalid) && total <= user.coins && Number.isSafeInteger(total);
 
   const open = (p) => {
     if (isOwned(p) || buying) return;
     setItem(p);
   };
-  const addToCart = (product, quantity, category) => {
-    const exists = cart.some(({ id }) => String(id) === String(product.id));
-    setCart((items) => putInCart(items, product, quantity, category, maxQuantity));
+  const addToCart = (product, amount, category, group = product) => {
+    const exists = cart.some((entry) => entry.key === product.key);
+    setCart((items) => putInCart(items, product, amount, category, maxQuantity, group));
     toast(exists ? 'Đã cập nhật số lượng trong giỏ' : 'Đã thêm vật phẩm vào giỏ');
   };
   const toggleCategoryCart = () => {
@@ -95,8 +93,8 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
       toast(`Đã thêm các vật phẩm còn lại của ${current.name} vào giỏ`);
     };
   };
-  const removeFromCart = (id) => {
-    setCart((items) => items.filter((entry) => String(entry.id) !== String(id)));
+  const removeFromCart = (key) => {
+    setCart((items) => items.filter((entry) => entry.key !== key));
     if (cart.length === 1) setCartOpen(false);
   };
   const clearCart = () => {
@@ -109,7 +107,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
     try {
       const response = await api.buy(cartPayload(entries));
       if (response.user) onUser(response.user);
-      for (const { product } of entries) if (product.once) markOwned(product.id);
+      for (const { product, group } of entries) if (isOnce(product, group)) markOwned(product.key);
       setCart([]);
       setCartOpen(false);
       setDone(true);
@@ -146,7 +144,8 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
         {!topup && (
           <div className='mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-panel px-3 py-2.5'>
             <p className='text-[11px] text-mute'>
-              Đã thêm <strong className='text-fg tabular-nums'>{formatNumber(categoryAddedCount)} / {formatNumber(eligible.length)}</strong> loại trong danh mục vào giỏ hàng
+              Trong danh mục: <strong className='text-fg tabular-nums'>{formatNumber(categoryAddedCount)} / {formatNumber(eligible.length)}</strong> loại đã thêm
+              <span className='hidden sm:inline'> · Các nhóm có tùy chọn cần chọn riêng</span>
             </p>
             <Button
               size='sm'
@@ -157,7 +156,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
               title={allCategoryAdded ? 'Xóa các vật phẩm thuộc danh mục hiện tại khỏi giỏ' : 'Thêm các vật phẩm đủ điều kiện thuộc toàn bộ danh mục'}
             >
               {allCategoryAdded ? <IconTrash size={15} /> : <IconShoppingCart size={15} />}
-              {allCategoryAdded ? 'Xóa tất cả' : 'Thêm tất cả vào giỏ hàng'}
+              {allCategoryAdded ? 'Xóa tất cả' : 'Thêm tất cả vào giỏ'}
             </Button>
           </div>
         )}
@@ -167,7 +166,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
         ) : (
           <ul key={tabId} className={`grid animate-fade gap-2 transition-opacity sm:grid-cols-2 xl:grid-cols-3 ${shop.loading ? 'pointer-events-none opacity-50' : ''}`}>
             {products.slice(0, shown).map((p) => (
-              <ProductItem key={p.id} p={p} owned={isOwned(p)} poor={hasPrice(p) && p.price > user.coins} cartQuantity={cartQuantities.get(String(p.id)) || 0} onBuy={() => open(p)} />
+              <ProductItem key={p.key} p={p} owned={isOwned(p)} poor={hasPrice(p) && p.price > user.coins} cartQuantity={productOptions(p).reduce((count, option) => count + (cartQuantities.get(option.key) || 0), 0)} onBuy={() => open(p)} />
             ))}
           </ul>
         )}
@@ -206,20 +205,20 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
               <span className='absolute -top-2 -right-2 grid min-w-5 h-5 place-items-center rounded-full bg-fg px-1 text-[10px] font-extrabold text-bg tabular-nums'>{formatNumber(cart.length)}</span>
             </span>
             <span className='min-w-0 flex-1'>
-              <span className='block text-xs font-extrabold'>Giỏ hàng</span>
+              <span className='block text-xs font-extrabold'>Giỏ hàng · {formatNumber(cartCount(entries))} vật phẩm</span>
               <span className='mt-0.5 flex items-center gap-1 text-xs font-bold text-coin'><Coin size={13} /> {formatNumber(total)}</span>
             </span>
-            <span className='shrink-0 rounded-lg bg-lime px-3 py-2 text-[11px] font-extrabold text-bg'>Xem giỏ hàng và mua</span>
+            <span className='shrink-0 rounded-lg bg-lime px-3 py-2 text-[11px] font-extrabold text-bg'>Xem giỏ & mua</span>
           </button>
         </div>
       )}
 
       <BuyDialog
-        key={item?.id ?? ''}
+        key={item?.key ?? ''}
         item={item}
         category={current?.name}
         user={user}
-        cartQuantity={selectedQuantity}
+        cartQuantities={cartQuantities}
         cartTotal={total}
         maxQuantity={maxQuantity}
         onAdd={addToCart}
@@ -238,7 +237,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh }) {
         buying={buying}
         maxQuantity={maxQuantity}
         onClose={() => setCartOpen(false)}
-        onQuantity={(id, quantity) => setCart((items) => changeCartQuantity(items, id, quantity, maxQuantity))}
+        onQuantity={(key, amount) => setCart((items) => changeCartQuantity(items, key, amount, maxQuantity))}
         onRemove={removeFromCart}
         onClear={clearCart}
         onBuy={purchase}
