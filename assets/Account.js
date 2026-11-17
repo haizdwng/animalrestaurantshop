@@ -1,5 +1,5 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Avatar.js","assets/index.js","assets/index.css","assets/IconPhoto.js","assets/IconCheck.js","assets/IconTrash.js","assets/clipboard.js"])))=>i.map(i=>d[i]);
-import { B as openidOtp, Et as createReactComponent, F as getTransactions, H as submitInvite, L as changeOpenid, M as cancelTransaction, Mt as require_react, Nt as __toESM, Q as Coin, R as getBuffetLink, V as redeemGiftCode, W as updateUser, _t as Field, a as formatNumber, bt as IconX, dt as SortSelect, ft as Menu, gt as toastError, ht as toast, lt as PageSizeSelect, mt as OtpButton, n as compareByTime, nt as PagerSkeleton, o as formatShortDateTime, ot as Spinner, pt as Dialog, r as formatDate, rt as RowSkeleton, s as formatVietnameseDong, t as __vitePreload, ut as Select, vt as Button, xt as IconRefresh, yt as require_jsx_runtime, z as getFriendLink } from "./index.js";
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Avatar.js","assets/index.js","assets/index.css","assets/IconPhoto.js","assets/IconTrash.js","assets/clipboard.js"])))=>i.map(i=>d[i]);
+import { $t as require_react, At as PageSizeSelect, Bt as require_jsx_runtime, C as formatDate, Ct as PagerSkeleton, D as formatVietnameseDong, Dt as Spinner, E as formatShortDateTime, Ft as OtpButton, Ht as IconRefresh, It as toast, Lt as toastError, Mt as SortSelect, Nt as Menu, Pt as Dialog, Q as cancelTransaction, Rt as Field, S as compareByTime, T as formatNumber, Vt as IconX, at as getBuffetLink, ct as redeemGiftCode, dt as updateUser, en as __toESM, it as changeOpenid, jt as Select, lt as submitInvite, ot as getFriendLink, qt as createReactComponent, st as openidOtp, t as __vitePreload, tt as getTransactions, wt as RowSkeleton, yt as Coin, zt as Button } from "./index.js";
 import { n as IconLock, r as IconCopy, t as copyText } from "./clipboard.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
 import { t as StrengthBar } from "./StrengthBar.js";
@@ -1301,7 +1301,7 @@ function LinkDialog({ request, title, open, onClose }) {
 	});
 }
 // src/features/account/Account.jsx
-var AvatarEditorDialog = (0, import_react.lazy)(() => __vitePreload(() => import("./Avatar.js"), __vite__mapDeps([0,1,2,3,4,5,6])));
+var AvatarEditorDialog = (0, import_react.lazy)(() => __vitePreload(() => import("./Avatar.js"), __vite__mapDeps([0,1,2,3,4,5])));
 function Account({ user, onUser, onLogout, onRefresh, checkin }) {
 	const form = useProfileForm(onUser);
 	const { show } = form;

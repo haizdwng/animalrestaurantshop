@@ -1,4 +1,4 @@
-import { Et as createReactComponent } from "./index.js";
+import { qt as createReactComponent } from "./index.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
 *

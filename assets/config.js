@@ -1,4 +1,4 @@
-import { Et as createReactComponent, n as compareByTime } from "./index.js";
+import { S as compareByTime, qt as createReactComponent } from "./index.js";
 import { t as IconUsers } from "./IconUsers.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT

@@ -1,6 +1,5 @@
-import { Et as createReactComponent, Mt as require_react, Nt as __toESM, U as updateAvatar, bt as IconX, ct as Tabs, ht as toast, it as Skeleton, jt as require_react_dom, ot as Spinner, vt as Button, xt as IconRefresh, yt as require_jsx_runtime } from "./index.js";
-import { t as IconPhoto } from "./IconPhoto.js";
-import { t as IconCheck } from "./IconCheck.js";
+import { $t as require_react, Bt as require_jsx_runtime, Dt as Spinner, Ht as IconRefresh, It as toast, Qt as require_react_dom, Tt as Skeleton, Vt as IconX, en as __toESM, kt as Tabs, qt as createReactComponent, ut as updateAvatar, zt as Button } from "./index.js";
+import { n as IconCheck, t as IconPhoto } from "./IconPhoto.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { r as IconCopy } from "./clipboard.js";
 /**
