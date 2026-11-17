@@ -1256,6 +1256,10 @@
     width: calc(var(--spacing) * 56);
   }
 
+  .w-auto {
+    width: auto;
+  }
+
   .w-full {
     width: 100%;
   }
@@ -1606,6 +1610,10 @@
     overscroll-behavior: contain;
   }
 
+  .overscroll-x-contain {
+    overscroll-behavior-x: contain;
+  }
+
   .rounded {
     border-radius: .25rem;
   }
@@ -1744,6 +1752,16 @@
 
   .border-lime {
     border-color: var(--color-lime);
+  }
+
+  .border-lime\/20 {
+    border-color: #d4ff3a33;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .border-lime\/20 {
+      border-color: color-mix(in oklab, var(--color-lime) 20%, transparent);
+    }
   }
 
   .border-lime\/25 {
@@ -2787,13 +2805,13 @@
       }
     }
 
-    .hover\:bg-lime\/25:hover {
-      background-color: #d4ff3a40;
+    .hover\:bg-lime\/20:hover {
+      background-color: #d4ff3a33;
     }
 
     @supports (color: color-mix(in lab, red, red)) {
-      .hover\:bg-lime\/25:hover {
-        background-color: color-mix(in oklab, var(--color-lime) 25%, transparent);
+      .hover\:bg-lime\/20:hover {
+        background-color: color-mix(in oklab, var(--color-lime) 20%, transparent);
       }
     }
 
@@ -3111,6 +3129,14 @@
       width: 100%;
     }
 
+    .md\:min-w-0 {
+      min-width: 0;
+    }
+
+    .md\:flex-1 {
+      flex: 1;
+    }
+
     .md\:grid-cols-8 {
       grid-template-columns: repeat(8, minmax(0, 1fr));
     }
@@ -3137,6 +3163,10 @@
 
     .md\:self-start {
       align-self: flex-start;
+    }
+
+    .md\:overflow-visible {
+      overflow: visible;
     }
 
     .md\:overflow-y-auto {

@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/clipboard.js","assets/IconPhoto.js","assets/Tile.js","assets/IconUsers.js","assets/IconPlus.js","assets/Account.js","assets/useRemoteResource.js","assets/IconStarFilled.js","assets/IconUser.js","assets/IconUserPlus.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Users.js","assets/Head.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/PaymentDialog.js","assets/clipboard.js","assets/IconPhoto.js","assets/Tile.js","assets/IconUsers.js","assets/IconPlus.js","assets/Account.js","assets/useRemoteResource.js","assets/IconStarFilled.js","assets/IconUser.js","assets/IconUserPlus.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Head.js","assets/Users.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
 // \0rolldown/runtime.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -14488,6 +14488,30 @@ var IconEye = /* @__PURE__ */ createReactComponent("outline", "eye", "Eye", [["p
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
+var IconFileUpload = /* @__PURE__ */ createReactComponent("outline", "file-upload", "FileUpload", [
+	["path", {
+		"d": "M14 3v4a1 1 0 0 0 1 1h4",
+		"key": "svg-0"
+	}],
+	["path", {
+		"d": "M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2",
+		"key": "svg-1"
+	}],
+	["path", {
+		"d": "M12 11v6",
+		"key": "svg-2"
+	}],
+	["path", {
+		"d": "M9.5 13.5l2.5 -2.5l2.5 2.5",
+		"key": "svg-3"
+	}]
+]);
+/**
+* @license @tabler/icons-react v3.52.0 - MIT
+*
+* This source code is licensed under the MIT license.
+* See the LICENSE file in the root directory of this source tree.
+*/
 var IconHexagonLetterA = /* @__PURE__ */ createReactComponent("outline", "hexagon-letter-a", "HexagonLetterA", [
 	["path", {
 		"d": "M19.875 6.27a2.225 2.225 0 0 1 1.125 1.948v7.284c0 .809 -.443 1.555 -1.158 1.948l-6.75 4.27a2.269 2.269 0 0 1 -2.184 0l-6.75 -4.27a2.225 2.225 0 0 1 -1.158 -1.948v-7.285c0 -.809 .443 -1.554 1.158 -1.947l6.75 -3.98a2.33 2.33 0 0 1 2.25 0l6.75 3.98h-.033",
@@ -15131,18 +15155,33 @@ function PageSizeSelect({ value, onChange, className }) {
 }
 // src/shared/components/ui/Tabs.jsx
 function Tabs({ tabs, value, onChange, label = "Điều hướng danh mục" }) {
+	const containerRef = (0, import_react.useRef)(null);
+	(0, import_react.useEffect)(() => {
+		const container = containerRef.current;
+		const selected = [...container?.children || []].find((child) => child.getAttribute("aria-selected") === "true");
+		if (!container || !selected) return;
+		const target = container.scrollLeft + selected.getBoundingClientRect().left - container.getBoundingClientRect().left - (container.clientWidth - selected.clientWidth) / 2;
+		container.scrollTo({
+			left: Math.max(0, target),
+			behavior: "auto"
+		});
+	}, [value]);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		ref: containerRef,
 		role: "tablist",
 		"aria-label": label,
-		className: "no-scrollbar flex min-w-0 gap-1 overflow-x-auto rounded-xl border border-line bg-panel p-1",
+		className: "no-scrollbar flex w-full min-w-0 max-w-full gap-1 overflow-x-auto overscroll-x-contain rounded-xl border border-line bg-panel p-1",
 		children: tabs.map(([key, title, Icon]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 			role: "tab",
 			type: "button",
 			"aria-selected": value === key,
 			onClick: () => onChange(key),
-			className: `ui-nav-item shrink-0 whitespace-nowrap ${value === key ? "bg-raise text-fg" : ""}`,
+			className: `ui-nav-item min-h-10 shrink-0 whitespace-nowrap ${value === key ? "bg-raise text-fg" : ""}`,
 			children: [
-				Icon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, { size: 16 }),
+				Icon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
+					size: 16,
+					className: "shrink-0"
+				}),
 				" ",
 				title
 			]
@@ -15906,6 +15945,20 @@ function Ve({ defaultValue: e, defaultLanguage: r, defaultPath: n, value: t, lan
 	});
 }
 var Ft = (0, import_react.memo)(Ve);
+// src/shared/components/ui/Tooltip.jsx
+function Tooltip({ text, children, side = "bottom", align = "center", className = "" }) {
+	const id = (0, import_react.useId)();
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
+		className: `ui-tooltip-anchor relative inline-flex min-w-0 ${className}`,
+		"aria-describedby": id,
+		children: [(0, import_react.isValidElement)(children) ? (0, import_react.cloneElement)(children, { "aria-describedby": id }) : children, /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+			role: "tooltip",
+			id,
+			className: `ui-tooltip whitespace-normal ${side === "top" ? "bottom-[calc(100%+.5rem)]" : "top-[calc(100%+.5rem)]"} ${align === "end" ? "right-0" : align === "start" ? "left-0" : "left-1/2 -translate-x-1/2"}`,
+			children: text
+		})]
+	});
+}
 // src/shared/components/ui/Feedback.jsx
 function Spinner({ size = 18, className = "" }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLoader2, {
@@ -16029,6 +16082,7 @@ function PagerSkeleton() {
 }
 // src/shared/components/ui/JsonEditor.jsx
 var formatJson = (value) => JSON.stringify(value, null, 2);
+var MAX_UPLOAD_BYTES = 20971520;
 var EDITOR_HEIGHT = "h-[clamp(22rem,62dvh,48rem)] min-h-72";
 var LOADING_WIDTHS = [
 	40,
@@ -16118,12 +16172,14 @@ function JsonEditor({ load, save, deps = [], extraActions = null }) {
 		error: ""
 	});
 	const [saving, setSaving] = (0, import_react.useState)(false);
+	const [confirmReload, setConfirmReload] = (0, import_react.useState)(false);
 	const current = (0, import_react.useRef)({
 		parseError: "",
 		dirty: false,
 		save: null
 	});
 	const request = (0, import_react.useRef)(0);
+	const uploadInput = (0, import_react.useRef)(null);
 	const loadRef = (0, import_react.useRef)(load);
 	loadRef.current = load;
 	const reload = async () => {
@@ -16181,6 +16237,27 @@ function JsonEditor({ load, save, deps = [], extraActions = null }) {
 		if (parseError) return;
 		setText(formatJson(JSON.parse(text)));
 	};
+	const importFile = async (event) => {
+		const file = event.target.files?.[0];
+		event.target.value = "";
+		if (!file) return;
+		if (!file.name.toLowerCase().endsWith(".json")) {
+			toast("Chỉ hỗ trợ tệp .json", "err");
+			return;
+		}
+		if (file.size > MAX_UPLOAD_BYTES) {
+			toast("Tệp JSON không được vượt quá 20 MB", "err");
+			return;
+		}
+		try {
+			const fileText = await file.text();
+			const parsed = JSON.parse(fileText.replace(/^\uFEFF/, ""));
+			setText(formatJson(parsed));
+			toast(`Đã nạp ${file.name}. Bấm Lưu để cập nhật lên máy chủ.`, "info");
+		} catch (error) {
+			toast(`Không thể đọc JSON: ${error.message}`, "err");
+		}
+	};
 	current.current = {
 		parseError,
 		dirty,
@@ -16198,33 +16275,79 @@ function JsonEditor({ load, save, deps = [], extraActions = null }) {
 		message: state.error,
 		onRetry: reload
 	});
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 		className: `ui-card min-w-0 overflow-hidden ${parseError ? "ring-1 ring-bad/40 ring-inset" : ""}`,
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "flex flex-wrap items-center justify-end gap-2 border-b border-line p-3",
+				role: "toolbar",
+				"aria-label": "Công cụ dữ liệu JSON",
+				className: "flex min-w-0 items-center justify-end gap-2 border-b border-line px-3 py-2.5",
 				children: [
 					extraActions,
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-						variant: "quiet",
-						size: "sm",
-						onClick: reload,
-						disabled: saving,
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 15 }), " Tải lại"]
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+						ref: uploadInput,
+						type: "file",
+						accept: ".json,application/json",
+						className: "sr-only",
+						tabIndex: -1,
+						"aria-label": "Chọn tệp JSON để nhập",
+						onChange: importFile
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-						variant: "ghost",
-						size: "sm",
-						onClick: format,
-						disabled: Boolean(parseError),
-						children: "Định dạng"
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
+						text: "Tải lại dữ liệu từ máy chủ",
+						side: "top",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+							variant: "ghost",
+							size: "sm",
+							className: "size-9! shrink-0 p-0!",
+							"aria-label": "Tải lại",
+							title: "Tải lại",
+							onClick: () => dirty ? setConfirmReload(true) : reload(),
+							disabled: saving,
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 17 })
+						})
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-						size: "sm",
-						onClick: submit,
-						loading: saving,
-						disabled: !dirty || Boolean(parseError),
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDeviceFloppy, { size: 15 }), " Lưu"]
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
+						text: "Định dạng JSON",
+						side: "top",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+							variant: "ghost",
+							size: "sm",
+							className: "size-9! shrink-0 p-0!",
+							"aria-label": "Định dạng JSON",
+							title: "Định dạng JSON",
+							onClick: format,
+							disabled: Boolean(parseError) || saving,
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconBraces, { size: 17 })
+						})
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
+						text: "Nhập dữ liệu từ tệp .json",
+						side: "top",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+							variant: "ghost",
+							size: "sm",
+							className: "size-9! shrink-0 p-0!",
+							"aria-label": "Nhập tệp JSON",
+							title: "Nhập tệp JSON",
+							onClick: () => uploadInput.current?.click(),
+							disabled: saving,
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconFileUpload, { size: 17 })
+						})
+					}),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Tooltip, {
+						text: "Lưu dữ liệu lên máy chủ (Ctrl/⌘ + S)",
+						side: "top",
+						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+							size: "sm",
+							className: "size-9! shrink-0 p-0!",
+							"aria-label": "Lưu JSON",
+							title: "Lưu JSON",
+							onClick: submit,
+							loading: saving,
+							disabled: !dirty || Boolean(parseError),
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDeviceFloppy, { size: 17 })
+						})
 					})
 				]
 			}),
@@ -16261,21 +16384,28 @@ function JsonEditor({ load, save, deps = [], extraActions = null }) {
 				})
 			})
 		]
-	});
-}
-// src/shared/components/ui/Tooltip.jsx
-function Tooltip({ text, children, side = "bottom", align = "center", className = "" }) {
-	const id = (0, import_react.useId)();
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-		className: `ui-tooltip-anchor relative inline-flex min-w-0 ${className}`,
-		"aria-describedby": id,
-		children: [(0, import_react.isValidElement)(children) ? (0, import_react.cloneElement)(children, { "aria-describedby": id }) : children, /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-			role: "tooltip",
-			id,
-			className: `ui-tooltip whitespace-normal ${side === "top" ? "bottom-[calc(100%+.5rem)]" : "top-[calc(100%+.5rem)]"} ${align === "end" ? "right-0" : align === "start" ? "left-0" : "left-1/2 -translate-x-1/2"}`,
-			children: text
+	}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Dialog, {
+		open: confirmReload,
+		title: "Tải lại dữ liệu",
+		onClose: () => setConfirmReload(false),
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+			className: "text-sm text-mute",
+			children: "Các thay đổi chưa lưu sẽ bị mất. Bạn có muốn tải lại dữ liệu từ máy chủ?"
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "grid grid-cols-2 gap-2",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+				variant: "ghost",
+				onClick: () => setConfirmReload(false),
+				children: "Hủy"
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+				onClick: () => {
+					setConfirmReload(false);
+					reload();
+				},
+				children: "Tải lại"
+			})]
 		})]
-	});
+	})] });
 }
 // src/shared/components/ui/SearchInput.jsx
 function SearchInput({ value, onChange, placeholder = "Tìm kiếm…", label = "Tìm kiếm", className = "", disabled = false }) {
@@ -17595,10 +17725,10 @@ var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"),
 var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11])));
 var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([12,7,2,3,13,14,15,16,6,17])));
 var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([18,19,10,15])));
-var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([20,17,13,11,5,19,10,15])));
-var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([21,16,19,10,15,2,13,22,5])));
-var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([23,1,19,10,15,14,7,11,5,9,13,22,2])));
-var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([24,19,10,15,22])));
+var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([20,17,13,11,5,19,10,15,21])));
+var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([22,16,19,10,15,2,13,21,5])));
+var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([23,1,19,10,15,14,7,11,5,9,13,21,2])));
+var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([24,19,10,15,21])));
 var AUTHENTICATION_PATHS = [
 	"/login",
 	"/register",
@@ -17844,4 +17974,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)({ md5: "b750a6e2b3d860ae46efcc050e03db3b" });
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
-export { createTransaction as $, useLocation as $t, adminAddPlayerLike as A, Pager as At, adminEditPlayer as B, Field as Bt, formatDate as C, JsonEditor as Ct, formatVietnameseDong as D, Skeleton as Dt, formatShortDateTime as E, RowSkeleton as Et, adminDecryptRecordValue as F, Menu as Ft, adminPlayerFriends as G, IconInfoCircle as Gt, adminEncryptRecordValue as H, IconX as Ht, adminDeleteGiftCode as I, Dialog as It, adminSaveData as J, IconAlertTriangle as Jt, adminPlayers as K, IconCircleCheck as Kt, adminDeletePlayerFriend as L, OtpButton as Lt, adminCreateGiftCode as M, PageSizeSelect as Mt, adminCreateUser as N, Select as Nt, adminAddCoin as O, ErrorState as Ot, adminData as P, SortSelect as Pt, cancelTransaction as Q, Outlet as Qt, adminDeleteUser as R, toast as Rt, compareByTime as S, Tooltip as St, formatNumber as T, PagerSkeleton as Tt, adminGiftCodes as U, IconSearch as Ut, adminEditUser as V, Button as Vt, adminPlayer as W, IconRefresh as Wt, adminUpdatePlayerAvatar as X, Badge as Xt, adminSaveRecord as Y, createReactComponent as Yt, adminUsers as Z, require_jsx_runtime as Zt, productOptions as _, fileToAvatar as _t, cartTotal as a, getBuffetLink as at, resolveCart as b, Logo as bt, eligibleCategoryProducts as c, redeemGiftCode as ct, getGroupRemaining as d, updateUser as dt, useNavigate as en, getTransaction as et, getPurchaseLimit as f, login as ft, isOwnedOnce as g, signupOtp as gt, isOnce as h, signup as ht, cartPayload as i, __toESM as in, changeOpenid as it, adminAddPlayerStar as j, Tabs as jt, adminAddPlayerFriend as k, Spinner as kt, getConditions as l, submitInvite as lt, hasValidPrice as m, resetPassword as mt, addCategoryToCart as n, require_react_dom as nn, ADMIN_MAX_QTY as nt, changeCartQuantity as o, getFriendLink as ot, hasOptions as p, passwordOtp as pt, adminRecord as q, IconChevronRight as qt, cartCount as r, require_react as rn, buy as rt, clampCartQuantity as s, openidOtp as st, __vitePreload as t, useParams as tn, getTransactions as tt, getConflictingKeys as u, updateAvatar as ut, putInCart as v, isAdmin as vt, formatDateTime as w, Line as wt, unmetConditions as x, SearchInput as xt, removeCategoryFromCart as y, Coin as yt, adminEditGiftCode as z, toastError as zt };
+export { createTransaction as $, useLocation as $t, adminAddPlayerLike as A, Pager as At, adminEditPlayer as B, Field as Bt, formatDate as C, Line as Ct, formatVietnameseDong as D, ErrorState as Dt, formatShortDateTime as E, Skeleton as Et, adminDecryptRecordValue as F, Menu as Ft, adminPlayerFriends as G, IconInfoCircle as Gt, adminEncryptRecordValue as H, IconX as Ht, adminDeleteGiftCode as I, Dialog as It, adminSaveData as J, IconAlertTriangle as Jt, adminPlayers as K, IconCircleCheck as Kt, adminDeletePlayerFriend as L, OtpButton as Lt, adminCreateGiftCode as M, PageSizeSelect as Mt, adminCreateUser as N, Select as Nt, adminAddCoin as O, Spinner as Ot, adminData as P, SortSelect as Pt, cancelTransaction as Q, Outlet as Qt, adminDeleteUser as R, toast as Rt, compareByTime as S, JsonEditor as St, formatNumber as T, RowSkeleton as Tt, adminGiftCodes as U, IconSearch as Ut, adminEditUser as V, Button as Vt, adminPlayer as W, IconRefresh as Wt, adminUpdatePlayerAvatar as X, Badge as Xt, adminSaveRecord as Y, createReactComponent as Yt, adminUsers as Z, require_jsx_runtime as Zt, productOptions as _, fileToAvatar as _t, cartTotal as a, getBuffetLink as at, resolveCart as b, Logo as bt, eligibleCategoryProducts as c, redeemGiftCode as ct, getGroupRemaining as d, updateUser as dt, useNavigate as en, getTransaction as et, getPurchaseLimit as f, login as ft, isOwnedOnce as g, signupOtp as gt, isOnce as h, signup as ht, cartPayload as i, __toESM as in, changeOpenid as it, adminAddPlayerStar as j, Tabs as jt, adminAddPlayerFriend as k, Tooltip as kt, getConditions as l, submitInvite as lt, hasValidPrice as m, resetPassword as mt, addCategoryToCart as n, require_react_dom as nn, ADMIN_MAX_QTY as nt, changeCartQuantity as o, getFriendLink as ot, hasOptions as p, passwordOtp as pt, adminRecord as q, IconChevronRight as qt, cartCount as r, require_react as rn, buy as rt, clampCartQuantity as s, openidOtp as st, __vitePreload as t, useParams as tn, getTransactions as tt, getConflictingKeys as u, updateAvatar as ut, putInCart as v, isAdmin as vt, formatDateTime as w, PagerSkeleton as wt, unmetConditions as x, SearchInput as xt, removeCategoryFromCart as y, Coin as yt, adminEditGiftCode as z, toastError as zt };

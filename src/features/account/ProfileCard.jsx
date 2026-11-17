@@ -16,12 +16,14 @@ export default function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGift
           <div className='grid size-20 place-items-center overflow-hidden rounded-2xl border border-line bg-raise text-mute'>
             {user.avatar && !imageFailed ? <img src={user.avatar} alt='Ảnh đại diện' className='size-full object-cover' onError={() => setImageFailed(true)} /> : <IconUser size={30} stroke={1.5} />}
           </div>
-          <Tooltip text='Chỉnh sửa ảnh đại diện' side='top' className='absolute -right-2 -bottom-2'>
-            <button type='button' onClick={onEditAvatar} aria-label='Chỉnh sửa ảnh đại diện'
+          <div className='absolute -right-2 -bottom-2 z-10'>
+            <Tooltip text='Chỉnh sửa ảnh đại diện' side='top'>
+              <button type='button' onClick={onEditAvatar} aria-label='Chỉnh sửa ảnh đại diện'
               className='grid size-9 cursor-pointer place-items-center rounded-xl border-2 border-panel bg-lime text-bg hover:brightness-105'>
-              <IconPencil size={16} />
-            </button>
-          </Tooltip>
+                <IconPencil size={16} />
+              </button>
+            </Tooltip>
+          </div>
         </div>
         <Button variant='quiet' size='sm' onClick={onLogout}><IconLogout size={16} /> Đăng xuất</Button>
       </div>

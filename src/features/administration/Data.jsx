@@ -17,10 +17,9 @@ export default function AdminData() {
   }, [section, activeSection, navigate]);
 
   return (
-    <div className='space-y-4'>
-      <Head title='Dữ liệu' sub='Chỉnh sửa cấu hình · Ctrl/⌘ + S để lưu'>
-        <Tabs tabs={DATA_TABS} value={activeSection} onChange={(next) => navigate(`/administrator/data/${next}`)} />
-      </Head>
+    <div className='min-w-0 space-y-4'>
+      <Head title='Dữ liệu' sub='Chỉnh sửa cấu hình · Ctrl/⌘ + S để lưu' />
+      <Tabs tabs={DATA_TABS} value={activeSection} label='Danh mục dữ liệu' onChange={(next) => navigate(`/administrator/data/${next}`)} />
       <JsonEditor
         key={activeSection}
         deps={[activeSection]}
