@@ -1,4 +1,4 @@
-import { $t as createReactComponent, Ft as Tabs, Gt as Button, Ht as toast, Qt as IconAlertTriangle, Tt as Logo, Vt as OtpButton, Wt as Field, _t as login, bt as signup, cn as __toESM, in as useNavigate, rn as useLocation, sn as require_react, tn as require_jsx_runtime, vt as passwordOtp, xt as signupOtp, yt as resetPassword } from "./index.js";
+import { $t as IconAlertTriangle, Et as Logo, Gt as Field, Ht as OtpButton, It as Tabs, Kt as Button, St as signupOtp, Ut as toast, an as useNavigate, bt as resetPassword, cn as require_react, en as createReactComponent, in as useLocation, ln as __toESM, nn as require_jsx_runtime, vt as login, xt as signup, yt as passwordOtp } from "./index.js";
 import { n as IconArrowLeft, t as IconArrowRight } from "./IconArrowRight.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
 import { t as StrengthBar } from "./StrengthBar.js";
@@ -28,7 +28,7 @@ var EMPTY_FORM = {
 var MODE_TABS = [["login", "Đăng nhập"], ["register", "Đăng ký"]];
 var SUBMIT_LABELS = {
 	login: "Đăng nhập",
-	register: "Tạo tài khoản",
+	register: "Đăng ký",
 	forgot: "Đặt lại mật khẩu"
 };
 // src/features/authentication/AuthHeader.jsx

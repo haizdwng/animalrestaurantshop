@@ -1,10 +1,10 @@
-import { $t as createReactComponent, A as formatNumber, Bt as Dialog, C as putInCart, Ct as isAdmin, E as unmetConditions, Et as SearchInput, Gt as Button, Ht as toast, It as PageSizeSelect, Jt as IconRefresh, Kt as IconX, Lt as Select, Mt as ErrorState, Nt as Spinner, Qt as IconAlertTriangle, S as productOptions, T as resolveCart, Ut as toastError, Wt as Field, Xt as IconCircleCheck, Zt as IconChevronRight, _ as hasValidPrice, a as cartTotal, an as useParams, b as isOwnedOnce, c as eligibleCategoryProducts, cn as __toESM, ct as buy, d as getConflictingKeys, en as Badge, f as getGroupRemaining, g as hasOptions, h as getTimeStatus, i as cartPayload, in as useNavigate, it as createTransaction, jt as Skeleton, l as formatShopDate, m as getTimeMessage, n as addCategoryToCart, o as changeCartQuantity, p as getPurchaseLimit, r as cartCount, s as clampCartQuantity, sn as require_react, st as ADMIN_MAX_QTY, tn as require_jsx_runtime, u as getConditions, v as isAvailable, w as removeCategoryFromCart, wt as Coin, x as optionMode, y as isOnce } from "./index.js";
+import { $t as IconAlertTriangle, C as productOptions, D as unmetConditions, Dt as SearchInput, E as resolveCart, Gt as Field, Kt as Button, Lt as PageSizeSelect, Mt as Skeleton, Nt as ErrorState, Pt as Spinner, Qt as IconChevronRight, Rt as Select, S as optionMode, T as removeCategoryFromCart, Tt as Coin, Ut as toast, Vt as Dialog, Wt as toastError, Yt as IconRefresh, Zt as IconCircleCheck, _ as hasValidPrice, a as cartTotal, an as useNavigate, at as createTransaction, b as isFullyOwned, c as eligibleCategoryProducts, cn as require_react, ct as ADMIN_MAX_QTY, d as getConflictingKeys, en as createReactComponent, f as getGroupRemaining, g as hasOptions, h as getTimeStatus, i as cartPayload, j as formatNumber, l as formatShopDate, ln as __toESM, lt as buy, m as getTimeMessage, n as addCategoryToCart, nn as require_jsx_runtime, o as changeCartQuantity, on as useParams, p as getPurchaseLimit, qt as IconX, r as cartCount, s as clampCartQuantity, tn as Badge, u as getConditions, v as isAvailable, w as putInCart, wt as isAdmin, x as isOnce, y as isBuyItemsSupported } from "./index.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { t as usePaginatedData } from "./usePaginatedData.js";
 import { a as IconClock, i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
+import { n as IconMusic, r as IconDeviceGamepad2, t as IconUsers } from "./IconUsers.js";
 import { n as IconCheck, t as IconPhoto } from "./IconPhoto.js";
 import { i as IconStar, n as hasPrice, r as matches, t as Tile } from "./Tile.js";
-import { t as IconUsers } from "./IconUsers.js";
 import { n as IconLock } from "./clipboard.js";
 import { t as IconPlus } from "./IconPlus.js";
 /**
@@ -104,46 +104,6 @@ var IconMinus = /* @__PURE__ */ createReactComponent("outline", "minus", "Minus"
 	"d": "M5 12l14 0",
 	"key": "svg-0"
 }]]);
-/**
-* @license @tabler/icons-react v3.52.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var IconMovie = /* @__PURE__ */ createReactComponent("outline", "movie", "Movie", [
-	["path", {
-		"d": "M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -12",
-		"key": "svg-0"
-	}],
-	["path", {
-		"d": "M8 4l0 16",
-		"key": "svg-1"
-	}],
-	["path", {
-		"d": "M16 4l0 16",
-		"key": "svg-2"
-	}],
-	["path", {
-		"d": "M4 8l4 0",
-		"key": "svg-3"
-	}],
-	["path", {
-		"d": "M4 16l4 0",
-		"key": "svg-4"
-	}],
-	["path", {
-		"d": "M4 12l16 0",
-		"key": "svg-5"
-	}],
-	["path", {
-		"d": "M16 8l4 0",
-		"key": "svg-6"
-	}],
-	["path", {
-		"d": "M16 16l4 0",
-		"key": "svg-7"
-	}]
-]);
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
 *
@@ -296,20 +256,22 @@ function ownedValue(value) {
 	if (typeof value === "string") return value.trim().length > 0;
 	return null;
 }
+var optionOwnership = (group) => hasOptions(group) ? productOptions(group).map((product) => ownedValue(product.owned)) : [ownedValue(group?.owned)];
 function ownershipStatus(group) {
-	const parent = ownedValue(group?.owned);
-	const child = hasOptions(group) ? productOptions(group).map((item) => ownedValue(item.owned)) : [];
-	if (parent === true || child.includes(true)) return true;
-	if (parent === false || child.includes(false)) return false;
+	if (ownedValue(group?.owned) === true) return true;
+	const statuses = optionOwnership(group);
+	if (statuses.includes(true)) return true;
+	if (statuses.includes(false)) return false;
 	return null;
 }
 function matchesShopFilter(group, filter, { cartKeys = /* @__PURE__ */ new Set(), conflicts = /* @__PURE__ */ new Set(), now = Date.now() } = {}) {
 	const choices = productOptions(group);
+	const statuses = optionOwnership(group);
 	switch (filter) {
 		case "owned": return ownershipStatus(group) === true;
-		case "unowned": return ownershipStatus(group) === false;
+		case "unowned": return statuses.includes(false) || !hasOptions(group) && ownedValue(group?.owned) === false;
 		case "available": return choices.some((item) => isAvailable(item, group, conflicts, now));
-		case "locked": return choices.some((item) => unmetConditions(item, group) || !getTimeStatus(item, group, now).available);
+		case "locked": return choices.some((item) => !isBuyItemsSupported(item.key) || unmetConditions(item, group) || !getTimeStatus(item, group, now).available || getPurchaseLimit(item, group) < 1);
 		case "cart": return choices.some((item) => cartKeys.has(item.key));
 		default: return true;
 	}
@@ -492,6 +454,7 @@ var TOPUP = "topup";
 var CATEGORY_ICONS = {
 	letters: IconMail,
 	customers: IconUsers,
+	musicians: IconMusic,
 	memorials: IconPhoto,
 	foods: IconChefHat,
 	plants: IconPlant2,
@@ -499,9 +462,9 @@ var CATEGORY_ICONS = {
 	flowers: IconFlower,
 	vegetables: IconWheat,
 	frames: IconPhoto,
-	films: IconMovie,
-	specials: IconStar,
-	items: IconBox
+	dolls: IconDeviceGamepad2,
+	items: IconBox,
+	specials: IconStar
 };
 // src/features/shop/QuantityPicker.jsx
 function QuantityPicker({ value, max, disabled = false, onChange, onEnter, compact = false }) {
@@ -573,24 +536,29 @@ function QuantityPicker({ value, max, disabled = false, onChange, onEnter, compa
 function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuantity = 100, now = Date.now(), conflictingKeys = /* @__PURE__ */ new Set(), onAdd, onRemove, onClose, onTopUp }) {
 	const variantSelectId = (0, import_react.useId)();
 	const options = item ? productOptions(item) : [];
-	const [selectedKey, setSelectedKey] = (0, import_react.useState)(() => (optionMode(item) === "singleOptions" ? options.find((option) => option.owned === true) : options.find((option) => !isOwnedOnce(option, item)))?.key || options[0]?.key || "");
+	const [selectedKey, setSelectedKey] = (0, import_react.useState)(() => (optionMode(item) === "singleOptions" ? options.find((option) => option.owned === true) : options.find((option) => !isFullyOwned(option, item)))?.key || options[0]?.key || "");
 	const [amount, setAmount] = (0, import_react.useState)(1);
+	(0, import_react.useEffect)(() => {
+		const current = productOptions(item);
+		setSelectedKey((optionMode(item) === "singleOptions" ? current.find((choice) => choice.owned === true) : current.find((choice) => !isFullyOwned(choice, item)))?.key || current[0]?.key || "");
+	}, [item?.key]);
 	const selected = options.find((option) => option.key === selectedKey) || options[0];
 	const selectedInCart = entries.find((entry) => entry.key === selected?.key);
 	const cartAmount = selectedInCart?.amount || 0;
 	const once = isOnce(selected, item);
-	const ownedOnce = isOwnedOnce(selected, item);
+	const fullyOwned = isFullyOwned(selected, item);
+	const supported = isBuyItemsSupported(selected?.key);
 	const conflict = conflictingKeys.has(selected?.key);
 	const blockedByConditions = unmetConditions(selected, item);
 	const time = getTimeStatus(selected, item, now);
 	const timeMessage = getTimeMessage(selected, item, now);
-	const available = !ownedOnce && !conflict && !blockedByConditions && time.available && hasValidPrice(selected);
+	const available = supported && !fullyOwned && !conflict && !blockedByConditions && time.available && hasValidPrice(selected);
 	const conditions = selected ? getConditions(selected, item) : [];
 	const mode = optionMode(item);
 	const exclusive = mode === "singleOptions" || mode === "multipleOptions" && item.limit === 1;
 	const groupRoom = exclusive ? Number.isSafeInteger(item.limit) ? item.limit : Infinity : getGroupRemaining(entries, item, selected?.key);
 	const limit = selected ? Math.min(getPurchaseLimit(selected, item, maxQuantity), groupRoom) : 0;
-	const quantity = once ? 1 : clampCartQuantity(amount, Math.max(1, limit));
+	const quantity = !available || limit < 1 ? 0 : once ? 1 : clampCartQuantity(amount, limit);
 	const total = hasValidPrice(selected) ? selected.price * quantity : 0;
 	const replacedTotal = (exclusive ? entries.filter((entry) => entry.groupKey === item.key && entry.key !== selected?.key) : []).reduce((sum, entry) => sum + entry.total, 0);
 	const nextCartTotal = cartTotal - (selectedInCart?.total || 0) - replacedTotal + total;
@@ -714,9 +682,9 @@ function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuant
 				className: "text-[11px] text-mute",
 				children: ["Số lượng đang có: ", formatNumber(selected.owned)]
 			}),
-			selected.owned === true && !once && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+			selected.owned === true && !once && !fullyOwned && limit >= 1 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 				className: "rounded-lg border border-line bg-bg px-3 py-2 text-[11px] text-mute",
-				children: "Đã sở hữu hoặc đang sử dụng. Bạn vẫn có thể mua tiếp vì vật phẩm này không giới hạn một lần."
+				children: "Đã sở hữu hoặc đang sử dụng. Vẫn có thể mua tiếp trong giới hạn còn lại."
 			}),
 			conditions.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "space-y-2 rounded-xl border border-line bg-bg p-3",
@@ -745,15 +713,23 @@ function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuant
 				className: "rounded-lg border border-bad/40 bg-bad/10 p-3 text-xs text-bad",
 				children: "Mã vật phẩm xuất hiện với cấu hình khác nhau ở nhiều danh mục. Backend hiện không cho mua mã này."
 			}),
-			ownedOnce && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+			fullyOwned && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 				className: "rounded-lg border border-ok/30 bg-ok/10 p-3 text-xs text-ok",
-				children: "Vật phẩm đã sở hữu và chỉ được mua một lần."
+				children: once ? "Vật phẩm đã sở hữu và chỉ được mua một lần." : "Đã đạt mức sở hữu tối đa, không thể mua thêm."
+			}),
+			!supported && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+				role: "alert",
+				className: "rounded-lg border border-bad/30 bg-bad/10 p-3 text-xs text-bad",
+				children: "Mã này chưa được hàm buyItems hỗ trợ. Không thể thêm vào giỏ."
 			}),
 			limit < 1 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 				className: "rounded-lg border border-bad/30 bg-bad/10 p-3 text-xs text-bad",
-				children: "Đã đạt giới hạn số lượng của nhóm trong giỏ hàng."
+				children: fullyOwned ? "Đã đạt giới hạn sở hữu." : getPurchaseLimit(selected, item, maxQuantity) < 1 ? "Đã đạt giới hạn mua của vật phẩm." : "Đã đạt giới hạn số lượng của nhóm trong giỏ hàng."
 			}),
-			once ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			limit < 1 ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex items-center gap-2 rounded-lg border border-line bg-bg px-3 py-2.5 text-[11px] text-mute",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 15 }), " Không thể mua thêm vật phẩm này"]
+			}) : once ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "flex items-center gap-2 rounded-lg border border-line bg-bg px-3 py-2.5 text-[11px] text-mute",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 15 }), " Chỉ được sở hữu một lần"]
 			}) : limit === 1 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
@@ -807,7 +783,7 @@ function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuant
 					className: "w-full",
 					disabled: !available || limit < 1,
 					onClick: add,
-					children: [available ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 16 }), ownedOnce ? "Đã mua" : conflict ? "Mã không hợp lệ" : blockedByConditions ? "Chưa đủ điều kiện" : !time.available ? "Ngoài thời gian bán" : !hasValidPrice(selected) ? "Không có giá" : limit < 1 ? "Đã đủ số lượng" : cartAmount ? "Cập nhật giỏ" : "Thêm vào giỏ"]
+					children: [available ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconShoppingCart, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 16 }), fullyOwned ? "Đã sở hữu" : !supported ? "Chưa hỗ trợ" : conflict ? "Mã không hợp lệ" : blockedByConditions ? "Chưa đủ điều kiện" : !time.available ? "Ngoài thời gian bán" : !hasValidPrice(selected) ? "Không có giá" : limit < 1 ? "Đã đủ số lượng" : cartAmount ? "Cập nhật giỏ" : "Thêm vào giỏ"]
 				})]
 			})
 		] })
@@ -1120,7 +1096,9 @@ function EmptyProducts({ searching, tabs = [], hits = {}, onSelect }) {
 function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__ */ new Set(), onBuy, now = Date.now() }) {
 	const grouped = hasOptions(p);
 	const choices = productOptions(p);
-	const ownedOnce = choices.length > 0 && choices.every((choice) => isOwnedOnce(choice, p));
+	const fullyOwned = choices.length > 0 && choices.every((choice) => isFullyOwned(choice, p));
+	const unsupported = choices.every((choice) => !isBuyItemsSupported(choice.key));
+	const atLimit = choices.length > 0 && choices.every((choice) => getPurchaseLimit(choice, p) < 1);
 	const conflicting = choices.some((choice) => conflictingKeys.has(choice.key));
 	const timeLimited = p.startTime !== void 0 || p.endTime !== void 0 || choices.some((option) => option.startTime !== void 0 || option.endTime !== void 0);
 	const availableNow = choices.some((option) => getTimeStatus(option, p, now).available);
@@ -1168,7 +1146,7 @@ function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__
 							timeMessage
 						]
 					}),
-					!ownedOnce && p.owned === true && !isOnce(p) && !grouped && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+					!fullyOwned && p.owned === true && !isOnce(p) && !grouped && !atLimit && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 						className: "mt-1 block text-[11px] text-ok",
 						children: "Đã sở hữu · có thể mua tiếp"
 					})
@@ -1176,14 +1154,22 @@ function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 				className: "flex shrink-0 flex-col items-end gap-1.5",
-				children: [ownedOnce ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+				children: [fullyOwned ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
 					Icon: IconCheck,
 					tone: "success",
-					children: "Đã mua"
+					children: isOnce(p) ? "Đã mua" : "Đã tối đa"
+				}) : unsupported ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+					Icon: IconLock,
+					tone: "neutral",
+					children: "Chưa hỗ trợ"
 				}) : conflicting ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
 					Icon: IconLock,
 					tone: "danger",
 					children: "Mã trùng"
+				}) : atLimit ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
+					Icon: IconLock,
+					tone: "neutral",
+					children: "Đã đạt giới hạn"
 				}) : timeLimited && !availableNow ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
 					Icon: IconClock,
 					tone: "neutral",
@@ -1202,7 +1188,7 @@ function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__
 						" ",
 						formatNumber(p.price)
 					]
-				}) : null, !ownedOnce && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				}) : null, !fullyOwned && !unsupported && !atLimit && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 					"aria-hidden": true,
 					className: "grid size-7 place-items-center rounded-lg bg-raise text-mute transition-colors group-hover:bg-line group-hover:text-fg",
 					children: grouped ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconChevronRight, { size: 16 }) : cartQuantity ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconCheck, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlus, { size: 16 })
@@ -1217,16 +1203,20 @@ function ShopSkeleton() {
 		"aria-busy": "true",
 		"aria-label": "Đang tải cửa hàng",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "mb-4 flex flex-wrap items-end gap-3",
+			className: "mb-4 space-y-3",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "min-w-0 flex-1 space-y-2",
+				className: "space-y-2",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-7 w-36" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 					className: "flex items-center gap-2 text-xs text-mute",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 13 }), " Đang tải cửa hàng…"]
 				})]
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "flex w-full items-center gap-2 sm:w-auto",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-10 flex-1 rounded-lg sm:w-72" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-10 rounded-lg" })]
+				className: "grid grid-cols-[minmax(0,1fr)_auto] gap-2 sm:grid-cols-[minmax(12rem,1fr)_minmax(10rem,12rem)_auto]",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-10 min-w-0 rounded-lg" }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "col-span-2 row-start-2 h-10 rounded-lg sm:col-span-1 sm:row-start-auto" }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "col-start-2 row-start-1 size-10 rounded-lg sm:col-start-3 sm:row-start-auto" })
+				]
 			})]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 			className: "grid gap-2 sm:grid-cols-2 xl:grid-cols-3",
@@ -1292,7 +1282,7 @@ function ShopToolbar({ title, count, ownedCount, query, onQuery, filter, onFilte
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 					variant: "ghost",
-					className: "col-start-2 row-start-1 size-10! px-0! sm:col-start-3 sm:row-start-auto",
+					className: "col-start-2 row-start-1 size-10! min-h-10! max-h-10! min-w-10! max-w-10! p-0! sm:col-start-3 sm:row-start-auto",
 					onClick: onReload,
 					disabled: loading,
 					"aria-label": "Tải lại cửa hàng",

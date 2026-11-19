@@ -1068,6 +1068,10 @@
     height: 1px;
   }
 
+  .max-h-10\! {
+    max-height: calc(var(--spacing) * 10) !important;
+  }
+
   .max-h-\[70dvh\] {
     max-height: 70dvh;
   }
@@ -1094,6 +1098,10 @@
 
   .min-h-10 {
     min-height: calc(var(--spacing) * 10);
+  }
+
+  .min-h-10\! {
+    min-height: calc(var(--spacing) * 10) !important;
   }
 
   .min-h-11 {
@@ -1244,6 +1252,10 @@
     max-width: var(--container-6xl);
   }
 
+  .max-w-10\! {
+    max-width: calc(var(--spacing) * 10) !important;
+  }
+
   .max-w-40 {
     max-width: calc(var(--spacing) * 40);
   }
@@ -1282,6 +1294,10 @@
 
   .min-w-5 {
     min-width: calc(var(--spacing) * 5);
+  }
+
+  .min-w-10\! {
+    min-width: calc(var(--spacing) * 10) !important;
   }
 
   .min-w-16 {

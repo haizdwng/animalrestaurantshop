@@ -1,4 +1,4 @@
-import { $t as createReactComponent } from "./index.js";
+import { en as createReactComponent } from "./index.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
 *
