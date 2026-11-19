@@ -1,4 +1,4 @@
-import { A as formatNumber, At as RowSkeleton, Bt as Dialog, Et as SearchInput, Gt as Button, Ht as toast, It as PageSizeSelect, J as adminGiftCodes, Jt as IconRefresh, L as adminCreateGiftCode, Mt as ErrorState, Nt as Spinner, Ut as toastError, V as adminDeleteGiftCode, W as adminEditGiftCode, Wt as Field, cn as __toESM, jt as Skeleton, k as formatDateTime, kt as PagerSkeleton, nt as adminUsers, sn as require_react, tn as require_jsx_runtime, wt as Coin, zt as Menu } from "./index.js";
+import { A as formatDateTime, At as PagerSkeleton, Bt as Menu, Dt as SearchInput, G as adminEditGiftCode, Gt as Field, H as adminDeleteGiftCode, Kt as Button, Lt as PageSizeSelect, Mt as Skeleton, Nt as ErrorState, Pt as Spinner, R as adminCreateGiftCode, Tt as Coin, Ut as toast, Vt as Dialog, Wt as toastError, Y as adminGiftCodes, Yt as IconRefresh, cn as require_react, j as formatNumber, jt as RowSkeleton, ln as __toESM, nn as require_jsx_runtime, rt as adminUsers } from "./index.js";
 import { t as IconGift } from "./IconGift.js";
 import { n as IconPencil, t as useRemoteResource } from "./useRemoteResource.js";
 import { t as IconPlus } from "./IconPlus.js";
@@ -101,7 +101,7 @@ function UserAssignment({ title, description, users, usersLoading, selected, onC
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 						className: "text-[11px] font-semibold text-mute",
-						children: ["Đã chọn: ", selectedUsers.length.toLocaleString("vi-VN")]
+						children: ["Đã thêm: ", selectedUsers.length.toLocaleString("vi-VN")]
 					}),
 					selectedRows.length ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 						className: "divide-y divide-line overflow-hidden rounded-lg border border-line bg-panel",
@@ -122,7 +122,7 @@ function UserAssignment({ title, description, users, usersLoading, selected, onC
 						}, userId(user)))
 					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 						className: "rounded-lg border border-dashed border-line p-3 text-[11px] text-mute",
-						children: "Chưa chọn người dùng nào"
+						children: "Chưa thêm người dùng nào"
 					}),
 					selectedPager
 				]
@@ -215,14 +215,12 @@ function GiftCodeDialog({ dialog, form, setForm, busy, onClose, onCreate, onEdit
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(UserAssignment, {
 					title: "Người dùng được phép dùng",
-					description: "Chỉ các tài khoản được chọn mới dùng được mã đổi thưởng này.",
 					users,
 					usersLoading,
 					selected: selectedUsers,
 					onChange: setSelectedUsers
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(UserAssignment, {
-					title: "Đã sử dụng",
-					description: "Danh sách người đã đổi thưởng. Có thể thêm hoặc bỏ để chỉnh trạng thái đã dùng.",
+					title: "Người dùng đã sử dụng",
 					users,
 					usersLoading,
 					selected: selectedUsed,

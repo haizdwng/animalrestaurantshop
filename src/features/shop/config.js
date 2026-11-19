@@ -1,9 +1,10 @@
-import { IconBox, IconChefHat, IconFish, IconFlower, IconMail, IconPhoto, IconStar, IconUsers, IconWheat, IconPlant2, IconMovie } from '@tabler/icons-react';
+import { IconBox, IconChefHat, IconDeviceGamepad2, IconFish, IconFlower, IconMail, IconMusic, IconPhoto, IconPlant2, IconStar, IconUsers, IconWheat } from '@tabler/icons-react';
 
 export const TOPUP = 'topup';
 export const CATEGORY_ICONS = {
   letters: IconMail,
   customers: IconUsers,
+  musicians: IconMusic,
   memorials: IconPhoto,
   foods: IconChefHat,
   plants: IconPlant2,
@@ -11,7 +12,7 @@ export const CATEGORY_ICONS = {
   flowers: IconFlower,
   vegetables: IconWheat,
   frames: IconPhoto,
-  films: IconMovie,
-  specials: IconStar,
-  items: IconBox
+  dolls: IconDeviceGamepad2,
+  items: IconBox,
+  specials: IconStar
 };

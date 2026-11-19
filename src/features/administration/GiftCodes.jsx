@@ -58,7 +58,7 @@ function UserAssignment({ title, description, users, usersLoading, selected, onC
         <div className='w-32 shrink-0'><PageSizeSelect value={pageSize} onChange={setPageSize} /></div>
       </div>
       <div className='space-y-2'>
-        <p className='text-[11px] font-semibold text-mute'>Đã chọn: {selectedUsers.length.toLocaleString('vi-VN')}</p>
+        <p className='text-[11px] font-semibold text-mute'>Đã thêm: {selectedUsers.length.toLocaleString('vi-VN')}</p>
         {selectedRows.length ? (
           <ul className='divide-y divide-line overflow-hidden rounded-lg border border-line bg-panel'>
             {selectedRows.map((user) => (
@@ -68,7 +68,7 @@ function UserAssignment({ title, description, users, usersLoading, selected, onC
               </li>
             ))}
           </ul>
-        ) : <p className='rounded-lg border border-dashed border-line p-3 text-[11px] text-mute'>Chưa chọn người dùng nào</p>}
+        ) : <p className='rounded-lg border border-dashed border-line p-3 text-[11px] text-mute'>Chưa thêm người dùng nào</p>}
         {selectedPager}
       </div>
       <div className='space-y-2 border-t border-line pt-3'>
@@ -103,8 +103,8 @@ function GiftCodeDialog({ dialog, form, setForm, busy, onClose, onCreate, onEdit
         <Field label='Số xu' type='number' inputMode='numeric' placeholder='100' value={form.coin} onChange={setField('coin')} />
         <Field label='Ngày hết hạn' type='datetime-local' hint='để trống nếu không giới hạn' value={form.date} onChange={setField('date')} />
         <>
-          <UserAssignment title='Người dùng được phép dùng' description='Chỉ các tài khoản được chọn mới dùng được mã đổi thưởng này.' users={users} usersLoading={usersLoading} selected={selectedUsers} onChange={setSelectedUsers} />
-          <UserAssignment title='Đã sử dụng' description='Danh sách người đã đổi thưởng. Có thể thêm hoặc bỏ để chỉnh trạng thái đã dùng.' users={users} usersLoading={usersLoading} selected={selectedUsed} onChange={setSelectedUsed} />
+          <UserAssignment title='Người dùng được phép dùng' users={users} usersLoading={usersLoading} selected={selectedUsers} onChange={setSelectedUsers} />
+          <UserAssignment title='Người dùng đã sử dụng' users={users} usersLoading={usersLoading} selected={selectedUsed} onChange={setSelectedUsed} />
         </>
         <Button type='submit' className='w-full' loading={busy}>
           {editing ? 'Lưu thay đổi' : 'Thêm mã đổi thưởng'}

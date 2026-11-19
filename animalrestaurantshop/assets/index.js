@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/usePaginatedData.js","assets/PaymentDialog.js","assets/clipboard.js","assets/IconPhoto.js","assets/Tile.js","assets/IconUsers.js","assets/IconPlus.js","assets/Account.js","assets/useRemoteResource.js","assets/IconStarFilled.js","assets/IconUser.js","assets/IconUserPlus.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Head.js","assets/Users.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/usePaginatedData.js","assets/PaymentDialog.js","assets/clipboard.js","assets/IconUsers.js","assets/IconPhoto.js","assets/Tile.js","assets/IconPlus.js","assets/Account.js","assets/useRemoteResource.js","assets/IconStarFilled.js","assets/IconUser.js","assets/IconUserPlus.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Head.js","assets/Users.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
 // \0rolldown/runtime.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -11451,10 +11451,10 @@ var require_client = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	checkDCE();
 	module.exports = require_react_dom_client_production();
 }));
-// node_modules/react-router/dist/development/chunk-6KYCQHYJ.mjs
+// node_modules/react-router/dist/development/chunk-YDNE64FV.mjs
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 /**
-* react-router v7.18.5
+* react-router v7.18.6
 *
 * Copyright (c) Remix Software Inc.
 *
@@ -11663,6 +11663,52 @@ function createBrowserURLImpl(windowImpl, to, isAbsolute = false) {
 	href = href.replace(/ $/, "%20");
 	if (!isAbsolute && PROTOCOL_RELATIVE_URL_REGEX.test(href)) href = base + href;
 	return new URL(href, base);
+}
+var DEFAULT_NAVIGATION_URL = new URL("http://localhost");
+function getNavigatorCurrentUrl(navigator) {
+	if (navigator.createURL) return navigator.createURL("/");
+	try {
+		return new URL(navigator.createHref("/"), DEFAULT_NAVIGATION_URL);
+	} catch {
+		return DEFAULT_NAVIGATION_URL;
+	}
+}
+function isSameOrigin(a, b) {
+	return a.origin === b.origin && (a.origin !== "null" || a.protocol === b.protocol && a.host === b.host);
+}
+function isExplicitUrl(destination, target) {
+	if (destination.startsWith("//")) return true;
+	let protocol = target.protocol.toLowerCase();
+	if (!destination.toLowerCase().startsWith(protocol)) return false;
+	return target.host === "" || destination.slice(protocol.length).startsWith("//");
+}
+function validateDocumentNavigationTarget(destination) {
+	let normalized = destination.replace(/[\t\n\r]/g, "");
+	let start = 0;
+	while (normalized.charCodeAt(start) <= 32) start++;
+	normalized = normalized.slice(start);
+	if (!ABSOLUTE_URL_REGEX.test(normalized)) return;
+	let target;
+	try {
+		target = new URL(destination, DEFAULT_NAVIGATION_URL);
+	} catch {
+		return;
+	}
+	if (!isExplicitUrl(destination, target)) throw new Error("External navigation is not allowed");
+}
+function validateNavigationTarget(original, resolved, currentUrl, externalPolicy) {
+	let originalUrl = null;
+	try {
+		originalUrl = original == null ? null : new URL(original, currentUrl);
+	} catch {}
+	let resolvedUrl = new URL(resolved, currentUrl);
+	let originalIsExternal = originalUrl != null && !isSameOrigin(originalUrl, currentUrl);
+	let resolvedIsExternal = !isSameOrigin(resolvedUrl, currentUrl);
+	if (externalPolicy === "reject") {
+		if (originalIsExternal || resolvedIsExternal) throw new Error("External navigation is not allowed");
+	} else if (resolvedIsExternal) {
+		if (originalUrl == null || !isExplicitUrl(original, originalUrl) || !isSameOrigin(originalUrl, resolvedUrl)) throw new Error("External navigation is not allowed");
+	}
 }
 function matchRoutes(routes, locationArg, basename = "/") {
 	return matchRoutesImpl(routes, locationArg, basename, false);
@@ -11983,38 +12029,6 @@ function parseToInfo(_to, basename) {
 	};
 }
 Object.getOwnPropertyNames(Object.prototype).sort().join("\0");
-var DEFAULT_NAVIGATION_URL = new URL("http://localhost");
-function getNavigatorCurrentUrl(navigator) {
-	if (navigator.createURL) return navigator.createURL("/");
-	try {
-		return new URL(navigator.createHref("/"), DEFAULT_NAVIGATION_URL);
-	} catch {
-		return DEFAULT_NAVIGATION_URL;
-	}
-}
-function isSameOrigin(a, b) {
-	return a.origin === b.origin && (a.origin !== "null" || a.protocol === b.protocol && a.host === b.host);
-}
-function isExplicitUrl(destination, target) {
-	if (destination.startsWith("//")) return true;
-	let protocol = target.protocol.toLowerCase();
-	if (!destination.toLowerCase().startsWith(protocol)) return false;
-	return target.host === "" || destination.slice(protocol.length).startsWith("//");
-}
-function validateNavigationTarget(original, resolved, currentUrl, externalPolicy) {
-	let originalUrl = null;
-	try {
-		originalUrl = original == null ? null : new URL(original, currentUrl);
-	} catch {}
-	let resolvedUrl = new URL(resolved, currentUrl);
-	let originalIsExternal = originalUrl != null && !isSameOrigin(originalUrl, currentUrl);
-	let resolvedIsExternal = !isSameOrigin(resolvedUrl, currentUrl);
-	if (externalPolicy === "reject") {
-		if (originalIsExternal || resolvedIsExternal) throw new Error("External navigation is not allowed");
-	} else if (resolvedIsExternal) {
-		if (originalUrl == null || !isExplicitUrl(original, originalUrl) || !isSameOrigin(originalUrl, resolvedUrl)) throw new Error("External navigation is not allowed");
-	}
-}
 var validMutationMethodsArr = [
 	"POST",
 	"PUT",
@@ -13052,7 +13066,7 @@ function mergeRefs(...refs) {
 import_react.Component;
 var isBrowser2 = typeof window !== "undefined" && typeof window.document !== "undefined" && typeof window.document.createElement !== "undefined";
 try {
-	if (isBrowser2) window.__reactRouterVersion = "7.18.5";
+	if (isBrowser2) window.__reactRouterVersion = "7.18.6";
 } catch (e) {}
 function HashRouter({ basename, children, useTransitions, window: window2 }) {
 	let historyRef = import_react.useRef();
@@ -13129,10 +13143,12 @@ var Link = import_react.forwardRef(function LinkWithRef({ onClick, discover = "r
 		if (!event.defaultPrevented) internalOnClick(event);
 	}
 	let isSpaLink = !(parsed.isExternal || reloadDocument);
+	let renderedHref = (isSpaLink ? maskedHref : void 0) || parsed.absoluteURL || href;
+	validateDocumentNavigationTarget(renderedHref);
 	let link = /* @__PURE__ */ import_react.createElement("a", {
 		...rest,
 		...prefetchHandlers,
-		href: (isSpaLink ? maskedHref : void 0) || parsed.absoluteURL || href,
+		href: renderedHref,
 		onClick: isSpaLink ? handleClick : onClick,
 		ref: mergeRefs(forwardedRef, prefetchRef),
 		target,
@@ -13367,7 +13383,9 @@ function useFormAction(action, { relative } = {}) {
 	}
 	if ((!action || action === ".") && match.route.index) path.search = path.search ? path.search.replace(/^\?/, "?index&") : "?index";
 	if (basename !== "/") path.pathname = path.pathname === "/" ? basename : joinPaths([basename, path.pathname]);
-	return createPath(path);
+	let formAction = createPath(path);
+	validateDocumentNavigationTarget(formAction);
+	return formAction;
 }
 var SCROLL_RESTORATION_STORAGE_KEY = "react-router-scroll-positions";
 var savedScrollPositions = {};
@@ -16711,7 +16729,8 @@ var pickUser = (response) => normUser(response.user);
 var isAdmin = (user) => user?.role === "administrator";
 var SHOP_CATEGORIES = Object.freeze({
 	letters: "Thư",
-	customers: "Khách",
+	customers: "Khách hàng",
+	musicians: "Khách mời",
 	memorials: "Vật kỷ niệm",
 	foods: "Món ăn",
 	plants: "Tưới cây",
@@ -16719,7 +16738,7 @@ var SHOP_CATEGORIES = Object.freeze({
 	flowers: "Hoa",
 	vegetables: "Rau",
 	frames: "Khung ảnh",
-	films: "Phim",
+	dolls: "Búp bê",
 	items: "Vật phẩm",
 	specials: "Đặc biệt"
 });
@@ -17214,15 +17233,52 @@ function useSession() {
 	};
 }
 // src/features/shop/cartUtils.js
+/** Current Shop API contract: { key, amount }, multipleOptions, singleOptions, milliseconds. */
 var optionMode = (group) => Array.isArray(group?.singleOptions) ? "singleOptions" : Array.isArray(group?.multipleOptions) ? "multipleOptions" : null;
 var hasOptions = (group) => optionMode(group) !== null;
 var productOptions = (group) => hasOptions(group) ? group[optionMode(group)] : group ? [group] : [];
 var isOnce = (product, group = product) => (product?.once ?? group?.once) === true;
 var isOwned = (value) => value === true || typeof value === "number" && value > 0 || typeof value === "string" && value.trim().length > 0;
 var isOwnedOnce = (product, group = product) => isOnce(product, group) && (isOwned(product?.owned) || product !== group && group?.once === true && isOwned(group.owned));
+var isFullyOwned = (product, group = product) => isOwnedOnce(product, group) || !isOnce(product, group) && optionMode(group) !== "singleOptions" && product?.owned === true;
+var EXACT_BUY_KEYS = /* @__PURE__ */ new Set([
+	"money_skipAdCard",
+	"money_checkInCard",
+	"yuer",
+	"terrace_bottle",
+	"magnifier",
+	"freeWish",
+	"Ad_x15",
+	"pigeon_endTime",
+	"InviteCard",
+	"CallCard",
+	"seed",
+	"dreamSeed",
+	"BattleOrder15"
+]);
+var BUY_PREFIXES = [
+	"courtyard_21_",
+	"doll_",
+	"vt_",
+	"fish_",
+	"Garden_",
+	"shiwu_",
+	"wanju_",
+	"takeOutFood_",
+	"customer_",
+	"booth_",
+	"npc_",
+	"food_",
+	"buffetFood_",
+	"Musician_",
+	"avatar_",
+	"specialty_fish_"
+];
+var isBuyItemsSupported = (key) => typeof key === "string" && (EXACT_BUY_KEYS.has(key) || BUY_PREFIXES.some((prefix) => key.startsWith(prefix)) || key.endsWith("_prop") || key.toLowerCase().startsWith("mail_") || key.toLowerCase().startsWith("memorial_"));
 var hasValidPrice = (product) => Number.isSafeInteger(product?.price) && product.price >= 0;
 var getConditions = (product, group = product) => [...Array.isArray(group?.conditions) ? group.conditions : [], ...product === group ? [] : Array.isArray(product?.conditions) ? product.conditions : []];
 var unmetConditions = (product, group = product) => getConditions(product, group).some((condition) => condition?.already !== true);
+/** The API uses Unix milliseconds. An absent bound means an unlimited side. */
 function getTimeStatus(product, group = product, now = Date.now()) {
 	const layers = product === group ? [group] : [group, product];
 	for (const layer of layers) {
@@ -17282,7 +17338,7 @@ function getTimeMessage(product, group = product, now = Date.now()) {
 	return "";
 }
 var normalizeLimit = (limit) => limit === void 0 || limit === Infinity ? Infinity : Number.isSafeInteger(limit) && limit > 0 ? limit : 0;
-var getPurchaseLimit = (product, group = product, accountLimit = 100) => Math.min(isOnce(product, group) ? 1 : Infinity, normalizeLimit(product?.limit), normalizeLimit(group?.limit), normalizeLimit(accountLimit));
+var getPurchaseLimit = (product, group = product, accountLimit = 100) => Math.min(isFullyOwned(product, group) ? 0 : isOnce(product, group) ? 1 : Infinity, normalizeLimit(product?.limit), normalizeLimit(group?.limit), normalizeLimit(accountLimit));
 function clampCartQuantity(value, limit = 100) {
 	if (limit < 1) return 0;
 	const number = Number(value);
@@ -17298,7 +17354,7 @@ function getGroupRemaining(cart, group, selectedKey) {
 function indexShop(tabs) {
 	const index = /* @__PURE__ */ new Map();
 	for (const tab of tabs || []) for (const group of tab.products || []) for (const product of productOptions(group)) {
-		if (!product?.key || !hasValidPrice(product)) continue;
+		if (!product?.key) continue;
 		if (!index.has(product.key)) index.set(product.key, []);
 		index.get(product.key).push({
 			product,
@@ -17308,6 +17364,7 @@ function indexShop(tabs) {
 	}
 	return index;
 }
+/** A key alone identifies a purchase on the server: differing rules are unsafe. */
 function getPurchaseSignature(product, group = product) {
 	return JSON.stringify({
 		price: product?.price,
@@ -17335,7 +17392,7 @@ function getConflictingKeys(tabs) {
 	return conflicts;
 }
 function isAvailable(product, group = product, conflicts = /* @__PURE__ */ new Set(), now = Date.now()) {
-	return !!product?.key && hasValidPrice(product) && !isOwnedOnce(product, group) && !unmetConditions(product, group) && !conflicts.has(product.key) && getPurchaseLimit(product, group) >= 1 && getTimeStatus(product, group, now).available;
+	return !!product?.key && isBuyItemsSupported(product.key) && hasValidPrice(product) && !isFullyOwned(product, group) && !unmetConditions(product, group) && !conflicts.has(product.key) && getPurchaseLimit(product, group) >= 1 && getTimeStatus(product, group, now).available;
 }
 function putInCart(cart, product, amount, category = "", accountLimit = 100, group = product, conflicts = /* @__PURE__ */ new Set(), now = Date.now()) {
 	if (!isAvailable(product, group, conflicts, now)) return cart;
@@ -17378,7 +17435,8 @@ function resolveCart(cart, tabs, accountLimit = 100, now = Date.now()) {
 		let invalid = "";
 		if (!latest) invalid = "Vật phẩm không còn trong cửa hàng";
 		else if (conflicts.has(entry.key)) invalid = "Mã vật phẩm trùng với cấu hình khác nhau";
-		else if (isOwnedOnce(product, group)) invalid = "Vật phẩm đã sở hữu";
+		else if (!isBuyItemsSupported(entry.key)) invalid = "Chức năng mua mã vật phẩm này chưa được buyItems hỗ trợ";
+		else if (isFullyOwned(product, group)) invalid = "Đã đạt mức sở hữu tối đa";
 		else if (unmetConditions(product, group)) invalid = "Chưa đáp ứng điều kiện mua";
 		else if (!getTimeStatus(product, group, now).available) invalid = getTimeMessage(product, group, now);
 		else if (optionMode(group) === "singleOptions" && new Set(groupItems.map((item) => item.key)).size > 1) invalid = "Chỉ chọn một loại trong nhóm";
@@ -17428,6 +17486,21 @@ function incrementOwned(product, amount, group = product) {
 	};
 	return product;
 }
+function incrementDollOwned(product, amount) {
+	const remaining = Math.max(0, product.limit - amount);
+	const next = incrementOwned(product, amount);
+	if (remaining === 0) {
+		const { limit: unused, ...rest } = next;
+		return {
+			...rest,
+			owned: true
+		};
+	}
+	return {
+		...next,
+		limit: remaining
+	};
+}
 function applyPurchaseToTabs(tabs, purchasedItems) {
 	const amounts = new Map(purchasedItems.map(({ key, amount }) => [key, amount]));
 	return tabs.map((tab) => ({
@@ -17435,7 +17508,8 @@ function applyPurchaseToTabs(tabs, purchasedItems) {
 		products: tab.products.map((group) => {
 			if (!hasOptions(group)) {
 				const amount = amounts.get(group.key);
-				return amount ? incrementOwned(group, amount) : group;
+				if (!amount) return group;
+				return tab.id === "dolls" ? incrementDollOwned(group, amount) : incrementOwned(group, amount);
 			}
 			const mode = optionMode(group);
 			const options = productOptions(group);
@@ -17765,11 +17839,11 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([0,1,2,3])));
 var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11,12])));
 var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([13,8,2,3,14,15,16,17,7,6,18])));
-var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([19,20,11,16])));
-var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([21,18,14,12,5,20,11,16,22,6])));
-var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([23,17,20,11,16,2,6,14,22,5])));
-var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([24,1,20,11,16,15,8,12,5,10,22,6,14,2])));
-var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([25,20,11,16,22])));
+var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([19,20,9,16])));
+var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([21,18,14,12,5,20,9,16,22,6])));
+var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([23,17,20,9,16,2,6,14,22,5])));
+var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([24,1,20,9,16,15,8,12,5,11,22,6,14,2])));
+var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([25,20,9,16,22])));
 var AUTHENTICATION_PATHS = [
 	"/login",
 	"/register",
@@ -18015,4 +18089,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)({ md5: "b750a6e2b3d860ae46efcc050e03db3b" });
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
-export { adminSaveData as $, createReactComponent as $t, formatNumber as A, RowSkeleton as At, adminDecryptRecordValue as B, Dialog as Bt, putInCart as C, isAdmin as Ct, compareByTime as D, JsonEditor as Dt, unmetConditions as E, SearchInput as Et, adminAddPlayerLike as F, Tabs as Ft, adminEditPlayer as G, Button as Gt, adminDeletePlayerFriend as H, toast as Ht, adminAddPlayerStar as I, PageSizeSelect as It, adminGiftCodes as J, IconRefresh as Jt, adminEditUser as K, IconX as Kt, adminCreateGiftCode as L, Select as Lt, formatVietnameseDong as M, ErrorState as Mt, adminAddCoin as N, Spinner as Nt, formatDate as O, Line as Ot, adminAddPlayerFriend as P, Pager as Pt, adminRecord as Q, IconAlertTriangle as Qt, adminCreateUser as R, SortSelect as Rt, productOptions as S, fileToAvatar as St, resolveCart as T, Logo as Tt, adminDeleteUser as U, toastError as Ut, adminDeleteGiftCode as V, OtpButton as Vt, adminEditGiftCode as W, Field as Wt, adminPlayerFriends as X, IconCircleCheck as Xt, adminPlayer as Y, IconInfoCircle as Yt, adminPlayers as Z, IconChevronRight as Zt, hasValidPrice as _, login as _t, cartTotal as a, useParams as an, getTransaction as at, isOwnedOnce as b, signup as bt, eligibleCategoryProducts as c, __toESM as cn, buy as ct, getConflictingKeys as d, getFriendLink as dt, Badge as en, adminSaveRecord as et, getGroupRemaining as f, openidOtp as ft, hasOptions as g, updateUser as gt, getTimeStatus as h, updateAvatar as ht, cartPayload as i, useNavigate as in, createTransaction as it, formatShortDateTime as j, Skeleton as jt, formatDateTime as k, PagerSkeleton as kt, formatShopDate as l, changeOpenid as lt, getTimeMessage as m, submitInvite as mt, addCategoryToCart as n, Outlet as nn, adminUsers as nt, changeCartQuantity as o, require_react_dom as on, getTransactions as ot, getPurchaseLimit as p, redeemGiftCode as pt, adminEncryptRecordValue as q, IconSearch as qt, cartCount as r, useLocation as rn, cancelTransaction as rt, clampCartQuantity as s, require_react as sn, ADMIN_MAX_QTY as st, __vitePreload as t, require_jsx_runtime as tn, adminUpdatePlayerAvatar as tt, getConditions as u, getBuffetLink as ut, isAvailable as v, passwordOtp as vt, removeCategoryFromCart as w, Coin as wt, optionMode as x, signupOtp as xt, isOnce as y, resetPassword as yt, adminData as z, Menu as zt };
+export { adminRecord as $, IconAlertTriangle as $t, formatDateTime as A, PagerSkeleton as At, adminData as B, Menu as Bt, productOptions as C, fileToAvatar as Ct, unmetConditions as D, SearchInput as Dt, resolveCart as E, Logo as Et, adminAddPlayerFriend as F, Pager as Ft, adminEditGiftCode as G, Field as Gt, adminDeleteGiftCode as H, OtpButton as Ht, adminAddPlayerLike as I, Tabs as It, adminEncryptRecordValue as J, IconSearch as Jt, adminEditPlayer as K, Button as Kt, adminAddPlayerStar as L, PageSizeSelect as Lt, formatShortDateTime as M, Skeleton as Mt, formatVietnameseDong as N, ErrorState as Nt, compareByTime as O, JsonEditor as Ot, adminAddCoin as P, Spinner as Pt, adminPlayers as Q, IconChevronRight as Qt, adminCreateGiftCode as R, Select as Rt, optionMode as S, signupOtp as St, removeCategoryFromCart as T, Coin as Tt, adminDeletePlayerFriend as U, toast as Ut, adminDecryptRecordValue as V, Dialog as Vt, adminDeleteUser as W, toastError as Wt, adminPlayer as X, IconInfoCircle as Xt, adminGiftCodes as Y, IconRefresh as Yt, adminPlayerFriends as Z, IconCircleCheck as Zt, hasValidPrice as _, updateUser as _t, cartTotal as a, useNavigate as an, createTransaction as at, isFullyOwned as b, resetPassword as bt, eligibleCategoryProducts as c, require_react as cn, ADMIN_MAX_QTY as ct, getConflictingKeys as d, getBuffetLink as dt, createReactComponent as en, adminSaveData as et, getGroupRemaining as f, getFriendLink as ft, hasOptions as g, updateAvatar as gt, getTimeStatus as h, submitInvite as ht, cartPayload as i, useLocation as in, cancelTransaction as it, formatNumber as j, RowSkeleton as jt, formatDate as k, Line as kt, formatShopDate as l, __toESM as ln, buy as lt, getTimeMessage as m, redeemGiftCode as mt, addCategoryToCart as n, require_jsx_runtime as nn, adminUpdatePlayerAvatar as nt, changeCartQuantity as o, useParams as on, getTransaction as ot, getPurchaseLimit as p, openidOtp as pt, adminEditUser as q, IconX as qt, cartCount as r, Outlet as rn, adminUsers as rt, clampCartQuantity as s, require_react_dom as sn, getTransactions as st, __vitePreload as t, Badge as tn, adminSaveRecord as tt, getConditions as u, changeOpenid as ut, isAvailable as v, login as vt, putInCart as w, isAdmin as wt, isOnce as x, signup as xt, isBuyItemsSupported as y, passwordOtp as yt, adminCreateUser as z, SortSelect as zt };

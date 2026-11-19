@@ -1,5 +1,5 @@
-import { $t as createReactComponent, D as compareByTime } from "./index.js";
-import { t as IconUsers } from "./IconUsers.js";
+import { O as compareByTime, en as createReactComponent } from "./index.js";
+import { n as IconMusic, r as IconDeviceGamepad2, t as IconUsers } from "./IconUsers.js";
 import { t as IconUser } from "./IconUser.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
@@ -19,34 +19,6 @@ var IconDatabase = /* @__PURE__ */ createReactComponent("outline", "database", "
 	["path", {
 		"d": "M4 12v6a8 3 0 0 0 16 0v-6",
 		"key": "svg-2"
-	}]
-]);
-/**
-* @license @tabler/icons-react v3.52.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var IconDeviceGamepad2 = /* @__PURE__ */ createReactComponent("outline", "device-gamepad-2", "DeviceGamepad2", [
-	["path", {
-		"d": "M12 5h3.5a5 5 0 0 1 0 10h-5.5l-4.015 4.227a2.3 2.3 0 0 1 -3.923 -2.035l1.634 -8.173a5 5 0 0 1 4.904 -4.019h3.4",
-		"key": "svg-0"
-	}],
-	["path", {
-		"d": "M14 15l4.07 4.284a2.3 2.3 0 0 0 3.925 -2.023l-1.6 -8.232",
-		"key": "svg-1"
-	}],
-	["path", {
-		"d": "M8 9v2",
-		"key": "svg-2"
-	}],
-	["path", {
-		"d": "M7 10h2",
-		"key": "svg-3"
-	}],
-	["path", {
-		"d": "M14 10h2",
-		"key": "svg-4"
 	}]
 ]);
 /**
@@ -75,30 +47,6 @@ var IconFileText = /* @__PURE__ */ createReactComponent("outline", "file-text", 
 	["path", {
 		"d": "M9 17l6 0",
 		"key": "svg-4"
-	}]
-]);
-/**
-* @license @tabler/icons-react v3.52.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var IconMusic = /* @__PURE__ */ createReactComponent("outline", "music", "Music", [
-	["path", {
-		"d": "M3 17a3 3 0 1 0 6 0a3 3 0 0 0 -6 0",
-		"key": "svg-0"
-	}],
-	["path", {
-		"d": "M13 17a3 3 0 1 0 6 0a3 3 0 0 0 -6 0",
-		"key": "svg-1"
-	}],
-	["path", {
-		"d": "M9 17v-13h10v13",
-		"key": "svg-2"
-	}],
-	["path", {
-		"d": "M9 8h10",
-		"key": "svg-3"
 	}]
 ]);
 /**

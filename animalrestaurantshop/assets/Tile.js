@@ -1,4 +1,4 @@
-import { $t as createReactComponent, S as productOptions, _ as hasValidPrice, cn as __toESM, sn as require_react, tn as require_jsx_runtime } from "./index.js";
+import { C as productOptions, _ as hasValidPrice, cn as require_react, en as createReactComponent, ln as __toESM, nn as require_jsx_runtime } from "./index.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
 *

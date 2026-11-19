@@ -3,14 +3,15 @@ import { Skeleton, Spinner } from '@/shared/components/ui';
 export default function ShopSkeleton() {
   return (
     <section aria-busy='true' aria-label='Đang tải cửa hàng'>
-      <div className='mb-4 flex flex-wrap items-end gap-3'>
-        <div className='min-w-0 flex-1 space-y-2'>
+      <div className='mb-4 space-y-3'>
+        <div className='space-y-2'>
           <Skeleton className='h-7 w-36' />
           <p className='flex items-center gap-2 text-xs text-mute'><Spinner size={13} /> Đang tải cửa hàng…</p>
         </div>
-        <div className='flex w-full items-center gap-2 sm:w-auto'>
-          <Skeleton className='h-10 flex-1 rounded-lg sm:w-72' />
-          <Skeleton className='size-10 rounded-lg' />
+        <div className='grid grid-cols-[minmax(0,1fr)_auto] gap-2 sm:grid-cols-[minmax(12rem,1fr)_minmax(10rem,12rem)_auto]'>
+          <Skeleton className='h-10 min-w-0 rounded-lg' />
+          <Skeleton className='col-span-2 row-start-2 h-10 rounded-lg sm:col-span-1 sm:row-start-auto' />
+          <Skeleton className='col-start-2 row-start-1 size-10 rounded-lg sm:col-start-3 sm:row-start-auto' />
         </div>
       </div>
       <ul className='grid gap-2 sm:grid-cols-2 xl:grid-cols-3'>

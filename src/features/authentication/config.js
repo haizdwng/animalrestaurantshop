@@ -7,4 +7,4 @@ export const MODE_TABS = [
   ['register', 'Đăng ký']
 ];
 
-export const SUBMIT_LABELS = { login: 'Đăng nhập', register: 'Tạo tài khoản', forgot: 'Đặt lại mật khẩu' };
+export const SUBMIT_LABELS = { login: 'Đăng nhập', register: 'Đăng ký', forgot: 'Đặt lại mật khẩu' };

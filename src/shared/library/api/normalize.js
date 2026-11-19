@@ -15,13 +15,14 @@ export function normUser(user) {
     friendInvite: user.friendInvite,
     createdAt: user.createdAt
   };
-}
+};
 export const pickUser = (response) => normUser(response.user);
 export const isAdmin = (user) => user?.role === 'administrator';
 
 export const SHOP_CATEGORIES = Object.freeze({
   letters: 'Thư',
-  customers: 'Khách',
+  customers: 'Khách hàng',
+  musicians: 'Khách mời',
   memorials: 'Vật kỷ niệm',
   foods: 'Món ăn',
   plants: 'Tưới cây',
@@ -29,7 +30,7 @@ export const SHOP_CATEGORIES = Object.freeze({
   flowers: 'Hoa',
   vegetables: 'Rau',
   frames: 'Khung ảnh',
-  films: 'Phim',
+  dolls: 'Búp bê',
   items: 'Vật phẩm',
   specials: 'Đặc biệt'
 });

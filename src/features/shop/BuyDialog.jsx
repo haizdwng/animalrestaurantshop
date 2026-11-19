@@ -2,31 +2,37 @@ import { useEffect, useId, useState } from 'react';
 import { IconCheck, IconLock, IconShoppingCart, IconTrash, IconX } from '@tabler/icons-react';
 import { formatNumber } from '@/shared/library/format';
 import { Button, Coin, Dialog, Select } from '@/shared/components/ui';
-import { clampCartQuantity, getConditions, getPurchaseLimit, getGroupRemaining, hasOptions, hasValidPrice, isOnce, isOwnedOnce, productOptions, unmetConditions, optionMode, getTimeStatus, getTimeMessage, formatShopDate } from '@/features/shop/cartUtils';
+import { clampCartQuantity, getConditions, getPurchaseLimit, getGroupRemaining, hasOptions, hasValidPrice, isOnce, isFullyOwned, isBuyItemsSupported, productOptions, unmetConditions, optionMode, getTimeStatus, getTimeMessage, formatShopDate } from '@/features/shop/cartUtils';
 import QuantityPicker from '@/features/shop/QuantityPicker';
 import Tile from '@/features/shop/Tile';
 
 export default function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuantity = 100, now = Date.now(), conflictingKeys = new Set(), onAdd, onRemove, onClose, onTopUp }) {
   const variantSelectId = useId();
   const options = item ? productOptions(item) : [];
-  const [selectedKey, setSelectedKey] = useState(() => (optionMode(item) === 'singleOptions' ? options.find((option) => option.owned === true) : options.find((option) => !isOwnedOnce(option, item)))?.key || options[0]?.key || '');
+  const [selectedKey, setSelectedKey] = useState(() => (optionMode(item) === 'singleOptions' ? options.find((option) => option.owned === true) : options.find((option) => !isFullyOwned(option, item)))?.key || options[0]?.key || '');
   const [amount, setAmount] = useState(1);
+
+  useEffect(() => {
+    const current = productOptions(item);
+    setSelectedKey((optionMode(item) === 'singleOptions' ? current.find((choice) => choice.owned === true) : current.find((choice) => !isFullyOwned(choice, item)))?.key || current[0]?.key || '');
+  }, [item?.key]);
   const selected = options.find((option) => option.key === selectedKey) || options[0];
   const selectedInCart = entries.find((entry) => entry.key === selected?.key);
   const cartAmount = selectedInCart?.amount || 0;
   const once = isOnce(selected, item);
-  const ownedOnce = isOwnedOnce(selected, item);
+  const fullyOwned = isFullyOwned(selected, item);
+  const supported = isBuyItemsSupported(selected?.key);
   const conflict = conflictingKeys.has(selected?.key);
   const blockedByConditions = unmetConditions(selected, item);
   const time = getTimeStatus(selected, item, now);
   const timeMessage = getTimeMessage(selected, item, now);
-  const available = !ownedOnce && !conflict && !blockedByConditions && time.available && hasValidPrice(selected);
+  const available = supported && !fullyOwned && !conflict && !blockedByConditions && time.available && hasValidPrice(selected);
   const conditions = selected ? getConditions(selected, item) : [];
   const mode = optionMode(item);
   const exclusive = mode === 'singleOptions' || (mode === 'multipleOptions' && item.limit === 1);
   const groupRoom = exclusive ? (Number.isSafeInteger(item.limit) ? item.limit : Infinity) : getGroupRemaining(entries, item, selected?.key);
   const limit = selected ? Math.min(getPurchaseLimit(selected, item, maxQuantity), groupRoom) : 0;
-  const quantity = once ? 1 : clampCartQuantity(amount, Math.max(1, limit));
+  const quantity = !available || limit < 1 ? 0 : once ? 1 : clampCartQuantity(amount, limit);
   const total = hasValidPrice(selected) ? selected.price * quantity : 0;
   const replaced = exclusive ? entries.filter((entry) => entry.groupKey === item.key && entry.key !== selected?.key) : [];
   const replacedTotal = replaced.reduce((sum, entry) => sum + entry.total, 0);
@@ -99,7 +105,7 @@ export default function BuyDialog({ item, category, user, entries = [], cartTota
           )}
 
           {typeof selected.owned === 'number' && <p className='text-[11px] text-mute'>Số lượng đang có: {formatNumber(selected.owned)}</p>}
-          {selected.owned === true && !once && <p className='rounded-lg border border-line bg-bg px-3 py-2 text-[11px] text-mute'>Đã sở hữu hoặc đang sử dụng. Bạn vẫn có thể mua tiếp vì vật phẩm này không giới hạn một lần.</p>}
+          {selected.owned === true && !once && !fullyOwned && limit >= 1 && <p className='rounded-lg border border-line bg-bg px-3 py-2 text-[11px] text-mute'>Đã sở hữu hoặc đang sử dụng. Vẫn có thể mua tiếp trong giới hạn còn lại.</p>}
 
           {conditions.length > 0 && (
             <div className='space-y-2 rounded-xl border border-line bg-bg p-3'>
@@ -115,10 +121,13 @@ export default function BuyDialog({ item, category, user, entries = [], cartTota
             </div>
           )}
           {conflict && <p role='alert' className='rounded-lg border border-bad/40 bg-bad/10 p-3 text-xs text-bad'>Mã vật phẩm xuất hiện với cấu hình khác nhau ở nhiều danh mục. Backend hiện không cho mua mã này.</p>}
-          {ownedOnce && <p className='rounded-lg border border-ok/30 bg-ok/10 p-3 text-xs text-ok'>Vật phẩm đã sở hữu và chỉ được mua một lần.</p>}
-          {limit < 1 && <p className='rounded-lg border border-bad/30 bg-bad/10 p-3 text-xs text-bad'>Đã đạt giới hạn số lượng của nhóm trong giỏ hàng.</p>}
+          {fullyOwned && <p className='rounded-lg border border-ok/30 bg-ok/10 p-3 text-xs text-ok'>{once ? 'Vật phẩm đã sở hữu và chỉ được mua một lần.' : 'Đã đạt mức sở hữu tối đa, không thể mua thêm.'}</p>}
+          {!supported && <p role='alert' className='rounded-lg border border-bad/30 bg-bad/10 p-3 text-xs text-bad'>Mã này chưa được hàm buyItems hỗ trợ. Không thể thêm vào giỏ.</p>}
+          {limit < 1 && <p className='rounded-lg border border-bad/30 bg-bad/10 p-3 text-xs text-bad'>{fullyOwned ? 'Đã đạt giới hạn sở hữu.' : getPurchaseLimit(selected, item, maxQuantity) < 1 ? 'Đã đạt giới hạn mua của vật phẩm.' : 'Đã đạt giới hạn số lượng của nhóm trong giỏ hàng.'}</p>}
 
-          {once ? (
+          {limit < 1 ? (
+            <div className='flex items-center gap-2 rounded-lg border border-line bg-bg px-3 py-2.5 text-[11px] text-mute'><IconLock size={15} /> Không thể mua thêm vật phẩm này</div>
+          ) : once ? (
             <div className='flex items-center gap-2 rounded-lg border border-line bg-bg px-3 py-2.5 text-[11px] text-mute'><IconLock size={15} /> Chỉ được sở hữu một lần</div>
           ) : limit === 1 ? (
             <p className='rounded-lg border border-line bg-bg px-3 py-2.5 text-[11px] text-mute'>Mỗi lần mua tối đa 1 vật phẩm. Có thể mua lại ở lần tiếp theo.</p>
@@ -141,7 +150,7 @@ export default function BuyDialog({ item, category, user, entries = [], cartTota
             {(!once || cartAmount === 0) && (
               <Button className='w-full' disabled={!available || limit < 1} onClick={add}>
                 {available ? <IconShoppingCart size={16} /> : <IconLock size={16} />}
-                {ownedOnce ? 'Đã mua' : conflict ? 'Mã không hợp lệ' : blockedByConditions ? 'Chưa đủ điều kiện' : !time.available ? 'Ngoài thời gian bán' : !hasValidPrice(selected) ? 'Không có giá' : limit < 1 ? 'Đã đủ số lượng' : cartAmount ? 'Cập nhật giỏ' : 'Thêm vào giỏ'}
+                {fullyOwned ? 'Đã sở hữu' : !supported ? 'Chưa hỗ trợ' : conflict ? 'Mã không hợp lệ' : blockedByConditions ? 'Chưa đủ điều kiện' : !time.available ? 'Ngoài thời gian bán' : !hasValidPrice(selected) ? 'Không có giá' : limit < 1 ? 'Đã đủ số lượng' : cartAmount ? 'Cập nhật giỏ' : 'Thêm vào giỏ'}
               </Button>
             )}
           </div>
