@@ -1,4 +1,4 @@
-import { cn as require_react, en as createReactComponent, ln as __toESM } from "./index.js";
+import { ln as require_react, tn as createReactComponent, un as __toESM } from "./index.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
 *

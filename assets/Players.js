@@ -1,4 +1,4 @@
-import { $ as adminRecord, At as PagerSkeleton, Bt as Menu, Ct as fileToAvatar, Dt as SearchInput, F as adminAddPlayerFriend, Gt as Field, I as adminAddPlayerLike, It as Tabs, J as adminEncryptRecordValue, Jt as IconSearch, K as adminEditPlayer, Kt as Button, L as adminAddPlayerStar, Lt as PageSizeSelect, Mt as Skeleton, Nt as ErrorState, Ot as JsonEditor, Pt as Spinner, Q as adminPlayers, Rt as Select, U as adminDeletePlayerFriend, Ut as toast, V as adminDecryptRecordValue, Vt as Dialog, Wt as toastError, X as adminPlayer, Xt as IconInfoCircle, Yt as IconRefresh, Z as adminPlayerFriends, an as useNavigate, cn as require_react, en as createReactComponent, j as formatNumber, jt as RowSkeleton, kt as Line, ln as __toESM, nn as require_jsx_runtime, nt as adminUpdatePlayerAvatar, on as useParams, tt as adminSaveRecord } from "./index.js";
+import { $ as adminRecord, At as PagerSkeleton, Bt as Menu, Ct as fileToAvatar, Dt as SearchInput, F as adminAddPlayerFriend, Gt as Field, I as adminAddPlayerLike, It as Tabs, J as adminEncryptRecordValue, K as adminEditPlayer, Kt as Button, L as adminAddPlayerStar, Lt as PageSizeSelect, Mt as Skeleton, Nt as ErrorState, Ot as JsonEditor, Pt as Spinner, Q as adminPlayers, Rt as Select, U as adminDeletePlayerFriend, Ut as toast, V as adminDecryptRecordValue, Vt as Dialog, Wt as toastError, X as adminPlayer, Xt as IconRefresh, Yt as IconSearch, Z as adminPlayerFriends, Zt as IconInfoCircle, j as formatNumber, jt as RowSkeleton, kt as Line, ln as require_react, nt as adminUpdatePlayerAvatar, on as useNavigate, rn as require_jsx_runtime, sn as useParams, tn as createReactComponent, tt as adminSaveRecord, un as __toESM } from "./index.js";
 import { n as IconArrowLeft, t as IconArrowRight } from "./IconArrowRight.js";
 import { o as PLAYER_TABS } from "./config.js";
 import { t as IconStarFilled } from "./IconStarFilled.js";
@@ -352,15 +352,16 @@ function PlayerFriends({ openid }) {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Head, {
 				title: "Danh sách bạn bè",
 				sub: friends ? `${friends.length.toLocaleString("vi-VN")} bạn bè` : "Đang tải danh sách…",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 					variant: "ghost",
 					size: "sm",
 					className: "size-9! p-0!",
 					title: "Tải lại bạn bè",
 					"aria-label": "Tải lại bạn bè",
 					onClick: loadFriends,
+					requestAction: true,
 					disabled: loading,
-					children: loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 17 })
+					children: [" ", loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 17 })]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 					size: "sm",
 					className: "size-9! p-0!",
@@ -494,6 +495,7 @@ function PlayerFriends({ openid }) {
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 						variant: "danger",
 						onClick: deleteFriend,
+						requestAction: true,
 						loading: removing,
 						children: "Xóa bạn bè"
 					})]

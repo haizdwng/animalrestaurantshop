@@ -14700,6 +14700,239 @@ var IconX = /* @__PURE__ */ createReactComponent("outline", "x", "X", [["path", 
 	"d": "M6 6l12 12",
 	"key": "svg-1"
 }]]);
+// src/shared/configuration/environment.js
+var DEFAULT_API_BASE_URL = "https://animalrestauranttools.vercel.app/api";
+var DEFAULT_REQUEST_TIMEOUT = 3e5;
+var API_BASE_URL = DEFAULT_API_BASE_URL.replace(/\/+$/, "");
+var REQUEST_TIMEOUT = DEFAULT_REQUEST_TIMEOUT;
+// src/shared/library/api/client.js
+var TOKEN_KEY = "token";
+var COIN_REQUESTS = /* @__PURE__ */ new Set([
+	"GET /user",
+	"POST /user/invite",
+	"POST /user/shop",
+	"POST /user/giftcode",
+	"POST /user/checkin"
+]);
+var activeRequests = 0;
+var activeCoinRequests = 0;
+var requestListeners = /* @__PURE__ */ new Set();
+var requestQueue = Promise.resolve();
+function enqueueRequest(fn) {
+	const run = requestQueue.then(() => fn());
+	requestQueue = run.catch(() => {});
+	return run;
+}
+function notifyRequestListeners() {
+	requestListeners.forEach((listener) => listener());
+}
+var subscribeToRequests = (listener) => {
+	requestListeners.add(listener);
+	return () => requestListeners.delete(listener);
+};
+var getPendingRequestCount = () => activeRequests;
+var getPendingCoinRequestCount = () => activeCoinRequests;
+function trackRequest(coin = false) {
+	activeRequests += 1;
+	if (coin) activeCoinRequests += 1;
+	notifyRequestListeners();
+	let finished = false;
+	return () => {
+		if (finished) return;
+		finished = true;
+		activeRequests = Math.max(0, activeRequests - 1);
+		if (coin) activeCoinRequests = Math.max(0, activeCoinRequests - 1);
+		notifyRequestListeners();
+	};
+}
+var getToken = () => localStorage.getItem(TOKEN_KEY) || "";
+var setToken = (token) => localStorage.setItem(TOKEN_KEY, token);
+var hasToken = () => !!localStorage.getItem(TOKEN_KEY);
+var clearToken = () => localStorage.removeItem(TOKEN_KEY);
+var ApiError = class extends Error {
+	constructor(message, data = {}) {
+		super(message);
+		this.name = "ApiError";
+		Object.assign(this, data);
+	}
+};
+var onUnauthorized = () => {};
+var setUnauthorizedHandler = (handler) => onUnauthorized = handler;
+async function http(method, path, body, { track = true, contentEncoding } = {}) {
+	return enqueueRequest(async () => {
+		const coinRequest = COIN_REQUESTS.has(`${method.toUpperCase()} ${path.split("?")[0]}`);
+		const finishRequest = track ? trackRequest(coinRequest) : () => {};
+		const isForm = body instanceof FormData;
+		const isBinary = body instanceof Uint8Array;
+		const controller = new AbortController();
+		const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+		try {
+			const token = localStorage.getItem(TOKEN_KEY);
+			const response = await fetch(API_BASE_URL + path, {
+				method,
+				cache: "no-store",
+				headers: {
+					...!isForm && body !== void 0 && { "Content-Type": "application/json" },
+					...contentEncoding && { "Content-Encoding": contentEncoding },
+					...token && { token }
+				},
+				body: body === void 0 ? void 0 : isForm || isBinary ? body : JSON.stringify(body),
+				signal: controller.signal
+			});
+			if (response.status === 204) return { success: true };
+			let data;
+			try {
+				data = await response.json();
+			} catch {
+				data = {
+					success: false,
+					message: `Máy chủ phản hồi không hợp lệ (${response.status})`
+				};
+			}
+			if (!data || typeof data !== "object") data = {
+				success: false,
+				message: `Máy chủ phản hồi không hợp lệ (${response.status})`
+			};
+			data.status = response.status;
+			if (response.status === 401) data = {
+				...data,
+				success: false,
+				code: "UNAUTHORIZED"
+			};
+			return data;
+		} catch (error) {
+			return {
+				success: false,
+				code: error?.name === "AbortError" ? "TIMEOUT" : "NETWORK",
+				message: error?.name === "AbortError" ? "Máy chủ phản hồi quá lâu — hãy thử lại" : "Không kết nối được máy chủ — có thể máy chủ chưa cho phép tên miền này (CORS)"
+			};
+		} finally {
+			clearTimeout(timeout);
+			finishRequest();
+		}
+	});
+}
+async function call(method, path, body, { auth = true, track = true, contentEncoding } = {}) {
+	const response = await http(method, path, body, {
+		track,
+		contentEncoding
+	});
+	if (!response || response.success !== true) {
+		if (response && !response.code && /xác thực|đăng nhập lại|unauthori|token/i.test(response.message || "")) response.code = "UNAUTHORIZED";
+		const error = new ApiError(response?.message || "Đã có lỗi xảy ra", response || {});
+		if (auth && error.code === "UNAUTHORIZED") {
+			clearToken();
+			onUnauthorized(error);
+		}
+		throw error;
+	}
+	if (response.token) setToken(response.token);
+	return response;
+}
+async function callStream(method, path, body, onProgress, { auth = true, timeout = REQUEST_TIMEOUT } = {}) {
+	return enqueueRequest(async () => {
+		const finishRequest = trackRequest();
+		const isForm = body instanceof FormData;
+		const controller = new AbortController();
+		const timer = setTimeout(() => controller.abort(), timeout);
+		let reader;
+		const handleError = (data = {}) => {
+			if (data.status === 401) data = {
+				...data,
+				success: false,
+				code: "UNAUTHORIZED"
+			};
+			if (!data.code && /xác thực|đăng nhập lại|unauthori|token/i.test(data.message || "")) data.code = "UNAUTHORIZED";
+			const error = new ApiError(data.message || "Đã có lỗi xảy ra", data);
+			if (auth && error.code === "UNAUTHORIZED") {
+				clearToken();
+				onUnauthorized(error);
+			}
+			return error;
+		};
+		try {
+			const token = getToken();
+			const response = await fetch(API_BASE_URL + path, {
+				method,
+				cache: "no-store",
+				headers: {
+					...!isForm && body !== void 0 && { "Content-Type": "application/json" },
+					...token && { token }
+				},
+				body: body === void 0 ? void 0 : isForm ? body : JSON.stringify(body),
+				signal: controller.signal
+			});
+			if (response.status === 204) return {
+				success: true,
+				status: 204
+			};
+			if (!response.body) throw handleError({
+				message: "Máy chủ không hỗ trợ truyền dữ liệu streaming",
+				status: response.status
+			});
+			reader = response.body.getReader();
+			const decoder = new TextDecoder();
+			let buffer = "";
+			let result = null;
+			const processLine = (line) => {
+				if (!line.trim()) return;
+				let data;
+				try {
+					data = JSON.parse(line);
+				} catch {
+					throw handleError({
+						message: "Máy chủ trả về dữ liệu streaming không hợp lệ",
+						status: response.status
+					});
+				}
+				if (data.type === "progress") {
+					onProgress?.(data.progress, data.message, data);
+					return;
+				}
+				if (data.type === "error") throw handleError({
+					...data,
+					status: response.status
+				});
+				if (data.type === "success") result = {
+					...data,
+					success: true,
+					status: response.status
+				};
+			};
+			while (true) {
+				const { done, value } = await reader.read();
+				buffer += decoder.decode(value || /* @__PURE__ */ new Uint8Array(), { stream: !done });
+				const lines = buffer.split("\n");
+				buffer = lines.pop() || "";
+				for (const line of lines) processLine(line);
+				if (done) break;
+			}
+			if (buffer.trim()) processLine(buffer);
+			if (!response.ok) throw handleError({
+				message: "Máy chủ xử lý yêu cầu thất bại",
+				status: response.status
+			});
+			if (!result) throw handleError({
+				message: "Máy chủ kết thúc xử lý mà không trả kết quả",
+				status: response.status
+			});
+			return result;
+		} catch (error) {
+			if (error instanceof ApiError) throw error;
+			if (error?.name === "AbortError") throw new ApiError("Máy chủ phản hồi quá lâu — hãy thử lại", { code: "TIMEOUT" });
+			throw new ApiError("Không kết nối được máy chủ — hãy kiểm tra kết nối mạng", { code: "NETWORK" });
+		} finally {
+			clearTimeout(timer);
+			if (reader) reader.releaseLock();
+			finishRequest();
+		}
+	});
+}
+var enc = encodeURIComponent;
+// src/shared/hooks/useRequestPending.js
+function useRequestPending() {
+	return (0, import_react.useSyncExternalStore)(subscribeToRequests, getPendingRequestCount, getPendingRequestCount) > 0;
+}
 // src/shared/components/ui/Button.jsx
 var VARIANTS = {
 	solid: "border border-transparent bg-lime text-bg hover:brightness-105",
@@ -14711,12 +14944,41 @@ var SIZES = {
 	sm: "min-h-8 px-3 text-xs",
 	md: "min-h-11 px-4 text-sm"
 };
-function Button({ variant = "solid", size = "md", className = "", loading = false, children, ...props }) {
+function childText(node) {
+	if (typeof node === "string" || typeof node === "number") return String(node);
+	if (Array.isArray(node)) return node.map(childText).join(" ");
+	return node && typeof node === "object" ? childText(node.props?.children) : "";
+}
+function isRequestButton(type, variant, label) {
+	if (type === "submit") return true;
+	if (/^(Tải lại|Làm mới|Kiểm tra|Thử lại|Lưu JSON|Đặt làm ảnh đại diện|Nhận \+|Mua tất cả)/i.test(label)) return true;
+	return variant === "danger" && /^(Xóa|Xoá|Hủy giao dịch|Huỷ giao dịch)/i.test(label);
+}
+function Button({ variant = "solid", size = "md", className = "", loading = false, requestAction, children, ...props }) {
+	const requestPending = useRequestPending();
+	const label = [
+		props["aria-label"],
+		props.title,
+		childText(children)
+	].filter(Boolean).join(" ").trim();
+	const requestControl = requestAction ?? isRequestButton(props.type, variant, label);
+	const disabled = Boolean(props.disabled || loading || requestControl && requestPending);
+	const { onClick, ...buttonProps } = props;
+	const handleClick = (event) => {
+		if (requestControl && getPendingRequestCount() > 0) {
+			event.preventDefault();
+			event.stopPropagation();
+			return;
+		}
+		onClick?.(event);
+	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-		...props,
+		...buttonProps,
 		type: props.type || "button",
-		disabled: props.disabled || loading,
+		onClick: handleClick,
+		disabled,
 		"aria-busy": loading || void 0,
+		"data-request-action": requestControl ? "" : void 0,
 		className: `inline-flex min-w-0 cursor-pointer items-center justify-center gap-2 rounded-lg font-bold leading-tight transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime disabled:cursor-not-allowed disabled:opacity-50 ${SIZES[size] || SIZES.md} ${VARIANTS[variant] || VARIANTS.solid} ${className}`,
 		children: [loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLoader2, {
 			size: 16,
@@ -14874,6 +15136,7 @@ function OtpButton({ send, target, onSent, check }) {
 	const [until, setUntil] = (0, import_react.useState)(0);
 	const [now, setNow] = (0, import_react.useState)(Date.now());
 	const [busy, setBusy] = (0, import_react.useState)(false);
+	const pending = useRequestPending();
 	const left = Math.max(0, Math.ceil((until - now) / 1e3));
 	(0, import_react.useEffect)(() => {
 		if (!left) return;
@@ -14881,7 +15144,7 @@ function OtpButton({ send, target, onSent, check }) {
 		return () => clearTimeout(t);
 	}, [left, now]);
 	const onClick = async () => {
-		if (check && !check()) return;
+		if (pending || busy || check && !check()) return;
 		setBusy(true);
 		try {
 			const r = await send();
@@ -14901,8 +15164,9 @@ function OtpButton({ send, target, onSent, check }) {
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 		type: "button",
-		disabled: left > 0 || busy,
+		disabled: left > 0 || busy || pending,
 		onClick,
+		"data-request-action": "",
 		className: "m-1 shrink-0 cursor-pointer rounded-md bg-lime px-3 text-[11px] font-bold text-bg transition hover:brightness-110 disabled:cursor-not-allowed disabled:bg-raise disabled:text-mute",
 		children: busy ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLoader2, {
 			size: 14,
@@ -16229,14 +16493,14 @@ function JsonEditor({ load, save, deps = [], extraActions = null }) {
 	}
 	const dirty = text !== original;
 	const submit = async () => {
-		if (!dirty || parseError || saving) return;
+		if (getPendingRequestCount() > 0 || !dirty || parseError || saving) return;
 		setSaving(true);
 		try {
 			const json = JSON.parse(text);
 			const result = await save(json);
 			const formatted = formatJson(json);
 			setOriginal(formatted);
-			setText(formatted);
+			setText((currentText) => currentText === text ? formatted : currentText);
 			toast(result?.message || "Đã lưu dữ liệu");
 		} catch (error) {
 			toastError(error);
@@ -16278,7 +16542,7 @@ function JsonEditor({ load, save, deps = [], extraActions = null }) {
 		applyEditorTheme(monaco);
 		editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
 			const snapshot = current.current;
-			if (!snapshot.parseError && snapshot.dirty) snapshot.save?.();
+			if (getPendingRequestCount() === 0 && !snapshot.parseError && snapshot.dirty) snapshot.save?.();
 		});
 	};
 	if (state.loading) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(EditorSkeleton, {});
@@ -16310,6 +16574,7 @@ function JsonEditor({ load, save, deps = [], extraActions = null }) {
 						className: "size-9! shrink-0 p-0!",
 						"aria-label": "Tải lại",
 						title: "Tải lại",
+						requestAction: true,
 						onClick: () => dirty ? setConfirmReload(true) : reload(),
 						disabled: saving,
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 17 })
@@ -16340,6 +16605,7 @@ function JsonEditor({ load, save, deps = [], extraActions = null }) {
 						"aria-label": "Lưu JSON",
 						title: "Lưu JSON",
 						onClick: submit,
+						requestAction: true,
 						loading: saving,
 						disabled: !dirty || Boolean(parseError),
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconDeviceFloppy, { size: 17 })
@@ -16393,6 +16659,7 @@ function JsonEditor({ load, save, deps = [], extraActions = null }) {
 				onClick: () => setConfirmReload(false),
 				children: "Hủy"
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+				requestAction: true,
 				onClick: () => {
 					setConfirmReload(false);
 					reload();
@@ -16484,235 +16751,6 @@ function Logo() {
 		})]
 	});
 }
-// src/shared/configuration/environment.js
-var DEFAULT_API_BASE_URL = "https://animalrestauranttools.vercel.app/api";
-var DEFAULT_REQUEST_TIMEOUT = 3e5;
-var API_BASE_URL = DEFAULT_API_BASE_URL.replace(/\/+$/, "");
-var REQUEST_TIMEOUT = DEFAULT_REQUEST_TIMEOUT;
-// src/shared/library/api/client.js
-var TOKEN_KEY = "token";
-var COIN_REQUESTS = /* @__PURE__ */ new Set([
-	"GET /user",
-	"POST /user/invite",
-	"POST /user/shop",
-	"POST /user/giftcode",
-	"POST /user/checkin"
-]);
-var activeRequests = 0;
-var activeCoinRequests = 0;
-var requestListeners = /* @__PURE__ */ new Set();
-var requestQueue = Promise.resolve();
-function enqueueRequest(fn) {
-	const run = requestQueue.then(() => fn());
-	requestQueue = run.catch(() => {});
-	return run;
-}
-function notifyRequestListeners() {
-	requestListeners.forEach((listener) => listener());
-}
-var subscribeToRequests = (listener) => {
-	requestListeners.add(listener);
-	return () => requestListeners.delete(listener);
-};
-var getPendingRequestCount = () => activeRequests;
-var getPendingCoinRequestCount = () => activeCoinRequests;
-function trackRequest(coin = false) {
-	activeRequests += 1;
-	if (coin) activeCoinRequests += 1;
-	notifyRequestListeners();
-	let finished = false;
-	return () => {
-		if (finished) return;
-		finished = true;
-		activeRequests = Math.max(0, activeRequests - 1);
-		if (coin) activeCoinRequests = Math.max(0, activeCoinRequests - 1);
-		notifyRequestListeners();
-	};
-}
-var getToken = () => localStorage.getItem(TOKEN_KEY) || "";
-var setToken = (token) => localStorage.setItem(TOKEN_KEY, token);
-var hasToken = () => !!localStorage.getItem(TOKEN_KEY);
-var clearToken = () => localStorage.removeItem(TOKEN_KEY);
-var ApiError = class extends Error {
-	constructor(message, data = {}) {
-		super(message);
-		this.name = "ApiError";
-		Object.assign(this, data);
-	}
-};
-var onUnauthorized = () => {};
-var setUnauthorizedHandler = (handler) => onUnauthorized = handler;
-async function http(method, path, body, { track = true, contentEncoding } = {}) {
-	return enqueueRequest(async () => {
-		const coinRequest = COIN_REQUESTS.has(`${method.toUpperCase()} ${path.split("?")[0]}`);
-		const finishRequest = track ? trackRequest(coinRequest) : () => {};
-		const isForm = body instanceof FormData;
-		const isBinary = body instanceof Uint8Array;
-		const controller = new AbortController();
-		const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
-		try {
-			const token = localStorage.getItem(TOKEN_KEY);
-			const response = await fetch(API_BASE_URL + path, {
-				method,
-				cache: "no-store",
-				headers: {
-					...!isForm && body !== void 0 && { "Content-Type": "application/json" },
-					...contentEncoding && { "Content-Encoding": contentEncoding },
-					...token && { token }
-				},
-				body: body === void 0 ? void 0 : isForm || isBinary ? body : JSON.stringify(body),
-				signal: controller.signal
-			});
-			if (response.status === 204) return { success: true };
-			let data;
-			try {
-				data = await response.json();
-			} catch {
-				data = {
-					success: false,
-					message: `Máy chủ phản hồi không hợp lệ (${response.status})`
-				};
-			}
-			if (!data || typeof data !== "object") data = {
-				success: false,
-				message: `Máy chủ phản hồi không hợp lệ (${response.status})`
-			};
-			data.status = response.status;
-			if (response.status === 401) data = {
-				...data,
-				success: false,
-				code: "UNAUTHORIZED"
-			};
-			return data;
-		} catch (error) {
-			return {
-				success: false,
-				code: error?.name === "AbortError" ? "TIMEOUT" : "NETWORK",
-				message: error?.name === "AbortError" ? "Máy chủ phản hồi quá lâu — hãy thử lại" : "Không kết nối được máy chủ — có thể máy chủ chưa cho phép tên miền này (CORS)"
-			};
-		} finally {
-			clearTimeout(timeout);
-			finishRequest();
-		}
-	});
-}
-async function call(method, path, body, { auth = true, track = true, contentEncoding } = {}) {
-	const response = await http(method, path, body, {
-		track,
-		contentEncoding
-	});
-	if (!response || response.success !== true) {
-		if (response && !response.code && /xác thực|đăng nhập lại|unauthori|token/i.test(response.message || "")) response.code = "UNAUTHORIZED";
-		const error = new ApiError(response?.message || "Đã có lỗi xảy ra", response || {});
-		if (auth && error.code === "UNAUTHORIZED") {
-			clearToken();
-			onUnauthorized(error);
-		}
-		throw error;
-	}
-	if (response.token) setToken(response.token);
-	return response;
-}
-async function callStream(method, path, body, onProgress, { auth = true, timeout = REQUEST_TIMEOUT } = {}) {
-	return enqueueRequest(async () => {
-		const finishRequest = trackRequest();
-		const isForm = body instanceof FormData;
-		const controller = new AbortController();
-		const timer = setTimeout(() => controller.abort(), timeout);
-		let reader;
-		const handleError = (data = {}) => {
-			if (data.status === 401) data = {
-				...data,
-				success: false,
-				code: "UNAUTHORIZED"
-			};
-			if (!data.code && /xác thực|đăng nhập lại|unauthori|token/i.test(data.message || "")) data.code = "UNAUTHORIZED";
-			const error = new ApiError(data.message || "Đã có lỗi xảy ra", data);
-			if (auth && error.code === "UNAUTHORIZED") {
-				clearToken();
-				onUnauthorized(error);
-			}
-			return error;
-		};
-		try {
-			const token = getToken();
-			const response = await fetch(API_BASE_URL + path, {
-				method,
-				cache: "no-store",
-				headers: {
-					...!isForm && body !== void 0 && { "Content-Type": "application/json" },
-					...token && { token }
-				},
-				body: body === void 0 ? void 0 : isForm ? body : JSON.stringify(body),
-				signal: controller.signal
-			});
-			if (response.status === 204) return {
-				success: true,
-				status: 204
-			};
-			if (!response.body) throw handleError({
-				message: "Máy chủ không hỗ trợ truyền dữ liệu streaming",
-				status: response.status
-			});
-			reader = response.body.getReader();
-			const decoder = new TextDecoder();
-			let buffer = "";
-			let result = null;
-			const processLine = (line) => {
-				if (!line.trim()) return;
-				let data;
-				try {
-					data = JSON.parse(line);
-				} catch {
-					throw handleError({
-						message: "Máy chủ trả về dữ liệu streaming không hợp lệ",
-						status: response.status
-					});
-				}
-				if (data.type === "progress") {
-					onProgress?.(data.progress, data.message, data);
-					return;
-				}
-				if (data.type === "error") throw handleError({
-					...data,
-					status: response.status
-				});
-				if (data.type === "success") result = {
-					...data,
-					success: true,
-					status: response.status
-				};
-			};
-			while (true) {
-				const { done, value } = await reader.read();
-				buffer += decoder.decode(value || /* @__PURE__ */ new Uint8Array(), { stream: !done });
-				const lines = buffer.split("\n");
-				buffer = lines.pop() || "";
-				for (const line of lines) processLine(line);
-				if (done) break;
-			}
-			if (buffer.trim()) processLine(buffer);
-			if (!response.ok) throw handleError({
-				message: "Máy chủ xử lý yêu cầu thất bại",
-				status: response.status
-			});
-			if (!result) throw handleError({
-				message: "Máy chủ kết thúc xử lý mà không trả kết quả",
-				status: response.status
-			});
-			return result;
-		} catch (error) {
-			if (error instanceof ApiError) throw error;
-			if (error?.name === "AbortError") throw new ApiError("Máy chủ phản hồi quá lâu — hãy thử lại", { code: "TIMEOUT" });
-			throw new ApiError("Không kết nối được máy chủ — hãy kiểm tra kết nối mạng", { code: "NETWORK" });
-		} finally {
-			clearTimeout(timer);
-			if (reader) reader.releaseLock();
-			finishRequest();
-		}
-	});
-}
-var enc = encodeURIComponent;
 // src/shared/library/api/normalize.js
 function normUser(user) {
 	if (!user || typeof user !== "object") return null;
@@ -16994,7 +17032,7 @@ var CHECKIN_REWARDS = [
 	5,
 	30
 ];
-var getCheckin = () => call("GET", "/user/checkin", void 0, { track: false });
+var getCheckin = () => call("GET", "/user/checkin");
 var claimCheckin = async () => withUser(await call("POST", "/user/checkin"));
 // src/shared/configuration/navigation.js
 var DEFAULT_DESTINATION = "/shop";
@@ -17083,10 +17121,11 @@ function AppHeader({ nav, current, onNavigate, coins, syncing, coinSyncing, onRe
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 					type: "button",
 					onClick: onRefresh,
+					disabled: syncing,
 					"aria-label": `Hiện có ${formatNumber(coins)} xu. Bấm để cập nhật`,
 					title: "Số xu hiện có · Bấm để cập nhật",
 					"aria-busy": coinSyncing || void 0,
-					className: "ml-auto flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-coin/30 bg-coin/10 px-3 text-sm font-bold text-coin tabular-nums transition-colors hover:bg-coin/15",
+					className: "ml-auto flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-coin/30 bg-coin/10 px-3 text-sm font-bold text-coin tabular-nums transition-colors hover:bg-coin/15 disabled:cursor-not-allowed disabled:opacity-60",
 					children: [coinSyncing ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 19 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Coin, { size: 20 }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 						className: "min-w-5 text-right",
 						children: formatNumber(coins)
@@ -17876,7 +17915,6 @@ function AppContent() {
 	const { status, user, setUser, refreshUser } = session;
 	const location = useLocation();
 	const navigate = useNavigate();
-	const lockedPath = (0, import_react.useRef)("");
 	const pendingRequestCount = (0, import_react.useSyncExternalStore)(subscribeToRequests, getPendingRequestCount, getPendingRequestCount);
 	const pendingCoinRequestCount = (0, import_react.useSyncExternalStore)(subscribeToRequests, getPendingCoinRequestCount, getPendingCoinRequestCount);
 	const requestsPending = pendingRequestCount > 0;
@@ -17886,81 +17924,33 @@ function AppContent() {
 	const admin = isAdmin(user);
 	const { shop, load: loadShop, applyPurchase: updateShopAfterPurchase } = useShop(status === "authed" && pathSegment === "shop", admin);
 	const checkin = useCheckin(status === "authed");
-	const currentPath = `${location.pathname}${location.search}${location.hash}`;
 	(0, import_react.useEffect)(() => {
-		if (!requestsPending) {
-			lockedPath.current = "";
-			return;
-		}
-		if (!lockedPath.current) lockedPath.current = currentPath;
-		if (currentPath !== lockedPath.current) navigate(lockedPath.current, { replace: true });
-	}, [
-		requestsPending,
-		currentPath,
-		navigate
-	]);
-	(0, import_react.useEffect)(() => {
-		if (!requestsPending) return;
-		const restorePath = () => {
-			if (lockedPath.current) navigate(lockedPath.current, { replace: true });
-		};
-		const preventInteraction = (event) => {
+		const preventDuplicateSubmit = (event) => {
+			if (getPendingRequestCount() === 0 || event.target.closest("[data-local-submit]")) return;
 			event.preventDefault();
 			event.stopImmediatePropagation();
 		};
-		window.addEventListener("popstate", restorePath);
-		window.addEventListener("keydown", preventInteraction, true);
-		window.addEventListener("keyup", preventInteraction, true);
-		window.addEventListener("wheel", preventInteraction, {
-			capture: true,
-			passive: false
-		});
-		window.addEventListener("touchmove", preventInteraction, {
-			capture: true,
-			passive: false
-		});
-		window.addEventListener("pointerdown", preventInteraction, true);
-		window.addEventListener("click", preventInteraction, true);
-		window.addEventListener("submit", preventInteraction, true);
-		return () => {
-			window.removeEventListener("popstate", restorePath);
-			window.removeEventListener("keydown", preventInteraction, true);
-			window.removeEventListener("keyup", preventInteraction, true);
-			window.removeEventListener("wheel", preventInteraction, true);
-			window.removeEventListener("touchmove", preventInteraction, true);
-			window.removeEventListener("pointerdown", preventInteraction, true);
-			window.removeEventListener("click", preventInteraction, true);
-			window.removeEventListener("submit", preventInteraction, true);
-		};
-	}, [requestsPending, navigate]);
-	const navigateTab = (next) => {
-		if (requestsPending) return;
-		navigate(`/${next}`);
-	};
-	if (status === "checking") return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		inert: requestsPending,
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Toaster, {}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BootScreen, {
-			error: session.bootError,
-			onRetry: session.boot,
-			onSwitchAccount: session.abandonBoot
-		})]
-	});
+		document.addEventListener("submit", preventDuplicateSubmit, true);
+		return () => document.removeEventListener("submit", preventDuplicateSubmit, true);
+	}, []);
+	if (status === "checking") return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Toaster, {}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BootScreen, {
+		error: session.bootError,
+		onRetry: session.boot,
+		onSwitchAccount: session.abandonBoot
+	})] });
 	if (status === "guest") {
 		if (!AUTHENTICATION_PATHS.includes(location.pathname)) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
 			to: getLoginDestination(location),
 			replace: true
 		});
-		return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			inert: requestsPending,
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Toaster, {}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.Suspense, {
-				fallback: null,
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Auth, { onAuthed: (nextUser) => {
-					const destination = getRequestedDestination(location.search);
-					session.signIn(nextUser);
-					navigate(destination, { replace: true });
-				} })
-			})]
-		});
+		return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Toaster, {}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.Suspense, {
+			fallback: null,
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Auth, { onAuthed: (nextUser) => {
+				const destination = getRequestedDestination(location.search);
+				session.signIn(nextUser);
+				navigate(destination, { replace: true });
+			} })
+		})] });
 	}
 	if (AUTHENTICATION_PATHS.includes(location.pathname)) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
 		to: getRequestedDestination(location.search),
@@ -17974,121 +17964,119 @@ function AppContent() {
 			"--app-header-h": "3.5rem",
 			"--app-bottom-nav-h": "4rem"
 		},
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Toaster, {}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			inert: requestsPending,
-			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AppHeader, {
-					nav: navigationItems,
-					current: activeTab,
-					onNavigate: navigateTab,
-					coins: user.coins,
-					syncing: requestsPending,
-					coinSyncing,
-					onRefresh: refreshUser,
-					badgeKeys: checkin.showBadge ? ["user"] : []
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("main", {
-					className: "mx-auto w-full max-w-6xl",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.Suspense, {
-						fallback: null,
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Routes, { children: [
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-								path: "/",
-								element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StartRoute, {})
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-								path: "/shop/:section?",
-								element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Shop, {
-									user,
-									onUser: setUser,
-									shop,
-									onReload: loadShop,
-									onRefresh: refreshUser,
-									onPurchase: updateShopAfterPurchase
-								})
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Route, {
-								path: "/administrator",
-								element: admin ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminPanel, {}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
-									to: "/shop",
-									replace: true
-								}),
-								children: [
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-										index: true,
-										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
-											to: "giftcodes",
-											replace: true
-										})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-										path: "giftcodes",
-										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminGiftCodes, {})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-										path: "users",
-										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminUsers, {})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-										path: "players",
-										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminPlayers, {})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-										path: "players/:openid",
-										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlayerRouteRedirect, {})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-										path: "players/:openid/:section",
-										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminPlayers, {})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-										path: "data",
-										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
-											to: "/administrator/data/musicians",
-											replace: true
-										})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-										path: "data/:section",
-										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminData, {})
-									}),
-									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-										path: "*",
-										element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
-											to: "/administrator/giftcodes",
-											replace: true
-										})
-									})
-								]
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-								path: "/user",
-								element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Account, {
-									user,
-									onUser: setUser,
-									onRefresh: refreshUser,
-									onLogout: session.logout,
-									checkin
-								})
-							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
-								path: "*",
-								element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
-									to: "/shop",
-									replace: true
-								})
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Toaster, {}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AppHeader, {
+				nav: navigationItems,
+				current: activeTab,
+				onNavigate: (next) => navigate(`/${next}`),
+				coins: user.coins,
+				syncing: requestsPending,
+				coinSyncing,
+				onRefresh: refreshUser,
+				badgeKeys: checkin.showBadge ? ["user"] : []
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("main", {
+				className: "mx-auto w-full max-w-6xl",
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react.Suspense, {
+					fallback: null,
+					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Routes, { children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+							path: "/",
+							element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StartRoute, {})
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+							path: "/shop/:section?",
+							element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Shop, {
+								user,
+								onUser: setUser,
+								shop,
+								onReload: loadShop,
+								onRefresh: refreshUser,
+								onPurchase: updateShopAfterPurchase
 							})
-						] })
-					})
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(BottomNav, {
-					nav: navigationItems,
-					current: activeTab,
-					onNavigate: navigateTab,
-					badgeKeys: checkin.showBadge ? ["user"] : []
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Route, {
+							path: "/administrator",
+							element: admin ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminPanel, {}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
+								to: "/shop",
+								replace: true
+							}),
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+									index: true,
+									element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
+										to: "giftcodes",
+										replace: true
+									})
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+									path: "giftcodes",
+									element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminGiftCodes, {})
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+									path: "users",
+									element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminUsers, {})
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+									path: "players",
+									element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminPlayers, {})
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+									path: "players/:openid",
+									element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlayerRouteRedirect, {})
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+									path: "players/:openid/:section",
+									element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminPlayers, {})
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+									path: "data",
+									element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
+										to: "/administrator/data/musicians",
+										replace: true
+									})
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+									path: "data/:section",
+									element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AdminData, {})
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+									path: "*",
+									element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
+										to: "/administrator/giftcodes",
+										replace: true
+									})
+								})
+							]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+							path: "/user",
+							element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Account, {
+								user,
+								onUser: setUser,
+								onRefresh: refreshUser,
+								onLogout: session.logout,
+								checkin
+							})
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Route, {
+							path: "*",
+							element: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Navigate, {
+								to: "/shop",
+								replace: true
+							})
+						})
+					] })
 				})
-			]
-		})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(BottomNav, {
+				nav: navigationItems,
+				current: activeTab,
+				onNavigate: (next) => navigate(`/${next}`),
+				badgeKeys: checkin.showBadge ? ["user"] : []
+			})
+		]
 	});
 }
 function App() {
@@ -18097,4 +18085,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)({ md5: "b750a6e2b3d860ae46efcc050e03db3b" });
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
-export { adminRecord as $, IconAlertTriangle as $t, formatDateTime as A, PagerSkeleton as At, adminData as B, Menu as Bt, productOptions as C, fileToAvatar as Ct, unmetConditions as D, SearchInput as Dt, resolveCart as E, Logo as Et, adminAddPlayerFriend as F, Pager as Ft, adminEditGiftCode as G, Field as Gt, adminDeleteGiftCode as H, OtpButton as Ht, adminAddPlayerLike as I, Tabs as It, adminEncryptRecordValue as J, IconSearch as Jt, adminEditPlayer as K, Button as Kt, adminAddPlayerStar as L, PageSizeSelect as Lt, formatShortDateTime as M, Skeleton as Mt, formatVietnameseDong as N, ErrorState as Nt, compareByTime as O, JsonEditor as Ot, adminAddCoin as P, Spinner as Pt, adminPlayers as Q, IconChevronRight as Qt, adminCreateGiftCode as R, Select as Rt, optionMode as S, signupOtp as St, removeCategoryFromCart as T, Coin as Tt, adminDeletePlayerFriend as U, toast as Ut, adminDecryptRecordValue as V, Dialog as Vt, adminDeleteUser as W, toastError as Wt, adminPlayer as X, IconInfoCircle as Xt, adminGiftCodes as Y, IconRefresh as Yt, adminPlayerFriends as Z, IconCircleCheck as Zt, hasValidPrice as _, updateUser as _t, cartTotal as a, useNavigate as an, createTransaction as at, isFullyOwned as b, resetPassword as bt, eligibleCategoryProducts as c, require_react as cn, ADMIN_MAX_QTY as ct, getConflictingKeys as d, getBuffetLink as dt, createReactComponent as en, adminSaveData as et, getGroupRemaining as f, getFriendLink as ft, hasOptions as g, updateAvatar as gt, getTimeStatus as h, submitInvite as ht, cartPayload as i, useLocation as in, cancelTransaction as it, formatNumber as j, RowSkeleton as jt, formatDate as k, Line as kt, formatShopDate as l, __toESM as ln, buy as lt, getTimeMessage as m, redeemGiftCode as mt, addCategoryToCart as n, require_jsx_runtime as nn, adminUpdatePlayerAvatar as nt, changeCartQuantity as o, useParams as on, getTransaction as ot, getPurchaseLimit as p, openidOtp as pt, adminEditUser as q, IconX as qt, cartCount as r, Outlet as rn, adminUsers as rt, clampCartQuantity as s, require_react_dom as sn, getTransactions as st, __vitePreload as t, Badge as tn, adminSaveRecord as tt, getConditions as u, changeOpenid as ut, isAvailable as v, login as vt, putInCart as w, isAdmin as wt, isOnce as x, signup as xt, isBuyItemsSupported as y, passwordOtp as yt, adminCreateUser as z, SortSelect as zt };
+export { adminRecord as $, IconChevronRight as $t, formatDateTime as A, PagerSkeleton as At, adminData as B, Menu as Bt, productOptions as C, fileToAvatar as Ct, unmetConditions as D, SearchInput as Dt, resolveCart as E, Logo as Et, adminAddPlayerFriend as F, Pager as Ft, adminEditGiftCode as G, Field as Gt, adminDeleteGiftCode as H, OtpButton as Ht, adminAddPlayerLike as I, Tabs as It, adminEncryptRecordValue as J, IconX as Jt, adminEditPlayer as K, Button as Kt, adminAddPlayerStar as L, PageSizeSelect as Lt, formatShortDateTime as M, Skeleton as Mt, formatVietnameseDong as N, ErrorState as Nt, compareByTime as O, JsonEditor as Ot, adminAddCoin as P, Spinner as Pt, adminPlayers as Q, IconCircleCheck as Qt, adminCreateGiftCode as R, Select as Rt, optionMode as S, signupOtp as St, removeCategoryFromCart as T, Coin as Tt, adminDeletePlayerFriend as U, toast as Ut, adminDecryptRecordValue as V, Dialog as Vt, adminDeleteUser as W, toastError as Wt, adminPlayer as X, IconRefresh as Xt, adminGiftCodes as Y, IconSearch as Yt, adminPlayerFriends as Z, IconInfoCircle as Zt, hasValidPrice as _, updateUser as _t, cartTotal as a, useLocation as an, createTransaction as at, isFullyOwned as b, resetPassword as bt, eligibleCategoryProducts as c, require_react_dom as cn, ADMIN_MAX_QTY as ct, getConflictingKeys as d, getBuffetLink as dt, IconAlertTriangle as en, adminSaveData as et, getGroupRemaining as f, getFriendLink as ft, hasOptions as g, updateAvatar as gt, getTimeStatus as h, submitInvite as ht, cartPayload as i, Outlet as in, cancelTransaction as it, formatNumber as j, RowSkeleton as jt, formatDate as k, Line as kt, formatShopDate as l, require_react as ln, buy as lt, getTimeMessage as m, redeemGiftCode as mt, addCategoryToCart as n, Badge as nn, adminUpdatePlayerAvatar as nt, changeCartQuantity as o, useNavigate as on, getTransaction as ot, getPurchaseLimit as p, openidOtp as pt, adminEditUser as q, useRequestPending as qt, cartCount as r, require_jsx_runtime as rn, adminUsers as rt, clampCartQuantity as s, useParams as sn, getTransactions as st, __vitePreload as t, createReactComponent as tn, adminSaveRecord as tt, getConditions as u, __toESM as un, changeOpenid as ut, isAvailable as v, login as vt, putInCart as w, isAdmin as wt, isOnce as x, signup as xt, isBuyItemsSupported as y, passwordOtp as yt, adminCreateUser as z, SortSelect as zt };

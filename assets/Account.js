@@ -1,5 +1,5 @@
 const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Avatar.js","assets/index.js","assets/index.css","assets/IconPhoto.js","assets/IconTrash.js","assets/clipboard.js"])))=>i.map(i=>d[i]);
-import { At as PagerSkeleton, Bt as Menu, Dt as SearchInput, Gt as Field, Ht as OtpButton, Kt as Button, Lt as PageSizeSelect, M as formatShortDateTime, N as formatVietnameseDong, O as compareByTime, Pt as Spinner, Rt as Select, Tt as Coin, Ut as toast, Vt as Dialog, Wt as toastError, Yt as IconRefresh, _t as updateUser, cn as require_react, dt as getBuffetLink, en as createReactComponent, ft as getFriendLink, ht as submitInvite, it as cancelTransaction, j as formatNumber, jt as RowSkeleton, k as formatDate, ln as __toESM, mt as redeemGiftCode, nn as require_jsx_runtime, pt as openidOtp, qt as IconX, st as getTransactions, t as __vitePreload, tn as Badge, ut as changeOpenid, zt as SortSelect } from "./index.js";
+import { At as PagerSkeleton, Bt as Menu, Dt as SearchInput, Gt as Field, Ht as OtpButton, Jt as IconX, Kt as Button, Lt as PageSizeSelect, M as formatShortDateTime, N as formatVietnameseDong, O as compareByTime, Pt as Spinner, Rt as Select, Tt as Coin, Ut as toast, Vt as Dialog, Wt as toastError, Xt as IconRefresh, _t as updateUser, dt as getBuffetLink, ft as getFriendLink, ht as submitInvite, it as cancelTransaction, j as formatNumber, jt as RowSkeleton, k as formatDate, ln as require_react, mt as redeemGiftCode, nn as Badge, pt as openidOtp, rn as require_jsx_runtime, st as getTransactions, t as __vitePreload, tn as createReactComponent, un as __toESM, ut as changeOpenid, zt as SortSelect } from "./index.js";
 import { n as IconLock, r as IconCopy, t as copyText } from "./clipboard.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
 import { t as StrengthBar } from "./StrengthBar.js";
@@ -527,6 +527,7 @@ function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGiftCode, onRedeemI
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 						className: "grid grid-cols-2 gap-2",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+							requestAction: true,
 							variant: "ghost",
 							size: "sm",
 							className: "min-w-0",
@@ -536,6 +537,7 @@ function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGiftCode, onRedeemI
 								children: "Kết bạn"
 							})]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+							requestAction: true,
 							variant: "ghost",
 							size: "sm",
 							className: "min-w-0",
@@ -754,6 +756,7 @@ function ConfirmCancel({ tx, onClose, onConfirm }) {
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 				variant: "danger",
 				onClick: () => onConfirm(tx),
+				requestAction: true,
 				children: "Huỷ giao dịch"
 			})]
 		})]
@@ -830,6 +833,7 @@ function Transactions({ onPaid }) {
 						variant: "quiet",
 						size: "sm",
 						onClick: load,
+						requestAction: true,
 						disabled: loading,
 						"aria-label": "Làm mới",
 						className: "ml-auto size-8! px-2!",
@@ -1006,6 +1010,7 @@ function LoginStreak({ checkin, onClaim, onUser }) {
 				children: error
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+				requestAction: true,
 				className: "w-full",
 				variant: canClaim ? "solid" : "ghost",
 				size: "sm",
@@ -1245,11 +1250,10 @@ function LinkDialog({ request, title, open, onClose }) {
 			active = false;
 		};
 	}, [open, request]);
-	const close = () => !state.loading && onClose();
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dialog, {
 		open,
 		title,
-		onClose: close,
+		onClose,
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			className: "space-y-4",
 			children: state.loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {

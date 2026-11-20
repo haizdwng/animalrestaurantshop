@@ -1,4 +1,4 @@
-import { $t as IconAlertTriangle, C as productOptions, D as unmetConditions, Dt as SearchInput, E as resolveCart, Gt as Field, Kt as Button, Lt as PageSizeSelect, Mt as Skeleton, Nt as ErrorState, Pt as Spinner, Qt as IconChevronRight, Rt as Select, S as optionMode, T as removeCategoryFromCart, Tt as Coin, Ut as toast, Vt as Dialog, Wt as toastError, Yt as IconRefresh, Zt as IconCircleCheck, _ as hasValidPrice, a as cartTotal, an as useNavigate, at as createTransaction, b as isFullyOwned, c as eligibleCategoryProducts, cn as require_react, ct as ADMIN_MAX_QTY, d as getConflictingKeys, en as createReactComponent, f as getGroupRemaining, g as hasOptions, h as getTimeStatus, i as cartPayload, j as formatNumber, l as formatShopDate, ln as __toESM, lt as buy, m as getTimeMessage, n as addCategoryToCart, nn as require_jsx_runtime, o as changeCartQuantity, on as useParams, p as getPurchaseLimit, qt as IconX, r as cartCount, s as clampCartQuantity, tn as Badge, u as getConditions, v as isAvailable, w as putInCart, wt as isAdmin, x as isOnce, y as isBuyItemsSupported } from "./index.js";
+import { $t as IconChevronRight, C as productOptions, D as unmetConditions, Dt as SearchInput, E as resolveCart, Gt as Field, Jt as IconX, Kt as Button, Lt as PageSizeSelect, Mt as Skeleton, Nt as ErrorState, Pt as Spinner, Qt as IconCircleCheck, Rt as Select, S as optionMode, T as removeCategoryFromCart, Tt as Coin, Ut as toast, Vt as Dialog, Wt as toastError, Xt as IconRefresh, _ as hasValidPrice, a as cartTotal, at as createTransaction, b as isFullyOwned, c as eligibleCategoryProducts, ct as ADMIN_MAX_QTY, d as getConflictingKeys, en as IconAlertTriangle, f as getGroupRemaining, g as hasOptions, h as getTimeStatus, i as cartPayload, j as formatNumber, l as formatShopDate, ln as require_react, lt as buy, m as getTimeMessage, n as addCategoryToCart, nn as Badge, o as changeCartQuantity, on as useNavigate, p as getPurchaseLimit, qt as useRequestPending, r as cartCount, rn as require_jsx_runtime, s as clampCartQuantity, sn as useParams, tn as createReactComponent, u as getConditions, un as __toESM, v as isAvailable, w as putInCart, wt as isAdmin, x as isOnce, y as isBuyItemsSupported } from "./index.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { t as usePaginatedData } from "./usePaginatedData.js";
 import { a as IconClock, i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
@@ -790,11 +790,11 @@ function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuant
 	});
 }
 // src/features/shop/CartDialog.jsx
-function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, onRemove, onClear, onBuy, onTopUp }) {
+function CartDialog({ open, entries, coins, ready, buying, requestPending = false, onClose, onQuantity, onRemove, onClear, onBuy, onTopUp }) {
 	const total = cartTotal(entries);
 	const shortage = Math.max(0, total - coins);
 	const invalid = entries.filter((entry) => entry.invalid);
-	const canBuy = entries.length > 0 && ready && !buying && invalid.length === 0 && shortage === 0 && Number.isSafeInteger(total);
+	const canBuy = entries.length > 0 && ready && !buying && !requestPending && invalid.length === 0 && shortage === 0 && Number.isSafeInteger(total);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Dialog, {
 		open,
 		title: "Giỏ hàng",
@@ -887,7 +887,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 									compact: true,
 									value: entry.amount,
 									max: limit,
-									disabled: buying || !ready,
+									disabled: buying,
 									onChange: (value) => onQuantity(entry.key, value)
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
 									className: "flex items-center gap-1 text-xs font-bold text-coin tabular-nums",
@@ -904,7 +904,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 								children: [
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconAlertTriangle, {
 										size: 14,
-										className: "mt-0.5 shrink-0"
+										className: "mt-1 shrink-0"
 									}),
 									" ",
 									entry.invalid
@@ -954,7 +954,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 				}),
 				invalid.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 					role: "alert",
-					className: "flex items-start gap-2 rounded-lg border border-bad/30 bg-bad/10 p-3 text-[11px] text-bad",
+					className: "flex items-start gap-2 border border-bad/30 bg-bad/10 p-3 text-[11px] text-bad",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconAlertTriangle, {
 							size: 16,
@@ -978,6 +978,7 @@ function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, 
 					]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+					requestAction: true,
 					className: "w-full",
 					disabled: !canBuy,
 					loading: buying,
@@ -1288,14 +1289,12 @@ function ShopToolbar({ title, count, ownedCount, query, onQuery, filter, onFilte
 			placeholder: "Tìm theo tên hoặc mã…",
 			value: query,
 			onChange: onQuery,
-			disabled: loading,
 			className: "w-full"
 		}),
 		filter: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Select, {
 			label: "Lọc vật phẩm",
 			value: filter,
 			onChange: onFilter,
-			disabled: loading,
 			className: "w-full",
 			children: SHOP_FILTER_OPTIONS.map(({ value, label }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
 				value,
@@ -1312,6 +1311,7 @@ function ShopToolbar({ title, count, ownedCount, query, onQuery, filter, onFilte
 			variant: "ghost",
 			className: "size-10! min-h-10! max-h-10! min-w-10! max-w-10! p-0!",
 			onClick: onReload,
+			requestAction: true,
 			disabled: loading,
 			"aria-label": "Tải lại cửa hàng",
 			title: "Tải lại dữ liệu cửa hàng",
@@ -1435,6 +1435,7 @@ function PurchaseDoneDialog({ open, onClose }) {
 var START_VIDEO = `/animalrestaurantshop/videos/start.mp4`;
 function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 	const navigate = useNavigate();
+	const requestPending = useRequestPending();
 	const { section } = useParams();
 	const tabs = shop.tabs || [];
 	const tabId = section || tabs[0]?.id || null;
@@ -1513,8 +1514,8 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 	const eligible = eligibleCategoryProducts(categoryProducts, conflicts, now);
 	const categoryAddedCount = eligible.filter((product) => cartQuantities.has(product.key)).length;
 	const allCategoryAdded = eligible.length > 0 && categoryAddedCount === eligible.length;
-	const cartReady = shop.ready === true && Array.isArray(shop.tabs) && !shop.loading;
-	const canPurchase = cartReady && entries.every(({ invalid }) => !invalid) && total <= user.coins && Number.isSafeInteger(total);
+	const cartReady = shop.ready === true && Array.isArray(shop.tabs);
+	const canPurchase = cartReady && entries.every(({ invalid }) => !invalid) && total <= user.coins && Number.isSafeInteger(total) && !requestPending;
 	const open = (p) => {
 		if (buying) return;
 		setItem(p);
@@ -1543,7 +1544,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 		setCartOpen(false);
 	};
 	const purchase = async () => {
-		if (buying || cart.length === 0 || !canPurchase) return;
+		if (buying || requestPending || cart.length === 0 || !canPurchase) return;
 		const freshEntries = resolveCart(cart, shop.tabs, maxQuantity, Date.now());
 		if (freshEntries.some((entry) => entry.invalid)) {
 			setNow(Date.now());
@@ -1593,6 +1594,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlayerPlay, { size: 16 }), " Xem hướng dẫn"]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 							loading: shop.loading,
+							requestAction: true,
 							onClick: onReload,
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 16 }), " Kiểm tra lại"]
 						})]
@@ -1656,7 +1658,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 				hits,
 				onSelect: selectTab
 			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
-				className: `grid animate-fade gap-2 transition-opacity sm:grid-cols-2 xl:grid-cols-3 ${shop.loading ? "pointer-events-none opacity-50" : ""}`,
+				className: "grid animate-fade gap-2 transition-opacity sm:grid-cols-2 xl:grid-cols-3",
 				children: productRows.map((p, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProductItem, {
 					p,
 					conflictingKeys: conflicts,
@@ -1749,6 +1751,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 				coins: user.coins,
 				ready: cartReady,
 				buying,
+				requestPending,
 				onClose: () => setCartOpen(false),
 				onQuantity: (key, amount) => setCart((items) => changeCartQuantity(items, key, amount, maxQuantity)),
 				onRemove: removeFromCart,

@@ -1,4 +1,4 @@
-import { B as adminData, It as Tabs, Ot as JsonEditor, an as useNavigate, cn as require_react, et as adminSaveData, ln as __toESM, nn as require_jsx_runtime, on as useParams } from "./index.js";
+import { B as adminData, It as Tabs, Ot as JsonEditor, et as adminSaveData, ln as require_react, on as useNavigate, rn as require_jsx_runtime, sn as useParams, un as __toESM } from "./index.js";
 import { r as DATA_TABS } from "./config.js";
 import { t as Head } from "./Head.js";
 // src/features/administration/Data.jsx
