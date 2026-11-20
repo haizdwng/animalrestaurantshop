@@ -17233,7 +17233,6 @@ function useSession() {
 	};
 }
 // src/features/shop/cartUtils.js
-/** Current Shop API contract: { key, amount }, multipleOptions, singleOptions, milliseconds. */
 var optionMode = (group) => Array.isArray(group?.singleOptions) ? "singleOptions" : Array.isArray(group?.multipleOptions) ? "multipleOptions" : null;
 var hasOptions = (group) => optionMode(group) !== null;
 var productOptions = (group) => hasOptions(group) ? group[optionMode(group)] : group ? [group] : [];
@@ -17274,11 +17273,16 @@ var BUY_PREFIXES = [
 	"avatar_",
 	"specialty_fish_"
 ];
-var isBuyItemsSupported = (key) => typeof key === "string" && (EXACT_BUY_KEYS.has(key) || BUY_PREFIXES.some((prefix) => key.startsWith(prefix)) || key.endsWith("_prop") || key.toLowerCase().startsWith("mail_") || key.toLowerCase().startsWith("memorial_"));
+var MEMORIAL_BUY_PREFIXES = [
+	"waimai_che_",
+	"Meorial_",
+	"Momorial_",
+	"Memoria_"
+];
+var isBuyItemsSupported = (key) => typeof key === "string" && (EXACT_BUY_KEYS.has(key) || BUY_PREFIXES.some((prefix) => key.startsWith(prefix)) || key.endsWith("_prop") || key.toLowerCase().startsWith("mail_") || key.toLowerCase().startsWith("memorial_") || MEMORIAL_BUY_PREFIXES.some((prefix) => key.startsWith(prefix)));
 var hasValidPrice = (product) => Number.isSafeInteger(product?.price) && product.price >= 0;
 var getConditions = (product, group = product) => [...Array.isArray(group?.conditions) ? group.conditions : [], ...product === group ? [] : Array.isArray(product?.conditions) ? product.conditions : []];
 var unmetConditions = (product, group = product) => getConditions(product, group).some((condition) => condition?.already !== true);
-/** The API uses Unix milliseconds. An absent bound means an unlimited side. */
 function getTimeStatus(product, group = product, now = Date.now()) {
 	const layers = product === group ? [group] : [group, product];
 	for (const layer of layers) {
@@ -17364,7 +17368,6 @@ function indexShop(tabs) {
 	}
 	return index;
 }
-/** A key alone identifies a purchase on the server: differing rules are unsafe. */
 function getPurchaseSignature(product, group = product) {
 	return JSON.stringify({
 		price: product?.price,

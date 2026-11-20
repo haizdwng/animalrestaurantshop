@@ -2962,14 +2962,6 @@
       max-height: min(90dvh, 52rem);
     }
 
-    .sm\:w-72 {
-      width: calc(var(--spacing) * 72);
-    }
-
-    .sm\:w-auto {
-      width: auto;
-    }
-
     .sm\:max-w-2xl {
       max-width: var(--container-2xl);
     }
