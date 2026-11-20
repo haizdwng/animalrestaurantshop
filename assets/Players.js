@@ -388,7 +388,7 @@ function PlayerFriends({ openid }) {
 			friends === null && loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 				"aria-busy": "true",
 				className: "divide-y divide-line overflow-hidden rounded-2xl border border-line bg-panel",
-				children: Array.from({ length: Math.min(pageSize, 5) }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, {}, index))
+				children: Array.from({ length: Math.min(pageSize, 10) }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, { kind: "friend" }, index))
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PagerSkeleton, {})] }) : error ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ErrorState, {
 				message: error,
 				onRetry: loadFriends,
@@ -464,8 +464,8 @@ function PlayerFriends({ openid }) {
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 						type: "submit",
 						className: "w-full",
-						loading: adding,
 						disabled: !friendId.trim(),
+						loading: adding,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlus, { size: 16 }), " Thêm bạn bè"]
 					})]
 				})
@@ -575,11 +575,14 @@ function PlayerRowSkeleton() {
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-10 shrink-0 rounded-xl" }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "min-w-0 flex-1 space-y-2",
+				className: "min-w-0 flex-1 space-y-1.5",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3.5 w-2/5" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-3/5" })]
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "hidden h-3.5 w-14 sm:block" }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-8 shrink-0 rounded-lg" })
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "hidden items-center gap-1.5 sm:flex",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-3.5 shrink-0 rounded-sm" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3.5 w-14" })]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" })
 		]
 	});
 }

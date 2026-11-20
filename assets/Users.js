@@ -403,6 +403,7 @@ function AdminUsers() {
 				"aria-busy": "true",
 				className: "divide-y divide-line rounded-2xl border border-line bg-panel",
 				children: Array.from({ length: Math.min(size, 10) }).map((_, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, {
+					kind: "user",
 					w: SKELETON_WIDTHS[i % 3],
 					trail: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "hidden h-3.5 w-14 sm:block" })
 				}, i))

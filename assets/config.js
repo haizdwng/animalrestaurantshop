@@ -186,6 +186,11 @@ var DATA_TABS = [
 		"data",
 		"Dữ liệu",
 		IconDatabase
+	],
+	[
+		"dolls",
+		"Búp bê",
+		IconDeviceGamepad2
 	]
 ];
 export { EMPTY_USER_FORM as a, EMPTY_GIFT_CODE as i, COIN_PRESETS as n, PLAYER_TABS as o, DATA_TABS as r, USER_SORTS as s, ADMIN_TABS as t };
