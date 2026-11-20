@@ -3,7 +3,7 @@ import Editor from '@monaco-editor/react';
 import { IconBraces, IconDeviceFloppy, IconFileUpload, IconRefresh } from '@tabler/icons-react';
 import Button from '@/shared/components/ui/Button';
 import Dialog from '@/shared/components/ui/Dialog';
-import { ErrorState, Spinner } from '@/shared/components/ui/Feedback';
+import { ErrorState } from '@/shared/components/ui/Feedback';
 import { Skeleton } from '@/shared/components/ui/Skeleton';
 import { toast, toastError } from '@/shared/components/ui/Toast';
 
@@ -52,11 +52,10 @@ function applyEditorTheme(monaco) {
 
 function EditorSkeleton() {
   return (
-    <section role='status' aria-busy='true' className='ui-card overflow-hidden'>
-      <header className='flex items-center gap-2 border-b border-line p-3'>
-        <Spinner size={15} /> <span className='mr-auto text-xs text-mute'>Đang tải dữ liệu…</span>
-        <Skeleton className='h-8 w-20' /><Skeleton className='h-8 w-20' />
-      </header>
+    <section role='status' aria-label='Đang tải dữ liệu JSON' aria-busy='true' className='ui-card min-w-0 overflow-hidden'>
+      <div className='flex min-w-0 items-center justify-end gap-2 border-b border-line px-3 py-2.5'>
+        {Array.from({ length: 4 }, (_, index) => <Skeleton key={index} className='size-9 shrink-0 rounded-lg' />)}
+      </div>
       <div className={`${EDITOR_HEIGHT} space-y-2.5 bg-bg p-4`}>
         {LOADING_WIDTHS.map((width, index) => <Skeleton key={index} className='h-3' style={{ width: `${width}%`, marginLeft: `${(index % 3) * 1.5}rem` }} />)}
       </div>
@@ -159,34 +158,34 @@ export default function JsonEditor({ load, save, deps = [], extraActions = null 
 
   return (
     <>
-    <section className={`ui-card min-w-0 overflow-hidden ${parseError ? 'ring-1 ring-bad/40 ring-inset' : ''}`}>
-      <div role='toolbar' aria-label='Công cụ dữ liệu JSON' className='flex min-w-0 items-center justify-end gap-2 border-b border-line px-3 py-2.5'>
-        {extraActions}
-        <input ref={uploadInput} type='file' accept='.json,application/json' className='sr-only' tabIndex={-1} aria-label='Chọn tệp JSON để nhập' onChange={importFile} />
-        <Button variant='ghost' size='sm' className='size-9! shrink-0 p-0!' aria-label='Tải lại' title='Tải lại' onClick={() => dirty ? setConfirmReload(true) : reload()} disabled={saving}><IconRefresh size={17} /></Button>
-        <Button variant='ghost' size='sm' className='size-9! shrink-0 p-0!' aria-label='Định dạng JSON' title='Định dạng JSON' onClick={format} disabled={Boolean(parseError) || saving}><IconBraces size={17} /></Button>
-        <Button variant='ghost' size='sm' className='size-9! shrink-0 p-0!' aria-label='Nhập tệp JSON' title='Nhập tệp JSON' onClick={() => uploadInput.current?.click()} disabled={saving}><IconFileUpload size={17} /></Button>
-        <Button size='sm' className='size-9! shrink-0 p-0!' aria-label='Lưu JSON' title='Lưu JSON' onClick={submit} loading={saving} disabled={!dirty || Boolean(parseError)}><IconDeviceFloppy size={17} /></Button>
-      </div>
-      {parseError && (
-        <div role='alert' className='flex items-start gap-2 border-b border-bad/30 bg-bad/10 px-4 py-3 text-xs text-bad'>
-          <IconBraces size={17} className='mt-0.5 shrink-0' />
-          <div className='min-w-0'><p className='font-bold'>JSON không hợp lệ</p><p className='mt-1 wrap-break-word'>{parseError}</p></div>
+      <section className={`ui-card min-w-0 overflow-hidden ${parseError ? 'ring-1 ring-bad/40 ring-inset' : ''}`}>
+        <div role='toolbar' aria-label='Công cụ dữ liệu JSON' className='flex min-w-0 items-center justify-end gap-2 border-b border-line px-3 py-2.5'>
+          {extraActions}
+          <input ref={uploadInput} type='file' accept='.json,application/json' className='sr-only' tabIndex={-1} aria-label='Chọn tệp JSON để nhập' onChange={importFile} />
+          <Button variant='ghost' size='sm' className='size-9! shrink-0 p-0!' aria-label='Tải lại' title='Tải lại' onClick={() => dirty ? setConfirmReload(true) : reload()} disabled={saving}><IconRefresh size={17} /></Button>
+          <Button variant='ghost' size='sm' className='size-9! shrink-0 p-0!' aria-label='Định dạng JSON' title='Định dạng JSON' onClick={format} disabled={Boolean(parseError) || saving}><IconBraces size={17} /></Button>
+          <Button variant='ghost' size='sm' className='size-9! shrink-0 p-0!' aria-label='Nhập tệp JSON' title='Nhập tệp JSON' onClick={() => uploadInput.current?.click()} disabled={saving}><IconFileUpload size={17} /></Button>
+          <Button size='sm' className='size-9! shrink-0 p-0!' aria-label='Lưu JSON' title='Lưu JSON' onClick={submit} loading={saving} disabled={!dirty || Boolean(parseError)}><IconDeviceFloppy size={17} /></Button>
         </div>
-      )}
-      <div className={EDITOR_HEIGHT}>
-        <Editor value={text} onChange={(value) => setText(value ?? '')} language='json' theme='animal-restaurant-shop'
-          options={EDITOR_OPTIONS} onMount={onMount}
-          loading={<div className='grid size-full place-items-center bg-bg text-xs text-mute'>Đang khởi tạo trình chỉnh sửa…</div>} />
-      </div>
-    </section>
-    <Dialog open={confirmReload} title='Tải lại dữ liệu' onClose={() => setConfirmReload(false)}>
-      <p className='text-sm text-mute'>Các thay đổi chưa lưu sẽ bị mất. Bạn có muốn tải lại dữ liệu từ máy chủ?</p>
-      <div className='grid grid-cols-2 gap-2'>
-        <Button variant='ghost' onClick={() => setConfirmReload(false)}>Hủy</Button>
-        <Button onClick={() => { setConfirmReload(false); reload(); }}>Tải lại</Button>
-      </div>
-    </Dialog>
+        {parseError && (
+          <div role='alert' className='flex items-start gap-2 border-b border-bad/30 bg-bad/10 px-4 py-3 text-xs text-bad'>
+            <IconBraces size={17} className='mt-0.5 shrink-0' />
+            <div className='min-w-0'><p className='font-bold'>JSON không hợp lệ</p><p className='mt-1 wrap-break-word'>{parseError}</p></div>
+          </div>
+        )}
+        <div className={EDITOR_HEIGHT}>
+          <Editor value={text} onChange={(value) => setText(value ?? '')} language='json' theme='animal-restaurant-shop'
+            options={EDITOR_OPTIONS} onMount={onMount}
+            loading={<div className='grid size-full place-items-center bg-bg text-xs text-mute'>Đang khởi tạo trình chỉnh sửa…</div>} />
+        </div>
+      </section>
+      <Dialog open={confirmReload} title='Tải lại dữ liệu' onClose={() => setConfirmReload(false)}>
+        <p className='text-sm text-mute'>Các thay đổi chưa lưu sẽ bị mất. Bạn có muốn tải lại dữ liệu từ máy chủ?</p>
+        <div className='grid grid-cols-2 gap-2'>
+          <Button variant='ghost' onClick={() => setConfirmReload(false)}>Hủy</Button>
+          <Button onClick={() => { setConfirmReload(false); reload(); }}>Tải lại</Button>
+        </div>
+      </Dialog>
     </>
   );
 };

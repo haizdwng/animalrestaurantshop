@@ -10,9 +10,8 @@ export const isOwnedOnce = (product, group = product) => isOnce(product, group) 
 export const isFullyOwned = (product, group = product) => isOwnedOnce(product, group) || (!isOnce(product, group) && optionMode(group) !== 'singleOptions' && product?.owned === true);
 
 const EXACT_BUY_KEYS = new Set(['money_skipAdCard', 'money_checkInCard', 'yuer', 'terrace_bottle', 'magnifier', 'freeWish', 'Ad_x15', 'pigeon_endTime', 'InviteCard', 'CallCard', 'seed', 'dreamSeed', 'BattleOrder15']);
-const BUY_PREFIXES = ['courtyard_21_', 'doll_', 'vt_', 'fish_', 'Garden_', 'shiwu_', 'wanju_', 'takeOutFood_', 'customer_', 'booth_', 'npc_', 'food_', 'buffetFood_', 'Musician_', 'avatar_', 'specialty_fish_'];
-const MEMORIAL_BUY_PREFIXES = ['waimai_che_', 'Meorial_', 'Momorial_', 'Memoria_'];
-export const isBuyItemsSupported = (key) => typeof key === 'string' && (EXACT_BUY_KEYS.has(key) || BUY_PREFIXES.some((prefix) => key.startsWith(prefix)) || key.endsWith('_prop') || key.toLowerCase().startsWith('mail_') || key.toLowerCase().startsWith('memorial_') || MEMORIAL_BUY_PREFIXES.some((prefix) => key.startsWith(prefix)));
+const BUY_PREFIXES = ['courtyard_21_', 'doll_', 'vt_', 'fish_', 'Garden_', 'shiwu_', 'wanju_', 'takeOutFood_', 'customer_', 'booth_', 'npc_', 'food_', 'buffetFood_', 'Musician_', 'avatar_', 'specialty_fish_', 'waimai_che_', 'Meorial_', 'Momorial_', 'Memoria_'];
+export const isBuyItemsSupported = (key) => typeof key === 'string' && (EXACT_BUY_KEYS.has(key) || BUY_PREFIXES.some((prefix) => key.startsWith(prefix)) || key.endsWith('_prop') || key.toLowerCase().startsWith('mail_') || key.toLowerCase().startsWith('memorial_'));
 export const hasValidPrice = (product) => Number.isSafeInteger(product?.price) && product.price >= 0;
 export const getConditions = (product, group = product) => [
   ...(Array.isArray(group?.conditions) ? group.conditions : []),
@@ -49,10 +48,7 @@ export function getTimeMessage(product, group = product, now = Date.now()) {
 };
 
 const normalizeLimit = (limit) => limit === undefined || limit === Infinity ? Infinity : Number.isSafeInteger(limit) && limit > 0 ? limit : 0;
-export const getPurchaseLimit = (product, group = product, accountLimit = 100) => Math.min(
-  isFullyOwned(product, group) ? 0 : isOnce(product, group) ? 1 : Infinity,
-  normalizeLimit(product?.limit), normalizeLimit(group?.limit), normalizeLimit(accountLimit)
-);
+export const getPurchaseLimit = (product, group = product, accountLimit = 100) => Math.min(isFullyOwned(product, group) ? 0 : isOnce(product, group) ? 1 : Infinity, normalizeLimit(product?.limit), normalizeLimit(group?.limit), normalizeLimit(accountLimit));
 export function clampCartQuantity(value, limit = 100) {
   if (limit < 1) return 0;
   const number = Number(value);

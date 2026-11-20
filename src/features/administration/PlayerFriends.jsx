@@ -110,7 +110,7 @@ export default function PlayerFriends({ openid }) {
       {friends === null && loading ? (
         <>
           <ul aria-busy='true' className='divide-y divide-line overflow-hidden rounded-2xl border border-line bg-panel'>
-            {Array.from({ length: Math.min(pageSize, 5) }, (_, index) => <RowSkeleton key={index} />)}
+            {Array.from({ length: Math.min(pageSize, 10) }, (_, index) => <RowSkeleton kind='friend' key={index} />)}
           </ul>
           <PagerSkeleton />
         </>
@@ -146,9 +146,8 @@ export default function PlayerFriends({ openid }) {
 
       <Dialog open={addOpen} title='Thêm bạn bè' onClose={() => !adding && setAddOpen(false)}>
         <form onSubmit={addFriend} className='space-y-4'>
-          <Field label='Mã bạn bè' placeholder='Nhập mã bạn bè' autoFocus autoCapitalize='none'
-            value={friendId} onChange={(event) => setFriendId(event.target.value)} />
-          <Button type='submit' className='w-full' loading={adding} disabled={!friendId.trim()}>
+          <Field label='Mã bạn bè' placeholder='Nhập mã bạn bè' autoFocus autoCapitalize='none' value={friendId} onChange={(event) => setFriendId(event.target.value)} />
+          <Button type='submit' className='w-full' disabled={!friendId.trim()} loading={adding}>
             <IconPlus size={16} /> Thêm bạn bè
           </Button>
         </form>

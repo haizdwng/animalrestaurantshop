@@ -107,6 +107,7 @@
     --leading-tight: 1.25;
     --leading-snug: 1.375;
     --leading-relaxed: 1.625;
+    --radius-sm: .25rem;
     --radius-md: .375rem;
     --radius-lg: .5rem;
     --radius-xl: .75rem;
@@ -691,18 +692,6 @@
     grid-column: span 2 / span 2;
   }
 
-  .col-start-2 {
-    grid-column-start: 2;
-  }
-
-  .row-start-1 {
-    grid-row-start: 1;
-  }
-
-  .row-start-2 {
-    grid-row-start: 2;
-  }
-
   .container {
     width: 100%;
   }
@@ -795,10 +784,6 @@
 
   .-mr-1 {
     margin-right: calc(var(--spacing) * -1);
-  }
-
-  .mr-auto {
-    margin-right: auto;
   }
 
   .mb-1 {
@@ -902,9 +887,19 @@
     height: calc(var(--spacing) * 2);
   }
 
+  .size-3\.5 {
+    width: calc(var(--spacing) * 3.5);
+    height: calc(var(--spacing) * 3.5);
+  }
+
   .size-4 {
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
+  }
+
+  .size-4\.25 {
+    width: calc(var(--spacing) * 4.25);
+    height: calc(var(--spacing) * 4.25);
   }
 
   .size-6 {
@@ -1176,6 +1171,18 @@
     width: 60%;
   }
 
+  .w-4\/5 {
+    width: 80%;
+  }
+
+  .w-6 {
+    width: calc(var(--spacing) * 6);
+  }
+
+  .w-8 {
+    width: calc(var(--spacing) * 8);
+  }
+
   .w-9 {
     width: calc(var(--spacing) * 9);
   }
@@ -1196,8 +1203,20 @@
     width: calc(var(--spacing) * 14);
   }
 
+  .w-16 {
+    width: calc(var(--spacing) * 16);
+  }
+
+  .w-18 {
+    width: calc(var(--spacing) * 18);
+  }
+
   .w-20 {
     width: calc(var(--spacing) * 20);
+  }
+
+  .w-24 {
+    width: calc(var(--spacing) * 24);
   }
 
   .w-27 {
@@ -1218,6 +1237,10 @@
 
   .w-48 {
     width: calc(var(--spacing) * 48);
+  }
+
+  .w-52 {
+    width: calc(var(--spacing) * 52);
   }
 
   .w-54 {
@@ -1256,8 +1279,16 @@
     max-width: calc(var(--spacing) * 10) !important;
   }
 
-  .max-w-40 {
-    max-width: calc(var(--spacing) * 40);
+  .max-w-20 {
+    max-width: calc(var(--spacing) * 20);
+  }
+
+  .max-w-24 {
+    max-width: calc(var(--spacing) * 24);
+  }
+
+  .max-w-32 {
+    max-width: calc(var(--spacing) * 32);
   }
 
   .max-w-48 {
@@ -1304,8 +1335,32 @@
     min-width: calc(var(--spacing) * 16);
   }
 
+  .min-w-38 {
+    min-width: calc(var(--spacing) * 38);
+  }
+
+  .min-w-40 {
+    min-width: calc(var(--spacing) * 40);
+  }
+
+  .min-w-58 {
+    min-width: calc(var(--spacing) * 58);
+  }
+
   .flex-1 {
     flex: 1;
+  }
+
+  .flex-\[1_1_9\.5rem\] {
+    flex: 9.5rem;
+  }
+
+  .flex-\[1_1_14\.5rem\] {
+    flex: 14.5rem;
+  }
+
+  .flex-\[1_1_14rem\] {
+    flex: 14rem;
   }
 
   .shrink-0 {
@@ -1621,6 +1676,10 @@
     border-radius: 0;
   }
 
+  .rounded-sm {
+    border-radius: var(--radius-sm);
+  }
+
   .rounded-xl {
     border-radius: var(--radius-xl);
   }
@@ -1779,16 +1838,6 @@
 
   .border-line {
     border-color: var(--color-line);
-  }
-
-  .border-line\/50 {
-    border-color: #35394080;
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .border-line\/50 {
-      border-color: color-mix(in oklab, var(--color-line) 50%, transparent);
-    }
   }
 
   .border-line\/70 {
@@ -2741,11 +2790,6 @@
     }
   }
 
-  .last\:border-b-0:last-child {
-    border-bottom-style: var(--tw-border-style);
-    border-bottom-width: 0;
-  }
-
   .focus-within\:border-lime:focus-within {
     border-color: var(--color-lime);
   }
@@ -2926,14 +2970,6 @@
       grid-column: span 3 / span 3;
     }
 
-    .sm\:col-start-3 {
-      grid-column-start: 3;
-    }
-
-    .sm\:row-start-auto {
-      grid-row-start: auto;
-    }
-
     .sm\:block {
       display: block;
     }
@@ -2970,6 +3006,10 @@
       max-width: var(--container-5xl);
     }
 
+    .sm\:max-w-44 {
+      max-width: calc(var(--spacing) * 44);
+    }
+
     .sm\:max-w-\[min\(52dvh\,20rem\)\] {
       max-width: min(52dvh, 20rem);
     }
@@ -2996,10 +3036,6 @@
 
     .sm\:grid-cols-\[auto_minmax\(0\,1fr\)_auto\] {
       grid-template-columns: auto minmax(0, 1fr) auto;
-    }
-
-    .sm\:grid-cols-\[minmax\(12rem\,1fr\)_minmax\(10rem\,12rem\)_auto\] {
-      grid-template-columns: minmax(12rem, 1fr) minmax(10rem, 12rem) auto;
     }
 
     .sm\:items-center {
@@ -3246,8 +3282,24 @@
   }
 
   @media (min-width: 80rem) {
+    .xl\:ml-auto {
+      margin-left: auto;
+    }
+
+    .xl\:flex-none {
+      flex: none;
+    }
+
     .xl\:grid-cols-3 {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .xl\:flex-nowrap {
+      flex-wrap: nowrap;
+    }
+
+    .xl\:justify-end {
+      justify-content: flex-end;
     }
   }
 

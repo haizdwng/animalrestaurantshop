@@ -104,7 +104,7 @@ export default function AdminUsers() {
         <>
           <ul aria-busy='true' className='divide-y divide-line rounded-2xl border border-line bg-panel'>
             {Array.from({ length: Math.min(size, 10) }).map((_, i) => (
-              <RowSkeleton key={i} w={SKELETON_WIDTHS[i % 3]} trail={<Skeleton className='hidden h-3.5 w-14 sm:block' />} />
+              <RowSkeleton kind='user' key={i} w={SKELETON_WIDTHS[i % 3]} trail={<Skeleton className='hidden h-3.5 w-14 sm:block' />} />
             ))}
           </ul>
           <PagerSkeleton />
@@ -114,7 +114,7 @@ export default function AdminUsers() {
       ) : shown?.length ? (
         <ul className={`divide-y divide-line rounded-2xl border border-line bg-panel transition-opacity ${loading ? 'opacity-50' : ''}`}>
           {rows.map((u, index) => (
-          <UserRow key={`${u.id || u.openid || 'user'}-${index}`} user={u} onAction={(kind) => open(kind, u)} />
+            <UserRow key={`${u.id || u.openid || 'user'}-${index}`} user={u} onAction={(kind) => open(kind, u)} />
           ))}
         </ul>
       ) : null}

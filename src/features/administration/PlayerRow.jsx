@@ -1,5 +1,4 @@
-import { IconPencil, IconStar, IconInfoCircle, IconThumbUp } from '@tabler/icons-react';
-import { IconStarFilled } from '@tabler/icons-react';
+import { IconPencil, IconStar, IconInfoCircle, IconThumbUp, IconStarFilled } from '@tabler/icons-react';
 import { Menu, Skeleton } from '@/shared/components/ui';
 
 export default function PlayerRow({ player, onAction }) {
@@ -32,12 +31,15 @@ export function PlayerRowSkeleton() {
   return (
     <li aria-hidden='true' className='flex min-w-0 items-center gap-3 px-4 py-3 sm:px-5'>
       <Skeleton className='size-10 shrink-0 rounded-xl' />
-      <div className='min-w-0 flex-1 space-y-2'>
+      <div className='min-w-0 flex-1 space-y-1.5'>
         <Skeleton className='h-3.5 w-2/5' />
         <Skeleton className='h-2.5 w-3/5' />
       </div>
-      <Skeleton className='hidden h-3.5 w-14 sm:block' />
-      <Skeleton className='size-8 shrink-0 rounded-lg' />
+      <div className='hidden items-center gap-1.5 sm:flex'>
+        <Skeleton className='size-3.5 shrink-0 rounded-sm' />
+        <Skeleton className='h-3.5 w-14' />
+      </div>
+      <Skeleton className='size-9 shrink-0 rounded-lg' />
     </li>
   );
 };

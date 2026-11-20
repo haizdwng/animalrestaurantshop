@@ -1023,6 +1023,17 @@ function CategoryButton({ id, name, Icon, count, active, featured, onSelect }) {
 		]
 	});
 }
+function CategoryButtonSkeleton({ index }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		"aria-hidden": "true",
+		className: "ui-nav-item flex h-9 w-27 max-w-full shrink-0 items-center gap-2 md:w-full",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-4.25 shrink-0 rounded-sm" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `h-3 min-w-0 flex-1 ${index % 3 === 0 ? "max-w-20" : "max-w-24"}` }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-4 w-6 shrink-0 rounded-md" })
+		]
+	});
+}
 function CategoryNav({ tabs, tabId, hits, onSelect }) {
 	const categories = tabs || [];
 	const active = (id) => tabId === id || !tabId && id === categories[0]?.id;
@@ -1042,7 +1053,7 @@ function CategoryNav({ tabs, tabId, hits, onSelect }) {
 					count: hits[id],
 					active: active(id),
 					onSelect
-				}, id)) : Array.from({ length: 5 }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-9 w-27 shrink-0 md:w-full" }, index)),
+				}, id)) : Object.keys(CATEGORY_ICONS).map((id, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(CategoryButtonSkeleton, { index }, id)),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					"aria-hidden": true,
 					className: "mx-1 w-px shrink-0 bg-line md:mx-0 md:my-2 md:h-px md:w-auto"
@@ -1197,100 +1208,153 @@ function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__
 		]
 	}) });
 }
-// src/features/shop/ShopSkeleton.jsx
-function ShopSkeleton() {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
-		"aria-busy": "true",
-		"aria-label": "Đang tải cửa hàng",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "mb-4 space-y-3",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "space-y-2",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-7 w-36" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-					className: "flex items-center gap-2 text-xs text-mute",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 13 }), " Đang tải cửa hàng…"]
-				})]
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "grid grid-cols-[minmax(0,1fr)_auto] gap-2 sm:grid-cols-[minmax(12rem,1fr)_minmax(10rem,12rem)_auto]",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-10 min-w-0 rounded-lg" }),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "col-span-2 row-start-2 h-10 rounded-lg sm:col-span-1 sm:row-start-auto" }),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "col-start-2 row-start-1 size-10 rounded-lg sm:col-start-3 sm:row-start-auto" })
-				]
-			})]
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
-			className: "grid gap-2 sm:grid-cols-2 xl:grid-cols-3",
-			children: Array.from({ length: 9 }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-				className: `ui-panel flex min-h-20 items-center gap-3 p-3 ${index >= 6 ? "hidden sm:flex" : ""}`,
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-12 shrink-0 rounded-xl" }),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "min-w-0 flex-1 space-y-2",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3 w-3/4" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-1/3" })]
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-						className: "space-y-2",
-						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3.5 w-9" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "ml-auto size-7" })]
-					})
-				]
-			}, index))
-		})]
-	});
-}
 // src/features/shop/ShopToolbar.jsx
-function ShopToolbar({ title, count, ownedCount, query, onQuery, filter, onFilter, loading, onReload }) {
+function ShopToolbarLayout({ title, description, search, filter, pageSize, pager, reload }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
 		className: "mb-4 space-y-3",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			className: "min-w-0",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
-				className: "ui-heading",
-				children: title || "Cửa hàng"
-			}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-				className: "ui-description mt-1 tabular-nums",
-				children: [
-					query.trim() ? `${formatNumber(count)} kết quả cho “${query.trim()}”` : `${formatNumber(count)} vật phẩm`,
-					" · ",
-					formatNumber(ownedCount),
-					" đã sở hữu"
-				]
-			})]
+			children: [title, description]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2 sm:grid-cols-[minmax(12rem,1fr)_minmax(10rem,12rem)_auto]",
+			role: "group",
+			"aria-label": "Công cụ cửa hàng",
+			className: "flex min-w-0 flex-wrap items-center gap-2 xl:flex-nowrap",
 			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
-					label: "Tìm vật phẩm",
-					placeholder: "Tìm theo tên hoặc mã…",
-					value: query,
-					onChange: onQuery,
-					disabled: loading,
-					className: "min-w-0"
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "min-w-40 flex-[1_1_14rem]",
+					children: search
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "col-span-2 row-start-2 sm:col-span-1 sm:row-start-auto",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Select, {
-						label: "Lọc vật phẩm",
-						value: filter,
-						onChange: onFilter,
-						disabled: loading,
-						className: "w-full",
-						children: SHOP_FILTER_OPTIONS.map(({ value, label }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
-							value,
-							children: label
-						}, value))
-					})
+					className: "min-w-38 flex-[1_1_9.5rem] sm:max-w-44 xl:flex-none",
+					children: filter
 				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-					variant: "ghost",
-					className: "col-start-2 row-start-1 size-10! min-h-10! max-h-10! min-w-10! max-w-10! p-0! sm:col-start-3 sm:row-start-auto",
-					onClick: onReload,
-					disabled: loading,
-					"aria-label": "Tải lại cửa hàng",
-					title: "Tải lại dữ liệu cửa hàng",
-					children: loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 17 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 17 })
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "w-32 shrink-0",
+					children: pageSize
+				}),
+				pager && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "min-w-58 flex-[1_1_14.5rem] xl:ml-auto xl:flex-none",
+					children: pager
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+					className: "shrink-0",
+					children: reload
 				})
 			]
 		})]
+	});
+}
+function ShopToolbarSkeleton() {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShopToolbarLayout, {
+		title: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-7 w-40 max-w-full" }),
+		description: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "mt-1 flex h-4 items-center",
+			children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-48 max-w-full" })
+		}),
+		search: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-10 w-full rounded-lg" }),
+		filter: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-10 w-full rounded-lg" }),
+		pageSize: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-10 w-full rounded-lg" }),
+		pager: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "flex min-h-10 items-center justify-between gap-2 xl:justify-end",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3 w-18 shrink-0" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex items-center gap-2",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-8" }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3 w-12" }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-8" })
+				]
+			})]
+		}),
+		reload: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-10 rounded-lg" })
+	});
+}
+function ShopToolbar({ title, count, ownedCount, query, onQuery, filter, onFilter, pageSize, onPageSize, pager, loading, onReload }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShopToolbarLayout, {
+		title: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
+			className: "ui-heading",
+			children: title || "Cửa hàng"
+		}),
+		description: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+			className: "ui-description mt-1 tabular-nums",
+			children: [
+				query.trim() ? `${formatNumber(count)} kết quả cho “${query.trim()}”` : `${formatNumber(count)} vật phẩm`,
+				" · ",
+				formatNumber(ownedCount),
+				" đã sở hữu"
+			]
+		}),
+		search: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
+			label: "Tìm vật phẩm",
+			placeholder: "Tìm theo tên hoặc mã…",
+			value: query,
+			onChange: onQuery,
+			disabled: loading,
+			className: "w-full"
+		}),
+		filter: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Select, {
+			label: "Lọc vật phẩm",
+			value: filter,
+			onChange: onFilter,
+			disabled: loading,
+			className: "w-full",
+			children: SHOP_FILTER_OPTIONS.map(({ value, label }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", {
+				value,
+				children: label
+			}, value))
+		}),
+		pageSize: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageSizeSelect, {
+			value: pageSize,
+			onChange: onPageSize,
+			className: "w-full"
+		}),
+		pager,
+		reload: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+			variant: "ghost",
+			className: "size-10! min-h-10! max-h-10! min-w-10! max-w-10! p-0!",
+			onClick: onReload,
+			disabled: loading,
+			"aria-label": "Tải lại cửa hàng",
+			title: "Tải lại dữ liệu cửa hàng",
+			children: loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 17 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 17 })
+		})
+	});
+}
+// src/features/shop/ShopSkeleton.jsx
+function ProductItemSkeleton({ index }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		className: "ui-panel flex min-h-20 w-full items-center gap-3 p-3",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-12 shrink-0 rounded-xl" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "min-w-0 flex-1 space-y-1.5",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `h-3.5 ${index % 3 === 0 ? "w-3/4" : "w-4/5"}` }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-1/2" }),
+					index % 3 === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-1/3" })
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex shrink-0 flex-col items-end gap-1.5",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-4 w-14 rounded-md" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-7 rounded-lg" })]
+			})
+		]
+	}) });
+}
+function ShopSkeleton() {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+		"aria-busy": "true",
+		"aria-label": "Đang tải cửa hàng",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShopToolbarSkeleton, {}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-panel px-3 py-2.5",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3 w-52 max-w-full" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-36 rounded-lg" })]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
+				className: "grid gap-2 sm:grid-cols-2 xl:grid-cols-3",
+				children: Array.from({ length: 20 }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProductItemSkeleton, { index }, index))
+			})
+		]
 	});
 }
 // src/features/shop/GuideVideoDialog.jsx
@@ -1550,6 +1614,9 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 				onQuery: setQ,
 				filter,
 				onFilter: setFilter,
+				pageSize,
+				onPageSize: setPageSize,
+				pager: products.length > 0 ? productPager : null,
 				loading: shop.loading,
 				onReload
 			}),
@@ -1598,17 +1665,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 					onBuy: () => open(p),
 					now
 				}, `${p.key}-${index}`))
-			}, tabId),
-			products.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "mt-5 space-y-3",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "ml-auto max-w-40",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageSizeSelect, {
-						value: pageSize,
-						onChange: setPageSize
-					})
-				}), productPager]
-			})
+			}, tabId)
 		] });
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {

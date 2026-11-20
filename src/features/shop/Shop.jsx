@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconPlayerPlay, IconRefresh, IconShoppingCart, IconTrash } from '@tabler/icons-react';
 import { formatNumber } from '@/shared/library/format';
-import { Button, Coin, ErrorState, PageSizeSelect, toast, toastError } from '@/shared/components/ui';
+import { Button, Coin, ErrorState, toast, toastError } from '@/shared/components/ui';
 import usePaginatedData from '@/shared/hooks/usePaginatedData';
 import { matchesShopFilter, ownershipStatus } from '@/features/shop/shopFilters';
 import * as api from '@/shared/library/api';
@@ -154,7 +154,20 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
     if (!shop.tabs) return shop.error ? <ErrorState message={shop.error} onRetry={onReload} loading={shop.loading} /> : <ShopSkeleton />;
     return (
       <>
-        <ShopToolbar title={current?.name} count={products.length} ownedCount={ownedCount} query={q} onQuery={setQ} filter={filter} onFilter={setFilter} loading={shop.loading} onReload={onReload} />
+        <ShopToolbar
+          title={current?.name}
+          count={products.length}
+          ownedCount={ownedCount}
+          query={q}
+          onQuery={setQ}
+          filter={filter}
+          onFilter={setFilter}
+          pageSize={pageSize}
+          onPageSize={setPageSize}
+          pager={products.length > 0 ? productPager : null}
+          loading={shop.loading}
+          onReload={onReload}
+        />
 
         {!topup && (
           <div className='mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-panel px-3 py-2.5'>
@@ -184,13 +197,6 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
               <ProductItem key={`${p.key}-${index}`} p={p} conflictingKeys={conflicts} poor={hasPrice(p) && p.price > user.coins} cartQuantity={productOptions(p).reduce((count, option) => count + (cartQuantities.get(option.key) || 0), 0)} onBuy={() => open(p)} now={now} />
             ))}
           </ul>
-        )}
-
-        {products.length > 0 && (
-          <div className='mt-5 space-y-3'>
-            <div className='ml-auto max-w-40'><PageSizeSelect value={pageSize} onChange={setPageSize} /></div>
-            {productPager}
-          </div>
         )}
       </>
     );

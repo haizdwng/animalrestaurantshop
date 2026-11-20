@@ -16040,46 +16040,61 @@ function Line({ h = "h-5", w = "w-1/2", bar = "h-3", className = "" }) {
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `${bar} ${w}` })
 	});
 }
-function RowSkeleton({ lead = true, trail, w = "w-2/5" }) {
+function RowSkeleton({ lead = true, trail, w = "w-2/5", kind = "list" }) {
+	if (kind === "friend") return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+		"aria-hidden": "true",
+		className: "flex min-w-0 items-center gap-3 p-3 sm:px-4",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-12 shrink-0 rounded-xl" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "min-w-0 flex-1 space-y-1.5",
+				children: [
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3 w-2/5" }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-3/5" }),
+					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-20" })
+				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" })
+		]
+	});
+	if (kind === "transaction") return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+		"aria-hidden": "true",
+		className: "flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 sm:px-5",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "min-w-0 flex-1 space-y-1.5",
+			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "flex items-center gap-2",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3.5 w-24" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-5 w-20 rounded-md" })]
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `h-2.5 ${w}` })]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" })]
+	});
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-		className: "flex items-center gap-3 border-b border-line/50 px-4 py-3 last:border-b-0 sm:px-5",
+		"aria-hidden": "true",
+		className: "flex min-w-0 items-center gap-3 px-4 py-3 sm:px-5",
 		children: [
 			lead && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "min-w-0 flex-1",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Line, {
-					w,
-					bar: "h-3.5"
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Line, {
-					h: "mt-0.5 h-4",
-					w: "w-3/5",
-					bar: "h-2.5"
-				})]
+				className: "min-w-0 flex-1 space-y-1.5",
+				children: [kind === "user" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex min-w-0 items-center gap-2",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `h-3.5 max-w-32 ${w}` }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-4 w-16 shrink-0 rounded-full" })]
+				}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `h-3.5 ${w}` }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-3/5" })]
 			}),
 			trail,
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-8 shrink-0 rounded-lg" })
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" })
 		]
 	});
 }
 function PagerSkeleton() {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "flex items-center justify-between gap-2",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Line, {
-			h: "h-8",
-			w: "w-20",
-			bar: "h-2.5",
-			className: "flex-1"
-		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			className: "flex items-center gap-1",
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
+		"aria-hidden": "true",
+		className: "flex flex-wrap items-center justify-between gap-2 text-xs",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3 w-24" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "flex items-center gap-2",
 			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-8 rounded-lg" }),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Line, {
-					h: "h-8",
-					w: "w-10 mx-auto",
-					bar: "h-3",
-					className: "min-w-16"
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-8 rounded-lg" })
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-8 rounded-lg" }),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3 w-16" }),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-8 rounded-lg" })
 			]
 		})]
 	});
@@ -16142,20 +16157,12 @@ function applyEditorTheme(monaco) {
 function EditorSkeleton() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 		role: "status",
+		"aria-label": "Đang tải dữ liệu JSON",
 		"aria-busy": "true",
-		className: "ui-card overflow-hidden",
-		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
-			className: "flex items-center gap-2 border-b border-line p-3",
-			children: [
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 15 }),
-				" ",
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-					className: "mr-auto text-xs text-mute",
-					children: "Đang tải dữ liệu…"
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-20" }),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-20" })
-			]
+		className: "ui-card min-w-0 overflow-hidden",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+			className: "flex min-w-0 items-center justify-end gap-2 border-b border-line px-3 py-2.5",
+			children: Array.from({ length: 4 }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" }, index))
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 			className: `${EDITOR_HEIGHT} space-y-2.5 bg-bg p-4`,
 			children: LOADING_WIDTHS.map((width, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, {
@@ -17271,15 +17278,13 @@ var BUY_PREFIXES = [
 	"buffetFood_",
 	"Musician_",
 	"avatar_",
-	"specialty_fish_"
-];
-var MEMORIAL_BUY_PREFIXES = [
+	"specialty_fish_",
 	"waimai_che_",
 	"Meorial_",
 	"Momorial_",
 	"Memoria_"
 ];
-var isBuyItemsSupported = (key) => typeof key === "string" && (EXACT_BUY_KEYS.has(key) || BUY_PREFIXES.some((prefix) => key.startsWith(prefix)) || key.endsWith("_prop") || key.toLowerCase().startsWith("mail_") || key.toLowerCase().startsWith("memorial_") || MEMORIAL_BUY_PREFIXES.some((prefix) => key.startsWith(prefix)));
+var isBuyItemsSupported = (key) => typeof key === "string" && (EXACT_BUY_KEYS.has(key) || BUY_PREFIXES.some((prefix) => key.startsWith(prefix)) || key.endsWith("_prop") || key.toLowerCase().startsWith("mail_") || key.toLowerCase().startsWith("memorial_"));
 var hasValidPrice = (product) => Number.isSafeInteger(product?.price) && product.price >= 0;
 var getConditions = (product, group = product) => [...Array.isArray(group?.conditions) ? group.conditions : [], ...product === group ? [] : Array.isArray(product?.conditions) ? product.conditions : []];
 var unmetConditions = (product, group = product) => getConditions(product, group).some((condition) => condition?.already !== true);

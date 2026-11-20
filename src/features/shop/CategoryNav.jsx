@@ -20,6 +20,16 @@ function CategoryButton({ id, name, Icon, count, active, featured, onSelect }) {
   );
 };
 
+function CategoryButtonSkeleton({ index }) {
+  return (
+    <div aria-hidden='true' className='ui-nav-item flex h-9 w-27 max-w-full shrink-0 items-center gap-2 md:w-full'>
+      <Skeleton className='size-4.25 shrink-0 rounded-sm' />
+      <Skeleton className={`h-3 min-w-0 flex-1 ${index % 3 === 0 ? 'max-w-20' : 'max-w-24'}`} />
+      <Skeleton className='h-4 w-6 shrink-0 rounded-md' />
+    </div>
+  );
+};
+
 export default function CategoryNav({ tabs, tabId, hits, onSelect }) {
   const categories = tabs || [];
   const active = (id) => tabId === id || (!tabId && id === categories[0]?.id);
@@ -27,7 +37,7 @@ export default function CategoryNav({ tabs, tabId, hits, onSelect }) {
     <aside className='sticky top-(--app-header-h) z-20 min-w-0 border-b border-line bg-bg/95 backdrop-blur-xl md:top-[calc(var(--app-header-h)+1rem)] md:max-h-[calc(100dvh-var(--app-header-h)-2rem)] md:self-start md:overflow-y-auto md:border-0 md:bg-transparent md:backdrop-blur-none'>
       <p className='hidden px-3 pb-2 text-[11px] font-bold tracking-wider text-mute uppercase md:block'>Danh mục</p>
       <nav aria-label='Danh mục cửa hàng' className='no-scrollbar flex w-full min-w-0 max-w-full gap-1 overflow-x-auto overscroll-x-contain px-3 py-2 md:flex-col md:overflow-visible md:p-0'>
-        {tabs ? categories.map(({ id, name }) => <CategoryButton key={id} id={id} name={name} Icon={CATEGORY_ICONS[id] || IconBox} count={hits[id]} active={active(id)} onSelect={onSelect} />) : Array.from({ length: 5 }, (_, index) => <Skeleton key={index} className='h-9 w-27 shrink-0 md:w-full' />)}
+        {tabs ? categories.map(({ id, name }) => <CategoryButton key={id} id={id} name={name} Icon={CATEGORY_ICONS[id] || IconBox} count={hits[id]} active={active(id)} onSelect={onSelect} />) : Object.keys(CATEGORY_ICONS).map((id, index) => <CategoryButtonSkeleton key={id} index={index} />)}
         <div aria-hidden className='mx-1 w-px shrink-0 bg-line md:mx-0 md:my-2 md:h-px md:w-auto' />
         <CategoryButton id={TOPUP} name='Mua xu' Icon={CoinIcon} active={active(TOPUP)} featured onSelect={onSelect} />
       </nav>

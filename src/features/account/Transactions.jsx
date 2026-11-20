@@ -20,12 +20,8 @@ function ConfirmCancel({ tx, onClose, onConfirm }) {
         Huỷ giao dịch <b className='text-fg'>{tx?.code}</b> ({formatVietnameseDong(tx?.amount)})?
       </p>
       <div className='grid grid-cols-2 gap-2'>
-        <Button variant='ghost' onClick={onClose}>
-          Không
-        </Button>
-        <Button variant='danger' onClick={() => onConfirm(tx)}>
-          Huỷ giao dịch
-        </Button>
+        <Button variant='ghost' onClick={onClose}>Không</Button>
+        <Button variant='danger' onClick={() => onConfirm(tx)}>Huỷ giao dịch</Button>
       </div>
     </Dialog>
   );
@@ -87,8 +83,8 @@ export default function Transactions({ onPaid }) {
       {!list && loading ? (
         <>
           <ul aria-busy='true' className='divide-y divide-line'>
-            {Array.from({ length: Math.min(size, 5) }).map((_, i) => (
-              <RowSkeleton key={i} lead={false} w={SKELETON_WIDTHS[i % 3]} />
+            {Array.from({ length: Math.min(size, 10) }).map((_, i) => (
+              <RowSkeleton kind='transaction' key={i} w={SKELETON_WIDTHS[i % 3]} />
             ))}
           </ul>
           <div className='border-t border-line px-4 py-2.5 sm:px-5'>
@@ -98,9 +94,7 @@ export default function Transactions({ onPaid }) {
       ) : !list && error ? (
         <div className='p-6 text-center text-xs'>
           <p className='text-bad'>{error}</p>
-          <Button variant='ghost' size='sm' onClick={load} className='mt-3'>
-            Thử lại
-          </Button>
+          <Button variant='ghost' size='sm' onClick={load} className='mt-3'>Thử lại</Button>
         </div>
       ) : shown?.length ? (
         <ul className={`divide-y divide-line transition-opacity ${loading ? 'opacity-50' : ''}`}>

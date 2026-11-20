@@ -852,8 +852,8 @@ function Transactions({ onPaid }) {
 			!list && loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 				"aria-busy": "true",
 				className: "divide-y divide-line",
-				children: Array.from({ length: Math.min(size, 5) }).map((_, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, {
-					lead: false,
+				children: Array.from({ length: Math.min(size, 10) }).map((_, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, {
+					kind: "transaction",
 					w: SKELETON_WIDTHS[i % 3]
 				}, i))
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {

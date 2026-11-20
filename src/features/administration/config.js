@@ -35,5 +35,6 @@ export const PLAYER_PAGE_SIZE = 10;
 export const DATA_TABS = [
   ['musicians', 'Khách mời', IconMusic],
   ['texts', 'Văn bản', IconFileText],
-  ['data', 'Dữ liệu', IconDatabase]
+  ['data', 'Dữ liệu', IconDatabase],
+  ['dolls', 'Búp bê', IconDeviceGamepad2]
 ];
