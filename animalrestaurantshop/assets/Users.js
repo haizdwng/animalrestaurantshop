@@ -1,4 +1,4 @@
-import { A as formatDateTime, At as PagerSkeleton, Bt as Menu, Gt as Field, Jt as IconSearch, Kt as Button, Lt as PageSizeSelect, Mt as Skeleton, Nt as ErrorState, P as adminAddCoin, Pt as Spinner, Tt as Coin, Ut as toast, Vt as Dialog, W as adminDeleteUser, Wt as toastError, Yt as IconRefresh, cn as require_react, en as createReactComponent, jt as RowSkeleton, ln as __toESM, nn as require_jsx_runtime, q as adminEditUser, rt as adminUsers, wt as isAdmin, z as adminCreateUser, zt as SortSelect } from "./index.js";
+import { A as formatDateTime, At as PagerSkeleton, Bt as Menu, Gt as Field, Kt as Button, Lt as PageSizeSelect, Mt as Skeleton, Nt as ErrorState, P as adminAddCoin, Pt as Spinner, Tt as Coin, Ut as toast, Vt as Dialog, W as adminDeleteUser, Wt as toastError, Xt as IconRefresh, Yt as IconSearch, jt as RowSkeleton, ln as require_react, q as adminEditUser, rn as require_jsx_runtime, rt as adminUsers, tn as createReactComponent, un as __toESM, wt as isAdmin, z as adminCreateUser, zt as SortSelect } from "./index.js";
 import { t as IconUserPlus } from "./IconUserPlus.js";
 import { a as EMPTY_USER_FORM, n as COIN_PRESETS, s as USER_SORTS } from "./config.js";
 import { i as validate } from "./validate.js";
@@ -364,6 +364,7 @@ function AdminUsers() {
 						size: "sm",
 						className: "size-8! p-0!",
 						onClick: load,
+						requestAction: true,
 						disabled: loading,
 						"aria-label": "Làm mới",
 						children: loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 14 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 14 })

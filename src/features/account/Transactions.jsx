@@ -21,7 +21,7 @@ function ConfirmCancel({ tx, onClose, onConfirm }) {
       </p>
       <div className='grid grid-cols-2 gap-2'>
         <Button variant='ghost' onClick={onClose}>Không</Button>
-        <Button variant='danger' onClick={() => onConfirm(tx)}>Huỷ giao dịch</Button>
+        <Button variant='danger' onClick={() => onConfirm(tx)} requestAction>Huỷ giao dịch</Button>
       </div>
     </Dialog>
   );
@@ -75,7 +75,7 @@ export default function Transactions({ onPaid }) {
       <h3 className='flex items-center gap-2 border-b border-line px-4 py-3 text-xs font-bold sm:px-5'>
         <IconReceipt size={16} className='text-coin' /> Giao dịch mua xu
         {list?.length > 0 && <span className='rounded bg-raise px-1.5 text-[10px] text-mute tabular-nums'>{list.length}</span>}
-        <Button variant='quiet' size='sm' onClick={load} disabled={loading} aria-label='Làm mới' className='ml-auto size-8! px-2!'>
+        <Button variant='quiet' size='sm' onClick={load} requestAction disabled={loading} aria-label='Làm mới' className='ml-auto size-8! px-2!'>
           {loading ? <Spinner size={14} /> : <IconRefresh size={14} />}
         </Button>
       </h3>

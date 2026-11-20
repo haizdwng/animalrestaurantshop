@@ -80,7 +80,7 @@ export default function AdminUsers() {
     <div className='space-y-4'>
       <Head title='Người dùng' sub={list ? `${list.length.toLocaleString('vi-VN')} tài khoản` : 'Đang tải danh sách…'}>
         <div className='flex gap-2'>
-          <Button variant='ghost' size='sm' className='size-8! p-0!' onClick={load} disabled={loading} aria-label='Làm mới'>
+          <Button variant='ghost' size='sm' className='size-8! p-0!' onClick={load} requestAction disabled={loading} aria-label='Làm mới'>
             {loading ? <Spinner size={14} /> : <IconRefresh size={14} />}
           </Button>
           <Button size='sm' onClick={() => open('create')}>

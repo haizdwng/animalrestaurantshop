@@ -92,12 +92,9 @@ export default function PlayerFriends({ openid }) {
   return (
     <section className='min-w-0 space-y-4'>
       <Head title='Danh sách bạn bè' sub={friends ? `${friends.length.toLocaleString('vi-VN')} bạn bè` : 'Đang tải danh sách…'}>
-        <Button variant='ghost' size='sm' className='size-9! p-0!' title='Tải lại bạn bè'
-          aria-label='Tải lại bạn bè' onClick={loadFriends} disabled={loading}>
-          {loading ? <Spinner size={16} /> : <IconRefresh size={17} />}
+        <Button variant='ghost' size='sm' className='size-9! p-0!' title='Tải lại bạn bè' aria-label='Tải lại bạn bè' onClick={loadFriends} requestAction disabled={loading}> {loading ? <Spinner size={16} /> : <IconRefresh size={17} />}
         </Button>
-        <Button size='sm' className='size-9! p-0!' title='Thêm bạn bè'
-          aria-label='Thêm bạn bè' onClick={() => setAddOpen(true)}>
+        <Button size='sm' className='size-9! p-0!' title='Thêm bạn bè' aria-label='Thêm bạn bè' onClick={() => setAddOpen(true)}>
           <IconPlus size={18} />
         </Button>
       </Head>
@@ -158,7 +155,7 @@ export default function PlayerFriends({ openid }) {
         </p>
         <div className='grid grid-cols-2 gap-2'>
           <Button variant='ghost' onClick={() => setRemoveTarget(null)} disabled={removing}>Hủy</Button>
-          <Button variant='danger' onClick={deleteFriend} loading={removing}>Xóa bạn bè</Button>
+          <Button variant='danger' onClick={deleteFriend} requestAction loading={removing}>Xóa bạn bè</Button>
         </div>
       </Dialog>
     </section>

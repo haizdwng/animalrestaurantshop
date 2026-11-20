@@ -4,6 +4,7 @@ import { IconPlayerPlay, IconRefresh, IconShoppingCart, IconTrash } from '@table
 import { formatNumber } from '@/shared/library/format';
 import { Button, Coin, ErrorState, toast, toastError } from '@/shared/components/ui';
 import usePaginatedData from '@/shared/hooks/usePaginatedData';
+import useRequestPending from '@/shared/hooks/useRequestPending';
 import { matchesShopFilter, ownershipStatus } from '@/features/shop/shopFilters';
 import * as api from '@/shared/library/api';
 import TopUp from '@/shared/components/payment/TopUp';
@@ -24,6 +25,7 @@ const START_VIDEO = `${import.meta.env.BASE_URL}videos/start.mp4`;
 
 export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
   const navigate = useNavigate();
+  const requestPending = useRequestPending();
   const { section } = useParams();
   const tabs = shop.tabs || [];
   const tabId = section || tabs[0]?.id || null;
@@ -79,8 +81,8 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
   const eligible = eligibleCategoryProducts(categoryProducts, conflicts, now);
   const categoryAddedCount = eligible.filter((product) => cartQuantities.has(product.key)).length;
   const allCategoryAdded = eligible.length > 0 && categoryAddedCount === eligible.length;
-  const cartReady = shop.ready === true && Array.isArray(shop.tabs) && !shop.loading;
-  const canPurchase = cartReady && entries.every(({ invalid }) => !invalid) && total <= user.coins && Number.isSafeInteger(total);
+  const cartReady = shop.ready === true && Array.isArray(shop.tabs);
+  const canPurchase = cartReady && entries.every(({ invalid }) => !invalid) && total <= user.coins && Number.isSafeInteger(total) && !requestPending;
 
   const open = (p) => {
     if (buying) return;
@@ -110,7 +112,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
     setCartOpen(false);
   };
   const purchase = async () => {
-    if (buying || cart.length === 0 || !canPurchase) return;
+    if (buying || requestPending || cart.length === 0 || !canPurchase) return;
     const freshEntries = resolveCart(cart, shop.tabs, maxQuantity, Date.now());
     if (freshEntries.some((entry) => entry.invalid)) {
       setNow(Date.now());
@@ -144,7 +146,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
             <Button variant='ghost' onClick={() => setGuide(true)}>
               <IconPlayerPlay size={16} /> Xem hướng dẫn
             </Button>
-            <Button loading={shop.loading} onClick={onReload}>
+            <Button loading={shop.loading} requestAction onClick={onReload}>
               <IconRefresh size={16} /> Kiểm tra lại
             </Button>
           </div>
@@ -192,7 +194,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
         {products.length === 0 ? (
           <EmptyProducts searching={!!needle || filter !== 'all'} tabs={tabs} hits={hits} onSelect={selectTab} />
         ) : (
-          <ul key={tabId} className={`grid animate-fade gap-2 transition-opacity sm:grid-cols-2 xl:grid-cols-3 ${shop.loading ? 'pointer-events-none opacity-50' : ''}`}>
+          <ul key={tabId} className='grid animate-fade gap-2 transition-opacity sm:grid-cols-2 xl:grid-cols-3'>
             {productRows.map((p, index) => (
               <ProductItem key={`${p.key}-${index}`} p={p} conflictingKeys={conflicts} poor={hasPrice(p) && p.price > user.coins} cartQuantity={productOptions(p).reduce((count, option) => count + (cartQuantities.get(option.key) || 0), 0)} onBuy={() => open(p)} now={now} />
             ))}
@@ -254,6 +256,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
         coins={user.coins}
         ready={cartReady}
         buying={buying}
+        requestPending={requestPending}
         onClose={() => setCartOpen(false)}
         onQuantity={(key, amount) => setCart((items) => changeCartQuantity(items, key, amount, maxQuantity))}
         onRemove={removeFromCart}

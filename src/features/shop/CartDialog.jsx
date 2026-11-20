@@ -5,11 +5,11 @@ import Tile from '@/features/shop/Tile';
 import QuantityPicker from '@/features/shop/QuantityPicker';
 import { cartCount, cartTotal, getGroupRemaining, isOnce } from '@/features/shop/cartUtils';
 
-export default function CartDialog({ open, entries, coins, ready, buying, onClose, onQuantity, onRemove, onClear, onBuy, onTopUp }) {
+export default function CartDialog({ open, entries, coins, ready, buying, requestPending = false, onClose, onQuantity, onRemove, onClear, onBuy, onTopUp }) {
   const total = cartTotal(entries);
   const shortage = Math.max(0, total - coins);
   const invalid = entries.filter((entry) => entry.invalid);
-  const canBuy = entries.length > 0 && ready && !buying && invalid.length === 0 && shortage === 0 && Number.isSafeInteger(total);
+  const canBuy = entries.length > 0 && ready && !buying && !requestPending && invalid.length === 0 && shortage === 0 && Number.isSafeInteger(total);
 
   return (
     <Dialog open={open} title='Giỏ hàng' onClose={() => !buying && onClose()}>
@@ -43,11 +43,11 @@ export default function CartDialog({ open, entries, coins, ready, buying, onClos
                   ) : limit === 1 ? (
                     <span className='text-[11px] text-mute'>Mỗi lần mua 1</span>
                   ) : (
-                    <QuantityPicker compact value={entry.amount} max={limit} disabled={buying || !ready} onChange={(value) => onQuantity(entry.key, value)} />
+                    <QuantityPicker compact value={entry.amount} max={limit} disabled={buying} onChange={(value) => onQuantity(entry.key, value)} />
                   )}
                   <span className='flex items-center gap-1 text-xs font-bold text-coin tabular-nums'><Coin size={14} /> {formatNumber(entry.total)}</span>
                 </div>
-                {entry.invalid && <p role='alert' className='mt-2 flex items-start gap-1.5 text-[11px] text-bad'><IconAlertTriangle size={14} className='mt-0.5 shrink-0' /> {entry.invalid}</p>}
+                {entry.invalid && <p role='alert' className='mt-2 flex items-start gap-1.5 text-[11px] text-bad'><IconAlertTriangle size={14} className='mt-1 shrink-0' /> {entry.invalid}</p>}
               </li>
             );
           })}
@@ -61,9 +61,9 @@ export default function CartDialog({ open, entries, coins, ready, buying, onClos
             <div className='flex items-center justify-between border-t border-line pt-2.5'><dt className='font-extrabold'>Tổng thanh toán</dt><dd className='flex items-center gap-1.5 text-lg font-extrabold text-coin tabular-nums'><Coin size={18} /> {formatNumber(total)}</dd></div>
           </dl>
           {!ready && <p className='rounded-lg border border-line bg-raise p-3 text-[11px] text-mute'>Cửa hàng chưa sẵn sàng, vui lòng kiểm tra lại.</p>}
-          {invalid.length > 0 && <p role='alert' className='flex items-start gap-2 rounded-lg border border-bad/30 bg-bad/10 p-3 text-[11px] text-bad'><IconAlertTriangle size={16} className='shrink-0' /> {invalid.length} vật phẩm chưa hợp lệ; hãy điều chỉnh trước khi mua.</p>}
+          {invalid.length > 0 && <p role='alert' className='flex items-start gap-2 border border-bad/30 bg-bad/10 p-3 text-[11px] text-bad'><IconAlertTriangle size={16} className='shrink-0' /> {invalid.length} vật phẩm chưa hợp lệ; hãy điều chỉnh trước khi mua.</p>}
           {shortage > 0 && <Button variant='ghost' className='w-full text-coin!' disabled={buying} onClick={onTopUp}><Coin size={16} /> Thiếu {formatNumber(shortage)} xu · Mua thêm</Button>}
-          <Button className='w-full' disabled={!canBuy} loading={buying} onClick={onBuy}><IconShoppingCart size={17} /> Mua tất cả · {formatNumber(entries.length)} loại</Button>
+          <Button requestAction className='w-full' disabled={!canBuy} loading={buying} onClick={onBuy}><IconShoppingCart size={17} /> Mua tất cả · {formatNumber(entries.length)} loại</Button>
         </>
       )}
     </Dialog>

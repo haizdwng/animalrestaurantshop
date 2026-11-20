@@ -54,16 +54,16 @@ export default function ShopToolbar({ title, count, ownedCount, query, onQuery, 
           {' · '}{formatNumber(ownedCount)} đã sở hữu
         </p>
       }
-      search={<SearchInput label='Tìm vật phẩm' placeholder='Tìm theo tên hoặc mã…' value={query} onChange={onQuery} disabled={loading} className='w-full' />}
+      search={<SearchInput label='Tìm vật phẩm' placeholder='Tìm theo tên hoặc mã…' value={query} onChange={onQuery} className='w-full' />}
       filter={
-        <Select label='Lọc vật phẩm' value={filter} onChange={onFilter} disabled={loading} className='w-full'>
+        <Select label='Lọc vật phẩm' value={filter} onChange={onFilter} className='w-full'>
           {SHOP_FILTER_OPTIONS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
         </Select>
       }
       pageSize={<PageSizeSelect value={pageSize} onChange={onPageSize} className='w-full' />}
       pager={pager}
       reload={
-        <Button variant='ghost' className='size-10! min-h-10! max-h-10! min-w-10! max-w-10! p-0!' onClick={onReload} disabled={loading} aria-label='Tải lại cửa hàng' title='Tải lại dữ liệu cửa hàng'>
+        <Button variant='ghost' className='size-10! min-h-10! max-h-10! min-w-10! max-w-10! p-0!' onClick={onReload} requestAction disabled={loading} aria-label='Tải lại cửa hàng' title='Tải lại dữ liệu cửa hàng'>
           {loading ? <Spinner size={17} /> : <IconRefresh size={17} />}
         </Button>
       }

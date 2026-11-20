@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { IconLoader2, IconSend } from '@tabler/icons-react';
 import { toast } from '@/shared/components/ui/Toast';
+import useRequestPending from '@/shared/hooks/useRequestPending';
 
 export default function OtpButton({ send, target, onSent, check }) {
   const [until, setUntil] = useState(0);
   const [now, setNow] = useState(Date.now());
   const [busy, setBusy] = useState(false);
+  const pending = useRequestPending();
   const left = Math.max(0, Math.ceil((until - now) / 1000));
   useEffect(() => {
     if (!left) return;
@@ -14,7 +16,7 @@ export default function OtpButton({ send, target, onSent, check }) {
   }, [left, now]);
 
   const onClick = async () => {
-    if (check && !check()) return;
+    if (pending || busy || (check && !check())) return;
     setBusy(true);
     try {
       const r = await send();
@@ -36,8 +38,9 @@ export default function OtpButton({ send, target, onSent, check }) {
   return (
     <button
       type='button'
-      disabled={left > 0 || busy}
+      disabled={left > 0 || busy || pending}
       onClick={onClick}
+      data-request-action=''
       className='m-1 shrink-0 cursor-pointer rounded-md bg-lime px-3 text-[11px] font-bold text-bg transition hover:brightness-110 disabled:cursor-not-allowed disabled:bg-raise disabled:text-mute'
     >
       {busy ? (

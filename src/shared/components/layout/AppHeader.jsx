@@ -16,7 +16,7 @@ export default function AppHeader({ nav, current, onNavigate, coins, syncing, co
             </button>
           ))}
         </nav>
-        <button type='button' onClick={onRefresh} aria-label={`Hiện có ${formatNumber(coins)} xu. Bấm để cập nhật`} title='Số xu hiện có · Bấm để cập nhật' aria-busy={coinSyncing || undefined} className='ml-auto flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-coin/30 bg-coin/10 px-3 text-sm font-bold text-coin tabular-nums transition-colors hover:bg-coin/15'>
+        <button type='button' onClick={onRefresh} disabled={syncing} aria-label={`Hiện có ${formatNumber(coins)} xu. Bấm để cập nhật`} title='Số xu hiện có · Bấm để cập nhật' aria-busy={coinSyncing || undefined} className='ml-auto flex h-10 shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-coin/30 bg-coin/10 px-3 text-sm font-bold text-coin tabular-nums transition-colors hover:bg-coin/15 disabled:cursor-not-allowed disabled:opacity-60'>
           {coinSyncing ? <Spinner size={19} /> : <Coin size={20} />}
           <span className='min-w-5 text-right'>{formatNumber(coins)}</span>
         </button>

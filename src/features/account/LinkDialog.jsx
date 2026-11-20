@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { IconCopy, IconLink } from '@tabler/icons-react';
-import { Button, Dialog, Spinner, toast, toastError } from '@/shared/components/ui';
+import { Button, Dialog, Spinner, toastError } from '@/shared/components/ui';
 import { copyText } from '@/shared/library/clipboard';
 
 export default function LinkDialog({ request, title, open, onClose }) {
@@ -21,15 +21,11 @@ export default function LinkDialog({ request, title, open, onClose }) {
         setState({ loading: false, message: '', link: '' });
         toastError(error);
       });
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, [open, request]);
 
-  const close = () => !state.loading && onClose();
-
   return (
-    <Dialog open={open} title={title} onClose={close}>
+    <Dialog open={open} title={title} onClose={onClose}>
       <div className='space-y-4'>
         {state.loading ? (
           <div className='flex items-center justify-center gap-2 rounded-xl bg-bg p-6 text-xs text-mute'>

@@ -48,8 +48,7 @@ export default function LoginStreak({ checkin, onClaim, onUser }) {
         ))}
       </div>
       {error && !loading && <p role='alert' className='text-xs text-bad'>{error}</p>}
-      <Button className='w-full' variant={canClaim ? 'solid' : 'ghost'} size='sm' loading={claiming || loading}
-        disabled={!canClaim || claiming || loading} onClick={handleClaim}>
+      <Button requestAction className='w-full' variant={canClaim ? 'solid' : 'ghost'} size='sm' loading={claiming || loading} disabled={!canClaim || claiming || loading} onClick={handleClaim}>
         {claiming ? 'Đang nhận…' : canClaim ? `Nhận +${formatNumber(claimReward)} xu hôm nay` : claimedToday ? 'Đã nhận quà hôm nay' : loading ? 'Đang tải…' : 'Chưa thể nhận'}
       </Button>
     </section>

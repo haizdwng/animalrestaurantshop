@@ -47,8 +47,8 @@ export default function ProfileCard({ user, onEditAvatar, onLogout, onRedeemGift
           <Button variant='ghost' size='sm' className='size-8! px-0!' disabled={!user.invite} aria-label='Sao chép mã mời' title='Sao chép mã mời của bạn' onClick={() => user.invite && copyText(user.invite, 'Đã sao chép mã mời')}><IconCopy size={16} /></Button>
         </div>
         <div className='grid grid-cols-2 gap-2'>
-          <Button variant='ghost' size='sm' className='min-w-0' onClick={onFriendLink}><IconUserPlus size={15} /><span className='truncate'>Kết bạn</span></Button>
-          <Button variant='ghost' size='sm' className='min-w-0' onClick={onBuffetLink}><IconBriefcase2 size={15} /><span className='truncate'>Làm thêm</span></Button>
+          <Button requestAction variant='ghost' size='sm' className='min-w-0' onClick={onFriendLink}><IconUserPlus size={15} /><span className='truncate'>Kết bạn</span></Button>
+          <Button requestAction variant='ghost' size='sm' className='min-w-0' onClick={onBuffetLink}><IconBriefcase2 size={15} /><span className='truncate'>Làm thêm</span></Button>
         </div>
       </div>
       {user.createdAt && <p className='relative mt-4 text-[11px] text-mute'>Tham gia {formatDate(user.createdAt)}</p>}
