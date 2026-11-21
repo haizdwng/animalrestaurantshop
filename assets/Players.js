@@ -1,4 +1,4 @@
-import { $ as adminRecord, At as PagerSkeleton, Bt as Menu, Ct as fileToAvatar, Dt as SearchInput, F as adminAddPlayerFriend, Gt as Field, I as adminAddPlayerLike, It as Tabs, J as adminEncryptRecordValue, K as adminEditPlayer, Kt as Button, L as adminAddPlayerStar, Lt as PageSizeSelect, Mt as Skeleton, Nt as ErrorState, Ot as JsonEditor, Pt as Spinner, Q as adminPlayers, Rt as Select, U as adminDeletePlayerFriend, Ut as toast, V as adminDecryptRecordValue, Vt as Dialog, Wt as toastError, X as adminPlayer, Xt as IconRefresh, Yt as IconSearch, Z as adminPlayerFriends, Zt as IconInfoCircle, j as formatNumber, jt as RowSkeleton, kt as Line, ln as require_react, nt as adminUpdatePlayerAvatar, on as useNavigate, rn as require_jsx_runtime, sn as useParams, tn as createReactComponent, tt as adminSaveRecord, un as __toESM } from "./index.js";
+import { $ as adminRecord, At as PagerSkeleton, Bt as Dialog, Ct as fileToAvatar, Dt as SearchInput, F as adminAddPlayerFriend, Gt as Button, Ht as toast, I as adminAddPlayerLike, It as Tabs, J as adminEncryptRecordValue, Jt as IconSearch, K as adminEditPlayer, L as adminAddPlayerStar, Lt as Select, Mt as Skeleton, Nt as ErrorState, Ot as JsonEditor, Pt as Spinner, Q as adminPlayers, U as adminDeletePlayerFriend, Ut as toastError, V as adminDecryptRecordValue, Wt as Field, X as adminPlayer, Xt as IconInfoCircle, Yt as IconRefresh, Z as adminPlayerFriends, an as useNavigate, cn as require_react, en as createReactComponent, j as formatNumber, jt as RowSkeleton, kt as Line, ln as __toESM, nn as require_jsx_runtime, nt as adminUpdatePlayerAvatar, on as useParams, tt as adminSaveRecord, zt as Menu } from "./index.js";
 import { n as IconArrowLeft, t as IconArrowRight } from "./IconArrowRight.js";
 import { o as PLAYER_TABS } from "./config.js";
 import { t as IconStarFilled } from "./IconStarFilled.js";
@@ -269,13 +269,11 @@ function RecordCrypto({ openid }) {
 	] });
 }
 // src/features/administration/PlayerFriends.jsx
-var DEFAULT_PAGE_SIZE = 10;
 function PlayerFriends({ openid }) {
 	const [friends, setFriends] = (0, import_react.useState)(null);
 	const [loading, setLoading] = (0, import_react.useState)(true);
 	const [error, setError] = (0, import_react.useState)("");
 	const [query, setQuery] = (0, import_react.useState)("");
-	const [pageSize, setPageSize] = (0, import_react.useState)(DEFAULT_PAGE_SIZE);
 	const [addOpen, setAddOpen] = (0, import_react.useState)(false);
 	const [friendId, setFriendId] = (0, import_react.useState)("");
 	const [adding, setAdding] = (0, import_react.useState)(false);
@@ -311,7 +309,7 @@ function PlayerFriends({ openid }) {
 		const search = query.trim().toLowerCase();
 		return !search || `${friend.nickName || ""} ${friend.openid || ""}`.toLowerCase().includes(search);
 	}), [friends, query]);
-	const { rows, pager } = usePaginatedData(filtered, pageSize, `${openid}|${query}`);
+	const { rows, pager } = usePaginatedData(filtered, `${openid}|${query}`);
 	const addFriend = async (event) => {
 		event.preventDefault();
 		const id = friendId.trim();
@@ -352,7 +350,7 @@ function PlayerFriends({ openid }) {
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Head, {
 				title: "Danh sách bạn bè",
 				sub: friends ? `${friends.length.toLocaleString("vi-VN")} bạn bè` : "Đang tải danh sách…",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 					variant: "ghost",
 					size: "sm",
 					className: "size-9! p-0!",
@@ -361,7 +359,7 @@ function PlayerFriends({ openid }) {
 					onClick: loadFriends,
 					requestAction: true,
 					disabled: loading,
-					children: [" ", loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 17 })]
+					children: loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 17 })
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 					size: "sm",
 					className: "size-9! p-0!",
@@ -371,25 +369,16 @@ function PlayerFriends({ openid }) {
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlus, { size: 18 })
 				})]
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
-					label: "Tìm bạn bè",
-					placeholder: "Tìm tên hoặc mã bạn bè…",
-					value: query,
-					onChange: setQuery
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "w-32",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageSizeSelect, {
-						value: pageSize,
-						onChange: setPageSize
-					})
-				})]
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
+				label: "Tìm bạn bè",
+				placeholder: "Tìm tên hoặc mã bạn bè…",
+				value: query,
+				onChange: setQuery
 			}),
 			friends === null && loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 				"aria-busy": "true",
 				className: "divide-y divide-line overflow-hidden rounded-2xl border border-line bg-panel",
-				children: Array.from({ length: Math.min(pageSize, 10) }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, { kind: "friend" }, index))
+				children: Array.from({ length: 10 }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, { kind: "friend" }, index))
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PagerSkeleton, {})] }) : error ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ErrorState, {
 				message: error,
 				onRetry: loadFriends,
@@ -759,13 +748,12 @@ function AdminPlayers() {
 	const [dialog, setDialog] = (0, import_react.useState)(null);
 	const [busy, setBusy] = (0, import_react.useState)(false);
 	const [manualOpen, setManualOpen] = (0, import_react.useState)(false);
-	const [size, setSize] = (0, import_react.useState)(10);
 	const currentSection = PLAYER_SECTIONS.includes(section) ? section : "player";
 	const shown = (0, import_react.useMemo)(() => {
 		const needle = query.trim().toLowerCase();
 		return (list || []).filter((person) => !needle || [person.nickName, person.openid].some((value) => String(value || "").toLowerCase().includes(needle)));
 	}, [list, query]);
-	const { rows, pager } = usePaginatedData(shown, size, query);
+	const { rows, pager } = usePaginatedData(shown, query);
 	const loadPlayer = (0, import_react.useCallback)(async (id) => {
 		if (!id) return;
 		setPlayer({
@@ -930,28 +918,22 @@ function AdminPlayers() {
 					})]
 				})
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "grid gap-2 sm:grid-cols-[1fr_auto]",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
-					className: "flex h-10 items-center gap-2 rounded-lg border border-line bg-panel px-3 focus-within:border-lime",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconSearch, {
-						size: 15,
-						className: "text-mute"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
-						value: query,
-						onChange: (event) => setQuery(event.target.value),
-						placeholder: "Tìm tên người chơi, mã người chơi…",
-						className: "min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-mute/50 sm:text-sm"
-					})]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageSizeSelect, {
-					value: size,
-					onChange: setSize
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
+				className: "flex h-10 items-center gap-2 rounded-lg border border-line bg-panel px-3 focus-within:border-lime",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconSearch, {
+					size: 15,
+					className: "text-mute"
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", {
+					value: query,
+					onChange: (event) => setQuery(event.target.value),
+					placeholder: "Tìm tên người chơi, mã người chơi…",
+					className: "min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-mute/50 sm:text-sm"
 				})]
-			}),
+			}) }),
 			!list && listLoading ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 				"aria-busy": "true",
 				className: "divide-y divide-line rounded-2xl border border-line bg-panel",
-				children: Array.from({ length: Math.min(size, 10) }).map((_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlayerRowSkeleton, {}, index))
+				children: Array.from({ length: 10 }).map((_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PlayerRowSkeleton, {}, index))
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PagerSkeleton, {})] }) : !list && listError ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ErrorState, {
 				message: listError,
 				onRetry: reload,

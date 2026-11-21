@@ -1,4 +1,4 @@
-import { $t as IconChevronRight, C as productOptions, D as unmetConditions, Dt as SearchInput, E as resolveCart, Gt as Field, Jt as IconX, Kt as Button, Lt as PageSizeSelect, Mt as Skeleton, Nt as ErrorState, Pt as Spinner, Qt as IconCircleCheck, Rt as Select, S as optionMode, T as removeCategoryFromCart, Tt as Coin, Ut as toast, Vt as Dialog, Wt as toastError, Xt as IconRefresh, _ as hasValidPrice, a as cartTotal, at as createTransaction, b as isFullyOwned, c as eligibleCategoryProducts, ct as ADMIN_MAX_QTY, d as getConflictingKeys, en as IconAlertTriangle, f as getGroupRemaining, g as hasOptions, h as getTimeStatus, i as cartPayload, j as formatNumber, l as formatShopDate, ln as require_react, lt as buy, m as getTimeMessage, n as addCategoryToCart, nn as Badge, o as changeCartQuantity, on as useNavigate, p as getPurchaseLimit, qt as useRequestPending, r as cartCount, rn as require_jsx_runtime, s as clampCartQuantity, sn as useParams, tn as createReactComponent, u as getConditions, un as __toESM, v as isAvailable, w as putInCart, wt as isAdmin, x as isOnce, y as isBuyItemsSupported } from "./index.js";
+import { $t as IconAlertTriangle, Bt as Dialog, C as productOptions, D as unmetConditions, Dt as SearchInput, E as resolveCart, Gt as Button, Ht as toast, Kt as useRequestPending, Lt as Select, Mt as Skeleton, Nt as ErrorState, Pt as Spinner, Qt as IconChevronRight, S as optionMode, T as removeCategoryFromCart, Tt as Coin, Ut as toastError, Wt as Field, Yt as IconRefresh, Zt as IconCircleCheck, _ as hasValidPrice, a as cartTotal, an as useNavigate, at as createTransaction, b as isFullyOwned, c as eligibleCategoryProducts, cn as require_react, ct as ADMIN_MAX_QTY, d as getConflictingKeys, en as createReactComponent, f as getGroupRemaining, g as hasOptions, h as getTimeStatus, i as cartPayload, j as formatNumber, l as formatShopDate, ln as __toESM, lt as buy, m as getTimeMessage, n as addCategoryToCart, nn as require_jsx_runtime, o as changeCartQuantity, on as useParams, p as getPurchaseLimit, qt as IconX, r as cartCount, s as clampCartQuantity, tn as Badge, u as getConditions, v as isAvailable, w as putInCart, wt as isAdmin, x as isOnce, y as isBuyItemsSupported } from "./index.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { t as usePaginatedData } from "./usePaginatedData.js";
 import { a as IconClock, i as IconQrcode, t as PaymentDialog } from "./PaymentDialog.js";
@@ -1210,7 +1210,7 @@ function ProductItem({ p, poor, cartQuantity = 0, conflictingKeys = /* @__PURE__
 	}) });
 }
 // src/features/shop/ShopToolbar.jsx
-function ShopToolbarLayout({ title, description, search, filter, pageSize, pager, reload }) {
+function ShopToolbarLayout({ title, description, search, filter, pager, reload }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
 		className: "mb-4 space-y-3",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -1228,10 +1228,6 @@ function ShopToolbarLayout({ title, description, search, filter, pageSize, pager
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "min-w-38 flex-[1_1_9.5rem] sm:max-w-44 xl:flex-none",
 					children: filter
-				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "w-32 shrink-0",
-					children: pageSize
 				}),
 				pager && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 					className: "min-w-58 flex-[1_1_14.5rem] xl:ml-auto xl:flex-none",
@@ -1254,7 +1250,6 @@ function ShopToolbarSkeleton() {
 		}),
 		search: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-10 w-full rounded-lg" }),
 		filter: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-10 w-full rounded-lg" }),
-		pageSize: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-10 w-full rounded-lg" }),
 		pager: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			className: "flex min-h-10 items-center justify-between gap-2 xl:justify-end",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3 w-18 shrink-0" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
@@ -1269,7 +1264,7 @@ function ShopToolbarSkeleton() {
 		reload: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-10 rounded-lg" })
 	});
 }
-function ShopToolbar({ title, count, ownedCount, query, onQuery, filter, onFilter, pageSize, onPageSize, pager, loading, onReload }) {
+function ShopToolbar({ title, count, ownedCount, query, onQuery, filter, onFilter, pager, loading, onReload }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ShopToolbarLayout, {
 		title: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", {
 			className: "ui-heading",
@@ -1301,11 +1296,6 @@ function ShopToolbar({ title, count, ownedCount, query, onQuery, filter, onFilte
 				children: label
 			}, value))
 		}),
-		pageSize: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageSizeSelect, {
-			value: pageSize,
-			onChange: onPageSize,
-			className: "w-full"
-		}),
 		pager,
 		reload: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 			variant: "ghost",
@@ -1321,24 +1311,27 @@ function ShopToolbar({ title, count, ownedCount, query, onQuery, filter, onFilte
 }
 // src/features/shop/ShopSkeleton.jsx
 function ProductItemSkeleton({ index }) {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "ui-panel flex min-h-20 w-full items-center gap-3 p-3",
-		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-12 shrink-0 rounded-xl" }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "min-w-0 flex-1 space-y-1.5",
-				children: [
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `h-3.5 ${index % 3 === 0 ? "w-3/4" : "w-4/5"}` }),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-1/2" }),
-					index % 3 === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-1/3" })
-				]
-			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "flex shrink-0 flex-col items-end gap-1.5",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-4 w-14 rounded-md" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-7 rounded-lg" })]
-			})
-		]
-	}) });
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
+		"aria-hidden": "true",
+		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			className: "ui-panel flex min-h-20 w-full items-center gap-3 p-3",
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-12 shrink-0 rounded-xl" }),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "min-w-0 flex-1 space-y-1.5",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `h-3.5 ${index % 3 === 0 ? "w-3/4" : "w-4/5"}` }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-1/2" }),
+						index % 3 === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-1/3" })
+					]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex shrink-0 flex-col items-end gap-1.5",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-4 w-14 rounded-md" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-7 rounded-lg" })]
+				})
+			]
+		})
+	});
 }
 function ShopSkeleton() {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
@@ -1352,7 +1345,7 @@ function ShopSkeleton() {
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 				className: "grid gap-2 sm:grid-cols-2 xl:grid-cols-3",
-				children: Array.from({ length: 20 }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProductItemSkeleton, { index }, index))
+				children: Array.from({ length: 10 }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ProductItemSkeleton, { index }, index))
 			})
 		]
 	});
@@ -1440,7 +1433,6 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 	const tabs = shop.tabs || [];
 	const tabId = section || tabs[0]?.id || null;
 	const [q, setQ] = (0, import_react.useState)("");
-	const [pageSize, setPageSize] = (0, import_react.useState)(20);
 	const [filter, setFilter] = (0, import_react.useState)("all");
 	const [now, setNow] = (0, import_react.useState)(() => Date.now());
 	const [item, setItem] = (0, import_react.useState)(null);
@@ -1500,7 +1492,7 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 		conflicts,
 		now
 	]);
-	const { rows: productRows, pager: productPager } = usePaginatedData(products, pageSize, `${tabId}|${needle}|${filter}`);
+	const { rows: productRows, pager: productPager } = usePaginatedData(products, `${tabId}|${needle}|${filter}`);
 	const ownedCount = (current?.products || []).filter((product) => ownershipStatus(product) === true).length;
 	const entries = (0, import_react.useMemo)(() => resolveCart(cart, shop.tabs, maxQuantity, now), [
 		cart,
@@ -1616,8 +1608,6 @@ function Shop({ user, onUser, shop, onReload, onRefresh, onPurchase }) {
 				onQuery: setQ,
 				filter,
 				onFilter: setFilter,
-				pageSize,
-				onPageSize: setPageSize,
 				pager: products.length > 0 ? productPager : null,
 				loading: shop.loading,
 				onReload

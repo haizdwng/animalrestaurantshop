@@ -1159,8 +1159,16 @@
     width: 20%;
   }
 
+  .w-2 {
+    width: calc(var(--spacing) * 2);
+  }
+
   .w-2\/5 {
     width: 40%;
+  }
+
+  .w-3\.5 {
+    width: calc(var(--spacing) * 3.5);
   }
 
   .w-3\/4 {
@@ -1177,6 +1185,10 @@
 
   .w-6 {
     width: calc(var(--spacing) * 6);
+  }
+
+  .w-7 {
+    width: calc(var(--spacing) * 7);
   }
 
   .w-8 {
@@ -1223,8 +1235,8 @@
     width: calc(var(--spacing) * 27);
   }
 
-  .w-32 {
-    width: calc(var(--spacing) * 32);
+  .w-28 {
+    width: calc(var(--spacing) * 28);
   }
 
   .w-36 {
@@ -1287,8 +1299,8 @@
     max-width: calc(var(--spacing) * 24);
   }
 
-  .max-w-32 {
-    max-width: calc(var(--spacing) * 32);
+  .max-w-36 {
+    max-width: calc(var(--spacing) * 36);
   }
 
   .max-w-48 {
@@ -1361,6 +1373,10 @@
 
   .flex-\[1_1_14rem\] {
     flex: 14rem;
+  }
+
+  .shrink {
+    flex-shrink: 1;
   }
 
   .shrink-0 {
@@ -1464,16 +1480,8 @@
     grid-template-columns: repeat(7, minmax(0, 1fr));
   }
 
-  .grid-cols-\[1fr_auto\] {
-    grid-template-columns: 1fr auto;
-  }
-
   .grid-cols-\[auto_1fr\] {
     grid-template-columns: auto 1fr;
-  }
-
-  .grid-cols-\[minmax\(0\,1fr\)_auto\] {
-    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .grid-cols-\[repeat\(auto-fill\,minmax\(4\.5rem\,1fr\)\)\] {
@@ -2381,6 +2389,11 @@
     line-height: calc(var(--spacing) * 6);
   }
 
+  .leading-none {
+    --tw-leading: 1;
+    line-height: 1;
+  }
+
   .leading-relaxed {
     --tw-leading: var(--leading-relaxed);
     line-height: var(--leading-relaxed);
@@ -2958,26 +2971,6 @@
   }
 
   @media (min-width: 40rem) {
-    .sm\:order-last {
-      order: 9999;
-    }
-
-    .sm\:col-span-1 {
-      grid-column: span 1 / span 1;
-    }
-
-    .sm\:col-span-3 {
-      grid-column: span 3 / span 3;
-    }
-
-    .sm\:block {
-      display: block;
-    }
-
-    .sm\:contents {
-      display: contents;
-    }
-
     .sm\:flex {
       display: flex;
     }
@@ -3026,16 +3019,8 @@
       grid-template-columns: repeat(6, minmax(0, 1fr));
     }
 
-    .sm\:grid-cols-\[1fr_auto\] {
-      grid-template-columns: 1fr auto;
-    }
-
-    .sm\:grid-cols-\[1fr_auto_auto\] {
-      grid-template-columns: 1fr auto auto;
-    }
-
-    .sm\:grid-cols-\[auto_minmax\(0\,1fr\)_auto\] {
-      grid-template-columns: auto minmax(0, 1fr) auto;
+    .sm\:grid-cols-\[minmax\(0\,1fr\)_auto\] {
+      grid-template-columns: minmax(0, 1fr) auto;
     }
 
     .sm\:items-center {
@@ -3072,6 +3057,10 @@
 
     .sm\:p-8 {
       padding: calc(var(--spacing) * 8);
+    }
+
+    .sm\:px-3 {
+      padding-inline: calc(var(--spacing) * 3);
     }
 
     .sm\:px-4 {

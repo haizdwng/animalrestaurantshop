@@ -1,4 +1,4 @@
-import { Ut as toast, tn as createReactComponent } from "./index.js";
+import { Ht as toast, en as createReactComponent } from "./index.js";
 /**
 * @license @tabler/icons-react v3.52.0 - MIT
 *

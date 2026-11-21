@@ -1,5 +1,5 @@
 const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Avatar.js","assets/index.js","assets/index.css","assets/IconPhoto.js","assets/IconTrash.js","assets/clipboard.js"])))=>i.map(i=>d[i]);
-import { At as PagerSkeleton, Bt as Menu, Dt as SearchInput, Gt as Field, Ht as OtpButton, Jt as IconX, Kt as Button, Lt as PageSizeSelect, M as formatShortDateTime, N as formatVietnameseDong, O as compareByTime, Pt as Spinner, Rt as Select, Tt as Coin, Ut as toast, Vt as Dialog, Wt as toastError, Xt as IconRefresh, _t as updateUser, dt as getBuffetLink, ft as getFriendLink, ht as submitInvite, it as cancelTransaction, j as formatNumber, jt as RowSkeleton, k as formatDate, ln as require_react, mt as redeemGiftCode, nn as Badge, pt as openidOtp, rn as require_jsx_runtime, st as getTransactions, t as __vitePreload, tn as createReactComponent, un as __toESM, ut as changeOpenid, zt as SortSelect } from "./index.js";
+import { At as PagerSkeleton, Bt as Dialog, Dt as SearchInput, Gt as Button, Ht as toast, Lt as Select, M as formatShortDateTime, Mt as Skeleton, N as formatVietnameseDong, O as compareByTime, Pt as Spinner, Rt as SortSelect, Tt as Coin, Ut as toastError, Vt as OtpButton, Wt as Field, Yt as IconRefresh, _t as updateUser, cn as require_react, dt as getBuffetLink, en as createReactComponent, ft as getFriendLink, ht as submitInvite, it as cancelTransaction, j as formatNumber, jt as RowSkeleton, k as formatDate, ln as __toESM, mt as redeemGiftCode, nn as require_jsx_runtime, pt as openidOtp, qt as IconX, st as getTransactions, t as __vitePreload, tn as Badge, ut as changeOpenid, zt as Menu } from "./index.js";
 import { n as IconLock, r as IconCopy, t as copyText } from "./clipboard.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
 import { t as StrengthBar } from "./StrengthBar.js";
@@ -591,16 +591,16 @@ var TX_SORTS = [
 	]
 ];
 // src/features/account/TransactionFilters.jsx
-function TransactionFilters({ list, statuses, q, onQ, status, onStatus, size, onSize, sort, onSort }) {
+function TransactionFilters({ list, statuses, q, onQ, status, onStatus, sort, onSort }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "grid grid-cols-2 gap-2 border-b border-line p-3 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:px-5",
+		className: "grid grid-cols-2 gap-2 border-b border-line p-3 sm:px-5",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
 				label: "Tìm giao dịch",
 				placeholder: "Tìm theo mã giao dịch…",
 				value: q,
 				onChange: onQ,
-				className: "col-span-2 sm:col-span-3"
+				className: "col-span-2"
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Select, {
 				label: "Lọc trạng thái",
@@ -620,16 +620,10 @@ function TransactionFilters({ list, statuses, q, onQ, status, onStatus, size, on
 					]
 				}, key))]
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageSizeSelect, {
-				value: size,
-				onChange: onSize,
-				className: "sm:order-last"
-			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SortSelect, {
 				sorts: TX_SORTS,
 				value: sort,
-				onChange: onSort,
-				className: "col-span-2 sm:col-span-1"
+				onChange: onSort
 			})
 		]
 	});
@@ -771,7 +765,6 @@ function Transactions({ onPaid }) {
 	const [status, setStatus] = (0, import_react.useState)("all");
 	const [q, setQ] = (0, import_react.useState)("");
 	const [sort, setSort] = (0, import_react.useState)(TX_SORTS[0][0]);
-	const [size, setSize] = (0, import_react.useState)(10);
 	const statuses = (0, import_react.useMemo)(() => [.../* @__PURE__ */ new Set([...Object.keys(STATUS), ...(list || []).map((t) => t.status)])].filter(Boolean), [list]);
 	const shown = (0, import_react.useMemo)(() => {
 		if (!list) return list;
@@ -783,7 +776,7 @@ function Transactions({ onPaid }) {
 		sort,
 		q
 	]);
-	const { rows, pager } = usePaginatedData(shown, size, status + sort + q);
+	const { rows, pager } = usePaginatedData(shown, status + sort + q);
 	const update = (tx) => {
 		setList((l) => l?.map((t) => t.code === tx.code ? {
 			...t,
@@ -849,15 +842,13 @@ function Transactions({ onPaid }) {
 				onQ: setQ,
 				status,
 				onStatus: setStatus,
-				size,
-				onSize: setSize,
 				sort,
 				onSort: setSort
 			}),
 			!list && loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 				"aria-busy": "true",
 				className: "divide-y divide-line",
-				children: Array.from({ length: Math.min(size, 10) }).map((_, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, {
+				children: Array.from({ length: 10 }).map((_, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, {
 					kind: "transaction",
 					w: SKELETON_WIDTHS[i % 3]
 				}, i))
@@ -931,6 +922,34 @@ function getLoginStreakProgress({ streak = 0, claimedToday = false, canClaim = f
 	};
 }
 // src/features/account/LoginStreak.jsx
+function LoginStreakSkeleton() {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+		"aria-label": "Đang tải tiến trình đăng nhập",
+		"aria-busy": "true",
+		className: "ui-card space-y-4 p-4",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", {
+				className: "flex items-center gap-3",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-10 shrink-0 rounded-xl" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "min-w-0 flex-1 space-y-1.5",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3.5 w-28" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-40 max-w-full" })]
+				})]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "grid grid-cols-7 gap-1.5",
+				children: Array.from({ length: 7 }, (_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex min-w-0 flex-col items-center gap-1.5 rounded-lg border border-line bg-bg px-0.5 py-2",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-2" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-7 rounded-full" }),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-7 max-w-full" })
+					]
+				}, index))
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-8 w-full rounded-lg" })
+		]
+	});
+}
 function LoginStreak({ checkin, onClaim, onUser }) {
 	const { streak = 0, claimedToday = false, canClaim = false, nextReward = 5, rewards = [
 		5,
@@ -959,6 +978,7 @@ function LoginStreak({ checkin, onClaim, onUser }) {
 			toast(requestError?.message || "Không nhận được phần thưởng", "err");
 		}
 	};
+	if (!loaded && !error) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoginStreakSkeleton, {});
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 		className: "ui-card space-y-4 p-4",
 		children: [
