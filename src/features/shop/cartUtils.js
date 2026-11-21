@@ -7,7 +7,7 @@ const isOwned = (value) => value === true || (typeof value === 'number' && value
 
 export const isOwnedOnce = (product, group = product) => isOnce(product, group) && (isOwned(product?.owned) || (product !== group && group?.once === true && isOwned(group.owned)));
 
-export const isFullyOwned = (product, group = product) => isOwnedOnce(product, group) || (!isOnce(product, group) && optionMode(group) !== 'singleOptions' && product?.owned === true);
+export const isFullyOwned = (product, group = product) => isOwnedOnce(product, group) || (!isOnce(product, group) && optionMode(group) !== 'singleOptions' && product?.owned === true && product?.limit !== true && group?.limit !== true);
 
 const EXACT_BUY_KEYS = new Set(['money_skipAdCard', 'money_checkInCard', 'yuer', 'terrace_bottle', 'magnifier', 'freeWish', 'Ad_x15', 'pigeon_endTime', 'InviteCard', 'CallCard', 'seed', 'dreamSeed', 'BattleOrder15']);
 const BUY_PREFIXES = ['courtyard_21_', 'doll_', 'vt_', 'fish_', 'Garden_', 'shiwu_', 'wanju_', 'takeOutFood_', 'customer_', 'booth_', 'npc_', 'food_', 'buffetFood_', 'Musician_', 'avatar_', 'specialty_fish_', 'waimai_che_', 'Meorial_', 'Momorial_', 'Memoria_'];
@@ -47,7 +47,7 @@ export function getTimeMessage(product, group = product, now = Date.now()) {
   return '';
 };
 
-const normalizeLimit = (limit) => limit === undefined || limit === Infinity ? Infinity : Number.isSafeInteger(limit) && limit > 0 ? limit : 0;
+export const normalizeLimit = (limit) => limit === undefined ? Infinity : limit === true ? 1 : Number.isSafeInteger(limit) && limit >= 0 ? limit : 0;
 export const getPurchaseLimit = (product, group = product, accountLimit = 100) => Math.min(isFullyOwned(product, group) ? 0 : isOnce(product, group) ? 1 : Infinity, normalizeLimit(product?.limit), normalizeLimit(group?.limit), normalizeLimit(accountLimit));
 export function clampCartQuantity(value, limit = 100) {
   if (limit < 1) return 0;
@@ -106,7 +106,7 @@ export function isAvailable(product, group = product, conflicts = new Set(), now
 export function putInCart(cart, product, amount, category = '', accountLimit = 100,
   group = product, conflicts = new Set(), now = Date.now()) {
   if (!isAvailable(product, group, conflicts, now)) return cart;
-  const exclusive = optionMode(group) === 'singleOptions' || (optionMode(group) === 'multipleOptions' && group.limit === 1);
+  const exclusive = optionMode(group) === 'singleOptions' || (optionMode(group) === 'multipleOptions' && (group.limit === 1 || group.limit === true));
   const remainingCart = exclusive ? cart.filter((entry) => entry.groupKey !== group.key || entry.key === product.key) : cart;
   const limit = Math.min(getPurchaseLimit(product, group, accountLimit), getGroupRemaining(remainingCart, group, product.key));
   if (limit < 1) return cart;
@@ -170,14 +170,15 @@ function incrementOwned(product, amount, group = product) {
   if (typeof product.owned === 'number') return { ...product, owned: product.owned + amount };
   return product;
 };
-function incrementDollOwned(product, amount) {
+function applyPurchasedQuantity(product, amount, group = product) {
+  const updated = incrementOwned(product, amount, group);
+  if (typeof product.limit !== 'number') return updated;
   const remaining = Math.max(0, product.limit - amount);
-  const next = incrementOwned(product, amount);
-  if (remaining === 0) {
-    const { limit: unused, ...rest } = next;
-    return { ...rest, owned: true };
-  };
-  return { ...next, limit: remaining };
+  return { ...updated, limit: remaining, ...(product === group && remaining === 0 ? { owned: true } : {}) };
+};
+function applyGroupQuantity(group, amount) {
+  if (typeof group.limit !== 'number') return group;
+  return { ...group, limit: Math.max(0, group.limit - amount) };
 };
 
 export function applyPurchaseToTabs(tabs, purchasedItems) {
@@ -187,30 +188,32 @@ export function applyPurchaseToTabs(tabs, purchasedItems) {
     products: tab.products.map((group) => {
       if (!hasOptions(group)) {
         const amount = amounts.get(group.key);
-        if (!amount) return group;
-        return tab.id === 'dolls' ? incrementDollOwned(group, amount) : incrementOwned(group, amount);
+        return amount ? applyPurchasedQuantity(group, amount) : group;
       };
       const mode = optionMode(group);
       const options = productOptions(group);
       const purchased = options.filter((option) => amounts.has(option.key));
       if (!purchased.length) return group;
+      const groupAmount = purchased.reduce((total, option) => total + amounts.get(option.key), 0);
+      const nextGroup = applyGroupQuantity(group, groupAmount);
       if (mode === 'singleOptions') {
         const selected = purchased[0];
         return {
-          ...group,
-          owned: typeof group.owned === 'string' ? (selected.name || selected.key) : typeof group.owned === 'boolean' ? true : group.owned,
-          singleOptions: options.map((option) => ({
-            ...option,
-            owned: typeof option.owned === 'boolean' ? option.key === selected.key : (amounts.has(option.key) ? incrementOwned(option, amounts.get(option.key), group).owned : option.owned)
-          }))
+          ...nextGroup,
+          owned: typeof group.owned === 'string' ? (selected.name || selected.key) : typeof group.owned === 'boolean' ? true : typeof group.owned === 'number' ? group.owned + groupAmount : group.owned,
+          singleOptions: options.map((option) => {
+            const amount = amounts.get(option.key);
+            const updated = amount ? applyPurchasedQuantity(option, amount, group) : option;
+            return { ...updated, owned: typeof option.owned === 'boolean' ? option.key === selected.key : updated.owned };
+          })
         };
       };
       const updatedOptions = options.map((option) => {
         const amount = amounts.get(option.key);
-        return amount ? incrementOwned(option, amount, group) : option;
+        return amount ? applyPurchasedQuantity(option, amount, group) : option;
       });
       return {
-        ...group,
+        ...nextGroup,
         owned: typeof group.owned === 'number' && updatedOptions.every((option) => typeof option.owned === 'number') ? updatedOptions.reduce((sum, option) => sum + option.owned, 0) : group.owned,
         multipleOptions: updatedOptions
       };

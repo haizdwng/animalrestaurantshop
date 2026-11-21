@@ -29,9 +29,10 @@ export default function BuyDialog({ item, category, user, entries = [], cartTota
   const available = supported && !fullyOwned && !conflict && !blockedByConditions && time.available && hasValidPrice(selected);
   const conditions = selected ? getConditions(selected, item) : [];
   const mode = optionMode(item);
-  const exclusive = mode === 'singleOptions' || (mode === 'multipleOptions' && item.limit === 1);
-  const groupRoom = exclusive ? (Number.isSafeInteger(item.limit) ? item.limit : Infinity) : getGroupRemaining(entries, item, selected?.key);
+  const exclusive = mode === 'singleOptions' || (mode === 'multipleOptions' && (item.limit === 1 || item.limit === true));
+  const groupRoom = exclusive ? (item.limit === true ? 1 : Number.isSafeInteger(item.limit) ? item.limit : Infinity) : getGroupRemaining(entries, item, selected?.key);
   const limit = selected ? Math.min(getPurchaseLimit(selected, item, maxQuantity), groupRoom) : 0;
+  const remainingLifetime = Math.min(typeof selected?.limit === 'number' ? selected.limit : Infinity, typeof item?.limit === 'number' ? item.limit : Infinity);
   const quantity = !available || limit < 1 ? 0 : once ? 1 : clampCartQuantity(amount, limit);
   const total = hasValidPrice(selected) ? selected.price * quantity : 0;
   const replaced = exclusive ? entries.filter((entry) => entry.groupKey === item.key && entry.key !== selected?.key) : [];
@@ -106,6 +107,9 @@ export default function BuyDialog({ item, category, user, entries = [], cartTota
 
           {typeof selected.owned === 'number' && <p className='text-[11px] text-mute'>Số lượng đang có: {formatNumber(selected.owned)}</p>}
           {selected.owned === true && !once && !fullyOwned && limit >= 1 && <p className='rounded-lg border border-line bg-bg px-3 py-2 text-[11px] text-mute'>Đã sở hữu hoặc đang sử dụng. Vẫn có thể mua tiếp trong giới hạn còn lại.</p>}
+          {typeof selected.limit === 'number' || typeof item.limit === 'number' ? (
+            <p className='text-[11px] text-mute'>Còn có thể mua: {formatNumber(remainingLifetime)}</p>
+          ) : null}
 
           {conditions.length > 0 && (
             <div className='space-y-2 rounded-xl border border-line bg-bg p-3'>
@@ -130,7 +134,9 @@ export default function BuyDialog({ item, category, user, entries = [], cartTota
           ) : once ? (
             <div className='flex items-center gap-2 rounded-lg border border-line bg-bg px-3 py-2.5 text-[11px] text-mute'><IconLock size={15} /> Chỉ được sở hữu một lần</div>
           ) : limit === 1 ? (
-            <p className='rounded-lg border border-line bg-bg px-3 py-2.5 text-[11px] text-mute'>Mỗi lần mua tối đa 1 vật phẩm. Có thể mua lại ở lần tiếp theo.</p>
+            <p className='rounded-lg border border-line bg-bg px-3 py-2.5 text-[11px] text-mute'>
+              {remainingLifetime === 1 ? 'Chỉ còn 1 vật phẩm được phép mua. Mua xong sẽ đạt giới hạn.' : 'Mỗi lần mua tối đa 1 vật phẩm. Có thể mua tiếp ở đơn hàng sau.'}
+            </p>
           ) : (
             <QuantityPicker value={quantity} max={Math.max(1, limit)} disabled={!available || limit < 1} onChange={setAmount} onEnter={add} />
           )}

@@ -555,9 +555,10 @@ function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuant
 	const available = supported && !fullyOwned && !conflict && !blockedByConditions && time.available && hasValidPrice(selected);
 	const conditions = selected ? getConditions(selected, item) : [];
 	const mode = optionMode(item);
-	const exclusive = mode === "singleOptions" || mode === "multipleOptions" && item.limit === 1;
-	const groupRoom = exclusive ? Number.isSafeInteger(item.limit) ? item.limit : Infinity : getGroupRemaining(entries, item, selected?.key);
+	const exclusive = mode === "singleOptions" || mode === "multipleOptions" && (item.limit === 1 || item.limit === true);
+	const groupRoom = exclusive ? item.limit === true ? 1 : Number.isSafeInteger(item.limit) ? item.limit : Infinity : getGroupRemaining(entries, item, selected?.key);
 	const limit = selected ? Math.min(getPurchaseLimit(selected, item, maxQuantity), groupRoom) : 0;
+	const remainingLifetime = Math.min(typeof selected?.limit === "number" ? selected.limit : Infinity, typeof item?.limit === "number" ? item.limit : Infinity);
 	const quantity = !available || limit < 1 ? 0 : once ? 1 : clampCartQuantity(amount, limit);
 	const total = hasValidPrice(selected) ? selected.price * quantity : 0;
 	const replacedTotal = (exclusive ? entries.filter((entry) => entry.groupKey === item.key && entry.key !== selected?.key) : []).reduce((sum, entry) => sum + entry.total, 0);
@@ -686,6 +687,10 @@ function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuant
 				className: "rounded-lg border border-line bg-bg px-3 py-2 text-[11px] text-mute",
 				children: "Đã sở hữu hoặc đang sử dụng. Vẫn có thể mua tiếp trong giới hạn còn lại."
 			}),
+			typeof selected.limit === "number" || typeof item.limit === "number" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
+				className: "text-[11px] text-mute",
+				children: ["Còn có thể mua: ", formatNumber(remainingLifetime)]
+			}) : null,
 			conditions.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "space-y-2 rounded-xl border border-line bg-bg p-3",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
@@ -734,7 +739,7 @@ function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuant
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLock, { size: 15 }), " Chỉ được sở hữu một lần"]
 			}) : limit === 1 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 				className: "rounded-lg border border-line bg-bg px-3 py-2.5 text-[11px] text-mute",
-				children: "Mỗi lần mua tối đa 1 vật phẩm. Có thể mua lại ở lần tiếp theo."
+				children: remainingLifetime === 1 ? "Chỉ còn 1 vật phẩm được phép mua. Mua xong sẽ đạt giới hạn." : "Mỗi lần mua tối đa 1 vật phẩm. Có thể mua tiếp ở đơn hàng sau."
 			}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuantityPicker, {
 				value: quantity,
 				max: Math.max(1, limit),
@@ -882,7 +887,7 @@ function CartDialog({ open, entries, coins, ready, buying, requestPending = fals
 									children: "Chỉ mua một lần"
 								}) : limit === 1 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 									className: "text-[11px] text-mute",
-									children: "Mỗi lần mua 1"
+									children: Math.min(typeof entry.product.limit === "number" ? entry.product.limit : Infinity, typeof entry.group.limit === "number" ? entry.group.limit : Infinity) === 1 ? "Chỉ còn 1 có thể mua" : "Mỗi lần mua 1"
 								}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(QuantityPicker, {
 									compact: true,
 									value: entry.amount,

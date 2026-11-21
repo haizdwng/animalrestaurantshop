@@ -41,7 +41,7 @@ export default function CartDialog({ open, entries, coins, ready, buying, reques
                   {once ? (
                     <span className='text-[11px] text-mute'>Chỉ mua một lần</span>
                   ) : limit === 1 ? (
-                    <span className='text-[11px] text-mute'>Mỗi lần mua 1</span>
+                    <span className='text-[11px] text-mute'>{Math.min(typeof entry.product.limit === 'number' ? entry.product.limit : Infinity, typeof entry.group.limit === 'number' ? entry.group.limit : Infinity) === 1 ? 'Chỉ còn 1 có thể mua' : 'Mỗi lần mua 1'}</span>
                   ) : (
                     <QuantityPicker compact value={entry.amount} max={limit} disabled={buying} onChange={(value) => onQuantity(entry.key, value)} />
                   )}
