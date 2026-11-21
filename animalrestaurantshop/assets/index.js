@@ -14570,34 +14570,6 @@ var IconInfoCircle = /* @__PURE__ */ createReactComponent("outline", "info-circl
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var IconListNumbers = /* @__PURE__ */ createReactComponent("outline", "list-numbers", "ListNumbers", [
-	["path", {
-		"d": "M11 6h9",
-		"key": "svg-0"
-	}],
-	["path", {
-		"d": "M11 12h9",
-		"key": "svg-1"
-	}],
-	["path", {
-		"d": "M12 18h8",
-		"key": "svg-2"
-	}],
-	["path", {
-		"d": "M4 16a2 2 0 1 1 4 0c0 .591 -.5 1 -1 1.5l-3 2.5h4",
-		"key": "svg-3"
-	}],
-	["path", {
-		"d": "M6 10v-6l-2 2",
-		"key": "svg-4"
-	}]
-]);
-/**
-* @license @tabler/icons-react v3.52.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
 var IconLoader2 = /* @__PURE__ */ createReactComponent("outline", "loader-2", "Loader2", [["path", {
 	"d": "M12 3a9 9 0 1 0 9 9",
 	"key": "svg-0"
@@ -15092,49 +15064,84 @@ function Toaster() {
 	});
 }
 // src/shared/components/ui/OtpButton.jsx
+var COOLDOWN_MS = 6e4;
 function OtpButton({ send, target, onSent, check }) {
-	const [until, setUntil] = (0, import_react.useState)(0);
+	const [cooldown, setCooldown] = (0, import_react.useState)({
+		target: "",
+		until: 0
+	});
 	const [now, setNow] = (0, import_react.useState)(Date.now());
 	const [busy, setBusy] = (0, import_react.useState)(false);
-	const pending = useRequestPending();
-	const left = Math.max(0, Math.ceil((until - now) / 1e3));
+	const busyRef = (0, import_react.useRef)(false);
+	const currentTarget = (0, import_react.useRef)(target);
+	currentTarget.current = target;
+	const requestPending = useRequestPending();
+	const left = cooldown.target === target ? Math.max(0, Math.ceil((cooldown.until - now) / 1e3)) : 0;
 	(0, import_react.useEffect)(() => {
-		if (!left) return;
-		const t = setTimeout(() => setNow(Date.now()), 1e3);
-		return () => clearTimeout(t);
+		if (left <= 0) return;
+		const timer = setTimeout(() => setNow(Date.now()), 1e3);
+		return () => clearTimeout(timer);
 	}, [left, now]);
-	const onClick = async () => {
-		if (pending || busy || check && !check()) return;
+	const sendCode = async () => {
+		if (busyRef.current || getPendingRequestCount() > 0 || left > 0) return;
+		if (check && !check()) return;
+		const requestedTarget = target.trim();
+		if (!requestedTarget) return;
+		busyRef.current = true;
 		setBusy(true);
 		try {
-			const r = await send();
-			setUntil(r.resendAt ? +new Date(r.resendAt) : Date.now() + 6e4);
+			const response = await send();
+			if (currentTarget.current !== target) return;
+			const serverTime = response.resendAt ? new Date(response.resendAt).getTime() : NaN;
+			setCooldown({
+				target: requestedTarget,
+				until: Number.isFinite(serverTime) && serverTime > Date.now() ? serverTime : Date.now() + COOLDOWN_MS
+			});
 			setNow(Date.now());
-			toast(r.message || `Đã gửi mã xác thực tới ${target}`, "info");
+			toast(response.message || "Đã gửi mã xác thực", "info");
 			onSent?.();
-		} catch (e) {
-			if (e.retryAt) {
-				setUntil(+new Date(e.retryAt));
+		} catch (error) {
+			if (error.retryAt) {
+				const retryTime = new Date(error.retryAt).getTime();
+				if (Number.isFinite(retryTime)) setCooldown({
+					target: requestedTarget,
+					until: retryTime
+				});
 				setNow(Date.now());
 			}
-			toast(e.message, "err");
+			toast(error.message || "Không gửi được mã xác thực", "err");
 		} finally {
+			busyRef.current = false;
 			setBusy(false);
 		}
 	};
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 		type: "button",
-		disabled: left > 0 || busy || pending,
-		onClick,
+		onClick: sendCode,
+		disabled: requestPending || busy || left > 0,
 		"data-request-action": "",
-		className: "m-1 shrink-0 cursor-pointer rounded-md bg-lime px-3 text-[11px] font-bold text-bg transition hover:brightness-110 disabled:cursor-not-allowed disabled:bg-raise disabled:text-mute",
-		children: busy ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLoader2, {
+		"aria-label": left > 0 ? `Gửi lại mã sau ${left} giây` : "Gửi mã xác thực",
+		"aria-busy": busy || void 0,
+		title: left > 0 ? `Có thể gửi lại sau ${left} giây` : "Gửi mã xác thực",
+		className: "m-1 inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md bg-lime px-2.5 text-[11px] leading-none font-bold whitespace-nowrap text-bg transition-colors hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime disabled:cursor-not-allowed disabled:bg-raise disabled:text-mute sm:px-3",
+		children: [busy ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLoader2, {
 			size: 14,
-			className: "animate-spin"
-		}) : left ? `${left}s` : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-			className: "flex items-center gap-1.5",
-			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconSend, { size: 13 }), " Gửi mã xác thực"]
-		})
+			className: "animate-spin",
+			"aria-hidden": true
+		}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconSend, {
+			size: 14,
+			className: "shrink-0",
+			"aria-hidden": true
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+			"aria-live": left ? "off" : void 0,
+			children: busy ? "Đang gửi…" : left ? `${left}s` : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				className: "sm:hidden",
+				children: "Gửi mã"
+			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+				className: "hidden sm:inline",
+				children: "Gửi mã xác thực"
+			})] })
+		})]
 	});
 }
 // src/shared/components/ui/Dialog.jsx
@@ -15337,13 +15344,6 @@ function Menu({ items = [], label = "Tùy chọn", disabled = false }) {
 		})
 	}), document.body)] });
 }
-// src/shared/configuration/pagination.js
-var PAGE_SIZES = [
-	10,
-	20,
-	50,
-	100
-];
 // src/shared/components/ui/Select.jsx
 function Select({ id, value, onChange, Icon, label, className = "", children, disabled = false }) {
 	const generatedId = (0, import_react.useId)();
@@ -15353,7 +15353,7 @@ function Select({ id, value, onChange, Icon, label, className = "", children, di
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", {
 				htmlFor: selectId,
-				className: label ? "sr-only" : "sr-only",
+				className: "sr-only",
 				children: label || "Lựa chọn"
 			}),
 			Icon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
@@ -15388,23 +15388,11 @@ function SortSelect({ sorts, value, onChange, className }) {
 		}, key))
 	});
 }
-function PageSizeSelect({ value, onChange, className }) {
-	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Select, {
-		label: "Số dòng mỗi trang",
-		Icon: IconListNumbers,
-		value,
-		onChange: (size) => onChange(Number(size)),
-		className,
-		children: PAGE_SIZES.map((size) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", {
-			value: size,
-			children: [size, " / trang"]
-		}, size))
-	});
-}
 // src/shared/components/ui/Tabs.jsx
-function Tabs({ tabs, value, onChange, label = "Điều hướng danh mục" }) {
+function Tabs({ tabs, value, onChange, label = "Điều hướng danh mục", equal = false }) {
 	const containerRef = (0, import_react.useRef)(null);
 	(0, import_react.useEffect)(() => {
+		if (equal) return;
 		const container = containerRef.current;
 		const selected = [...container?.children || []].find((child) => child.getAttribute("aria-selected") === "true");
 		if (!container || !selected) return;
@@ -15413,18 +15401,18 @@ function Tabs({ tabs, value, onChange, label = "Điều hướng danh mục" }) 
 			left: Math.max(0, target),
 			behavior: "auto"
 		});
-	}, [value]);
+	}, [value, equal]);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 		ref: containerRef,
 		role: "tablist",
 		"aria-label": label,
-		className: "no-scrollbar flex w-full min-w-0 max-w-full gap-1 overflow-x-auto overscroll-x-contain rounded-xl border border-line bg-panel p-1",
+		className: `no-scrollbar w-full min-w-0 max-w-full gap-1 rounded-xl border border-line bg-panel p-1 ${equal ? "grid grid-cols-2" : "flex overflow-x-auto overscroll-x-contain"}`,
 		children: tabs.map(([key, title, Icon]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 			role: "tab",
 			type: "button",
 			"aria-selected": value === key,
 			onClick: () => onChange(key),
-			className: `ui-nav-item min-h-10 shrink-0 whitespace-nowrap ${value === key ? "bg-raise text-fg" : ""}`,
+			className: `ui-nav-item min-h-10 whitespace-nowrap ${equal ? "min-w-0 w-full shrink justify-center" : "shrink-0"} ${value === key ? "bg-raise text-fg" : ""}`,
 			children: [
 				Icon && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Icon, {
 					size: 16,
@@ -16271,7 +16259,7 @@ function Line({ h = "h-5", w = "w-1/2", bar = "h-3", className = "" }) {
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `${bar} ${w}` })
 	});
 }
-function RowSkeleton({ lead = true, trail, w = "w-2/5", kind = "list" }) {
+function RowSkeleton({ kind = "list", w = "w-2/5", lead = true, trail = null }) {
 	if (kind === "friend") return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
 		"aria-hidden": "true",
 		className: "flex min-w-0 items-center gap-3 p-3 sm:px-4",
@@ -16294,10 +16282,45 @@ function RowSkeleton({ lead = true, trail, w = "w-2/5", kind = "list" }) {
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			className: "min-w-0 flex-1 space-y-1.5",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "flex items-center gap-2",
+				className: "flex min-w-0 items-center gap-2",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3.5 w-24" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-5 w-20 rounded-md" })]
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `h-2.5 ${w}` })]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" })]
+	});
+	if (kind === "user") return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+		"aria-hidden": "true",
+		className: "flex min-w-0 items-center gap-3 px-4 py-3 sm:px-5",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "min-w-0 flex-1 space-y-1.5",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "flex min-w-0 items-center gap-2",
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `h-3.5 max-w-36 ${w}` }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-4 w-16 shrink-0 rounded-full" })]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-3/5" })]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "hidden shrink-0 items-center gap-1.5 sm:flex",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3.5 w-3.5 rounded-sm" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3.5 w-16" })]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" })
+		]
+	});
+	if (kind === "giftcode") return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
+		"aria-hidden": "true",
+		className: "flex min-w-0 items-center gap-3 px-4 py-3 sm:px-5",
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "min-w-0 flex-1 space-y-1.5",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `h-3.5 ${w}` }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-4/5" })]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				className: "hidden shrink-0 items-center gap-1.5 sm:flex",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3.5 w-3.5 rounded-sm" }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-3.5 w-16" })]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" })
+		]
 	});
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
 		"aria-hidden": "true",
@@ -16306,10 +16329,7 @@ function RowSkeleton({ lead = true, trail, w = "w-2/5", kind = "list" }) {
 			lead && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "min-w-0 flex-1 space-y-1.5",
-				children: [kind === "user" ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "flex min-w-0 items-center gap-2",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `h-3.5 max-w-32 ${w}` }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-4 w-16 shrink-0 rounded-full" })]
-				}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `h-3.5 ${w}` }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-3/5" })]
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: `h-3.5 ${w}` }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "h-2.5 w-3/5" })]
 			}),
 			trail,
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "size-9 shrink-0 rounded-lg" })
@@ -18058,4 +18078,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)({ md5: "b750a6e2b3d860ae46efcc050e03db3b" });
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
-export { adminRecord as $, IconChevronRight as $t, formatDateTime as A, PagerSkeleton as At, adminData as B, Menu as Bt, productOptions as C, fileToAvatar as Ct, unmetConditions as D, SearchInput as Dt, resolveCart as E, Logo as Et, adminAddPlayerFriend as F, Pager as Ft, adminEditGiftCode as G, Field as Gt, adminDeleteGiftCode as H, OtpButton as Ht, adminAddPlayerLike as I, Tabs as It, adminEncryptRecordValue as J, IconX as Jt, adminEditPlayer as K, Button as Kt, adminAddPlayerStar as L, PageSizeSelect as Lt, formatShortDateTime as M, Skeleton as Mt, formatVietnameseDong as N, ErrorState as Nt, compareByTime as O, JsonEditor as Ot, adminAddCoin as P, Spinner as Pt, adminPlayers as Q, IconCircleCheck as Qt, adminCreateGiftCode as R, Select as Rt, optionMode as S, signupOtp as St, removeCategoryFromCart as T, Coin as Tt, adminDeletePlayerFriend as U, toast as Ut, adminDecryptRecordValue as V, Dialog as Vt, adminDeleteUser as W, toastError as Wt, adminPlayer as X, IconRefresh as Xt, adminGiftCodes as Y, IconSearch as Yt, adminPlayerFriends as Z, IconInfoCircle as Zt, hasValidPrice as _, updateUser as _t, cartTotal as a, useLocation as an, createTransaction as at, isFullyOwned as b, resetPassword as bt, eligibleCategoryProducts as c, require_react_dom as cn, ADMIN_MAX_QTY as ct, getConflictingKeys as d, getBuffetLink as dt, IconAlertTriangle as en, adminSaveData as et, getGroupRemaining as f, getFriendLink as ft, hasOptions as g, updateAvatar as gt, getTimeStatus as h, submitInvite as ht, cartPayload as i, Outlet as in, cancelTransaction as it, formatNumber as j, RowSkeleton as jt, formatDate as k, Line as kt, formatShopDate as l, require_react as ln, buy as lt, getTimeMessage as m, redeemGiftCode as mt, addCategoryToCart as n, Badge as nn, adminUpdatePlayerAvatar as nt, changeCartQuantity as o, useNavigate as on, getTransaction as ot, getPurchaseLimit as p, openidOtp as pt, adminEditUser as q, useRequestPending as qt, cartCount as r, require_jsx_runtime as rn, adminUsers as rt, clampCartQuantity as s, useParams as sn, getTransactions as st, __vitePreload as t, createReactComponent as tn, adminSaveRecord as tt, getConditions as u, __toESM as un, changeOpenid as ut, isAvailable as v, login as vt, putInCart as w, isAdmin as wt, isOnce as x, signup as xt, isBuyItemsSupported as y, passwordOtp as yt, adminCreateUser as z, SortSelect as zt };
+export { adminRecord as $, IconAlertTriangle as $t, formatDateTime as A, PagerSkeleton as At, adminData as B, Dialog as Bt, productOptions as C, fileToAvatar as Ct, unmetConditions as D, SearchInput as Dt, resolveCart as E, Logo as Et, adminAddPlayerFriend as F, Pager as Ft, adminEditGiftCode as G, Button as Gt, adminDeleteGiftCode as H, toast as Ht, adminAddPlayerLike as I, Tabs as It, adminEncryptRecordValue as J, IconSearch as Jt, adminEditPlayer as K, useRequestPending as Kt, adminAddPlayerStar as L, Select as Lt, formatShortDateTime as M, Skeleton as Mt, formatVietnameseDong as N, ErrorState as Nt, compareByTime as O, JsonEditor as Ot, adminAddCoin as P, Spinner as Pt, adminPlayers as Q, IconChevronRight as Qt, adminCreateGiftCode as R, SortSelect as Rt, optionMode as S, signupOtp as St, removeCategoryFromCart as T, Coin as Tt, adminDeletePlayerFriend as U, toastError as Ut, adminDecryptRecordValue as V, OtpButton as Vt, adminDeleteUser as W, Field as Wt, adminPlayer as X, IconInfoCircle as Xt, adminGiftCodes as Y, IconRefresh as Yt, adminPlayerFriends as Z, IconCircleCheck as Zt, hasValidPrice as _, updateUser as _t, cartTotal as a, useNavigate as an, createTransaction as at, isFullyOwned as b, resetPassword as bt, eligibleCategoryProducts as c, require_react as cn, ADMIN_MAX_QTY as ct, getConflictingKeys as d, getBuffetLink as dt, createReactComponent as en, adminSaveData as et, getGroupRemaining as f, getFriendLink as ft, hasOptions as g, updateAvatar as gt, getTimeStatus as h, submitInvite as ht, cartPayload as i, useLocation as in, cancelTransaction as it, formatNumber as j, RowSkeleton as jt, formatDate as k, Line as kt, formatShopDate as l, __toESM as ln, buy as lt, getTimeMessage as m, redeemGiftCode as mt, addCategoryToCart as n, require_jsx_runtime as nn, adminUpdatePlayerAvatar as nt, changeCartQuantity as o, useParams as on, getTransaction as ot, getPurchaseLimit as p, openidOtp as pt, adminEditUser as q, IconX as qt, cartCount as r, Outlet as rn, adminUsers as rt, clampCartQuantity as s, require_react_dom as sn, getTransactions as st, __vitePreload as t, Badge as tn, adminSaveRecord as tt, getConditions as u, changeOpenid as ut, isAvailable as v, login as vt, putInCart as w, isAdmin as wt, isOnce as x, signup as xt, isBuyItemsSupported as y, passwordOtp as yt, adminCreateUser as z, Menu as zt };

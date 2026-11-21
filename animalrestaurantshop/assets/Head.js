@@ -1,4 +1,4 @@
-import { Kt as Button, ln as require_react, rn as require_jsx_runtime, un as __toESM } from "./index.js";
+import { Gt as Button, cn as require_react, ln as __toESM, nn as require_jsx_runtime } from "./index.js";
 // src/features/administration/Head.jsx
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 var import_jsx_runtime = require_jsx_runtime();

@@ -1,9 +1,9 @@
 import { IconRefresh } from '@tabler/icons-react';
 import { formatNumber } from '@/shared/library/format';
-import { Button, PageSizeSelect, SearchInput, Select, Skeleton, Spinner } from '@/shared/components/ui';
+import { Button, SearchInput, Select, Skeleton, Spinner } from '@/shared/components/ui';
 import { SHOP_FILTER_OPTIONS } from '@/features/shop/shopFilters';
 
-export function ShopToolbarLayout({ title, description, search, filter, pageSize, pager, reload }) {
+export function ShopToolbarLayout({ title, description, search, filter, pager, reload }) {
   return (
     <header className='mb-4 space-y-3'>
       <div className='min-w-0'>
@@ -13,7 +13,6 @@ export function ShopToolbarLayout({ title, description, search, filter, pageSize
       <div role='group' aria-label='Công cụ cửa hàng' className='flex min-w-0 flex-wrap items-center gap-2 xl:flex-nowrap'>
         <div className='min-w-40 flex-[1_1_14rem]'>{search}</div>
         <div className='min-w-38 flex-[1_1_9.5rem] sm:max-w-44 xl:flex-none'>{filter}</div>
-        <div className='w-32 shrink-0'>{pageSize}</div>
         {pager && <div className='min-w-58 flex-[1_1_14.5rem] xl:ml-auto xl:flex-none'>{pager}</div>}
         <div className='shrink-0'>{reload}</div>
       </div>
@@ -28,7 +27,6 @@ export function ShopToolbarSkeleton() {
       description={<div className='mt-1 flex h-4 items-center'><Skeleton className='h-2.5 w-48 max-w-full' /></div>}
       search={<Skeleton className='h-10 w-full rounded-lg' />}
       filter={<Skeleton className='h-10 w-full rounded-lg' />}
-      pageSize={<Skeleton className='h-10 w-full rounded-lg' />}
       pager={
         <div className='flex min-h-10 items-center justify-between gap-2 xl:justify-end'>
           <Skeleton className='h-3 w-18 shrink-0' />
@@ -44,7 +42,7 @@ export function ShopToolbarSkeleton() {
   );
 };
 
-export default function ShopToolbar({ title, count, ownedCount, query, onQuery, filter, onFilter, pageSize, onPageSize, pager, loading, onReload }) {
+export default function ShopToolbar({ title, count, ownedCount, query, onQuery, filter, onFilter, pager, loading, onReload }) {
   return (
     <ShopToolbarLayout
       title={<h1 className='ui-heading'>{title || 'Cửa hàng'}</h1>}
@@ -60,7 +58,6 @@ export default function ShopToolbar({ title, count, ownedCount, query, onQuery, 
           {SHOP_FILTER_OPTIONS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
         </Select>
       }
-      pageSize={<PageSizeSelect value={pageSize} onChange={onPageSize} className='w-full' />}
       pager={pager}
       reload={
         <Button variant='ghost' className='size-10! min-h-10! max-h-10! min-w-10! max-w-10! p-0!' onClick={onReload} requestAction disabled={loading} aria-label='Tải lại cửa hàng' title='Tải lại dữ liệu cửa hàng'>

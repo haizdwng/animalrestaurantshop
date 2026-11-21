@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { IconRefresh, IconSearch, IconUserPlus } from '@tabler/icons-react';
-import { EMPTY_USER_FORM, USER_PAGE_SIZE, USER_SORTS } from '@/features/administration/config';
-import { Button, ErrorState, PagerSkeleton, PageSizeSelect, RowSkeleton, Skeleton, SortSelect, Spinner, toast, toastError } from '@/shared/components/ui';
+import { EMPTY_USER_FORM, USER_SORTS } from '@/features/administration/config';
+import { Button, ErrorState, PagerSkeleton, RowSkeleton, SortSelect, Spinner, toast, toastError } from '@/shared/components/ui';
 import { validate } from '@/shared/library/validate';
 import usePaginatedData from '@/shared/hooks/usePaginatedData';
 import useRemoteResource from '@/shared/hooks/useRemoteResource';
@@ -17,7 +17,6 @@ export default function AdminUsers() {
   const { data: list, loading, error, reload: load } = useRemoteResource(async () => (await api.adminUsers()).users);
   const [q, setQ] = useState('');
   const [sort, setSort] = useState(USER_SORTS[0][0]);
-  const [size, setSize] = useState(USER_PAGE_SIZE);
   const [dlg, setDlg] = useState(null);
   const [f, setF] = useState(EMPTY_USER_FORM);
   const [busy, setBusy] = useState(false);
@@ -28,7 +27,7 @@ export default function AdminUsers() {
     const comparator = USER_SORTS.find((x) => x[0] === sort)?.[2] || USER_SORTS[0][2];
     return hit && [...hit].sort(comparator);
   }, [list, q, sort]);
-  const { rows, pager } = usePaginatedData(shown, size, q + sort);
+  const { rows, pager } = usePaginatedData(shown, q + sort);
 
   const open = (kind, user) => {
     setF(kind === 'edit' ? { ...EMPTY_USER_FORM, openid: user.openid ?? '', username: user.username ?? '' } : EMPTY_USER_FORM);
@@ -89,22 +88,19 @@ export default function AdminUsers() {
         </div>
       </Head>
 
-      <div className='grid gap-2 sm:grid-cols-[1fr_auto_auto]'>
+      <div className='grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]'>
         <label className='flex h-10 items-center gap-2 rounded-lg border border-line bg-panel px-3 focus-within:border-lime'>
           <IconSearch size={15} className='text-mute' />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder='Tìm tên đăng nhập, mã người chơi,…' className='min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-mute/50 sm:text-sm' />
         </label>
-        <div className='grid grid-cols-[1fr_auto] gap-2 sm:contents'>
-          <SortSelect sorts={USER_SORTS} value={sort} onChange={setSort} />
-          <PageSizeSelect value={size} onChange={setSize} />
-        </div>
+        <SortSelect sorts={USER_SORTS} value={sort} onChange={setSort} />
       </div>
 
       {!list && loading ? (
         <>
           <ul aria-busy='true' className='divide-y divide-line rounded-2xl border border-line bg-panel'>
-            {Array.from({ length: Math.min(size, 10) }).map((_, i) => (
-              <RowSkeleton kind='user' key={i} w={SKELETON_WIDTHS[i % 3]} trail={<Skeleton className='hidden h-3.5 w-14 sm:block' />} />
+            {Array.from({ length: 10 }).map((_, i) => (
+              <RowSkeleton kind='user' key={i} w={SKELETON_WIDTHS[i % 3]} />
             ))}
           </ul>
           <PagerSkeleton />

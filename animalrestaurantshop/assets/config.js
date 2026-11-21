@@ -1,4 +1,4 @@
-import { O as compareByTime, tn as createReactComponent } from "./index.js";
+import { O as compareByTime, en as createReactComponent } from "./index.js";
 import { n as IconMusic, r as IconDeviceGamepad2, t as IconUsers } from "./IconUsers.js";
 import { t as IconUser } from "./IconUser.js";
 /**

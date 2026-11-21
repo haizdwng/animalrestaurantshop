@@ -2,19 +2,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { IconPlus, IconRefresh, IconStarFilled, IconTrash, IconUser } from '@tabler/icons-react';
 import { formatNumber } from '@/shared/library/format';
 import Tile from '@/features/shop/Tile';
-import { Button, Dialog, ErrorState, Field, PageSizeSelect, PagerSkeleton, RowSkeleton, SearchInput, Spinner, toast, toastError } from '@/shared/components/ui';
+import { Button, Dialog, ErrorState, Field, PagerSkeleton, RowSkeleton, SearchInput, Spinner, toast, toastError } from '@/shared/components/ui';
 import Head from '@/features/administration/Head';
 import usePaginatedData from '@/shared/hooks/usePaginatedData';
 import * as api from '@/shared/library/api';
-
-const DEFAULT_PAGE_SIZE = 10;
 
 export default function PlayerFriends({ openid }) {
   const [friends, setFriends] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
-  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [addOpen, setAddOpen] = useState(false);
   const [friendId, setFriendId] = useState('');
   const [adding, setAdding] = useState(false);
@@ -51,7 +48,7 @@ export default function PlayerFriends({ openid }) {
     const search = query.trim().toLowerCase();
     return !search || `${friend.nickName || ''} ${friend.openid || ''}`.toLowerCase().includes(search);
   }), [friends, query]);
-  const { rows, pager } = usePaginatedData(filtered, pageSize, `${openid}|${query}`);
+  const { rows, pager } = usePaginatedData(filtered, `${openid}|${query}`);
 
   const addFriend = async (event) => {
     event.preventDefault();
@@ -92,22 +89,20 @@ export default function PlayerFriends({ openid }) {
   return (
     <section className='min-w-0 space-y-4'>
       <Head title='Danh sách bạn bè' sub={friends ? `${friends.length.toLocaleString('vi-VN')} bạn bè` : 'Đang tải danh sách…'}>
-        <Button variant='ghost' size='sm' className='size-9! p-0!' title='Tải lại bạn bè' aria-label='Tải lại bạn bè' onClick={loadFriends} requestAction disabled={loading}> {loading ? <Spinner size={16} /> : <IconRefresh size={17} />}
+        <Button variant='ghost' size='sm' className='size-9! p-0!' title='Tải lại bạn bè' aria-label='Tải lại bạn bè' onClick={loadFriends} requestAction disabled={loading}>
+          {loading ? <Spinner size={16} /> : <IconRefresh size={17} />}
         </Button>
         <Button size='sm' className='size-9! p-0!' title='Thêm bạn bè' aria-label='Thêm bạn bè' onClick={() => setAddOpen(true)}>
           <IconPlus size={18} />
         </Button>
       </Head>
 
-      <div className='grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2'>
-        <SearchInput label='Tìm bạn bè' placeholder='Tìm tên hoặc mã bạn bè…' value={query} onChange={setQuery} />
-        <div className='w-32'><PageSizeSelect value={pageSize} onChange={setPageSize} /></div>
-      </div>
+      <SearchInput label='Tìm bạn bè' placeholder='Tìm tên hoặc mã bạn bè…' value={query} onChange={setQuery} />
 
       {friends === null && loading ? (
         <>
           <ul aria-busy='true' className='divide-y divide-line overflow-hidden rounded-2xl border border-line bg-panel'>
-            {Array.from({ length: Math.min(pageSize, 10) }, (_, index) => <RowSkeleton kind='friend' key={index} />)}
+            {Array.from({ length: 10 }, (_, index) => <RowSkeleton kind='friend' key={index} />)}
           </ul>
           <PagerSkeleton />
         </>
@@ -125,9 +120,7 @@ export default function PlayerFriends({ openid }) {
                   <IconStarFilled size={12} /> {formatNumber(Number(friend.starSum || 0))} sao
                 </p>
               </div>
-              <Button variant='quiet' size='sm' className='size-9! shrink-0 p-0! text-bad! hover:bg-bad/10'
-                onClick={() => setRemoveTarget(friend)} title={`Xóa bạn bè ${friend.nickName || friend.openid}`}
-                aria-label={`Xóa ${friend.nickName || friend.openid} khỏi danh sách bạn bè`}>
+              <Button variant='quiet' size='sm' className='size-9! shrink-0 p-0! text-bad! hover:bg-bad/10' onClick={() => setRemoveTarget(friend)} title={`Xóa bạn bè ${friend.nickName || friend.openid}`} aria-label={`Xóa ${friend.nickName || friend.openid} khỏi danh sách bạn bè`}>
                 <IconTrash size={17} />
               </Button>
             </li>

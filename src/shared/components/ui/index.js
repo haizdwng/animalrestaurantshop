@@ -5,7 +5,7 @@ export { default as OtpButton } from '@/shared/components/ui/OtpButton';
 export { default as Dialog } from '@/shared/components/ui/Dialog';
 export { default as Toaster, toast, toastError } from '@/shared/components/ui/Toast';
 export { default as Menu } from '@/shared/components/ui/Menu';
-export { default as Select, SortSelect, PageSizeSelect } from '@/shared/components/ui/Select';
+export { default as Select, SortSelect } from '@/shared/components/ui/Select';
 export { default as Tabs } from '@/shared/components/ui/Tabs';
 export { default as Pager } from '@/shared/components/ui/Pager';
 export { default as JsonEditor } from '@/shared/components/ui/JsonEditor';

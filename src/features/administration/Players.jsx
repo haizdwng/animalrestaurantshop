@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconArrowLeft, IconArrowRight, IconRefresh, IconSearch } from '@tabler/icons-react';
-import { Button, Dialog, ErrorState, Field, JsonEditor, PageSizeSelect, PagerSkeleton, Spinner, Tabs, toast, toastError } from '@/shared/components/ui';
-import { PLAYER_PAGE_SIZE, PLAYER_TABS } from '@/features/administration/config';
+import { Button, Dialog, ErrorState, Field, JsonEditor, PagerSkeleton, Spinner, Tabs, toast, toastError } from '@/shared/components/ui';
+import { PLAYER_TABS } from '@/features/administration/config';
 import PlayerCard, { PlayerCardSkeleton } from '@/features/administration/PlayerCard';
 import RecordCrypto from '@/features/administration/RecordCrypto';
 import PlayerFriends from '@/features/administration/PlayerFriends';
@@ -25,7 +25,6 @@ export default function AdminPlayers() {
   const [dialog, setDialog] = useState(null);
   const [busy, setBusy] = useState(false);
   const [manualOpen, setManualOpen] = useState(false);
-  const [size, setSize] = useState(PLAYER_PAGE_SIZE);
 
   const currentSection = PLAYER_SECTIONS.includes(section) ? section : 'player';
 
@@ -33,7 +32,7 @@ export default function AdminPlayers() {
     const needle = query.trim().toLowerCase();
     return (list || []).filter((person) => !needle || [person.nickName, person.openid].some((value) => String(value || '').toLowerCase().includes(needle)));
   }, [list, query]);
-  const { rows, pager } = usePaginatedData(shown, size, query);
+  const { rows, pager } = usePaginatedData(shown, query);
 
   const loadPlayer = useCallback(async (id) => {
     if (!id) return;
@@ -155,17 +154,16 @@ export default function AdminPlayers() {
             <Button size='sm' onClick={() => setManualOpen(true)} aria-label='Mở tra cứu người chơi'><IconSearch size={14} /> Mã người chơi</Button>
           </div>
         </Head>
-        <div className='grid gap-2 sm:grid-cols-[1fr_auto]'>
+        <div>
           <label className='flex h-10 items-center gap-2 rounded-lg border border-line bg-panel px-3 focus-within:border-lime'>
             <IconSearch size={15} className='text-mute' />
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder='Tìm tên người chơi, mã người chơi…' className='min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-mute/50 sm:text-sm' />
           </label>
-          <PageSizeSelect value={size} onChange={setSize} />
         </div>
         {!list && listLoading ? (
           <>
             <ul aria-busy='true' className='divide-y divide-line rounded-2xl border border-line bg-panel'>
-              {Array.from({ length: Math.min(size, 10) }).map((_, index) => <PlayerRowSkeleton key={index} />)}
+              {Array.from({ length: 10 }).map((_, index) => <PlayerRowSkeleton key={index} />)}
             </ul>
             <PagerSkeleton />
           </>

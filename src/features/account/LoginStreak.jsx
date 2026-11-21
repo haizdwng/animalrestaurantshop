@@ -1,8 +1,32 @@
 import { IconCalendarCheck, IconGift } from '@tabler/icons-react';
-import { Badge, Button, Coin, toast } from '@/shared/components/ui';
+import { Badge, Button, Coin, Skeleton, toast } from '@/shared/components/ui';
 import { formatNumber } from '@/shared/library/format';
 import { CHECKIN_DAYS } from '@/shared/library/api/checkin';
 import { getLoginStreakProgress } from '@/features/account/loginStreakProgress';
+
+function LoginStreakSkeleton() {
+  return (
+    <section aria-label='Đang tải tiến trình đăng nhập' aria-busy='true' className='ui-card space-y-4 p-4'>
+      <header className='flex items-center gap-3'>
+        <Skeleton className='size-10 shrink-0 rounded-xl' />
+        <div className='min-w-0 flex-1 space-y-1.5'>
+          <Skeleton className='h-3.5 w-28' />
+          <Skeleton className='h-2.5 w-40 max-w-full' />
+        </div>
+      </header>
+      <div className='grid grid-cols-7 gap-1.5'>
+        {Array.from({ length: 7 }, (_, index) => (
+          <div key={index} className='flex min-w-0 flex-col items-center gap-1.5 rounded-lg border border-line bg-bg px-0.5 py-2'>
+            <Skeleton className='h-2.5 w-2' />
+            <Skeleton className='size-7 rounded-full' />
+            <Skeleton className='h-2.5 w-7 max-w-full' />
+          </div>
+        ))}
+      </div>
+      <Skeleton className='h-8 w-full rounded-lg' />
+    </section>
+  );
+};
 
 export default function LoginStreak({ checkin, onClaim, onUser }) {
   const { streak = 0, claimedToday = false, canClaim = false, nextReward = 5, rewards = [5, 5, 5, 5, 5, 5, 30], loading = false, claiming = false, error = '', loaded = false } = checkin || {};
@@ -20,6 +44,8 @@ export default function LoginStreak({ checkin, onClaim, onUser }) {
       toast(requestError?.message || 'Không nhận được phần thưởng', 'err');
     };
   };
+
+  if (!loaded && !error) return <LoginStreakSkeleton />;
 
   return (
     <section className='ui-card space-y-4 p-4'>

@@ -4,7 +4,7 @@ import { formatVietnameseDong } from '@/shared/library/format';
 import { Button, Dialog, PagerSkeleton, RowSkeleton, Spinner, toast, toastError } from '@/shared/components/ui';
 import PaymentDialog from '@/shared/components/payment/PaymentDialog';
 import { STATUS } from '@/shared/components/payment/StatusBadge';
-import { TX_PAGE_SIZE, TX_SORTS } from '@/features/account/config';
+import { TX_SORTS } from '@/features/account/config';
 import usePaginatedData from '@/shared/hooks/usePaginatedData';
 import useRemoteResource from '@/shared/hooks/useRemoteResource';
 import TransactionFilters from '@/features/account/TransactionFilters';
@@ -35,7 +35,6 @@ export default function Transactions({ onPaid }) {
   const [status, setStatus] = useState('all');
   const [q, setQ] = useState('');
   const [sort, setSort] = useState(TX_SORTS[0][0]);
-  const [size, setSize] = useState(TX_PAGE_SIZE);
 
   const statuses = useMemo(() => [...new Set([...Object.keys(STATUS), ...(list || []).map((t) => t.status)])].filter(Boolean), [list]);
   const shown = useMemo(() => {
@@ -43,7 +42,7 @@ export default function Transactions({ onPaid }) {
     const comparator = TX_SORTS.find((x) => x[0] === sort)?.[2] || TX_SORTS[0][2];
     return list.filter((t) => (status === 'all' || t.status === status) && String(t.code ?? '').toLowerCase().includes(q.trim().toLowerCase())).sort(comparator);
   }, [list, status, sort, q]);
-  const { rows, pager } = usePaginatedData(shown, size, status + sort + q);
+  const { rows, pager } = usePaginatedData(shown, status + sort + q);
 
   const update = (tx) => {
     setList((l) => l?.map((t) => (t.code === tx.code ? { ...t, ...tx } : t)));
@@ -79,11 +78,11 @@ export default function Transactions({ onPaid }) {
           {loading ? <Spinner size={14} /> : <IconRefresh size={14} />}
         </Button>
       </h3>
-      {(list?.length > 0 || (!list && loading)) && <TransactionFilters list={list} statuses={statuses} q={q} onQ={setQ} status={status} onStatus={setStatus} size={size} onSize={setSize} sort={sort} onSort={setSort} />}
+      {(list?.length > 0 || (!list && loading)) && <TransactionFilters list={list} statuses={statuses} q={q} onQ={setQ} status={status} onStatus={setStatus} sort={sort} onSort={setSort} />}
       {!list && loading ? (
         <>
           <ul aria-busy='true' className='divide-y divide-line'>
-            {Array.from({ length: Math.min(size, 10) }).map((_, i) => (
+            {Array.from({ length: 10 }).map((_, i) => (
               <RowSkeleton kind='transaction' key={i} w={SKELETON_WIDTHS[i % 3]} />
             ))}
           </ul>

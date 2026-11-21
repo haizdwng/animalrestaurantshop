@@ -1,9 +1,10 @@
 import { Skeleton } from '@/shared/components/ui';
 import { ShopToolbarSkeleton } from '@/features/shop/ShopToolbar';
+import { PAGE_SIZE } from '@/shared/configuration/pagination';
 
 function ProductItemSkeleton({ index }) {
   return (
-    <li>
+    <li aria-hidden='true'>
       <div className='ui-panel flex min-h-20 w-full items-center gap-3 p-3'>
         <Skeleton className='size-12 shrink-0 rounded-xl' />
         <div className='min-w-0 flex-1 space-y-1.5'>
@@ -29,7 +30,7 @@ export default function ShopSkeleton() {
         <Skeleton className='h-8 w-36 rounded-lg' />
       </div>
       <ul className='grid gap-2 sm:grid-cols-2 xl:grid-cols-3'>
-        {Array.from({ length: 20 }, (_, index) => <ProductItemSkeleton key={index} index={index} />)}
+        {Array.from({ length: PAGE_SIZE }, (_, index) => <ProductItemSkeleton key={index} index={index} />)}
       </ul>
     </section>
   );

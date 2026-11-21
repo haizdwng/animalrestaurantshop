@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { IconGift, IconPencil, IconPlus, IconRefresh, IconTrash } from '@tabler/icons-react';
-import { Button, Coin, Dialog, ErrorState, Field, Menu, PageSizeSelect, PagerSkeleton, RowSkeleton, SearchInput, Skeleton, Spinner, toast, toastError } from '@/shared/components/ui';
+import { Button, Coin, Dialog, ErrorState, Field, Menu, PagerSkeleton, RowSkeleton, SearchInput, Spinner, toast, toastError } from '@/shared/components/ui';
 import { formatDateTime, formatNumber } from '@/shared/library/format';
-import { EMPTY_GIFT_CODE, GIFT_CODE_PAGE_SIZE } from '@/features/administration/config';
+import { EMPTY_GIFT_CODE } from '@/features/administration/config';
 import Head from '@/features/administration/Head';
 import usePaginatedData from '@/shared/hooks/usePaginatedData';
 import useRemoteResource from '@/shared/hooks/useRemoteResource';
@@ -37,7 +37,6 @@ const identicalIds = (left, right) => left.length === right.length && left.every
 
 function UserAssignment({ title, description, users, usersLoading, selected, onChange }) {
   const [query, setQuery] = useState('');
-  const [pageSize, setPageSize] = useState(GIFT_CODE_PAGE_SIZE);
   const selectedSet = useMemo(() => new Set(selected), [selected]);
   const available = useMemo(() => (users || []).filter((user) => {
     const text = `${user.username || ''} ${user.playerName || user.name || ''} ${user.openid || ''} ${userId(user)}`.toLowerCase();
@@ -45,8 +44,8 @@ function UserAssignment({ title, description, users, usersLoading, selected, onC
   }), [users, selectedSet, query]);
   const userLookup = useMemo(() => new Map((users || []).map((user) => [userId(user), user])), [users]);
   const selectedUsers = useMemo(() => selected.map((id) => userLookup.get(id) || { _id: id }), [selected, userLookup]);
-  const { rows: selectedRows, pager: selectedPager } = usePaginatedData(selectedUsers, pageSize, `selected|${selected.join('|')}`);
-  const { rows: availableRows, pager: availablePager } = usePaginatedData(available, pageSize, `available|${query}|${selected.join('|')}`);
+  const { rows: selectedRows, pager: selectedPager } = usePaginatedData(selectedUsers, `selected|${selected.join('|')}`);
+  const { rows: availableRows, pager: availablePager } = usePaginatedData(available, `available|${query}|${selected.join('|')}`);
 
   return (
     <section className='min-w-0 space-y-3 rounded-xl border border-line bg-bg p-3'>
@@ -55,7 +54,6 @@ function UserAssignment({ title, description, users, usersLoading, selected, onC
           <h3 className='text-xs font-bold'>{title}</h3>
           <p className='mt-1 text-[11px] text-mute'>{description}</p>
         </div>
-        <div className='w-32 shrink-0'><PageSizeSelect value={pageSize} onChange={setPageSize} /></div>
       </div>
       <div className='space-y-2'>
         <p className='text-[11px] font-semibold text-mute'>Đã thêm: {selectedUsers.length.toLocaleString('vi-VN')}</p>
@@ -132,7 +130,6 @@ export default function GiftCodes() {
   const { data: users, loading: usersLoading, error: usersError, reload: reloadUsers } = useRemoteResource(async () => (await api.adminUsers()).users);
   const { data: list, loading, error, reload: load } = useRemoteResource(async () => (await api.adminGiftCodes()).giftcodes, Array.isArray(users));
   const [query, setQuery] = useState('');
-  const [pageSize, setPageSize] = useState(GIFT_CODE_PAGE_SIZE);
   const [dialog, setDialog] = useState(null);
   const [form, setForm] = useState(EMPTY_GIFT_CODE);
   const [busy, setBusy] = useState(false);
@@ -143,7 +140,7 @@ export default function GiftCodes() {
     const search = query.trim().toLowerCase();
     return list?.filter((entry) => !search || String(entry.code ?? '').toLowerCase().includes(search));
   }, [list, query]);
-  const { rows, pager } = usePaginatedData(matching, pageSize, query);
+  const { rows, pager } = usePaginatedData(matching, query);
   const close = () => !busy && setDialog(null);
   const openCreate = () => {
     setForm(EMPTY_GIFT_CODE);
@@ -220,15 +217,12 @@ export default function GiftCodes() {
             <Button size='sm' onClick={openCreate} disabled={!Array.isArray(users)} aria-label='Thêm mã đổi thưởng'><IconPlus size={17} /> Thêm mã đổi thưởng</Button>
           </div>
         </Head>
-        <div className='grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2'>
-          <SearchInput value={query} onChange={setQuery} label='Tìm mã đổi thưởng' placeholder='Tìm mã đổi thưởng…' />
-          <div className='w-32'><PageSizeSelect value={pageSize} onChange={setPageSize} /></div>
-        </div>
+        <SearchInput value={query} onChange={setQuery} label='Tìm mã đổi thưởng' placeholder='Tìm mã đổi thưởng…' />
         {!users && usersError ? <ErrorState message={usersError} onRetry={reloadUsers} loading={usersLoading} /> : !list && (loading || usersLoading) ? (
           <>
             <ul aria-busy='true' className='divide-y divide-line rounded-2xl border border-line bg-panel'>
-              {Array.from({ length: Math.min(pageSize, 10) }).map((_, index) => (
-                <RowSkeleton key={index} w={index % 2 ? 'w-1/3' : 'w-1/4'} trail={<Skeleton className='hidden h-3.5 w-14 sm:block' />} />
+              {Array.from({ length: 10 }).map((_, index) => (
+                <RowSkeleton kind='giftcode' key={index} w={index % 2 ? 'w-1/3' : 'w-1/4'} />
               ))}
             </ul>
             <PagerSkeleton />
@@ -236,8 +230,7 @@ export default function GiftCodes() {
         ) : !list && error ? <ErrorState message={error} onRetry={load} loading={loading} /> : matching?.length ? (
           <ul className={`divide-y divide-line rounded-2xl border border-line bg-panel transition-opacity ${loading ? 'opacity-50' : ''}`}>
             {rows.map((giftcode, index) => (
-              <GiftCodeRow key={`${giftcode.code || 'giftcode'}-${index}`} giftcode={giftcode}
-                onEdit={() => openEdit(giftcode)} onDelete={() => setDialog({ kind: 'delete', giftcode })} />
+              <GiftCodeRow key={`${giftcode.code || 'giftcode'}-${index}`} giftcode={giftcode} onEdit={() => openEdit(giftcode)} onDelete={() => setDialog({ kind: 'delete', giftcode })} />
             ))}
           </ul>
         ) : null}

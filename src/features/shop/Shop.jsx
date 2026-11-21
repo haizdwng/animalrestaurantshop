@@ -30,7 +30,6 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
   const tabs = shop.tabs || [];
   const tabId = section || tabs[0]?.id || null;
   const [q, setQ] = useState('');
-  const [pageSize, setPageSize] = useState(20);
   const [filter, setFilter] = useState('all');
   const [now, setNow] = useState(() => Date.now());
   const [item, setItem] = useState(null);
@@ -71,7 +70,7 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
   const productMatches = (product) => matches(product, needle) && matchesShopFilter(product, filter, { cartKeys, conflicts, now });
   const products = useMemo(() => (current?.products || []).filter(productMatches), [current, needle, filter, cartKeys, conflicts, now]);
   const hits = useMemo(() => Object.fromEntries(tabs.map((tab) => [tab.id, tab.products.filter(productMatches).length])), [tabs, needle, filter, cartKeys, conflicts, now]);
-  const { rows: productRows, pager: productPager } = usePaginatedData(products, pageSize, `${tabId}|${needle}|${filter}`);
+  const { rows: productRows, pager: productPager } = usePaginatedData(products, `${tabId}|${needle}|${filter}`);
   const ownedCount = (current?.products || []).filter((product) => ownershipStatus(product) === true).length;
 
   const entries = useMemo(() => resolveCart(cart, shop.tabs, maxQuantity, now), [cart, shop.tabs, maxQuantity, now]);
@@ -164,8 +163,6 @@ export default function Shop({ user, onUser, shop, onReload, onRefresh, onPurcha
           onQuery={setQ}
           filter={filter}
           onFilter={setFilter}
-          pageSize={pageSize}
-          onPageSize={setPageSize}
           pager={products.length > 0 ? productPager : null}
           loading={shop.loading}
           onReload={onReload}

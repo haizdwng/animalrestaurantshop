@@ -1,4 +1,4 @@
-import { A as formatDateTime, At as PagerSkeleton, Bt as Menu, Dt as SearchInput, G as adminEditGiftCode, Gt as Field, H as adminDeleteGiftCode, Kt as Button, Lt as PageSizeSelect, Mt as Skeleton, Nt as ErrorState, Pt as Spinner, R as adminCreateGiftCode, Tt as Coin, Ut as toast, Vt as Dialog, Wt as toastError, Xt as IconRefresh, Y as adminGiftCodes, j as formatNumber, jt as RowSkeleton, ln as require_react, rn as require_jsx_runtime, rt as adminUsers, un as __toESM } from "./index.js";
+import { A as formatDateTime, At as PagerSkeleton, Bt as Dialog, Dt as SearchInput, G as adminEditGiftCode, Gt as Button, H as adminDeleteGiftCode, Ht as toast, Nt as ErrorState, Pt as Spinner, R as adminCreateGiftCode, Tt as Coin, Ut as toastError, Wt as Field, Y as adminGiftCodes, Yt as IconRefresh, cn as require_react, j as formatNumber, jt as RowSkeleton, ln as __toESM, nn as require_jsx_runtime, rt as adminUsers, zt as Menu } from "./index.js";
 import { t as IconGift } from "./IconGift.js";
 import { n as IconPencil, t as useRemoteResource } from "./useRemoteResource.js";
 import { t as IconPlus } from "./IconPlus.js";
@@ -60,7 +60,6 @@ var selectedIds = (list) => (list || []).map((user) => String(typeof user === "o
 var identicalIds = (left, right) => left.length === right.length && left.every((id) => right.includes(id));
 function UserAssignment({ title, description, users, usersLoading, selected, onChange }) {
 	const [query, setQuery] = (0, import_react.useState)("");
-	const [pageSize, setPageSize] = (0, import_react.useState)(10);
 	const selectedSet = (0, import_react.useMemo)(() => new Set(selected), [selected]);
 	const available = (0, import_react.useMemo)(() => (users || []).filter((user) => {
 		const text = `${user.username || ""} ${user.playerName || user.name || ""} ${user.openid || ""} ${userId(user)}`.toLowerCase();
@@ -72,14 +71,14 @@ function UserAssignment({ title, description, users, usersLoading, selected, onC
 	]);
 	const userLookup = (0, import_react.useMemo)(() => new Map((users || []).map((user) => [userId(user), user])), [users]);
 	const selectedUsers = (0, import_react.useMemo)(() => selected.map((id) => userLookup.get(id) || { _id: id }), [selected, userLookup]);
-	const { rows: selectedRows, pager: selectedPager } = usePaginatedData(selectedUsers, pageSize, `selected|${selected.join("|")}`);
-	const { rows: availableRows, pager: availablePager } = usePaginatedData(available, pageSize, `available|${query}|${selected.join("|")}`);
+	const { rows: selectedRows, pager: selectedPager } = usePaginatedData(selectedUsers, `selected|${selected.join("|")}`);
+	const { rows: availableRows, pager: availablePager } = usePaginatedData(available, `available|${query}|${selected.join("|")}`);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 		className: "min-w-0 space-y-3 rounded-xl border border-line bg-bg p-3",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "flex flex-wrap items-start justify-between gap-2",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					className: "min-w-0 flex-1",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
 						className: "text-xs font-bold",
@@ -88,13 +87,7 @@ function UserAssignment({ title, description, users, usersLoading, selected, onC
 						className: "mt-1 text-[11px] text-mute",
 						children: description
 					})]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					className: "w-32 shrink-0",
-					children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageSizeSelect, {
-						value: pageSize,
-						onChange: setPageSize
-					})
-				})]
+				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 				className: "space-y-2",
@@ -271,7 +264,6 @@ function GiftCodes() {
 	const { data: users, loading: usersLoading, error: usersError, reload: reloadUsers } = useRemoteResource(async () => (await adminUsers()).users);
 	const { data: list, loading, error, reload: load } = useRemoteResource(async () => (await adminGiftCodes()).giftcodes, Array.isArray(users));
 	const [query, setQuery] = (0, import_react.useState)("");
-	const [pageSize, setPageSize] = (0, import_react.useState)(10);
 	const [dialog, setDialog] = (0, import_react.useState)(null);
 	const [form, setForm] = (0, import_react.useState)(EMPTY_GIFT_CODE);
 	const [busy, setBusy] = (0, import_react.useState)(false);
@@ -281,7 +273,7 @@ function GiftCodes() {
 		const search = query.trim().toLowerCase();
 		return list?.filter((entry) => !search || String(entry.code ?? "").toLowerCase().includes(search));
 	}, [list, query]);
-	const { rows, pager } = usePaginatedData(matching, pageSize, query);
+	const { rows, pager } = usePaginatedData(matching, query);
 	const close = () => !busy && setDialog(null);
 	const openCreate = () => {
 		setForm(EMPTY_GIFT_CODE);
@@ -382,20 +374,11 @@ function GiftCodes() {
 						})]
 					})
 				}),
-				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
-						value: query,
-						onChange: setQuery,
-						label: "Tìm mã đổi thưởng",
-						placeholder: "Tìm mã đổi thưởng…"
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "w-32",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageSizeSelect, {
-							value: pageSize,
-							onChange: setPageSize
-						})
-					})]
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SearchInput, {
+					value: query,
+					onChange: setQuery,
+					label: "Tìm mã đổi thưởng",
+					placeholder: "Tìm mã đổi thưởng…"
 				}),
 				!users && usersError ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ErrorState, {
 					message: usersError,
@@ -404,9 +387,9 @@ function GiftCodes() {
 				}) : !list && (loading || usersLoading) ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 					"aria-busy": "true",
 					className: "divide-y divide-line rounded-2xl border border-line bg-panel",
-					children: Array.from({ length: Math.min(pageSize, 10) }).map((_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, {
-						w: index % 2 ? "w-1/3" : "w-1/4",
-						trail: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "hidden h-3.5 w-14 sm:block" })
+					children: Array.from({ length: 10 }).map((_, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, {
+						kind: "giftcode",
+						w: index % 2 ? "w-1/3" : "w-1/4"
 					}, index))
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PagerSkeleton, {})] }) : !list && error ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ErrorState, {
 					message: error,

@@ -12,5 +12,5 @@ export default function AuthHeader({ mode, onMode }) {
       <p className='ui-description'>Đặt mật khẩu mới bằng mã OTP gửi tới mã người chơi của bạn.</p>
     </header>
   );
-  return <div className='mb-6'><Tabs tabs={MODE_TABS} value={mode} onChange={onMode} label='Đăng nhập hoặc đăng ký' /></div>;
+  return <div className='mb-6'><Tabs equal tabs={MODE_TABS} value={mode} onChange={onMode} label='Đăng nhập hoặc đăng ký' /></div>;
 };

@@ -1,4 +1,4 @@
-import { A as formatDateTime, At as PagerSkeleton, Bt as Menu, Gt as Field, Kt as Button, Lt as PageSizeSelect, Mt as Skeleton, Nt as ErrorState, P as adminAddCoin, Pt as Spinner, Tt as Coin, Ut as toast, Vt as Dialog, W as adminDeleteUser, Wt as toastError, Xt as IconRefresh, Yt as IconSearch, jt as RowSkeleton, ln as require_react, q as adminEditUser, rn as require_jsx_runtime, rt as adminUsers, tn as createReactComponent, un as __toESM, wt as isAdmin, z as adminCreateUser, zt as SortSelect } from "./index.js";
+import { A as formatDateTime, At as PagerSkeleton, Bt as Dialog, Gt as Button, Ht as toast, Jt as IconSearch, Nt as ErrorState, P as adminAddCoin, Pt as Spinner, Rt as SortSelect, Tt as Coin, Ut as toastError, W as adminDeleteUser, Wt as Field, Yt as IconRefresh, cn as require_react, en as createReactComponent, jt as RowSkeleton, ln as __toESM, nn as require_jsx_runtime, q as adminEditUser, rt as adminUsers, wt as isAdmin, z as adminCreateUser, zt as Menu } from "./index.js";
 import { t as IconUserPlus } from "./IconUserPlus.js";
 import { a as EMPTY_USER_FORM, n as COIN_PRESETS, s as USER_SORTS } from "./config.js";
 import { i as validate } from "./validate.js";
@@ -282,7 +282,6 @@ function AdminUsers() {
 	const { data: list, loading, error, reload: load } = useRemoteResource(async () => (await adminUsers()).users);
 	const [q, setQ] = (0, import_react.useState)("");
 	const [sort, setSort] = (0, import_react.useState)(USER_SORTS[0][0]);
-	const [size, setSize] = (0, import_react.useState)(10);
 	const [dlg, setDlg] = (0, import_react.useState)(null);
 	const [f, setF] = (0, import_react.useState)(EMPTY_USER_FORM);
 	const [busy, setBusy] = (0, import_react.useState)(false);
@@ -296,7 +295,7 @@ function AdminUsers() {
 		q,
 		sort
 	]);
-	const { rows, pager } = usePaginatedData(shown, size, q + sort);
+	const { rows, pager } = usePaginatedData(shown, q + sort);
 	const open = (kind, user) => {
 		setF(kind === "edit" ? {
 			...EMPTY_USER_FORM,
@@ -377,7 +376,7 @@ function AdminUsers() {
 				})
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "grid gap-2 sm:grid-cols-[1fr_auto_auto]",
+				className: "grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", {
 					className: "flex h-10 items-center gap-2 rounded-lg border border-line bg-panel px-3 focus-within:border-lime",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconSearch, {
@@ -389,25 +388,18 @@ function AdminUsers() {
 						placeholder: "Tìm tên đăng nhập, mã người chơi,…",
 						className: "min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-mute/50 sm:text-sm"
 					})]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					className: "grid grid-cols-[1fr_auto] gap-2 sm:contents",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SortSelect, {
-						sorts: USER_SORTS,
-						value: sort,
-						onChange: setSort
-					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PageSizeSelect, {
-						value: size,
-						onChange: setSize
-					})]
+				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SortSelect, {
+					sorts: USER_SORTS,
+					value: sort,
+					onChange: setSort
 				})]
 			}),
 			!list && loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
 				"aria-busy": "true",
 				className: "divide-y divide-line rounded-2xl border border-line bg-panel",
-				children: Array.from({ length: Math.min(size, 10) }).map((_, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, {
+				children: Array.from({ length: 10 }).map((_, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(RowSkeleton, {
 					kind: "user",
-					w: SKELETON_WIDTHS[i % 3],
-					trail: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, { className: "hidden h-3.5 w-14 sm:block" })
+					w: SKELETON_WIDTHS[i % 3]
 				}, i))
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(PagerSkeleton, {})] }) : !list && error ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ErrorState, {
 				message: error,
