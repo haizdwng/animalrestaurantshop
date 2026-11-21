@@ -29,7 +29,7 @@ export async function prepareAvatarPhoto(file) {
     context.fillStyle = '#ffffff';
     context.fillRect(0, 0, OUTPUT_SIZE, OUTPUT_SIZE);
     context.drawImage(image, left, top, crop, crop, 0, 0, OUTPUT_SIZE, OUTPUT_SIZE);
-    return canvas.toDataURL('image/jpeg', 0.85);
+    return canvas.toDataURL('image/jpeg');
   } finally {
     URL.revokeObjectURL(url);
   };

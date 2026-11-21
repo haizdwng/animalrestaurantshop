@@ -1366,16 +1366,16 @@ function GuideVideoDialog({ open, src, title = "Hướng dẫn", onClose }) {
 	});
 }
 // src/features/shop/PurchaseDoneDialog.jsx
-var LOCK_SECONDS = 5;
+var LOCK_SECONDS = 20;
 var VIDEO_URL = `/animalrestaurantshop/videos/done.mp4`;
 function PurchaseDoneDialog({ open, onClose }) {
 	const [left, setLeft] = (0, import_react.useState)(LOCK_SECONDS);
-	const [video, setVideo] = (0, import_react.useState)(false);
 	(0, import_react.useEffect)(() => {
 		if (!open) return;
 		setLeft(LOCK_SECONDS);
-		setVideo(false);
-		const timer = setInterval(() => setLeft((n) => Math.max(0, n - 1)), 1e3);
+		const timer = setInterval(() => {
+			setLeft((n) => Math.max(0, n - 1));
+		}, 1e3);
 		return () => clearInterval(timer);
 	}, [open]);
 	const locked = left > 0;
@@ -1391,35 +1391,24 @@ function PurchaseDoneDialog({ open, onClose }) {
 					className: "mt-0.5 shrink-0 text-ok"
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
 					className: "whitespace-pre-line",
-					children: [
-						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", {
-							className: "text-fg",
-							children: "Đã mua vật phẩm thành công"
-						}),
-						"\n",
-						"Vui lòng xóa dữ liệu trò chơi hoặc xóa và tải lại trò chơi để vật phẩm được khả dụng"
-					]
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", {
+						className: "text-fg",
+						children: "Đã mua vật phẩm thành công"
+					}), "Vui lòng tải lại dữ liệu trò chơi của bạn để vật phẩm được khả dụng."]
 				})]
 			}),
-			video && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("video", {
+			open && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("video", {
 				src: VIDEO_URL,
 				controls: true,
 				autoPlay: true,
 				playsInline: true,
 				className: "max-h-[70dvh] w-full rounded-xl bg-black object-contain"
 			}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				className: "grid grid-cols-2 gap-2",
-				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-					variant: "ghost",
-					onClick: () => setVideo(true),
-					disabled: video,
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlayerPlay, { size: 15 }), " Xem hướng dẫn"]
-				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-					disabled: locked,
-					onClick: onClose,
-					children: locked ? `Đóng (${left}s)` : "Đóng"
-				})]
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
+				block: true,
+				disabled: locked,
+				onClick: onClose,
+				children: locked ? `Đóng (${left}s)` : "Đóng"
 			})
 		]
 	});
