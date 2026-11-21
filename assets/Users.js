@@ -371,6 +371,7 @@ function AdminUsers() {
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 						size: "sm",
 						onClick: () => open("create"),
+						"aria-label": "Thêm người dùng",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconUserPlus, { size: 15 }), " Thêm người dùng"]
 					})]
 				})

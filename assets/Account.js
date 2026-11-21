@@ -705,6 +705,7 @@ function TransactionRow({ tx: t, cancelling, onPay, onCancel, onExpire }) {
 				{
 					label: "Thanh toán tiếp",
 					Icon: IconQrcode,
+					requestAction: true,
 					onClick: onPay,
 					hidden: !pending
 				},
@@ -872,6 +873,7 @@ function Transactions({ onPaid }) {
 					variant: "ghost",
 					size: "sm",
 					onClick: load,
+					requestAction: true,
 					className: "mt-3",
 					children: "Thử lại"
 				})]

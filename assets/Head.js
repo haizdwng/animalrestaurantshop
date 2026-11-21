@@ -5,14 +5,11 @@ var import_jsx_runtime = require_jsx_runtime();
 function renderIconActions(element) {
 	if (!(0, import_react.isValidElement)(element)) return element;
 	if (element.type === Button) {
-		const nodes = import_react.Children.toArray(element.props.children);
-		const icon = nodes.find(import_react.isValidElement);
-		if (!icon) return element;
-		const label = element.props["aria-label"] || nodes.filter((node) => typeof node === "string").join(" ").trim();
-		if (!label) return element;
+		const icon = import_react.Children.toArray(element.props.children).find(import_react.isValidElement);
+		const label = element.props["aria-label"];
+		if (!icon || !label) return element;
 		return (0, import_react.cloneElement)(element, {
-			"aria-label": label,
-			title: label,
+			title: element.props.title || label,
 			className: "size-9! shrink-0 p-0!",
 			children: icon
 		});

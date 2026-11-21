@@ -2152,6 +2152,7 @@ function Avatar({ onUser, onClose }) {
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 								size: "sm",
+								requestAction: true,
 								loading: busy,
 								disabled: locked,
 								onClick: useAsAvatar,

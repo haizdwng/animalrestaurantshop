@@ -918,12 +918,14 @@ function AdminPlayers() {
 						size: "sm",
 						className: "size-8! p-0!",
 						onClick: reload,
+						requestAction: true,
 						disabled: listLoading,
 						"aria-label": "Làm mới",
 						children: listLoading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 14 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 14 })
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 						size: "sm",
 						onClick: () => setManualOpen(true),
+						"aria-label": "Mở tra cứu người chơi",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconSearch, { size: 14 }), " Mã người chơi"]
 					})]
 				})
@@ -973,6 +975,7 @@ function AdminPlayers() {
 				title: "Xem thông tin theo mã người chơi",
 				onClose: () => setManualOpen(false),
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+					"data-local-submit": true,
 					onSubmit: (event) => {
 						go(event);
 						setManualOpen(false);
@@ -987,6 +990,7 @@ function AdminPlayers() {
 						onChange: (event) => setInput(event.target.value)
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
 						type: "submit",
+						requestAction: false,
 						className: "w-full",
 						disabled: !input.trim(),
 						children: ["Xem thông tin ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconArrowRight, { size: 15 })]
@@ -1031,6 +1035,7 @@ function AdminPlayers() {
 						"aria-label": "Quay lại danh sách người chơi",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconArrowLeft, { size: 14 })
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", {
+						"data-local-submit": true,
 						onSubmit: go,
 						className: "flex h-8 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-panel px-3 focus-within:border-lime",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconSearch, {

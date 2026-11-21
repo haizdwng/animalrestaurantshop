@@ -14707,32 +14707,23 @@ var API_BASE_URL = DEFAULT_API_BASE_URL.replace(/\/+$/, "");
 var REQUEST_TIMEOUT = DEFAULT_REQUEST_TIMEOUT;
 // src/shared/library/api/client.js
 var TOKEN_KEY = "token";
-var COIN_REQUESTS = /* @__PURE__ */ new Set([
-	"GET /user",
-	"POST /user/invite",
-	"POST /user/shop",
-	"POST /user/giftcode",
-	"POST /user/checkin"
-]);
+var UNAUTHORIZED = "UNAUTHORIZED";
 var activeRequests = 0;
 var activeCoinRequests = 0;
-var requestListeners = /* @__PURE__ */ new Set();
 var requestQueue = Promise.resolve();
-function enqueueRequest(fn) {
-	const run = requestQueue.then(() => fn());
-	requestQueue = run.catch(() => {});
-	return run;
-}
+var onUnauthorized = () => {};
+var unauthorizedNotified = false;
+var requestListeners = /* @__PURE__ */ new Set();
 function notifyRequestListeners() {
-	requestListeners.forEach((listener) => listener());
+	for (const listener of requestListeners) listener();
 }
-var subscribeToRequests = (listener) => {
+function subscribeToRequests(listener) {
 	requestListeners.add(listener);
 	return () => requestListeners.delete(listener);
-};
+}
 var getPendingRequestCount = () => activeRequests;
 var getPendingCoinRequestCount = () => activeCoinRequests;
-function trackRequest(coin = false) {
+function trackRequest(coin) {
 	activeRequests += 1;
 	if (coin) activeCoinRequests += 1;
 	notifyRequestListeners();
@@ -14740,35 +14731,153 @@ function trackRequest(coin = false) {
 	return () => {
 		if (finished) return;
 		finished = true;
-		activeRequests = Math.max(0, activeRequests - 1);
-		if (coin) activeCoinRequests = Math.max(0, activeCoinRequests - 1);
+		activeRequests -= 1;
+		if (coin) activeCoinRequests -= 1;
 		notifyRequestListeners();
 	};
 }
+function enqueueRequest(task, { track = true, coin = false } = {}) {
+	const finish = track ? trackRequest(coin) : () => {};
+	const operation = requestQueue.then(task);
+	requestQueue = operation.catch(() => {});
+	return operation.finally(finish);
+}
 var getToken = () => localStorage.getItem(TOKEN_KEY) || "";
-var setToken = (token) => localStorage.setItem(TOKEN_KEY, token);
-var hasToken = () => !!localStorage.getItem(TOKEN_KEY);
+var setToken = (token) => {
+	localStorage.setItem(TOKEN_KEY, token);
+	unauthorizedNotified = false;
+};
+var hasToken = () => Boolean(getToken());
 var clearToken = () => localStorage.removeItem(TOKEN_KEY);
 var ApiError = class extends Error {
-	constructor(message, data = {}) {
+	constructor(message, details = {}) {
 		super(message);
 		this.name = "ApiError";
-		Object.assign(this, data);
+		Object.assign(this, details);
 	}
 };
-var onUnauthorized = () => {};
-var setUnauthorizedHandler = (handler) => onUnauthorized = handler;
-async function http(method, path, body, { track = true, contentEncoding } = {}) {
+var setUnauthorizedHandler = (handler) => {
+	onUnauthorized = handler;
+};
+function makeApiError(payload, httpStatus, auth) {
+	const data = payload && typeof payload === "object" ? payload : {};
+	const unauthorized = httpStatus === 401 || data.code === UNAUTHORIZED;
+	const code = unauthorized ? UNAUTHORIZED : data.code || "API_ERROR";
+	const error = new ApiError(data.message || `Yêu cầu thất bại (${httpStatus})`, {
+		...data,
+		code,
+		status: httpStatus
+	});
+	if (auth && unauthorized) {
+		clearToken();
+		if (!unauthorizedNotified) {
+			unauthorizedNotified = true;
+			onUnauthorized(error);
+		}
+	}
+	return error;
+}
+function networkError(error) {
+	if (error instanceof ApiError) return error;
+	if (error?.name === "AbortError") return new ApiError("Máy chủ phản hồi quá lâu — hãy thử lại", { code: "TIMEOUT" });
+	return new ApiError("Không kết nối được máy chủ — hãy kiểm tra kết nối mạng", { code: "NETWORK" });
+}
+async function readJson(response, auth) {
+	if (response.status === 204) return { success: true };
+	let data;
+	try {
+		data = await response.json();
+	} catch {
+		throw makeApiError({
+			code: "INVALID_RESPONSE",
+			message: "Máy chủ phản hồi không hợp lệ"
+		}, response.status, auth);
+	}
+	if (!data || typeof data !== "object" || Array.isArray(data)) throw makeApiError({
+		code: "INVALID_RESPONSE",
+		message: "Máy chủ phản hồi không hợp lệ"
+	}, response.status, auth);
+	if (!response.ok || data.success !== true) throw makeApiError(data, response.status, auth);
+	if (data.token) setToken(data.token);
+	return data;
+}
+async function readStream(response, onProgress, auth) {
+	if (response.status === 204) return { success: true };
+	if (!response.ok) {
+		let data;
+		try {
+			data = await response.json();
+		} catch {
+			data = {
+				code: "HTTP_ERROR",
+				message: `Máy chủ xử lý yêu cầu thất bại (${response.status})`
+			};
+		}
+		throw makeApiError(data, response.status, auth);
+	}
+	if (!response.body) throw makeApiError({
+		code: "INVALID_RESPONSE",
+		message: "Máy chủ không hỗ trợ truyền dữ liệu streaming"
+	}, response.status, auth);
+	const reader = response.body.getReader();
+	const decoder = new TextDecoder();
+	let buffer = "";
+	let result = null;
+	function processLine(line) {
+		if (!line.trim()) return;
+		let event;
+		try {
+			event = JSON.parse(line);
+		} catch {
+			throw makeApiError({
+				code: "INVALID_RESPONSE",
+				message: "Máy chủ trả về dữ liệu streaming không hợp lệ"
+			}, response.status, auth);
+		}
+		if (!event || typeof event !== "object") throw makeApiError({
+			code: "INVALID_RESPONSE",
+			message: "Máy chủ trả về dữ liệu streaming không hợp lệ"
+		}, response.status, auth);
+		switch (event.type) {
+			case "progress":
+				onProgress?.(event.progress, event.message, event);
+				break;
+			case "error": throw makeApiError(event, response.status, auth);
+			case "success": result = {
+				...event,
+				success: true
+			};
+		}
+	}
+	try {
+		while (true) {
+			const { done, value } = await reader.read();
+			buffer += decoder.decode(value || /* @__PURE__ */ new Uint8Array(), { stream: !done });
+			const lines = buffer.split("\n");
+			buffer = lines.pop() || "";
+			for (const line of lines) processLine(line);
+			if (done) break;
+		}
+		if (buffer.trim()) processLine(buffer);
+		if (!result) throw makeApiError({
+			code: "INVALID_RESPONSE",
+			message: "Máy chủ kết thúc xử lý mà không trả kết quả"
+		}, response.status, auth);
+		if (result.token) setToken(result.token);
+		return result;
+	} finally {
+		reader.releaseLock();
+	}
+}
+async function executeRequest(method, path, body, parser, { auth = true, track = true, coin = false, contentEncoding, timeout = REQUEST_TIMEOUT } = {}) {
 	return enqueueRequest(async () => {
-		const coinRequest = COIN_REQUESTS.has(`${method.toUpperCase()} ${path.split("?")[0]}`);
-		const finishRequest = track ? trackRequest(coinRequest) : () => {};
+		const controller = new AbortController();
+		const timer = setTimeout(() => controller.abort(), timeout);
 		const isForm = body instanceof FormData;
 		const isBinary = body instanceof Uint8Array;
-		const controller = new AbortController();
-		const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 		try {
-			const token = localStorage.getItem(TOKEN_KEY);
-			const response = await fetch(API_BASE_URL + path, {
+			const token = getToken();
+			return await parser(await fetch(API_BASE_URL + path, {
 				method,
 				cache: "no-store",
 				headers: {
@@ -14778,155 +14887,22 @@ async function http(method, path, body, { track = true, contentEncoding } = {}) 
 				},
 				body: body === void 0 ? void 0 : isForm || isBinary ? body : JSON.stringify(body),
 				signal: controller.signal
-			});
-			if (response.status === 204) return { success: true };
-			let data;
-			try {
-				data = await response.json();
-			} catch {
-				data = {
-					success: false,
-					message: `Máy chủ phản hồi không hợp lệ (${response.status})`
-				};
-			}
-			if (!data || typeof data !== "object") data = {
-				success: false,
-				message: `Máy chủ phản hồi không hợp lệ (${response.status})`
-			};
-			data.status = response.status;
-			if (response.status === 401) data = {
-				...data,
-				success: false,
-				code: "UNAUTHORIZED"
-			};
-			return data;
+			}), auth);
 		} catch (error) {
-			return {
-				success: false,
-				code: error?.name === "AbortError" ? "TIMEOUT" : "NETWORK",
-				message: error?.name === "AbortError" ? "Máy chủ phản hồi quá lâu — hãy thử lại" : "Không kết nối được máy chủ — có thể máy chủ chưa cho phép tên miền này (CORS)"
-			};
-		} finally {
-			clearTimeout(timeout);
-			finishRequest();
-		}
-	});
-}
-async function call(method, path, body, { auth = true, track = true, contentEncoding } = {}) {
-	const response = await http(method, path, body, {
-		track,
-		contentEncoding
-	});
-	if (!response || response.success !== true) {
-		if (response && !response.code && /xác thực|đăng nhập lại|unauthori|token/i.test(response.message || "")) response.code = "UNAUTHORIZED";
-		const error = new ApiError(response?.message || "Đã có lỗi xảy ra", response || {});
-		if (auth && error.code === "UNAUTHORIZED") {
-			clearToken();
-			onUnauthorized(error);
-		}
-		throw error;
-	}
-	if (response.token) setToken(response.token);
-	return response;
-}
-async function callStream(method, path, body, onProgress, { auth = true, timeout = REQUEST_TIMEOUT } = {}) {
-	return enqueueRequest(async () => {
-		const finishRequest = trackRequest();
-		const isForm = body instanceof FormData;
-		const controller = new AbortController();
-		const timer = setTimeout(() => controller.abort(), timeout);
-		let reader;
-		const handleError = (data = {}) => {
-			if (data.status === 401) data = {
-				...data,
-				success: false,
-				code: "UNAUTHORIZED"
-			};
-			if (!data.code && /xác thực|đăng nhập lại|unauthori|token/i.test(data.message || "")) data.code = "UNAUTHORIZED";
-			const error = new ApiError(data.message || "Đã có lỗi xảy ra", data);
-			if (auth && error.code === "UNAUTHORIZED") {
-				clearToken();
-				onUnauthorized(error);
-			}
-			return error;
-		};
-		try {
-			const token = getToken();
-			const response = await fetch(API_BASE_URL + path, {
-				method,
-				cache: "no-store",
-				headers: {
-					...!isForm && body !== void 0 && { "Content-Type": "application/json" },
-					...token && { token }
-				},
-				body: body === void 0 ? void 0 : isForm ? body : JSON.stringify(body),
-				signal: controller.signal
-			});
-			if (response.status === 204) return {
-				success: true,
-				status: 204
-			};
-			if (!response.body) throw handleError({
-				message: "Máy chủ không hỗ trợ truyền dữ liệu streaming",
-				status: response.status
-			});
-			reader = response.body.getReader();
-			const decoder = new TextDecoder();
-			let buffer = "";
-			let result = null;
-			const processLine = (line) => {
-				if (!line.trim()) return;
-				let data;
-				try {
-					data = JSON.parse(line);
-				} catch {
-					throw handleError({
-						message: "Máy chủ trả về dữ liệu streaming không hợp lệ",
-						status: response.status
-					});
-				}
-				if (data.type === "progress") {
-					onProgress?.(data.progress, data.message, data);
-					return;
-				}
-				if (data.type === "error") throw handleError({
-					...data,
-					status: response.status
-				});
-				if (data.type === "success") result = {
-					...data,
-					success: true,
-					status: response.status
-				};
-			};
-			while (true) {
-				const { done, value } = await reader.read();
-				buffer += decoder.decode(value || /* @__PURE__ */ new Uint8Array(), { stream: !done });
-				const lines = buffer.split("\n");
-				buffer = lines.pop() || "";
-				for (const line of lines) processLine(line);
-				if (done) break;
-			}
-			if (buffer.trim()) processLine(buffer);
-			if (!response.ok) throw handleError({
-				message: "Máy chủ xử lý yêu cầu thất bại",
-				status: response.status
-			});
-			if (!result) throw handleError({
-				message: "Máy chủ kết thúc xử lý mà không trả kết quả",
-				status: response.status
-			});
-			return result;
-		} catch (error) {
-			if (error instanceof ApiError) throw error;
-			if (error?.name === "AbortError") throw new ApiError("Máy chủ phản hồi quá lâu — hãy thử lại", { code: "TIMEOUT" });
-			throw new ApiError("Không kết nối được máy chủ — hãy kiểm tra kết nối mạng", { code: "NETWORK" });
+			throw networkError(error);
 		} finally {
 			clearTimeout(timer);
-			if (reader) reader.releaseLock();
-			finishRequest();
 		}
+	}, {
+		track,
+		coin
 	});
+}
+function call(method, path, body, options = {}) {
+	return executeRequest(method, path, body, readJson, options);
+}
+function callStream(method, path, body, onProgress, options = {}) {
+	return executeRequest(method, path, body, (response, auth) => readStream(response, onProgress, auth), options);
 }
 var enc = encodeURIComponent;
 // src/shared/hooks/useRequestPending.js
@@ -14944,28 +14920,12 @@ var SIZES = {
 	sm: "min-h-8 px-3 text-xs",
 	md: "min-h-11 px-4 text-sm"
 };
-function childText(node) {
-	if (typeof node === "string" || typeof node === "number") return String(node);
-	if (Array.isArray(node)) return node.map(childText).join(" ");
-	return node && typeof node === "object" ? childText(node.props?.children) : "";
-}
-function isRequestButton(type, variant, label) {
-	if (type === "submit") return true;
-	if (/^(Tải lại|Làm mới|Kiểm tra|Thử lại|Lưu JSON|Đặt làm ảnh đại diện|Nhận \+|Mua tất cả)/i.test(label)) return true;
-	return variant === "danger" && /^(Xóa|Xoá|Hủy giao dịch|Huỷ giao dịch)/i.test(label);
-}
-function Button({ variant = "solid", size = "md", className = "", loading = false, requestAction, children, ...props }) {
+function Button({ variant = "solid", size = "md", className = "", loading = false, requestAction, children, onClick, type = "button", disabled = false, ...props }) {
 	const requestPending = useRequestPending();
-	const label = [
-		props["aria-label"],
-		props.title,
-		childText(children)
-	].filter(Boolean).join(" ").trim();
-	const requestControl = requestAction ?? isRequestButton(props.type, variant, label);
-	const disabled = Boolean(props.disabled || loading || requestControl && requestPending);
-	const { onClick, ...buttonProps } = props;
+	const sendsRequest = requestAction ?? type === "submit";
+	const inactive = Boolean(disabled || loading || sendsRequest && requestPending);
 	const handleClick = (event) => {
-		if (requestControl && getPendingRequestCount() > 0) {
+		if (sendsRequest && getPendingRequestCount() > 0) {
 			event.preventDefault();
 			event.stopPropagation();
 			return;
@@ -14973,12 +14933,12 @@ function Button({ variant = "solid", size = "md", className = "", loading = fals
 		onClick?.(event);
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
-		...buttonProps,
-		type: props.type || "button",
+		...props,
+		type,
 		onClick: handleClick,
-		disabled,
+		disabled: inactive,
 		"aria-busy": loading || void 0,
-		"data-request-action": requestControl ? "" : void 0,
+		"data-request-action": sendsRequest ? "" : void 0,
 		className: `inline-flex min-w-0 cursor-pointer items-center justify-center gap-2 rounded-lg font-bold leading-tight transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime disabled:cursor-not-allowed disabled:opacity-50 ${SIZES[size] || SIZES.md} ${VARIANTS[variant] || VARIANTS.solid} ${className}`,
 		children: [loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconLoader2, {
 			size: 16,
@@ -15283,6 +15243,7 @@ function Menu({ items = [], label = "Tùy chọn", disabled = false }) {
 	const menu = (0, import_react.useRef)(null);
 	const menuId = (0, import_react.useId)();
 	const [position, setPosition] = (0, import_react.useState)(null);
+	const requestPending = useRequestPending();
 	const shown = items.filter((item) => !item.hidden);
 	const open = Boolean(position);
 	(0, import_react.useEffect)(() => {
@@ -15350,12 +15311,17 @@ function Menu({ items = [], label = "Tùy chọn", disabled = false }) {
 			"aria-label": label,
 			style: position,
 			className: "fixed z-10 max-h-[calc(100dvh-24px)] w-54 overflow-auto rounded-xl border border-line bg-panel p-1.5 shadow-(--ui-shadow) animate-pop",
-			children: shown.map(({ label: itemLabel, Icon, onClick, danger, disabled: itemDisabled }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+			children: shown.map(({ id, label: itemLabel, Icon, onClick, danger, disabled: itemDisabled, requestAction = false }, index) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 				type: "button",
 				role: "menuitem",
-				disabled: itemDisabled,
+				disabled: itemDisabled || requestAction && requestPending,
+				"data-request-action": requestAction ? "" : void 0,
 				className: `flex min-h-10 w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 text-left text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-45 ${danger ? "text-bad hover:bg-bad/10" : "text-fg hover:bg-raise"}`,
-				onClick: () => {
+				onClick: (event) => {
+					if (requestAction && getPendingRequestCount() > 0) {
+						event.preventDefault();
+						return;
+					}
 					setPosition(null);
 					onClick?.();
 				},
@@ -15367,7 +15333,7 @@ function Menu({ items = [], label = "Tùy chọn", disabled = false }) {
 					" ",
 					itemLabel
 				]
-			}, itemLabel))
+			}, id ?? index))
 		})
 	}), document.body)] });
 }
@@ -16284,6 +16250,7 @@ function ErrorState({ message, onRetry, loading }) {
 				variant: "ghost",
 				size: "sm",
 				loading,
+				requestAction: true,
 				onClick: onRetry,
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 15 }), " Thử lại"]
 			})
@@ -16851,7 +16818,10 @@ function fileToAvatar(file) {
 }
 // src/shared/library/api/auth.js
 var getMe = async () => {
-	const response = await call("GET", "/user", void 0, { auth: false });
+	const response = await call("GET", "/user", void 0, {
+		auth: false,
+		coin: true
+	});
 	if (!response.user && !response.username) throw new ApiError(response.message || "Không lấy được thông tin tài khoản");
 	return {
 		...response,
@@ -16896,8 +16866,8 @@ var changeOpenid = async (openid, otp) => withUser(await call("PATCH", "/user/op
 	openid,
 	otp
 }));
-var redeemGiftCode = async (code) => withUser(await call("POST", "/user/giftcode", { code }));
-var submitInvite = async (invite) => withUser(await call("POST", "/user/invite", { invite }));
+var redeemGiftCode = async (code) => withUser(await call("POST", "/user/giftcode", { code }, { coin: true }));
+var submitInvite = async (invite) => withUser(await call("POST", "/user/invite", { invite }, { coin: true }));
 var getFriendLink = () => call("GET", "/user/links/friend");
 var getBuffetLink = () => call("GET", "/user/links/buffet");
 var checkShopReady = () => call("GET", "/user/shop/ready");
@@ -16925,7 +16895,10 @@ var getShop = async () => {
 	};
 };
 var buy = async (items) => {
-	return withUser(await call("POST", "/user/shop", await compressJsonGZip({ items }), { contentEncoding: "gzip" }));
+	return withUser(await call("POST", "/user/shop", await compressJsonGZip({ items }), {
+		contentEncoding: "gzip",
+		coin: true
+	}));
 };
 var createTransaction = (coin) => call("POST", "/user/transactions", { coin });
 var getTransaction = async (code) => {
@@ -17033,7 +17006,7 @@ var CHECKIN_REWARDS = [
 	30
 ];
 var getCheckin = () => call("GET", "/user/checkin");
-var claimCheckin = async () => withUser(await call("POST", "/user/checkin"));
+var claimCheckin = async () => withUser(await call("POST", "/user/checkin", void 0, { coin: true }));
 // src/shared/configuration/navigation.js
 var DEFAULT_DESTINATION = "/shop";
 var AUTHENTICATION_PATH = /^\/(?:login|register|forgot)(?:\/|$)/i;
