@@ -259,6 +259,7 @@ function DeleteDialog({ giftcode, busy, onClose, onConfirm }) {
 				children: "Huỷ"
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 				variant: "danger",
+				requestAction: true,
 				loading: busy,
 				onClick: onConfirm,
 				children: "Xoá"
@@ -368,6 +369,7 @@ function GiftCodes() {
 							variant: "ghost",
 							size: "sm",
 							onClick: load,
+							requestAction: true,
 							disabled: loading,
 							"aria-label": "Tải lại danh sách mã đổi thưởng",
 							children: loading ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Spinner, { size: 16 }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 16 })
@@ -375,6 +377,7 @@ function GiftCodes() {
 							size: "sm",
 							onClick: openCreate,
 							disabled: !Array.isArray(users),
+							"aria-label": "Thêm mã đổi thưởng",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconPlus, { size: 17 }), " Thêm mã đổi thưởng"]
 						})]
 					})

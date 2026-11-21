@@ -10,17 +10,15 @@ export default function LinkDialog({ request, title, open, onClose }) {
     if (!open || !request) return undefined;
     let active = true;
     setState({ loading: true, message: '', link: '' });
-    request()
-      .then((result) => {
-        if (!active) return;
-        if (!result?.link) throw new Error(result?.message || 'Máy chủ không trả về liên kết');
-        setState({ loading: false, message: result.message || '', link: result.link });
-      })
-      .catch((error) => {
-        if (!active) return;
-        setState({ loading: false, message: '', link: '' });
-        toastError(error);
-      });
+    request().then((result) => {
+      if (!active) return;
+      if (!result?.link) throw new Error(result?.message || 'Máy chủ không trả về liên kết');
+      setState({ loading: false, message: result.message || '', link: result.link });
+    }).catch((error) => {
+      if (!active) return;
+      setState({ loading: false, message: '', link: '' });
+      toastError(error);
+    });
     return () => { active = false; };
   }, [open, request]);
 

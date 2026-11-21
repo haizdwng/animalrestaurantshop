@@ -149,10 +149,10 @@ export default function AdminPlayers() {
       <div className='space-y-4'>
         <Head title='Người chơi' sub={list ? `${list.length.toLocaleString('vi-VN')} người chơi` : 'Đang tải danh sách…'}>
           <div className='flex gap-2'>
-            <Button variant='ghost' size='sm' className='size-8! p-0!' onClick={reload} disabled={listLoading} aria-label='Làm mới'>
+            <Button variant='ghost' size='sm' className='size-8! p-0!' onClick={reload} requestAction disabled={listLoading} aria-label='Làm mới'>
               {listLoading ? <Spinner size={14} /> : <IconRefresh size={14} />}
             </Button>
-            <Button size='sm' onClick={() => setManualOpen(true)}><IconSearch size={14} /> Mã người chơi</Button>
+            <Button size='sm' onClick={() => setManualOpen(true)} aria-label='Mở tra cứu người chơi'><IconSearch size={14} /> Mã người chơi</Button>
           </div>
         </Head>
         <div className='grid gap-2 sm:grid-cols-[1fr_auto]'>
@@ -188,9 +188,9 @@ export default function AdminPlayers() {
         )}
         {pager}
         <Dialog open={manualOpen} title='Xem thông tin theo mã người chơi' onClose={() => setManualOpen(false)}>
-          <form onSubmit={(event) => { go(event); setManualOpen(false); }} className='space-y-4'>
+          <form data-local-submit onSubmit={(event) => { go(event); setManualOpen(false); }} className='space-y-4'>
             <Field label='Mã người chơi' placeholder='openid' autoFocus autoCapitalize='none' value={input} onChange={(event) => setInput(event.target.value)} />
-            <Button type='submit' className='w-full' disabled={!input.trim()}>
+            <Button type='submit' requestAction={false} className='w-full' disabled={!input.trim()}>
               Xem thông tin <IconArrowRight size={15} />
             </Button>
           </form>
@@ -215,7 +215,7 @@ export default function AdminPlayers() {
           >
             <IconArrowLeft size={14} />
           </Button>
-          <form onSubmit={go} className='flex h-8 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-panel px-3 focus-within:border-lime'>
+          <form data-local-submit onSubmit={go} className='flex h-8 min-w-0 flex-1 items-center gap-2 rounded-lg border border-line bg-panel px-3 focus-within:border-lime'>
             <IconSearch size={14} className='text-mute' />
             <input value={input} onChange={(event) => setInput(event.target.value)} placeholder='Mã người chơi khác…' className='min-w-0 flex-1 bg-transparent text-base outline-none sm:text-xs' />
           </form>

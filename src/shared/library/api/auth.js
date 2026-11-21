@@ -2,7 +2,7 @@ import { ApiError, call, clearToken, setToken } from '@/shared/library/api/clien
 import { pickUser } from '@/shared/library/api/normalize';
 
 export const getMe = async () => {
-  const response = await call('GET', '/user', undefined, { auth: false });
+  const response = await call('GET', '/user', undefined, { auth: false, coin: true });
   if (!response.user && !response.username) throw new ApiError(response.message || 'Không lấy được thông tin tài khoản');
   return { ...response, user: pickUser(response) };
 };

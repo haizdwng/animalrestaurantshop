@@ -122,7 +122,7 @@ function DeleteDialog({ giftcode, busy, onClose, onConfirm }) {
       </p>
       <div className='grid grid-cols-2 gap-2'>
         <Button variant='ghost' onClick={onClose}>Huỷ</Button>
-        <Button variant='danger' loading={busy} onClick={onConfirm}>Xoá</Button>
+        <Button variant='danger' requestAction loading={busy} onClick={onConfirm}>Xoá</Button>
       </div>
     </Dialog>
   );
@@ -214,10 +214,10 @@ export default function GiftCodes() {
       <div className='min-w-0 space-y-4'>
         <Head title='Mã đổi thưởng' sub={list ? `${list.length.toLocaleString('vi-VN')} mã` : 'Đang tải danh sách…'}>
           <div className='flex gap-2'>
-            <Button variant='ghost' size='sm' onClick={load} disabled={loading} aria-label='Tải lại danh sách mã đổi thưởng'>
+            <Button variant='ghost' size='sm' onClick={load} requestAction disabled={loading} aria-label='Tải lại danh sách mã đổi thưởng'>
               {loading ? <Spinner size={16} /> : <IconRefresh size={16} />}
             </Button>
-            <Button size='sm' onClick={openCreate} disabled={!Array.isArray(users)}><IconPlus size={17} /> Thêm mã đổi thưởng</Button>
+            <Button size='sm' onClick={openCreate} disabled={!Array.isArray(users)} aria-label='Thêm mã đổi thưởng'><IconPlus size={17} /> Thêm mã đổi thưởng</Button>
           </div>
         </Head>
         <div className='grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2'>

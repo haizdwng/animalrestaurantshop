@@ -5,20 +5,15 @@ function renderIconActions(element) {
   if (!isValidElement(element)) return element;
 
   if (element.type === Button) {
-    const nodes = Children.toArray(element.props.children);
-    const icon = nodes.find(isValidElement);
-    if (!icon) return element;
+    const icon = Children.toArray(element.props.children).find(isValidElement);
+    const label = element.props['aria-label'];
+    if (!icon || !label) return element;
 
-    const label = element.props['aria-label'] || nodes.filter((node) => typeof node === 'string').join(' ').trim();
-    if (!label) return element;
-
-    const button = cloneElement(element, {
-      'aria-label': label,
-      title: label,
+    return cloneElement(element, {
+      title: element.props.title || label,
       className: 'size-9! shrink-0 p-0!',
       children: icon
     });
-    return button;
   };
 
   if (element.props.children === undefined) return element;

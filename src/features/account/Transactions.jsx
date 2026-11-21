@@ -94,7 +94,7 @@ export default function Transactions({ onPaid }) {
       ) : !list && error ? (
         <div className='p-6 text-center text-xs'>
           <p className='text-bad'>{error}</p>
-          <Button variant='ghost' size='sm' onClick={load} className='mt-3'>Thử lại</Button>
+          <Button variant='ghost' size='sm' onClick={load} requestAction className='mt-3'>Thử lại</Button>
         </div>
       ) : shown?.length ? (
         <ul className={`divide-y divide-line transition-opacity ${loading ? 'opacity-50' : ''}`}>

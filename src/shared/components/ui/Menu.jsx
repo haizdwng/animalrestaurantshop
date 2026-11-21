@@ -1,13 +1,17 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { IconDotsVertical } from '@tabler/icons-react';
+import useRequestPending from '@/shared/hooks/useRequestPending';
+import { getPendingRequestCount } from '@/shared/library/api/client';
 
 const ROW_HEIGHT = 40;
+
 export default function Menu({ items = [], label = 'Tùy chọn', disabled = false }) {
   const button = useRef(null);
   const menu = useRef(null);
   const menuId = useId();
   const [position, setPosition] = useState(null);
+  const requestPending = useRequestPending();
   const shown = items.filter((item) => !item.hidden);
   const open = Boolean(position);
 
@@ -61,10 +65,23 @@ export default function Menu({ items = [], label = 'Tùy chọn', disabled = fal
       <div className='fixed inset-0 z-50' onPointerDown={(event) => { if (event.target === event.currentTarget) setPosition(null); }}>
         <div id={menuId} ref={menu} role='menu' aria-label={label} style={position}
           className='fixed z-10 max-h-[calc(100dvh-24px)] w-54 overflow-auto rounded-xl border border-line bg-panel p-1.5 shadow-(--ui-shadow) animate-pop'>
-          {shown.map(({ label: itemLabel, Icon, onClick, danger, disabled: itemDisabled }) => (
-            <button key={itemLabel} type='button' role='menuitem' disabled={itemDisabled}
+          {shown.map(({ id, label: itemLabel, Icon, onClick, danger, disabled: itemDisabled, requestAction = false }, index) => (
+            <button
+              key={id ?? index}
+              type='button'
+              role='menuitem'
+              disabled={itemDisabled || (requestAction && requestPending)}
+              data-request-action={requestAction ? '' : undefined}
               className={`flex min-h-10 w-full cursor-pointer items-center gap-2.5 rounded-lg px-3 text-left text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-45 ${danger ? 'text-bad hover:bg-bad/10' : 'text-fg hover:bg-raise'}`}
-              onClick={() => { setPosition(null); onClick?.(); }}>
+              onClick={(event) => {
+                if (requestAction && getPendingRequestCount() > 0) {
+                  event.preventDefault();
+                  return;
+                };
+                setPosition(null);
+                onClick?.();
+              }}
+            >
               {Icon && <Icon size={16} className='shrink-0' />} {itemLabel}
             </button>
           ))}

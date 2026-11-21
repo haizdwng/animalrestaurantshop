@@ -20,7 +20,7 @@ export function ErrorState({ message, onRetry, loading }) {
     <div role='alert' className='ui-card flex flex-col items-center gap-4 p-8 text-center'>
       <span className='grid size-12 place-items-center rounded-2xl bg-bad/10 text-bad'><IconCloudOff size={28} /></span>
       <div className='space-y-1'><h2 className='text-sm font-extrabold'>Không tải được dữ liệu</h2><p className='max-w-md text-xs leading-relaxed text-mute'>{message}</p></div>
-      {onRetry && <Button variant='ghost' size='sm' loading={loading} onClick={onRetry}><IconRefresh size={15} /> Thử lại</Button>}
+      {onRetry && <Button variant='ghost' size='sm' loading={loading} requestAction onClick={onRetry}><IconRefresh size={15} /> Thử lại</Button>}
     </div>
   );
 };

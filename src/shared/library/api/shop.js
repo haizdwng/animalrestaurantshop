@@ -13,5 +13,5 @@ export const getShop = async () => {
 
 export const buy = async (items) => {
   const body = await compressJsonGZip({ items });
-  return withUser(await call('POST', '/user/shop', body, { contentEncoding: 'gzip' }));
+  return withUser(await call('POST', '/user/shop', body, { contentEncoding: 'gzip', coin: true }));
 };

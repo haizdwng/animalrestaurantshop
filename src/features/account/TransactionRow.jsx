@@ -68,9 +68,9 @@ export default function TransactionRow({ tx: t, cancelling, onPay, onCancel, onE
       {cancelling && <Spinner size={15} className='text-mute' />}
       <Menu
         items={[
-          { label: 'Thanh toán tiếp', Icon: IconQrcode, onClick: onPay, hidden: !pending },
+          { label: 'Thanh toán tiếp', Icon: IconQrcode, requestAction: true, onClick: onPay, hidden: !pending },
           { label: 'Sao chép mã', Icon: IconCopy, onClick: () => copyText(t.code, 'Đã sao chép mã giao dịch') },
-          { label: 'Huỷ giao dịch', Icon: IconX, danger: true, onClick: onCancel, hidden: !pending },
+          { label: 'Huỷ giao dịch', Icon: IconX, danger: true, onClick: onCancel, hidden: !pending }
         ]}
       />
     </li>

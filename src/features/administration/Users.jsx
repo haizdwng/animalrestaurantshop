@@ -83,7 +83,7 @@ export default function AdminUsers() {
           <Button variant='ghost' size='sm' className='size-8! p-0!' onClick={load} requestAction disabled={loading} aria-label='Làm mới'>
             {loading ? <Spinner size={14} /> : <IconRefresh size={14} />}
           </Button>
-          <Button size='sm' onClick={() => open('create')}>
+          <Button size='sm' onClick={() => open('create')} aria-label='Thêm người dùng'>
             <IconUserPlus size={15} /> Thêm người dùng
           </Button>
         </div>

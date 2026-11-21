@@ -227,7 +227,7 @@ export default function PaymentDialog({ tx, onClose, onChange, onPaid }) {
               <Button variant='ghost' disabled={!!busy} onClick={() => setConfirmCancel(false)}>
                 Không
               </Button>
-              <Button variant='danger' loading={busy === 'cancel'} onClick={cancel}>
+              <Button variant='danger' requestAction loading={busy === 'cancel'} onClick={cancel}>
                 Huỷ giao dịch
               </Button>
             </div>
@@ -237,7 +237,7 @@ export default function PaymentDialog({ tx, onClose, onChange, onPaid }) {
             <Button variant='ghost' disabled={!!busy} onClick={() => setConfirmCancel(true)}>
               <IconX size={14} /> Huỷ
             </Button>
-            <Button loading={busy === 'check'} onClick={check}>
+            <Button requestAction loading={busy === 'check'} onClick={check}>
               <IconRefresh size={16} /> Kiểm tra
             </Button>
           </div>

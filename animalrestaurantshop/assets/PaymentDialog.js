@@ -389,6 +389,7 @@ function PaymentDialog({ tx, onClose, onChange, onPaid }) {
 						children: "Không"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
 						variant: "danger",
+						requestAction: true,
 						loading: busy === "cancel",
 						onClick: cancel,
 						children: "Huỷ giao dịch"
@@ -402,6 +403,7 @@ function PaymentDialog({ tx, onClose, onChange, onPaid }) {
 					onClick: () => setConfirmCancel(true),
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconX, { size: 14 }), " Huỷ"]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
+					requestAction: true,
 					loading: busy === "check",
 					onClick: check,
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IconRefresh, { size: 16 }), " Kiểm tra"]

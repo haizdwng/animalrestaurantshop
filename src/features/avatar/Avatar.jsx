@@ -251,7 +251,7 @@ export default function Avatar({ onUser, onClose }) {
             <Button variant='ghost' size='sm' disabled={locked} onClick={download} title='Tải ảnh PNG về máy'>
               <IconDownload size={17} /> <span className='hidden sm:inline'>Tải về</span>
             </Button>
-            <Button size='sm' loading={busy} disabled={locked} onClick={useAsAvatar}>
+            <Button size='sm' requestAction loading={busy} disabled={locked} onClick={useAsAvatar}>
               <IconUserCheck size={17} /> <span className='truncate'>Đặt làm ảnh đại diện</span>
             </Button>
           </div>
