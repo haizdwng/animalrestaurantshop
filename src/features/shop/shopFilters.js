@@ -1,4 +1,4 @@
-import { getPurchaseLimit, getTimeStatus, hasOptions, isAvailable, isBuyItemsSupported, productOptions, unmetConditions } from '@/features/shop/cartUtils';
+import { isAvailable, nodeOptions, ownedValue } from '@/features/shop/cartUtils';
 
 export const SHOP_FILTER_OPTIONS = Object.freeze([
   { value: 'all', label: 'Tất cả vật phẩm' },
@@ -9,32 +9,22 @@ export const SHOP_FILTER_OPTIONS = Object.freeze([
   { value: 'cart', label: 'Trong giỏ hàng' }
 ]);
 
-export function ownedValue(value) {
-  if (typeof value === 'boolean') return value;
-  if (typeof value === 'number') return Number.isFinite(value) ? value > 0 : null;
-  if (typeof value === 'string') return value.trim().length > 0;
-  return null;
-};
-
-const optionOwnership = (group) => hasOptions(group) ? productOptions(group).map((product) => ownedValue(product.owned)) : [ownedValue(group?.owned)];
-
-export function ownershipStatus(group) {
-  if (ownedValue(group?.owned) === true) return true;
-  const statuses = optionOwnership(group);
+export function ownershipStatus(node) {
+  const current = ownedValue(node?.owned);
+  if (current !== null) return current;
+  const statuses = nodeOptions(node).map((child) => ownershipStatus(child));
   if (statuses.includes(true)) return true;
   if (statuses.includes(false)) return false;
   return null;
 };
 
-export function matchesShopFilter(group, filter, { cartKeys = new Set(), conflicts = new Set(), now = Date.now() } = {}) {
-  const choices = productOptions(group);
-  const statuses = optionOwnership(group);
+export function matchesShopFilter(product, filter, { cart = [], category = '', accountLimit = 100, now = Date.now() } = {}) {
   switch (filter) {
-    case 'owned': return ownershipStatus(group) === true;
-    case 'unowned': return statuses.includes(false) || (!hasOptions(group) && ownedValue(group?.owned) === false);
-    case 'available': return choices.some((item) => isAvailable(item, group, conflicts, now));
-    case 'locked': return choices.some((item) => !isBuyItemsSupported(item.key) || unmetConditions(item, group) || !getTimeStatus(item, group, now).available || getPurchaseLimit(item, group) < 1);
-    case 'cart': return choices.some((item) => cartKeys.has(item.key));
+    case 'owned': return ownershipStatus(product) === true;
+    case 'unowned': return ownershipStatus(product) === false;
+    case 'available': return isAvailable(product, accountLimit, now);
+    case 'locked': return !isAvailable(product, accountLimit, now);
+    case 'cart': return cart.some((item) => item.category === category && item.key === product.key);
     default: return true;
   };
 };

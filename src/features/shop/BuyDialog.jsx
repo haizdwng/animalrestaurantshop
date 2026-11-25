@@ -1,166 +1,140 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IconCheck, IconLock, IconShoppingCart, IconTrash, IconX } from '@tabler/icons-react';
 import { formatNumber } from '@/shared/library/format';
-import { Button, Coin, Dialog, Select } from '@/shared/components/ui';
-import { clampCartQuantity, getConditions, getPurchaseLimit, getGroupRemaining, hasOptions, hasValidPrice, isOnce, isFullyOwned, isBuyItemsSupported, productOptions, unmetConditions, optionMode, getTimeStatus, getTimeMessage, formatShopDate } from '@/features/shop/cartUtils';
+import { Button, Coin, Dialog } from '@/shared/components/ui';
+import { cartLineId, createCartLine, effectiveDisplay, findLine, hasOptions, initialSelections, lineMaximum, nodeType, ownedLabel, resolveCart } from '@/features/shop/cartUtils';
 import QuantityPicker from '@/features/shop/QuantityPicker';
+import ShopNodeSelector from '@/features/shop/ShopNodeSelector';
 import Tile from '@/features/shop/Tile';
 
-export default function BuyDialog({ item, category, user, entries = [], cartTotal = 0, maxQuantity = 100, now = Date.now(), conflictingKeys = new Set(), onAdd, onRemove, onClose, onTopUp }) {
-  const variantSelectId = useId();
-  const options = item ? productOptions(item) : [];
-  const [selectedKey, setSelectedKey] = useState(() => (optionMode(item) === 'singleOptions' ? options.find((option) => option.owned === true) : options.find((option) => !isFullyOwned(option, item)))?.key || options[0]?.key || '');
-  const [amount, setAmount] = useState(1);
+function describeSelection(node, selections, ancestors = []) {
+  if (!node || !selections) return [];
+  const items = [];
+  for (const [key, selected] of Object.entries(selections)) {
+    const child = node.options?.[key];
+    if (!child) continue;
+    items.push({ node: child, ancestors: [...ancestors, node] });
+    items.push(...describeSelection(child, selected, [...ancestors, node]));
+  };
+  return items;
+};
 
+export default function BuyDialog({ item, category, tabs, user, entries = [], editLine = null, maxQuantity = 100, now = Date.now(), onAdd, onRemove, onClose, onTopUp }) {
+  const [selections, setSelections] = useState(() => editLine?.selections ?? initialSelections(item, false, now));
+  const [amount, setAmount] = useState(() => editLine?.amount ?? 1);
   useEffect(() => {
-    const current = productOptions(item);
-    setSelectedKey((optionMode(item) === 'singleOptions' ? current.find((choice) => choice.owned === true) : current.find((choice) => !isFullyOwned(choice, item)))?.key || current[0]?.key || '');
-  }, [item?.key]);
-  const selected = options.find((option) => option.key === selectedKey) || options[0];
-  const selectedInCart = entries.find((entry) => entry.key === selected?.key);
-  const cartAmount = selectedInCart?.amount || 0;
-  const once = isOnce(selected, item);
-  const fullyOwned = isFullyOwned(selected, item);
-  const supported = isBuyItemsSupported(selected?.key);
-  const conflict = conflictingKeys.has(selected?.key);
-  const blockedByConditions = unmetConditions(selected, item);
-  const time = getTimeStatus(selected, item, now);
-  const timeMessage = getTimeMessage(selected, item, now);
-  const available = supported && !fullyOwned && !conflict && !blockedByConditions && time.available && hasValidPrice(selected);
-  const conditions = selected ? getConditions(selected, item) : [];
-  const mode = optionMode(item);
-  const exclusive = mode === 'singleOptions' || (mode === 'multipleOptions' && (item.limit === 1 || item.limit === true));
-  const groupRoom = exclusive ? (item.limit === true ? 1 : Number.isSafeInteger(item.limit) ? item.limit : Infinity) : getGroupRemaining(entries, item, selected?.key);
-  const limit = selected ? Math.min(getPurchaseLimit(selected, item, maxQuantity), groupRoom) : 0;
-  const remainingLifetime = Math.min(typeof selected?.limit === 'number' ? selected.limit : Infinity, typeof item?.limit === 'number' ? item.limit : Infinity);
-  const quantity = !available || limit < 1 ? 0 : once ? 1 : clampCartQuantity(amount, limit);
-  const total = hasValidPrice(selected) ? selected.price * quantity : 0;
-  const replaced = exclusive ? entries.filter((entry) => entry.groupKey === item.key && entry.key !== selected?.key) : [];
-  const replacedTotal = replaced.reduce((sum, entry) => sum + entry.total, 0);
-  const nextCartTotal = cartTotal - (selectedInCart?.total || 0) - replacedTotal + total;
-  const shortage = Math.max(0, nextCartTotal - (user?.coins || 0));
+    setSelections(editLine?.selections ?? initialSelections(item, false, now));
+    setAmount(editLine?.amount ?? 1);
+  }, [item, editLine?.lineId]);
 
-  useEffect(() => {
-    setAmount(clampCartQuantity(cartAmount || 1, Math.max(1, limit)));
-  }, [selectedKey, cartAmount, limit]);
+  const draft = item && category ? createCartLine(category.id, item.key, amount, selections) : null;
+  const baseline = entries.filter((line) => line.lineId !== editLine?.lineId);
+  const sameLine = draft ? findLine(baseline, draft) : null;
+  const candidate = draft ? createCartLine(draft.category, draft.key, amount + (sameLine?.amount || 0), selections) : null;
+  const candidateId = draft ? cartLineId(draft) : '';
+  const previousLines = baseline.filter((line) => line.lineId !== candidateId && !(nodeType(item) === 'single' && line.category === candidate?.category && line.key === candidate?.key));
+  const prepared = candidate ? [...previousLines, candidate] : previousLines;
+  const checked = resolveCart(prepared, tabs, maxQuantity, now);
+  const resolved = candidate ? checked[checked.length - 1] : null;
+  const maxTotal = resolved ? lineMaximum(resolved, checked, maxQuantity) : 0;
+  const max = Math.max(0, maxTotal - (sameLine?.amount || 0));
+  const limit = Math.max(1, max);
+  const shortage = Math.max(0, checked.reduce((sum, line) => sum + line.subtotal, 0) - Number(user?.coins || 0));
+  const possible = !!resolved && !resolved.invalid && amount <= max && max > 0 && checked.every((line) => !line.invalid);
+  const selected = item ? describeSelection(item, selections) : [];
+  const details = item ? effectiveDisplay(item) : {};
+  const lastChoice = selected.at(-1);
+  const unit = lastChoice ? effectiveDisplay(lastChoice.node, lastChoice.ancestors).unit ?? details.unit : details.unit;
+  const allConditions = item ? [item, ...selected.map(({ node }) => node)].flatMap((node) => node.conditions || []) : [];
+  const cartAmount = sameLine?.amount ?? 0;
 
   const add = () => {
-    if (!selected || !available || limit < 1) return;
-    onAdd(selected, quantity, category, item);
-    onClose();
+    if (!possible) return;
+    onAdd(draft, editLine?.lineId);
   };
   const remove = () => {
-    if (!cartAmount || !selected) return;
-    onRemove(selected.key);
+    if (!editLine && !sameLine) return;
+    onRemove(editLine?.lineId || candidateId);
     onClose();
   };
 
   return (
-    <Dialog open={!!item} title={cartAmount ? 'Cập nhật giỏ hàng' : 'Chi tiết vật phẩm'} onClose={onClose}>
-      {item && selected && (
-        <>
-          <div className='flex items-center gap-3'>
+    <Dialog open={!!item} title={editLine ? 'Sửa vật phẩm trong giỏ' : 'Chi tiết vật phẩm'} onClose={onClose}>
+      {item && (
+        <div className='space-y-4'>
+          <div className='flex items-start gap-3'>
             <Tile p={item} size='lg' />
             <div className='min-w-0 flex-1'>
-              <p className='text-[11px] text-mute'>{category}</p>
-              <p className='text-base leading-tight font-extrabold'>{item.name || item.key}</p>
-              <p className='mt-1 truncate text-[11px] text-mute' title={item.key}>{item.key}</p>
-              {typeof item.owned === 'string' && item.owned && <p className='mt-1 text-[11px] text-coin'>Đang chọn: {item.owned}</p>}
-              {typeof item.owned === 'number' && <p className='mt-1 text-[11px] text-mute'>Đã có: {formatNumber(item.owned)}</p>}
+              <p className='text-[11px] text-mute'>{category?.name}</p>
+              <h3 className='text-base leading-tight font-extrabold'>{item.name || item.key}</h3>
+              <p className='mt-1 break-all font-mono text-[10px] text-mute'>{item.key}</p>
+              {ownedLabel(item) && <p className='mt-1 text-[11px] text-coin'>{ownedLabel(item)}</p>}
+              {details.description?.trim() && <p className='mt-2 text-xs leading-relaxed text-mute'>{details.description}</p>}
             </div>
           </div>
 
-          {hasOptions(item) && (
-            <div className='space-y-1.5'>
-              <label htmlFor={variantSelectId} className='block text-[11px] font-medium text-mute'>
-                {mode === 'singleOptions' ? 'Chọn một lựa chọn duy nhất' : 'Chọn một loại để thêm vào giỏ'}
-              </label>
-              <Select id={variantSelectId} label='Lựa chọn vật phẩm' value={selected.key} onChange={setSelectedKey} className='h-11! w-full! bg-bg!'>
-                {options.map((option) => (
-                  <option key={option.key} value={option.key}>
-                    {option.name || option.key}{typeof option.owned === 'number' ? ` · có ${formatNumber(option.owned)}` : option.owned === true && isOnce(option, item) ? ' · đã sở hữu' : option.owned === true ? ' · đang dùng' : ''}
-                  </option>
-                ))}
-              </Select>
-              <p className='text-[11px] text-mute'>
-                {mode === 'singleOptions' ? 'Chỉ một lựa chọn trong nhóm được giữ trong mỗi đơn. Chọn loại khác sẽ thay thế loại trước đó.' : 'Có thể thêm nhiều loại khác nhau vào cùng đơn hàng, trong giới hạn số lượng của nhóm.'}
-              </p>
+          {hasOptions(item) && <ShopNodeSelector node={item} selections={selections} onChange={(next) => { setSelections(next); setAmount(1); }} />}
+
+          {selected.length > 0 && (
+            <div className='space-y-1.5 rounded-xl border border-line bg-bg p-3'>
+              <p className='text-[11px] font-bold'>Cấu hình đã chọn</p>
+              {selected.map(({ node, ancestors }, index) => {
+                const display = effectiveDisplay(node, ancestors);
+                return <div key={`${index}:${node.key}`} className='flex min-w-0 flex-wrap items-center justify-between gap-2 text-xs'>
+                  <span className='min-w-0 wrap-break-word text-mute'>{node.name || node.key}</span>
+                  <span className='shrink-0 text-[11px]'>{ownedLabel(node)}{display.unit && typeof node.owned === 'number' ? ` ${display.unit}` : ''}</span>
+                </div>;
+              })}
             </div>
           )}
 
-          <div className='flex items-center justify-between rounded-xl border border-line bg-bg p-3 text-xs'>
-            <div className='min-w-0'>
-              <p className='truncate font-bold' title={selected.key}>{selected.name || selected.key}</p>
-              <p className='mt-0.5 truncate text-[10px] text-mute'>{selected.key}</p>
-            </div>
-            <p className='flex shrink-0 items-center gap-1 font-extrabold tabular-nums text-coin'><Coin size={15} /> {hasValidPrice(selected) ? formatNumber(selected.price) : '—'}</p>
-          </div>
-
-          {(item.startTime !== undefined || item.endTime !== undefined || selected.startTime !== undefined || selected.endTime !== undefined) && (
-            <div className={`space-y-1 rounded-xl border p-3 text-[11px] ${time.available ? 'border-line bg-bg text-mute' : 'border-coin/40 bg-coin/10 text-coin'}`}>
-              <p className='font-bold text-fg'>Thời gian mở bán</p>
-              {(selected.startTime !== undefined || item.startTime !== undefined) && <p>Bắt đầu: {Number.isSafeInteger(Math.max(selected.startTime ?? 0, item.startTime ?? 0)) ? formatShopDate(Math.max(selected.startTime ?? 0, item.startTime ?? 0)) : 'Không hợp lệ'}</p>}
-              {(selected.endTime !== undefined || item.endTime !== undefined) && <p>Kết thúc: {Number.isSafeInteger(Math.min(selected.endTime ?? Infinity, item.endTime ?? Infinity)) ? formatShopDate(Math.min(selected.endTime ?? Infinity, item.endTime ?? Infinity)) : 'Không hợp lệ'}</p>}
-              {timeMessage && <p className='font-semibold'>{timeMessage}</p>}
-            </div>
-          )}
-
-          {typeof selected.owned === 'number' && <p className='text-[11px] text-mute'>Số lượng đang có: {formatNumber(selected.owned)}</p>}
-          {selected.owned === true && !once && !fullyOwned && limit >= 1 && <p className='rounded-lg border border-line bg-bg px-3 py-2 text-[11px] text-mute'>Đã sở hữu hoặc đang sử dụng. Vẫn có thể mua tiếp trong giới hạn còn lại.</p>}
-          {typeof selected.limit === 'number' || typeof item.limit === 'number' ? (
-            <p className='text-[11px] text-mute'>Còn có thể mua: {formatNumber(remainingLifetime)}</p>
-          ) : null}
-
-          {conditions.length > 0 && (
+          {allConditions.length > 0 && (
             <div className='space-y-2 rounded-xl border border-line bg-bg p-3'>
               <p className='text-[11px] font-bold'>Điều kiện mua</p>
-              <ul className='space-y-2'>
-                {conditions.map(({ name, already }, index) => (
-                  <li key={`${name}-${index}`} className='flex items-start gap-2 text-xs'>
-                    {already ? <IconCheck size={16} className='mt-0.5 shrink-0 text-ok' /> : <IconX size={16} className='mt-0.5 shrink-0 text-bad' />}
-                    <span className={already ? 'text-mute' : 'text-fg'}>{name}</span>
-                  </li>
-                ))}
-              </ul>
+              {allConditions.map(({ name, met }, index) => <p key={`${name}:${index}`} className='flex items-start gap-2 text-[11px]'>
+                {met ? <IconCheck size={15} className='shrink-0 text-ok' /> : <IconX size={15} className='shrink-0 text-bad' />}
+                <span className={met ? 'text-mute' : 'text-bad'}>{name}</span>
+              </p>)}
             </div>
           )}
-          {conflict && <p role='alert' className='rounded-lg border border-bad/40 bg-bad/10 p-3 text-xs text-bad'>Mã vật phẩm xuất hiện với cấu hình khác nhau ở nhiều danh mục. Backend hiện không cho mua mã này.</p>}
-          {fullyOwned && <p className='rounded-lg border border-ok/30 bg-ok/10 p-3 text-xs text-ok'>{once ? 'Vật phẩm đã sở hữu và chỉ được mua một lần.' : 'Đã đạt mức sở hữu tối đa, không thể mua thêm.'}</p>}
-          {!supported && <p role='alert' className='rounded-lg border border-bad/30 bg-bad/10 p-3 text-xs text-bad'>Mã này chưa được hàm buyItems hỗ trợ. Không thể thêm vào giỏ.</p>}
-          {limit < 1 && <p className='rounded-lg border border-bad/30 bg-bad/10 p-3 text-xs text-bad'>{fullyOwned ? 'Đã đạt giới hạn sở hữu.' : getPurchaseLimit(selected, item, maxQuantity) < 1 ? 'Đã đạt giới hạn mua của vật phẩm.' : 'Đã đạt giới hạn số lượng của nhóm trong giỏ hàng.'}</p>}
 
-          {limit < 1 ? (
-            <div className='flex items-center gap-2 rounded-lg border border-line bg-bg px-3 py-2.5 text-[11px] text-mute'><IconLock size={15} /> Không thể mua thêm vật phẩm này</div>
-          ) : once ? (
-            <div className='flex items-center gap-2 rounded-lg border border-line bg-bg px-3 py-2.5 text-[11px] text-mute'><IconLock size={15} /> Chỉ được sở hữu một lần</div>
-          ) : limit === 1 ? (
-            <p className='rounded-lg border border-line bg-bg px-3 py-2.5 text-[11px] text-mute'>
-              {remainingLifetime === 1 ? 'Chỉ còn 1 vật phẩm được phép mua. Mua xong sẽ đạt giới hạn.' : 'Mỗi lần mua tối đa 1 vật phẩm. Có thể mua tiếp ở đơn hàng sau.'}
-            </p>
-          ) : (
-            <QuantityPicker value={quantity} max={Math.max(1, limit)} disabled={!available || limit < 1} onChange={setAmount} onEnter={add} />
-          )}
-
-          <div className='flex items-center justify-between rounded-xl border border-line bg-bg px-4 py-3'>
-            <span className='text-xs font-bold'>Thành tiền</span>
-            <span className='flex items-center gap-1 text-lg font-extrabold tabular-nums text-coin'><Coin size={18} /> {formatNumber(total)}</span>
-          </div>
-          {shortage > 0 && available && (
-            <div className='flex items-center justify-between gap-2 rounded-lg border border-coin/30 bg-coin/10 p-3 text-[11px]'>
-              <span className='text-coin'>Thiếu {formatNumber(shortage)} xu</span>
-              <button type='button' onClick={onTopUp} className='cursor-pointer font-bold text-coin underline underline-offset-2'>Mua xu</button>
+          {item.startTime != null || item.endTime != null || selected.some(({ node }) => node.startTime != null || node.endTime != null) ? (
+            <div className='space-y-1 rounded-xl border border-line bg-bg p-3 text-[11px] text-mute'>
+              <p className='font-bold text-fg'>Thời gian mở bán (theo toàn bộ đường dẫn)</p>
+              {[item, ...selected.map(({ node }) => node)].filter((node) => node.startTime != null || node.endTime != null).map((node, index) => (
+                <p key={index} className='wrap-break-word'>{node.name || node.key}: {node.startTime != null ? `Từ ${new Date(node.startTime).toLocaleString('vi-VN')}` : 'Không giới hạn bắt đầu'} · {node.endTime != null ? `Đến ${new Date(node.endTime).toLocaleString('vi-VN')}` : 'Không giới hạn kết thúc'}</p>
+              ))}
             </div>
+          ) : null}
+
+          <p className='text-[11px] text-mute'>Đơn vị mua: {unit || 'cái'}</p>
+          {max === 0 ? <p className='rounded-lg border border-bad/40 bg-bad/10 p-3 text-[11px] text-bad'>Đã hết số lượng được phép mua.</p> : (
+            <QuantityPicker value={amount} max={limit} onChange={setAmount} onEnter={add} />
           )}
-          <div className={`grid gap-2 ${cartAmount > 0 && !once ? 'grid-cols-2' : ''}`}>
-            {cartAmount > 0 && <Button variant='ghost' className='w-full text-bad!' onClick={remove}><IconTrash size={16} /> Xóa khỏi giỏ</Button>}
-            {(!once || cartAmount === 0) && (
-              <Button className='w-full' disabled={!available || limit < 1} onClick={add}>
-                {available ? <IconShoppingCart size={16} /> : <IconLock size={16} />}
-                {fullyOwned ? 'Đã sở hữu' : !supported ? 'Chưa hỗ trợ' : conflict ? 'Mã không hợp lệ' : blockedByConditions ? 'Chưa đủ điều kiện' : !time.available ? 'Ngoài thời gian bán' : !hasValidPrice(selected) ? 'Không có giá' : limit < 1 ? 'Đã đủ số lượng' : cartAmount ? 'Cập nhật giỏ' : 'Thêm vào giỏ'}
-              </Button>
-            )}
+
+          {resolved?.invalid && <p role='alert' className='rounded-lg border border-bad/40 bg-bad/10 p-3 text-xs text-bad'>{resolved.invalid}</p>}
+          {nodeType(item) === 'multiple' && <p className='text-[11px] text-mute'>Bạn có thể chọn loại khác và thêm tiếp. Mỗi loại sẽ là một dòng đơn hàng riêng.</p>}
+          <div className='rounded-xl border border-line bg-bg p-3'>
+            <div className='flex items-center justify-between text-xs'>
+              <span>Đơn giá</span><span className='flex items-center gap-1 font-bold text-coin'><Coin size={14} /> {formatNumber(resolved?.unitPrice || 0)}</span>
+            </div>
+            <div className='mt-2 flex items-center justify-between border-t border-line pt-2'>
+              <span className='text-xs font-bold'>Thành tiền</span>
+              <span className='flex items-center gap-1 text-lg font-extrabold tabular-nums text-coin'><Coin size={18} /> {formatNumber(resolved?.subtotal || 0)}</span>
+            </div>
           </div>
-        </>
+          {shortage > 0 && <div className='flex flex-wrap items-center justify-between gap-2 rounded-lg border border-coin/30 bg-coin/10 p-3 text-[11px]'>
+            <span className='text-coin'>Giỏ hàng sẽ thiếu {formatNumber(shortage)} xu</span>
+            <button type='button' onClick={onTopUp} className='cursor-pointer font-bold text-coin underline underline-offset-2'>Mua xu</button>
+          </div>}
+          <div className={`grid gap-2 ${editLine || sameLine ? 'grid-cols-2' : ''}`}>
+            {(editLine || sameLine) && <Button variant='ghost' className='w-full text-bad!' onClick={remove}><IconTrash size={15} /> Xóa khỏi giỏ</Button>}
+            <Button className='w-full' disabled={!possible} onClick={add}>
+              {possible ? <IconShoppingCart size={16} /> : <IconLock size={16} />}
+              {editLine ? 'Cập nhật giỏ' : cartAmount ? 'Thêm số lượng' : 'Thêm vào giỏ'}
+            </Button>
+          </div>
+        </div>
       )}
     </Dialog>
   );

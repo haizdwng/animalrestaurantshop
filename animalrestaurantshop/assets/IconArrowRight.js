@@ -1,6 +1,6 @@
-import { en as createReactComponent } from "./index.js";
+import { Ot as createReactComponent } from "./index.js";
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -20,7 +20,7 @@ var IconArrowLeft = /* @__PURE__ */ createReactComponent("outline", "arrow-left"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.

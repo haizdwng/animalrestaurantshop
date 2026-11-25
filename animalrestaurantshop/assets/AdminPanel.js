@@ -1,4 +1,4 @@
-import { It as Tabs, an as useNavigate, in as useLocation, nn as require_jsx_runtime, rn as Outlet } from "./index.js";
+import { At as require_jsx_runtime, Mt as useLocation, Nt as useNavigate, jt as Outlet, ut as Tabs } from "./index.js";
 import { t as ADMIN_TABS } from "./config.js";
 // src/features/administration/AdminPanel.jsx
 var import_jsx_runtime = require_jsx_runtime();

@@ -1,9 +1,9 @@
-import { Gt as Button, Ht as toast, It as Tabs, Mt as Skeleton, Pt as Spinner, Yt as IconRefresh, cn as require_react, en as createReactComponent, gt as updateAvatar, ln as __toESM, nn as require_jsx_runtime, qt as IconX, sn as require_react_dom } from "./index.js";
+import { At as require_jsx_runtime, Ct as IconRefresh, Ft as require_react_dom, It as require_react, Lt as __toESM, Ot as createReactComponent, W as updateAvatar, ct as Spinner, gt as toast, ot as Skeleton, ut as Tabs, xt as IconX, yt as Button } from "./index.js";
 import { n as IconCheck, t as IconPhoto } from "./IconPhoto.js";
 import { t as IconTrash } from "./IconTrash.js";
 import { r as IconCopy } from "./clipboard.js";
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -47,7 +47,7 @@ var IconAdjustmentsHorizontal = /* @__PURE__ */ createReactComponent("outline", 
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -60,7 +60,7 @@ var IconArrowBackUp = /* @__PURE__ */ createReactComponent("outline", "arrow-bac
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -73,7 +73,7 @@ var IconArrowForwardUp = /* @__PURE__ */ createReactComponent("outline", "arrow-
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -97,7 +97,7 @@ var IconBrush = /* @__PURE__ */ createReactComponent("outline", "brush", "Brush"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -129,7 +129,7 @@ var IconCat = /* @__PURE__ */ createReactComponent("outline", "cat", "Cat", [
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -142,7 +142,7 @@ var IconClipboard = /* @__PURE__ */ createReactComponent("outline", "clipboard",
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -152,7 +152,7 @@ var IconCrown = /* @__PURE__ */ createReactComponent("outline", "crown", "Crown"
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -189,7 +189,7 @@ var IconDice5 = /* @__PURE__ */ createReactComponent("outline", "dice-5", "Dice5
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -209,7 +209,7 @@ var IconDownload = /* @__PURE__ */ createReactComponent("outline", "download", "
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -222,7 +222,7 @@ var IconEraser = /* @__PURE__ */ createReactComponent("outline", "eraser", "Eras
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -246,7 +246,7 @@ var IconMoodSmile = /* @__PURE__ */ createReactComponent("outline", "mood-smile"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -274,7 +274,7 @@ var IconPhotoOff = /* @__PURE__ */ createReactComponent("outline", "photo-off", 
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -306,7 +306,7 @@ var IconPhotoPlus = /* @__PURE__ */ createReactComponent("outline", "photo-plus"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -316,7 +316,7 @@ var IconPointer = /* @__PURE__ */ createReactComponent("outline", "pointer", "Po
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -348,7 +348,7 @@ var IconRotateClockwise2 = /* @__PURE__ */ createReactComponent("outline", "rota
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -358,7 +358,7 @@ var IconSparkles = /* @__PURE__ */ createReactComponent("outline", "sparkles", "
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -378,7 +378,7 @@ var IconUserCheck = /* @__PURE__ */ createReactComponent("outline", "user-check"
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -402,7 +402,7 @@ var IconZoomIn = /* @__PURE__ */ createReactComponent("outline", "zoom-in", "Zoo
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.

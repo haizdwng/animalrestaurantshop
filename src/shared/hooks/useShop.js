@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as api from '@/shared/library/api';
-import { applyPurchaseToTabs } from '@/features/shop/cartUtils';
 
 const INITIAL = { tabs: null, loading: false, error: '', ready: null, readyMessage: '' };
 
@@ -34,10 +33,7 @@ export default function useShop(enabled, skipReady = false) {
     };
   }, []);
 
-  const applyPurchase = useCallback((items) => {
-    request.current += 1;
-    setShop((current) => current.tabs ? { ...current, loading: false, tabs: applyPurchaseToTabs(current.tabs, items) } : current);
-  }, []);
+  const applyPurchase = useCallback(async () => load(), [load]);
 
   useEffect(() => {
     if (!enabled) {

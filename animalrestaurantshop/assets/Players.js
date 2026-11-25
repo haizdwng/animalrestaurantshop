@@ -1,4 +1,4 @@
-import { $ as adminRecord, At as PagerSkeleton, Bt as Dialog, Ct as fileToAvatar, Dt as SearchInput, F as adminAddPlayerFriend, Gt as Button, Ht as toast, I as adminAddPlayerLike, It as Tabs, J as adminEncryptRecordValue, Jt as IconSearch, K as adminEditPlayer, L as adminAddPlayerStar, Lt as Select, Mt as Skeleton, Nt as ErrorState, Ot as JsonEditor, Pt as Spinner, Q as adminPlayers, U as adminDeletePlayerFriend, Ut as toastError, V as adminDecryptRecordValue, Wt as Field, X as adminPlayer, Xt as IconInfoCircle, Yt as IconRefresh, Z as adminPlayerFriends, an as useNavigate, cn as require_react, en as createReactComponent, j as formatNumber, jt as RowSkeleton, kt as Line, ln as __toESM, nn as require_jsx_runtime, nt as adminUpdatePlayerAvatar, on as useParams, tt as adminSaveRecord, zt as Menu } from "./index.js";
+import { A as adminUpdatePlayerAvatar, At as require_jsx_runtime, Ct as IconRefresh, D as adminRecord, E as adminPlayers, It as require_react, Lt as __toESM, Nt as useNavigate, Ot as createReactComponent, Pt as useParams, S as adminEncryptRecordValue, St as IconSearch, T as adminPlayerFriends, Z as fileToAvatar, _ as adminDeletePlayerFriend, _t as toastError, a as formatNumber, at as RowSkeleton, b as adminEditPlayer, ct as Spinner, d as adminAddPlayerStar, dt as Select, gt as toast, h as adminDecryptRecordValue, it as PagerSkeleton, k as adminSaveRecord, l as adminAddPlayerFriend, mt as Dialog, nt as JsonEditor, ot as Skeleton, pt as Menu, rt as Line, st as ErrorState, tt as SearchInput, u as adminAddPlayerLike, ut as Tabs, vt as Field, w as adminPlayer, wt as IconInfoCircle, yt as Button } from "./index.js";
 import { n as IconArrowLeft, t as IconArrowRight } from "./IconArrowRight.js";
 import { o as PLAYER_TABS } from "./config.js";
 import { t as IconStarFilled } from "./IconStarFilled.js";
@@ -6,13 +6,13 @@ import { t as IconUser } from "./IconUser.js";
 import { n as IconLock, r as IconCopy, t as copyText } from "./clipboard.js";
 import { t as IconPlus } from "./IconPlus.js";
 import { t as IconTrash } from "./IconTrash.js";
-import { i as IconStar, t as Tile } from "./Tile.js";
+import { E as IconStar, t as Tile } from "./Tile.js";
 import { t as Head } from "./Head.js";
-import { t as usePaginatedData } from "./usePaginatedData.js";
-import { n as IconPencil, t as useRemoteResource } from "./useRemoteResource.js";
+import { n as IconPencil, t as usePaginatedData } from "./usePaginatedData.js";
+import { t as useRemoteResource } from "./useRemoteResource.js";
 import { i as validate } from "./validate.js";
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -32,7 +32,7 @@ var IconLockOpen = /* @__PURE__ */ createReactComponent("outline", "lock-open", 
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -42,7 +42,7 @@ var IconThumbUp = /* @__PURE__ */ createReactComponent("outline", "thumb-up", "T
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.

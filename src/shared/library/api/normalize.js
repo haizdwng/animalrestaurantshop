@@ -35,38 +35,33 @@ export const SHOP_CATEGORIES = Object.freeze({
   specials: 'Đặc biệt'
 });
 
-const FIELDS = ['key', 'name', 'image', 'price', 'once', 'owned', 'conditions', 'limit', 'startTime', 'endTime'];
-function selectFields(source) {
-  const value = {};
-  for (const field of FIELDS) if (Object.hasOwn(source, field)) value[field] = source[field];
-  if (Array.isArray(value.conditions)) value.conditions = value.conditions.filter((condition) => condition && typeof condition.name === 'string' && typeof condition.already === 'boolean').map(({ name, already }) => ({ name, already }));
-  else delete value.conditions;
-  return value;
-};
-function normalizeProduct(product) {
-  if (!product || typeof product.key !== 'string' || !product.key.trim()) return null;
-  const normalized = selectFields(product);
-  for (const field of ['multipleOptions', 'singleOptions']) {
-    if (!Array.isArray(product[field])) continue;
-    normalized[field] = product[field].filter((option) => option && typeof option.key === 'string' && option.key.trim()).map(selectFields);
+const PUBLIC_FIELDS = [
+  'key', 'name', 'description', 'image', 'unit', 'type', 'price',
+  'owned', 'canPurchase', 'purchaseLimit', 'purchaseLimitScope',
+  'limit', 'limitScope', 'remainingLimit', 'remainingCapacity',
+  'maxPurchasableQuantity', 'startTime', 'endTime',
+  'required', 'minSelections', 'maxSelections', 'defaultValue'
+];
+const object = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+function normalizeNode(source, depth = 0) {
+  if (!object(source) || typeof source.key !== 'string' || !source.key.trim() || depth > 62) return null;
+  const node = {};
+  for (const field of PUBLIC_FIELDS) if (Object.hasOwn(source, field)) node[field] = source[field];
+  if (Array.isArray(source.conditions)) node.conditions = source.conditions.map((entry) => ({ name: entry?.name, met: entry?.met }));
+  if (object(source.options)) {
+    node.options = {};
+    for (const [key, value] of Object.entries(source.options)) {
+      if (value?.key !== key) continue;
+      const child = normalizeNode(value, depth + 1);
+      if (child) node.options[key] = child;
+    };
   };
-  return normalized;
-};
-function normalizeCategory(source) {
-  const signatures = new Set();
-  const products = [];
-  for (const item of source) {
-    const product = normalizeProduct(item);
-    if (!product) continue;
-    const signature = JSON.stringify(product);
-    if (signatures.has(signature)) continue;
-    signatures.add(signature);
-    products.push(product);
-  };
-  return products;
+  return node;
 };
 export function normShop(shop) {
-  if (!shop || typeof shop !== 'object') return [];
-  return Object.entries(SHOP_CATEGORIES).filter(([category]) => Array.isArray(shop[category])).map(([category, name]) => ({ id: category, name, products: normalizeCategory(shop[category]) }));
+  if (!object(shop)) return [];
+  return Object.entries(SHOP_CATEGORIES).filter(([category]) => Array.isArray(shop[category])).map(([id, name]) => ({
+    id, name, products: shop[id].map((source) => normalizeNode(source)).filter(Boolean)
+  }));
 };
 export const normAdminUser = (user) => ({ ...user, id: user._id });
