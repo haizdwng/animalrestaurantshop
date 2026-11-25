@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/usePaginatedData.js","assets/PaymentDialog.js","assets/clipboard.js","assets/IconUsers.js","assets/IconPhoto.js","assets/Tile.js","assets/IconPlus.js","assets/Account.js","assets/useRemoteResource.js","assets/IconStarFilled.js","assets/IconUser.js","assets/IconUserPlus.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Head.js","assets/Users.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/Auth.js","assets/IconArrowRight.js","assets/validate.js","assets/StrengthBar.js","assets/Shop.js","assets/IconTrash.js","assets/usePaginatedData.js","assets/Tile.js","assets/PaymentDialog.js","assets/clipboard.js","assets/IconUsers.js","assets/IconPhoto.js","assets/IconPlus.js","assets/Account.js","assets/IconStarFilled.js","assets/IconUser.js","assets/IconUserPlus.js","assets/useRemoteResource.js","assets/IconGift.js","assets/AdminPanel.js","assets/config.js","assets/GiftCodes.js","assets/Head.js","assets/Users.js","assets/Players.js","assets/Data.js"])))=>i.map(i=>d[i]);
 // \0rolldown/runtime.js
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -11451,10 +11451,10 @@ var require_client = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	checkDCE();
 	module.exports = require_react_dom_client_production();
 }));
-// node_modules/react-router/dist/development/chunk-YDNE64FV.mjs
+// node_modules/react-router/dist/development/chunk-Z7SQORRT.mjs
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 /**
-* react-router v7.18.6
+* react-router v7.18.7
 *
 * Copyright (c) Remix Software Inc.
 *
@@ -11843,13 +11843,17 @@ function matchRouteBranch(branch, pathname, allowPartial = false) {
 	}
 	return matches;
 }
+var MAX_OPTIONAL_PATH_SEGMENTS = 12;
 function matchPath(pattern, pathname) {
 	if (typeof pattern === "string") pattern = {
 		path: pattern,
 		caseSensitive: false,
 		end: true
 	};
-	let [matcher, compiledParams] = compilePath(pattern.path, pattern.caseSensitive, pattern.end);
+	let { path } = pattern;
+	let optionalSegments = 0;
+	for (let index = path.indexOf("?"); index !== -1; index = path.indexOf("?", index + 1)) if (++optionalSegments > MAX_OPTIONAL_PATH_SEGMENTS) throw new Error(`Path pattern ${JSON.stringify(path)} exceeds the limit of ${MAX_OPTIONAL_PATH_SEGMENTS} optional segments.`);
+	let [matcher, compiledParams] = compilePath(path, pattern.caseSensitive, pattern.end);
 	return matchPathImpl(pattern, pathname, matcher, compiledParams);
 }
 function matchPathImpl(pattern, pathname, matcher, compiledParams) {
@@ -13066,7 +13070,7 @@ function mergeRefs(...refs) {
 import_react.Component;
 var isBrowser2 = typeof window !== "undefined" && typeof window.document !== "undefined" && typeof window.document.createElement !== "undefined";
 try {
-	if (isBrowser2) window.__reactRouterVersion = "7.18.6";
+	if (isBrowser2) window.__reactRouterVersion = "7.18.7";
 } catch (e) {}
 function HashRouter({ basename, children, useTransitions, window: window2 }) {
 	let historyRef = import_react.useRef();
@@ -14250,7 +14254,7 @@ function Badge({ tone = "neutral", Icon, children, className = "" }) {
 }
 // node_modules/@tabler/icons-react/dist/esm/defaultAttributes.mjs
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14278,7 +14282,7 @@ var defaultAttributes = {
 };
 // node_modules/@tabler/icons-react/dist/esm/createReactComponent.mjs
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14308,7 +14312,7 @@ var createReactComponent = (type, iconName, iconNamePascal, iconNode) => {
 	return Component;
 };
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14328,7 +14332,7 @@ var IconAlertTriangle = /* @__PURE__ */ createReactComponent("outline", "alert-t
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14341,7 +14345,7 @@ var IconArrowsSort = /* @__PURE__ */ createReactComponent("outline", "arrows-sor
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14354,7 +14358,7 @@ var IconBraces = /* @__PURE__ */ createReactComponent("outline", "braces", "Brac
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14382,7 +14386,7 @@ var IconBuildingStore = /* @__PURE__ */ createReactComponent("outline", "buildin
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14392,7 +14396,7 @@ var IconChevronLeft = /* @__PURE__ */ createReactComponent("outline", "chevron-l
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14402,7 +14406,7 @@ var IconChevronRight = /* @__PURE__ */ createReactComponent("outline", "chevron-
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14415,7 +14419,7 @@ var IconCircleCheck = /* @__PURE__ */ createReactComponent("outline", "circle-ch
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14428,7 +14432,7 @@ var IconCloudOff = /* @__PURE__ */ createReactComponent("outline", "cloud-off", 
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14448,7 +14452,7 @@ var IconDeviceFloppy = /* @__PURE__ */ createReactComponent("outline", "device-f
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14468,7 +14472,7 @@ var IconDotsVertical = /* @__PURE__ */ createReactComponent("outline", "dots-ver
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14488,7 +14492,7 @@ var IconEyeOff = /* @__PURE__ */ createReactComponent("outline", "eye-off", "Eye
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14501,7 +14505,7 @@ var IconEye = /* @__PURE__ */ createReactComponent("outline", "eye", "Eye", [["p
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14525,7 +14529,7 @@ var IconFileUpload = /* @__PURE__ */ createReactComponent("outline", "file-uploa
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14545,7 +14549,7 @@ var IconHexagonLetterA = /* @__PURE__ */ createReactComponent("outline", "hexago
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14565,7 +14569,7 @@ var IconInfoCircle = /* @__PURE__ */ createReactComponent("outline", "info-circl
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14575,7 +14579,7 @@ var IconLoader2 = /* @__PURE__ */ createReactComponent("outline", "loader-2", "L
 	"key": "svg-0"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14588,7 +14592,7 @@ var IconRefresh = /* @__PURE__ */ createReactComponent("outline", "refresh", "Re
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14601,7 +14605,7 @@ var IconSearch = /* @__PURE__ */ createReactComponent("outline", "search", "Sear
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14614,7 +14618,7 @@ var IconSelector = /* @__PURE__ */ createReactComponent("outline", "selector", "
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14627,7 +14631,7 @@ var IconSend = /* @__PURE__ */ createReactComponent("outline", "send", "Send", [
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14640,7 +14644,7 @@ var IconSettings = /* @__PURE__ */ createReactComponent("outline", "settings", "
 	"key": "svg-1"
 }]]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -14660,7 +14664,7 @@ var IconUserCircle = /* @__PURE__ */ createReactComponent("outline", "user-circl
 	}]
 ]);
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.
@@ -16774,56 +16778,55 @@ var SHOP_CATEGORIES = Object.freeze({
 	items: "Vật phẩm",
 	specials: "Đặc biệt"
 });
-var FIELDS = [
+var PUBLIC_FIELDS = [
 	"key",
 	"name",
+	"description",
 	"image",
+	"unit",
+	"type",
 	"price",
-	"once",
 	"owned",
-	"conditions",
+	"canPurchase",
+	"purchaseLimit",
+	"purchaseLimitScope",
 	"limit",
+	"limitScope",
+	"remainingLimit",
+	"remainingCapacity",
+	"maxPurchasableQuantity",
 	"startTime",
-	"endTime"
+	"endTime",
+	"required",
+	"minSelections",
+	"maxSelections",
+	"defaultValue"
 ];
-function selectFields(source) {
-	const value = {};
-	for (const field of FIELDS) if (Object.hasOwn(source, field)) value[field] = source[field];
-	if (Array.isArray(value.conditions)) value.conditions = value.conditions.filter((condition) => condition && typeof condition.name === "string" && typeof condition.already === "boolean").map(({ name, already }) => ({
-		name,
-		already
+var object = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+function normalizeNode(source, depth = 0) {
+	if (!object(source) || typeof source.key !== "string" || !source.key.trim() || depth > 62) return null;
+	const node = {};
+	for (const field of PUBLIC_FIELDS) if (Object.hasOwn(source, field)) node[field] = source[field];
+	if (Array.isArray(source.conditions)) node.conditions = source.conditions.map((entry) => ({
+		name: entry?.name,
+		met: entry?.met
 	}));
-	else delete value.conditions;
-	return value;
-}
-function normalizeProduct(product) {
-	if (!product || typeof product.key !== "string" || !product.key.trim()) return null;
-	const normalized = selectFields(product);
-	for (const field of ["multipleOptions", "singleOptions"]) {
-		if (!Array.isArray(product[field])) continue;
-		normalized[field] = product[field].filter((option) => option && typeof option.key === "string" && option.key.trim()).map(selectFields);
+	if (object(source.options)) {
+		node.options = {};
+		for (const [key, value] of Object.entries(source.options)) {
+			if (value?.key !== key) continue;
+			const child = normalizeNode(value, depth + 1);
+			if (child) node.options[key] = child;
+		}
 	}
-	return normalized;
-}
-function normalizeCategory(source) {
-	const signatures = /* @__PURE__ */ new Set();
-	const products = [];
-	for (const item of source) {
-		const product = normalizeProduct(item);
-		if (!product) continue;
-		const signature = JSON.stringify(product);
-		if (signatures.has(signature)) continue;
-		signatures.add(signature);
-		products.push(product);
-	}
-	return products;
+	return node;
 }
 function normShop(shop) {
-	if (!shop || typeof shop !== "object") return [];
-	return Object.entries(SHOP_CATEGORIES).filter(([category]) => Array.isArray(shop[category])).map(([category, name]) => ({
-		id: category,
+	if (!object(shop)) return [];
+	return Object.entries(SHOP_CATEGORIES).filter(([category]) => Array.isArray(shop[category])).map(([id, name]) => ({
+		id,
 		name,
-		products: normalizeCategory(shop[category])
+		products: shop[id].map((source) => normalizeNode(source)).filter(Boolean)
 	}));
 }
 var normAdminUser = (user) => ({
@@ -16907,6 +16910,8 @@ async function compressJsonGZip(value) {
 	return new Uint8Array(await new Response(output).arrayBuffer());
 }
 var ADMIN_MAX_QTY = 1e5;
+var MAX_COMPRESSED_BYTES = 262144;
+var MAX_BODY_BYTES = 1048576;
 var getShop = async () => {
 	const response = await call("GET", "/user/shop");
 	return {
@@ -16915,10 +16920,20 @@ var getShop = async () => {
 	};
 };
 var buy = async (items) => {
-	return withUser(await call("POST", "/user/shop", await compressJsonGZip({ items }), {
+	if (!Array.isArray(items) || !items.length || items.length > 5e3 || items.some((item) => !item || Object.keys(item).length !== 4 || ![
+		"category",
+		"key",
+		"amount",
+		"selections"
+	].every((key) => Object.hasOwn(item, key)) || typeof item.category !== "string" || typeof item.key !== "string" || !Number.isSafeInteger(item.amount) || item.amount < 1 || !item.selections || typeof item.selections !== "object" || Array.isArray(item.selections))) throw new Error("Danh sách vật phẩm không hợp lệ");
+	const body = { items };
+	if (new TextEncoder().encode(JSON.stringify(body)).byteLength > MAX_BODY_BYTES) throw new Error("Đơn hàng vượt giới hạn 1 MiB");
+	const compressed = await compressJsonGZip(body);
+	if (compressed.byteLength > MAX_COMPRESSED_BYTES) throw new Error("Đơn hàng nén vượt giới hạn 256 KiB");
+	return call("POST", "/user/shop", compressed, {
 		contentEncoding: "gzip",
 		coin: true
-	}));
+	});
 };
 var createTransaction = (coin) => call("POST", "/user/transactions", { coin });
 var getTransaction = async (code) => {
@@ -17271,320 +17286,6 @@ function useSession() {
 		}, [signOut])
 	};
 }
-// src/features/shop/cartUtils.js
-var optionMode = (group) => Array.isArray(group?.singleOptions) ? "singleOptions" : Array.isArray(group?.multipleOptions) ? "multipleOptions" : null;
-var hasOptions = (group) => optionMode(group) !== null;
-var productOptions = (group) => hasOptions(group) ? group[optionMode(group)] : group ? [group] : [];
-var isOnce = (product, group = product) => (product?.once ?? group?.once) === true;
-var isOwned = (value) => value === true || typeof value === "number" && value > 0 || typeof value === "string" && value.trim().length > 0;
-var isOwnedOnce = (product, group = product) => isOnce(product, group) && (isOwned(product?.owned) || product !== group && group?.once === true && isOwned(group.owned));
-var isFullyOwned = (product, group = product) => isOwnedOnce(product, group) || !isOnce(product, group) && optionMode(group) !== "singleOptions" && product?.owned === true && product?.limit !== true && group?.limit !== true;
-var EXACT_BUY_KEYS = /* @__PURE__ */ new Set([
-	"money_skipAdCard",
-	"money_checkInCard",
-	"yuer",
-	"terrace_bottle",
-	"magnifier",
-	"freeWish",
-	"Ad_x15",
-	"pigeon_endTime",
-	"InviteCard",
-	"CallCard",
-	"seed",
-	"dreamSeed",
-	"BattleOrder15"
-]);
-var BUY_PREFIXES = [
-	"courtyard_21_",
-	"doll_",
-	"vt_",
-	"fish_",
-	"Garden_",
-	"shiwu_",
-	"wanju_",
-	"takeOutFood_",
-	"customer_",
-	"booth_",
-	"npc_",
-	"food_",
-	"buffetFood_",
-	"Musician_",
-	"avatar_",
-	"specialty_fish_",
-	"waimai_che_",
-	"Meorial_",
-	"Momorial_",
-	"Memoria_"
-];
-var isBuyItemsSupported = (key) => typeof key === "string" && (EXACT_BUY_KEYS.has(key) || BUY_PREFIXES.some((prefix) => key.startsWith(prefix)) || key.endsWith("_prop") || key.toLowerCase().startsWith("mail_") || key.toLowerCase().startsWith("memorial_"));
-var hasValidPrice = (product) => Number.isSafeInteger(product?.price) && product.price >= 0;
-var getConditions = (product, group = product) => [...Array.isArray(group?.conditions) ? group.conditions : [], ...product === group ? [] : Array.isArray(product?.conditions) ? product.conditions : []];
-var unmetConditions = (product, group = product) => getConditions(product, group).some((condition) => condition?.already !== true);
-function getTimeStatus(product, group = product, now = Date.now()) {
-	const layers = product === group ? [group] : [group, product];
-	for (const layer of layers) {
-		const { startTime, endTime } = layer || {};
-		if (startTime !== void 0 && (!Number.isSafeInteger(startTime) || startTime < 0)) return {
-			available: false,
-			state: "invalid",
-			boundary: null
-		};
-		if (endTime !== void 0 && (!Number.isSafeInteger(endTime) || endTime < 0)) return {
-			available: false,
-			state: "invalid",
-			boundary: null
-		};
-		if (startTime !== void 0 && endTime !== void 0 && startTime >= endTime) return {
-			available: false,
-			state: "invalid",
-			boundary: null
-		};
-	}
-	const start = Math.max(...layers.map((layer) => layer?.startTime ?? 0));
-	const end = Math.min(...layers.map((layer) => layer?.endTime ?? Infinity));
-	if (start >= end) return {
-		available: false,
-		state: "invalid",
-		boundary: null
-	};
-	if (now < start) return {
-		available: false,
-		state: "upcoming",
-		boundary: start
-	};
-	if (now >= end) return {
-		available: false,
-		state: "expired",
-		boundary: end
-	};
-	return {
-		available: true,
-		state: "active",
-		boundary: Number.isFinite(end) ? end : null
-	};
-}
-var formatShopDate = (timestamp) => new Intl.DateTimeFormat("vi-VN", {
-	hour: "2-digit",
-	minute: "2-digit",
-	day: "2-digit",
-	month: "2-digit",
-	year: "numeric"
-}).format(new Date(timestamp));
-function getTimeMessage(product, group = product, now = Date.now()) {
-	const status = getTimeStatus(product, group, now);
-	if (status.state === "upcoming") return `Mở bán từ ${formatShopDate(status.boundary)}`;
-	if (status.state === "expired") return `Đã kết thúc bán lúc ${formatShopDate(status.boundary)}`;
-	if (status.state === "invalid") return "Thời gian bán không hợp lệ";
-	if (status.boundary !== null) return `Kết thúc bán lúc ${formatShopDate(status.boundary)}`;
-	return "";
-}
-var normalizeLimit = (limit) => limit === void 0 ? Infinity : limit === true ? 1 : Number.isSafeInteger(limit) && limit >= 0 ? limit : 0;
-var getPurchaseLimit = (product, group = product, accountLimit = 100) => Math.min(isFullyOwned(product, group) ? 0 : isOnce(product, group) ? 1 : Infinity, normalizeLimit(product?.limit), normalizeLimit(group?.limit), normalizeLimit(accountLimit));
-function clampCartQuantity(value, limit = 100) {
-	if (limit < 1) return 0;
-	const number = Number(value);
-	return Math.max(1, Math.min(limit, Number.isFinite(number) ? Math.trunc(number) : 1));
-}
-function getGroupRemaining(cart, group, selectedKey) {
-	if (!hasOptions(group)) return Infinity;
-	const limit = normalizeLimit(group.limit);
-	if (limit === Infinity) return Infinity;
-	const used = cart.reduce((sum, entry) => sum + (entry.groupKey === group.key && entry.key !== selectedKey ? entry.amount : 0), 0);
-	return Math.max(0, limit - used);
-}
-function indexShop(tabs) {
-	const index = /* @__PURE__ */ new Map();
-	for (const tab of tabs || []) for (const group of tab.products || []) for (const product of productOptions(group)) {
-		if (!product?.key) continue;
-		if (!index.has(product.key)) index.set(product.key, []);
-		index.get(product.key).push({
-			product,
-			group,
-			category: tab.name
-		});
-	}
-	return index;
-}
-function getPurchaseSignature(product, group = product) {
-	return JSON.stringify({
-		price: product?.price,
-		once: isOnce(product, group),
-		owned: product?.owned,
-		parentOnceOwned: product !== group && group.once === true ? group.owned : null,
-		productLimit: product?.limit ?? null,
-		groupLimit: group?.limit ?? null,
-		optionMode: optionMode(group),
-		groupKey: hasOptions(group) ? group.key : null,
-		conditions: getConditions(product, group).map(({ name, already }) => ({
-			name,
-			already
-		})),
-		startTime: [group?.startTime ?? null, product === group ? null : product?.startTime ?? null],
-		endTime: [group?.endTime ?? null, product === group ? null : product?.endTime ?? null]
-	});
-}
-function getConflictingKeys(tabs) {
-	const conflicts = /* @__PURE__ */ new Set();
-	for (const [key, candidates] of indexShop(tabs)) {
-		const signature = getPurchaseSignature(candidates[0].product, candidates[0].group);
-		if (candidates.some(({ product, group }) => getPurchaseSignature(product, group) !== signature)) conflicts.add(key);
-	}
-	return conflicts;
-}
-function isAvailable(product, group = product, conflicts = /* @__PURE__ */ new Set(), now = Date.now()) {
-	return !!product?.key && isBuyItemsSupported(product.key) && hasValidPrice(product) && !isFullyOwned(product, group) && !unmetConditions(product, group) && !conflicts.has(product.key) && getPurchaseLimit(product, group) >= 1 && getTimeStatus(product, group, now).available;
-}
-function putInCart(cart, product, amount, category = "", accountLimit = 100, group = product, conflicts = /* @__PURE__ */ new Set(), now = Date.now()) {
-	if (!isAvailable(product, group, conflicts, now)) return cart;
-	const remainingCart = optionMode(group) === "singleOptions" || optionMode(group) === "multipleOptions" && (group.limit === 1 || group.limit === true) ? cart.filter((entry) => entry.groupKey !== group.key || entry.key === product.key) : cart;
-	const limit = Math.min(getPurchaseLimit(product, group, accountLimit), getGroupRemaining(remainingCart, group, product.key));
-	if (limit < 1) return cart;
-	const entry = {
-		key: product.key,
-		amount: clampCartQuantity(amount, limit),
-		groupKey: group.key,
-		product,
-		group,
-		category
-	};
-	const found = remainingCart.findIndex((other) => other.key === entry.key);
-	if (found < 0) return [...remainingCart, entry];
-	return remainingCart.map((other, index) => index === found ? entry : other);
-}
-function changeCartQuantity(cart, key, amount, accountLimit = 100) {
-	return cart.map((entry) => {
-		if (entry.key !== key) return entry;
-		const limit = Math.min(getPurchaseLimit(entry.product, entry.group, accountLimit), getGroupRemaining(cart, entry.group, key));
-		return limit < 1 ? entry : {
-			...entry,
-			amount: clampCartQuantity(amount, limit)
-		};
-	});
-}
-function resolveCart(cart, tabs, accountLimit = 100, now = Date.now()) {
-	const index = indexShop(tabs);
-	const conflicts = getConflictingKeys(tabs);
-	return cart.map((entry) => {
-		const matches = index.get(entry.key) || [];
-		const latest = matches.find((candidate) => candidate.group.key === entry.groupKey) || matches[0];
-		const product = latest?.product || entry.product;
-		const group = latest?.group || entry.group;
-		const limit = getPurchaseLimit(product, group, accountLimit);
-		const groupItems = cart.filter((item) => item.groupKey === group?.key);
-		const groupAmount = groupItems.reduce((sum, item) => sum + item.amount, 0);
-		let invalid = "";
-		if (!latest) invalid = "Vật phẩm không còn trong cửa hàng";
-		else if (conflicts.has(entry.key)) invalid = "Mã vật phẩm trùng với cấu hình khác nhau";
-		else if (!isBuyItemsSupported(entry.key)) invalid = "Chức năng mua mã vật phẩm này chưa được buyItems hỗ trợ";
-		else if (isFullyOwned(product, group)) invalid = "Đã đạt mức sở hữu tối đa";
-		else if (unmetConditions(product, group)) invalid = "Chưa đáp ứng điều kiện mua";
-		else if (!getTimeStatus(product, group, now).available) invalid = getTimeMessage(product, group, now);
-		else if (optionMode(group) === "singleOptions" && new Set(groupItems.map((item) => item.key)).size > 1) invalid = "Chỉ chọn một loại trong nhóm";
-		else if (!Number.isSafeInteger(entry.amount) || entry.amount < 1 || entry.amount > limit || hasOptions(group) && groupAmount > normalizeLimit(group.limit)) invalid = "Số lượng vượt giới hạn mỗi lần mua";
-		const price = hasValidPrice(product) ? product.price : 0;
-		const total = price * entry.amount;
-		if (!hasValidPrice(product) || !Number.isSafeInteger(total)) invalid = "Giá vật phẩm không hợp lệ";
-		return {
-			...entry,
-			product,
-			group,
-			category: latest?.category || entry.category,
-			price,
-			total,
-			invalid,
-			limit
-		};
-	});
-}
-var cartTotal = (entries) => entries.reduce((sum, entry) => sum + entry.total, 0);
-var cartCount = (entries) => entries.reduce((sum, entry) => sum + entry.amount, 0);
-var cartPayload = (entries) => entries.map(({ key, amount }) => ({
-	key,
-	amount
-}));
-var eligibleCategoryProducts = (products, conflicts = /* @__PURE__ */ new Set(), now = Date.now()) => (products || []).filter((product) => !hasOptions(product) && isAvailable(product, product, conflicts, now));
-function addCategoryToCart(cart, products, category = "", accountLimit = 100, conflicts = /* @__PURE__ */ new Set(), now = Date.now()) {
-	let updated = cart;
-	for (const product of eligibleCategoryProducts(products, conflicts, now)) {
-		if (updated.some((entry) => entry.key === product.key)) continue;
-		updated = putInCart(updated, product, 1, category, accountLimit, product, conflicts, now);
-	}
-	return updated;
-}
-function removeCategoryFromCart(cart, products) {
-	const keys = new Set((products || []).flatMap((product) => productOptions(product).map((choice) => choice.key)));
-	return cart.filter((entry) => !keys.has(entry.key));
-}
-function incrementOwned(product, amount, group = product) {
-	if (isOnce(product, group)) return {
-		...product,
-		owned: true
-	};
-	if (typeof product.owned === "number") return {
-		...product,
-		owned: product.owned + amount
-	};
-	return product;
-}
-function applyPurchasedQuantity(product, amount, group = product) {
-	const updated = incrementOwned(product, amount, group);
-	if (typeof product.limit !== "number") return updated;
-	const remaining = Math.max(0, product.limit - amount);
-	return {
-		...updated,
-		limit: remaining,
-		...product === group && remaining === 0 ? { owned: true } : {}
-	};
-}
-function applyGroupQuantity(group, amount) {
-	if (typeof group.limit !== "number") return group;
-	return {
-		...group,
-		limit: Math.max(0, group.limit - amount)
-	};
-}
-function applyPurchaseToTabs(tabs, purchasedItems) {
-	const amounts = new Map(purchasedItems.map(({ key, amount }) => [key, amount]));
-	return tabs.map((tab) => ({
-		...tab,
-		products: tab.products.map((group) => {
-			if (!hasOptions(group)) {
-				const amount = amounts.get(group.key);
-				return amount ? applyPurchasedQuantity(group, amount) : group;
-			}
-			const mode = optionMode(group);
-			const options = productOptions(group);
-			const purchased = options.filter((option) => amounts.has(option.key));
-			if (!purchased.length) return group;
-			const groupAmount = purchased.reduce((total, option) => total + amounts.get(option.key), 0);
-			const nextGroup = applyGroupQuantity(group, groupAmount);
-			if (mode === "singleOptions") {
-				const selected = purchased[0];
-				return {
-					...nextGroup,
-					owned: typeof group.owned === "string" ? selected.name || selected.key : typeof group.owned === "boolean" ? true : typeof group.owned === "number" ? group.owned + groupAmount : group.owned,
-					singleOptions: options.map((option) => {
-						const amount = amounts.get(option.key);
-						const updated = amount ? applyPurchasedQuantity(option, amount, group) : option;
-						return {
-							...updated,
-							owned: typeof option.owned === "boolean" ? option.key === selected.key : updated.owned
-						};
-					})
-				};
-			}
-			const updatedOptions = options.map((option) => {
-				const amount = amounts.get(option.key);
-				return amount ? applyPurchasedQuantity(option, amount, group) : option;
-			});
-			return {
-				...nextGroup,
-				owned: typeof group.owned === "number" && updatedOptions.every((option) => typeof option.owned === "number") ? updatedOptions.reduce((sum, option) => sum + option.owned, 0) : group.owned,
-				multipleOptions: updatedOptions
-			};
-		})
-	}));
-}
 // src/shared/hooks/useShop.js
 var INITIAL$1 = {
 	tabs: null,
@@ -17642,14 +17343,7 @@ function useShop(enabled, skipReady = false) {
 			}));
 		}
 	}, []);
-	const applyPurchase = (0, import_react.useCallback)((items) => {
-		request.current += 1;
-		setShop((current) => current.tabs ? {
-			...current,
-			loading: false,
-			tabs: applyPurchaseToTabs(current.tabs, items)
-		} : current);
-	}, []);
+	const applyPurchase = (0, import_react.useCallback)(async () => load(), [load]);
 	(0, import_react.useEffect)(() => {
 		if (!enabled) {
 			request.current += 1;
@@ -17885,12 +17579,12 @@ var __vitePreload = function preload(baseModule, deps, importerUrl) {
 // src/application/App.jsx
 var Auth = (0, import_react.lazy)(() => __vitePreload(() => import("./Auth.js"), __vite__mapDeps([0,1,2,3])));
 var Shop = (0, import_react.lazy)(() => __vitePreload(() => import("./Shop.js"), __vite__mapDeps([4,5,6,7,8,9,10,11,12])));
-var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([13,8,2,3,14,15,16,17,7,6,18])));
-var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([19,20,9,16])));
-var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([21,18,14,12,5,20,9,16,22,6])));
-var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([23,17,20,9,16,2,6,14,22,5])));
-var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([24,1,20,9,16,15,8,12,5,11,22,6,14,2])));
-var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([25,20,9,16,22])));
+var Account = (0, import_react.lazy)(() => __vitePreload(() => import("./Account.js"), __vite__mapDeps([13,9,2,3,6,14,15,16,8,17,18])));
+var AdminPanel = (0, import_react.lazy)(() => __vitePreload(() => import("./AdminPanel.js"), __vite__mapDeps([19,20,10,15])));
+var AdminGiftCodes = (0, import_react.lazy)(() => __vitePreload(() => import("./GiftCodes.js"), __vite__mapDeps([21,18,6,12,5,20,10,15,22,17])));
+var AdminUsers = (0, import_react.lazy)(() => __vitePreload(() => import("./Users.js"), __vite__mapDeps([23,16,20,10,15,2,6,17,22,5])));
+var AdminPlayers = (0, import_react.lazy)(() => __vitePreload(() => import("./Players.js"), __vite__mapDeps([24,1,20,10,15,14,9,12,5,7,22,6,17,2])));
+var AdminData = (0, import_react.lazy)(() => __vitePreload(() => import("./Data.js"), __vite__mapDeps([25,20,10,15,22])));
 var AUTHENTICATION_PATHS = [
 	"/login",
 	"/register",
@@ -18085,4 +17779,4 @@ function App() {
 // src/main.jsx
 (0, import_disable_devtool_min.default)({ md5: "b750a6e2b3d860ae46efcc050e03db3b" });
 (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HashRouter, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}) }));
-export { adminRecord as $, IconAlertTriangle as $t, formatDateTime as A, PagerSkeleton as At, adminData as B, Dialog as Bt, productOptions as C, fileToAvatar as Ct, unmetConditions as D, SearchInput as Dt, resolveCart as E, Logo as Et, adminAddPlayerFriend as F, Pager as Ft, adminEditGiftCode as G, Button as Gt, adminDeleteGiftCode as H, toast as Ht, adminAddPlayerLike as I, Tabs as It, adminEncryptRecordValue as J, IconSearch as Jt, adminEditPlayer as K, useRequestPending as Kt, adminAddPlayerStar as L, Select as Lt, formatShortDateTime as M, Skeleton as Mt, formatVietnameseDong as N, ErrorState as Nt, compareByTime as O, JsonEditor as Ot, adminAddCoin as P, Spinner as Pt, adminPlayers as Q, IconChevronRight as Qt, adminCreateGiftCode as R, SortSelect as Rt, optionMode as S, signupOtp as St, removeCategoryFromCart as T, Coin as Tt, adminDeletePlayerFriend as U, toastError as Ut, adminDecryptRecordValue as V, OtpButton as Vt, adminDeleteUser as W, Field as Wt, adminPlayer as X, IconInfoCircle as Xt, adminGiftCodes as Y, IconRefresh as Yt, adminPlayerFriends as Z, IconCircleCheck as Zt, hasValidPrice as _, updateUser as _t, cartTotal as a, useNavigate as an, createTransaction as at, isFullyOwned as b, resetPassword as bt, eligibleCategoryProducts as c, require_react as cn, ADMIN_MAX_QTY as ct, getConflictingKeys as d, getBuffetLink as dt, createReactComponent as en, adminSaveData as et, getGroupRemaining as f, getFriendLink as ft, hasOptions as g, updateAvatar as gt, getTimeStatus as h, submitInvite as ht, cartPayload as i, useLocation as in, cancelTransaction as it, formatNumber as j, RowSkeleton as jt, formatDate as k, Line as kt, formatShopDate as l, __toESM as ln, buy as lt, getTimeMessage as m, redeemGiftCode as mt, addCategoryToCart as n, require_jsx_runtime as nn, adminUpdatePlayerAvatar as nt, changeCartQuantity as o, useParams as on, getTransaction as ot, getPurchaseLimit as p, openidOtp as pt, adminEditUser as q, IconX as qt, cartCount as r, Outlet as rn, adminUsers as rt, clampCartQuantity as s, require_react_dom as sn, getTransactions as st, __vitePreload as t, Badge as tn, adminSaveRecord as tt, getConditions as u, changeOpenid as ut, isAvailable as v, login as vt, putInCart as w, isAdmin as wt, isOnce as x, signup as xt, isBuyItemsSupported as y, passwordOtp as yt, adminCreateUser as z, Menu as zt };
+export { Coin as $, adminUpdatePlayerAvatar as A, require_jsx_runtime as At, getFriendLink as B, adminGiftCodes as C, IconRefresh as Ct, adminRecord as D, IconAlertTriangle as Dt, adminPlayers as E, IconChevronRight as Et, getTransactions as F, require_react_dom as Ft, updateUser as G, redeemGiftCode as H, ADMIN_MAX_QTY as I, require_react as It, resetPassword as J, login as K, buy as L, __toESM as Lt, cancelTransaction as M, useLocation as Mt, createTransaction as N, useNavigate as Nt, adminSaveData as O, createReactComponent as Ot, getTransaction as P, useParams as Pt, isAdmin as Q, changeOpenid as R, adminEncryptRecordValue as S, IconSearch as St, adminPlayerFriends as T, IconCircleCheck as Tt, submitInvite as U, openidOtp as V, updateAvatar as W, signupOtp as X, signup as Y, fileToAvatar as Z, adminDeletePlayerFriend as _, toastError as _t, formatNumber as a, RowSkeleton as at, adminEditPlayer as b, useRequestPending as bt, adminAddCoin as c, Spinner as ct, adminAddPlayerStar as d, Select as dt, Logo as et, adminCreateGiftCode as f, SortSelect as ft, adminDeleteGiftCode as g, toast as gt, adminDecryptRecordValue as h, OtpButton as ht, formatDateTime as i, PagerSkeleton as it, adminUsers as j, Outlet as jt, adminSaveRecord as k, Badge as kt, adminAddPlayerFriend as l, Pager as lt, adminData as m, Dialog as mt, compareByTime as n, JsonEditor as nt, formatShortDateTime as o, Skeleton as ot, adminCreateUser as p, Menu as pt, passwordOtp as q, formatDate as r, Line as rt, formatVietnameseDong as s, ErrorState as st, __vitePreload as t, SearchInput as tt, adminAddPlayerLike as u, Tabs as ut, adminDeleteUser as v, Field as vt, adminPlayer as w, IconInfoCircle as wt, adminEditUser as x, IconX as xt, adminEditGiftCode as y, Button as yt, getBuffetLink as z };

@@ -1,9 +1,9 @@
-import { $t as IconAlertTriangle, Et as Logo, Gt as Button, Ht as toast, It as Tabs, St as signupOtp, Vt as OtpButton, Wt as Field, an as useNavigate, bt as resetPassword, cn as require_react, en as createReactComponent, in as useLocation, ln as __toESM, nn as require_jsx_runtime, vt as login, xt as signup, yt as passwordOtp } from "./index.js";
+import { At as require_jsx_runtime, Dt as IconAlertTriangle, It as require_react, J as resetPassword, K as login, Lt as __toESM, Mt as useLocation, Nt as useNavigate, Ot as createReactComponent, X as signupOtp, Y as signup, et as Logo, gt as toast, ht as OtpButton, q as passwordOtp, ut as Tabs, vt as Field, yt as Button } from "./index.js";
 import { n as IconArrowLeft, t as IconArrowRight } from "./IconArrowRight.js";
 import { i as validate, n as hasErrors, t as cleanOtp } from "./validate.js";
 import { t as StrengthBar } from "./StrengthBar.js";
 /**
-* @license @tabler/icons-react v3.52.0 - MIT
+* @license @tabler/icons-react v3.53.0 - MIT
 *
 * This source code is licensed under the MIT license.
 * See the LICENSE file in the root directory of this source tree.

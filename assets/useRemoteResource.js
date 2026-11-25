@@ -1,17 +1,4 @@
-import { cn as require_react, en as createReactComponent, ln as __toESM } from "./index.js";
-/**
-* @license @tabler/icons-react v3.52.0 - MIT
-*
-* This source code is licensed under the MIT license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var IconPencil = /* @__PURE__ */ createReactComponent("outline", "pencil", "Pencil", [["path", {
-	"d": "M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4",
-	"key": "svg-0"
-}], ["path", {
-	"d": "M13.5 6.5l4 4",
-	"key": "svg-1"
-}]]);
+import { It as require_react, Lt as __toESM } from "./index.js";
 // src/shared/hooks/useRemoteResource.js
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
 function useRemoteResource(fetcher, enabled = true) {
@@ -59,4 +46,4 @@ function useRemoteResource(fetcher, enabled = true) {
 		reload
 	};
 }
-export { IconPencil as n, useRemoteResource as t };
+export { useRemoteResource as t };
